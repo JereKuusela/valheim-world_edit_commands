@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net4.8</TargetFramework>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="BepInEx.dll">
+      <HintPath>..\Libs\BepinEx.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.dll">
+      <HintPath>..\Libs\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule.dll">
+      <HintPath>..\Libs\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="0Harmony.dll">
+      <HintPath>..\Libs\0Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="BepInEx.Harmony.dll">
+      <HintPath>..\Libs\BepInEx.Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="assembly_valheim_publicized.dll">
+      <HintPath>..\Libs\assembly_valheim_publicized.dll</HintPath>
+    </Reference>
+    <Reference Include="assembly_utils_publicized.dll">
+      <HintPath>..\Libs\assembly_utils_publicized.dll</HintPath>
+    </Reference>
+    <Reference Include="DEV.dll">
+      <HintPath>..\Libs\DEV.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

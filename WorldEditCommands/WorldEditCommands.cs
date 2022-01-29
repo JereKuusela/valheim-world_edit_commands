@@ -1,0 +1,24 @@
+﻿using BepInEx;
+using HarmonyLib;
+
+namespace WorldEditCommands {
+  [BepInPlugin("valheim.jerekuusela.world_edit_commands", "WorldEditCommands", "1.0.0.0")]
+  [BepInDependency("valheim.jerekuusela.dev")]
+  public class WorldEditCommands : BaseUnityPlugin {
+    public void Awake() {
+      Harmony harmony = new Harmony("valheim.jerekuusela.world_edit_commands");
+      harmony.PatchAll();
+    }
+  }
+  [HarmonyPatch(typeof(Terminal), "InitTerminal")]
+  public class SetCommands {
+    public static void Postfix() {
+      new UndoSpawnCommand();
+      new RedoSpawnCommand();
+      new SpawnLocationCommand();
+      new SpawnObjectCommand();
+      new ObjectCommand();
+      new TerrainCommand();
+    }
+  }
+}
