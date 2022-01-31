@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
-using HarmonyLib;
+using DEV;
 using UnityEngine;
 
 namespace WorldEditCommands {
 
-  public class SpawnLocationCommand : UndoCommand {
+  public class SpawnLocationCommand : BaseCommand {
     public SpawnLocationCommand() {
       new Terminal.ConsoleCommand("spawn_location", "[name] (seed=n pos=x,z,y rot=y refPos=x,z,y refRot=y) - Spawns a given location.", delegate (Terminal.ConsoleEventArgs args) {
         if (args.Length < 2) {
@@ -64,24 +64,16 @@ namespace WorldEditCommands {
         if (snap && ZoneSystem.instance.FindFloor(spawnPosition, out var value))
           spawnPosition.y = value;
 
-        AddedZDOs.zdos.Clear();
+        AddedZDOs.StartTracking();
         ZoneSystem.instance.SpawnLocation(location, seed, spawnPosition, spawnRotation, ZoneSystem.SpawnMode.Full, new List<GameObject>());
-        Spawns.Push(AddedZDOs.zdos.ToList());
-        AddedZDOs.zdos.Clear();
         args.Context.AddString("Spawned: " + name + " at " + PrintVectorXZY(spawnPosition));
+        var spawns = AddedZDOs.StopTracking();
         // Disable player based positioning.
-        AddToHistory("spawn_location " + name + " refRot=" + baseAngle + " refPos=" + PrintVectorXZY(basePosition) + " seed=" + seed + " rot=" + relativePosition + " " + string.Join(" ", args.Args.Skip(2)));
+        var undoCommand = "spawn_location " + name + " refRot=" + baseAngle + " refPos=" + PrintVectorXZY(basePosition) + " seed=" + seed + " rot=" + relativePosition + " " + string.Join(" ", args.Args.Skip(2));
+        var undo = new UndoSpawn(spawns, undoCommand);
 
-      }, true, true, optionsFetcher: () => ZoneSystem.instance.m_locations.Select(location => location.m_prefabName).ToList());
-    }
-
-    ///<summary>Catch new zdos for undo.</summary>
-    [HarmonyPatch(typeof(ZNetView), "Awake")]
-    public class AddedZDOs {
-      public static List<ZDO> zdos = new List<ZDO>();
-      public static void Postfix(ZNetView __instance) {
-        zdos.Add(__instance.GetZDO());
-      }
+      }, true, true, optionsFetcher: () => ParameterInfo.LocationIds);
+      new SpawnLocationAutoComplete();
     }
   }
 }

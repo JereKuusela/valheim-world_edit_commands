@@ -9,7 +9,7 @@ namespace WorldEditCommands {
     public TerrainCommand() {
       new Terminal.ConsoleCommand("terrain", "[raise/lower/reset/level/paint=value] [radius=0] [smooth=0] [blockcheck] [square] - Terrain manipulation.", delegate (Terminal.ConsoleEventArgs args) {
         if (Player.m_localPlayer == null) {
-          AddMessage(args.Context, "Unable to find the player.");
+          Helper.AddMessage(args.Context, "Unable to find the player.");
           return;
         }
         var pos = Player.m_localPlayer.transform.position;
@@ -40,6 +40,8 @@ namespace WorldEditCommands {
         UndoManager.Add(new UndoTerrain(before, after, pos, pars.Radius));
 
       }, true, true, optionsFetcher: () => Operations);
+      Operations.Sort();
+      new TerrainAutoComplete();
     }
     private static TerrainParameters ParseArgs(Terminal.ConsoleEventArgs args, float height) {
       var parameters = new TerrainParameters();
@@ -53,8 +55,6 @@ namespace WorldEditCommands {
           parameters.BlockCheck = true;
         if (split[0] == "level")
           parameters.Level = height;
-        if (TryInt(split[0], -1) != -1)
-          parameters.Radius = TryInt(split[0], -1);
         if (split.Length < 2) continue;
         if (split[0] == "radius")
           parameters.Radius = Mathf.Min(64f, TryFloat(split[1], 0f));
@@ -71,10 +71,10 @@ namespace WorldEditCommands {
       }
       return parameters;
     }
-    private static List<string> Operations = new List<string>(){
-      "raise",
+    public static List<string> Operations = new List<string>(){
       "lower",
       "level",
+      "raise",
       "reset",
       "paint",
       "blockcheck",

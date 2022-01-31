@@ -13,12 +13,11 @@ namespace WorldEditCommands {
   [HarmonyPatch(typeof(Terminal), "InitTerminal")]
   public class SetCommands {
     public static void Postfix() {
-      new UndoSpawnCommand();
-      new RedoSpawnCommand();
       new SpawnLocationCommand();
       new SpawnObjectCommand();
       new ObjectCommand();
       new TerrainCommand();
+      new AliasesCommand();
     }
   }
 }

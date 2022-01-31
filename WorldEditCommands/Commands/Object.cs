@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using DEV;
+using Service;
 using UnityEngine;
 
 namespace WorldEditCommands {
@@ -39,7 +40,7 @@ namespace WorldEditCommands {
       foreach (var operation in operations) {
         var name = operation.Split('=')[0];
         if (!Operations.Contains(name)) {
-          AddMessage(context, $"Error: Invalid operation {name}.");
+          Helper.AddMessage(context, $"Error: Invalid operation {name}.");
           return;
         }
       }
@@ -101,13 +102,15 @@ namespace WorldEditCommands {
           }
           var message = output.Replace("¤", Utils.GetPrefabName(view.gameObject));
           if (zdos.Count() == 1)
-            AddMessage(context, message);
+            Helper.AddMessage(context, message);
           else
             context.AddString(message);
         }
       }
     }
     public ObjectCommand() {
+      var parameters = Operations.Concat(Params).ToList();
+      parameters.Sort();
       new Terminal.ConsoleCommand("object", "[operation=value] [id=*] [radius=0] - Modifies the targeted object.", delegate (Terminal.ConsoleEventArgs args) {
         if (args.Length < 2) return;
         var pars = ParseArgs(args);
@@ -115,56 +118,18 @@ namespace WorldEditCommands {
         if (pars.Radius > 0f) {
           zdos = GetZDOs(pars.Id, pars.Radius);
         } else {
-          var view = GetHovered(args);
+          var view = Helper.GetHovered(args);
           if (!view) return;
           if (!GetPrefabs(pars.Id).Contains(view.GetZDO().GetPrefab())) {
-            AddMessage(args.Context, $"Skipped: {view.name}  has invalid id.");
+            Helper.AddMessage(args.Context, $"Skipped: {view.name}  has invalid id.");
             return;
           }
           zdos = new ZDO[] { view.GetZDO() };
         }
         Execute(args.Context, pars.Operations, zdos);
 
-      }, true, true, optionsFetcher: () => Operations);
-      AutoComplete.Register("object", (int index, string parameter) => {
-        if (parameter == "baby" || parameter == "tame" || parameter == "wild" || parameter == "remove" || parameter == "sleep" || parameter == "info") return ParameterInfo.None;
-        if (parameter == "id") {
-          if (index == 0) return ParameterInfo.Ids;
-          return ParameterInfo.None;
-        }
-        if (parameter == "left_hand" || parameter == "right_hand" || parameter == "helmet" || parameter == "chest" || parameter == "shoulders" || parameter == "legs" || parameter == "utility") {
-          if (index == 0) return ParameterInfo.ItemIds;
-          if (index == 1) return ParameterInfo.Create("Visual", "number (0 or more)");
-          return ParameterInfo.None;
-        }
-        if (parameter == "radius" || parameter == "range" || parameter == "health" || parameter == "stars") {
-          if (index == 0) return ParameterInfo.Create(parameter, "number");
-          return ParameterInfo.None;
-        }
-        if (parameter == "move") {
-          if (index == 0) return ParameterInfo.Create("X", "number");
-          if (index == 1) return ParameterInfo.Create("Z", "number");
-          if (index == 2) return ParameterInfo.Create("Y", "number");
-          if (index == 3) return ParameterInfo.Origin;
-          return ParameterInfo.None;
-        }
-        if (parameter == "rotate") {
-          if (index == 0) return ParameterInfo.Create("Y", "number or reset");
-          if (index == 1) return ParameterInfo.Create("X", "number");
-          if (index == 2) return ParameterInfo.Create("Z", "number");
-          if (index == 3) return ParameterInfo.Origin;
-          return ParameterInfo.None;
-        }
-        if (parameter == "scale") {
-          if (index == 0) return ParameterInfo.Create("X", "number");
-          if (index == 1) return ParameterInfo.Create("Z", "number");
-          if (index == 2) return ParameterInfo.Create("Y", "number");
-          return ParameterInfo.None;
-        }
-        var args = Operations.Concat(Params).ToList();
-        args.Sort();
-        return args;
-      });
+      }, true, true, optionsFetcher: () => parameters);
+      new ObjectAutoComplete();
     }
     private static TargetParameters ParseArgs(Terminal.ConsoleEventArgs args) {
       var parameters = new TargetParameters();
@@ -180,7 +145,7 @@ namespace WorldEditCommands {
       }
       return parameters;
     }
-    private static List<string> Operations = new List<string>(){
+    public static List<string> Operations = new List<string>(){
       "health",
       "stars",
       "baby",
@@ -201,7 +166,7 @@ namespace WorldEditCommands {
       "rotate",
       "scale"
     };
-    private static List<string> Params = new List<string>(){
+    public static List<string> Params = new List<string>(){
       "id",
       "radius",
       "range",

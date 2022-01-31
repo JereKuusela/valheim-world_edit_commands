@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using DEV;
+using Service;
 using UnityEngine;
 
 namespace WorldEditCommands {
@@ -21,7 +22,7 @@ namespace WorldEditCommands {
     public bool Hunt = false;
     public bool Snap = true;
   }
-  public class SpawnObjectCommand : UndoCommand {
+  public class SpawnObjectCommand : BaseCommand {
     private static List<GameObject> SpawnObject(GameObject prefab, Vector3 position, int count, bool snap) {
       var spawned = new List<GameObject>();
       for (int i = 0; i < count; i++) {
@@ -78,19 +79,19 @@ namespace WorldEditCommands {
         }
         if (split[0] == "refPos" || split[0] == "refPosition") {
           useDefaultRelativePosition = false;
-          if (split[1].Contains(","))
-            pars.BasePosition = TryVectorXZY(split[1].Split(','), pars.BasePosition);
-          else {
-            var player = FindPlayer(split[1]);
-            if (player.m_characterID.IsNone()) {
-              args.Context.AddString("Error: Unable to find the player.");
-              return null;
-            } else if (!player.m_publicPosition) {
-              args.Context.AddString("Error: Player doesn't have a public position.");
-              return null;
-            } else {
-              pars.BasePosition = player.m_position;
-            }
+          pars.BasePosition = TryVectorXZY(split[1].Split(','), pars.BasePosition);
+        }
+        if (split[0] == "refPlayer") {
+          useDefaultRelativePosition = false;
+          var player = FindPlayer(split[1]);
+          if (player.m_characterID.IsNone()) {
+            args.Context.AddString("Error: Unable to find the player.");
+            return null;
+          } else if (!player.m_publicPosition) {
+            args.Context.AddString("Error: Player doesn't have a public position.");
+            return null;
+          } else {
+            pars.BasePosition = player.m_position;
           }
         }
       }
@@ -122,10 +123,10 @@ namespace WorldEditCommands {
       }
     }
     public SpawnObjectCommand() {
-      new Terminal.ConsoleCommand("spawn_object", "[name] (stars=n amount=n pos=x,z,y rot=z,x,z scale=x,y,z refPos=x,z,y refRot=y,x,z health=n) - Spawns an object.", delegate (Terminal.ConsoleEventArgs args) {
+      new Terminal.ConsoleCommand("spawn_object", "[name] ...parameters - Spawns an object.", delegate (Terminal.ConsoleEventArgs args) {
         if (args.Length < 2) return;
         var prefabName = args[1];
-        var prefab = GetPrefab(prefabName);
+        var prefab = Helper.GetPrefab(prefabName);
         if (!prefab) return;
 
         var pars = ParseArgs(args);
@@ -140,11 +141,12 @@ namespace WorldEditCommands {
         Player.m_localPlayer.Message(MessageHud.MessageType.TopLeft, "Spawning object " + prefabName, spawned.Count, null);
         args.Context.AddString("Spawned: " + prefabName + " at " + PrintVectorXZY(position));
         var spawns = spawned.Select(obj => obj.GetComponent<ZNetView>()?.GetZDO()).Where(obj => obj != null).ToList();
-        Spawns.Push(spawns);
-
         // Disable player based positioning.
-        AddToHistory("spawn_object " + prefabName + " refRot=" + PrintAngleYXZ(pars.BaseRotation) + " refPos=" + PrintVectorXZY(pars.BasePosition) + " " + string.Join(" ", args.Args.Skip(2)));
+        var undoCommand = "spawn_object " + prefabName + " refRot=" + PrintAngleYXZ(pars.BaseRotation) + " refPos=" + PrintVectorXZY(pars.BasePosition) + " " + string.Join(" ", args.Args.Skip(2));
+        var undo = new UndoSpawn(spawns, undoCommand);
+        UndoManager.Add(undo);
       }, true, true, optionsFetcher: () => ParameterInfo.Ids);
+      new SpawnObjectAutoComplete();
     }
   }
 }

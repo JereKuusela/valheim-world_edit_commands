@@ -36,9 +36,11 @@ namespace WorldEditCommands {
     public void Undo() {
       Terrain.ApplyData(Before, Position, Radius);
     }
+    public string UndoMessage() => "Undoing terrain changes";
 
     public void Redo() {
       Terrain.ApplyData(After, Position, Radius);
     }
+    public string RedoMessage() => "Redoing terrain changes";
   }
 }
