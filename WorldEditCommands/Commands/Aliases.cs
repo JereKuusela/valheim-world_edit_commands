@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using DEV;
+using ServerDevcommands;
 
 namespace WorldEditCommands {
-  public class AliasesCommand : BaseCommand {
+  public class AliasesCommand {
     public AliasesCommand() {
       new Terminal.ConsoleCommand("world_edit_aliases", "[set/clear] - Sets some useful aliases.", delegate (Terminal.ConsoleEventArgs args) {
         if (args.Length > 1 && args[1] == "clear") {
@@ -20,6 +20,7 @@ namespace WorldEditCommands {
           args.Context.TryRunCommand("alias change_shoulders");
           args.Context.TryRunCommand("alias change_utility");
           args.Context.TryRunCommand("alias essential");
+          args.Context.TryRunCommand("alias spawn");
         } else {
           args.Context.TryRunCommand("alias move object move=$,$ radius=$ id=$");
           args.Context.TryRunCommand("alias rotate object rotate=$,$ radius=$ id=$");
@@ -35,6 +36,7 @@ namespace WorldEditCommands {
           args.Context.TryRunCommand("alias change_shoulders object shoulders=$ radius=$ id=$");
           args.Context.TryRunCommand("alias change_utility object utility=$ radius=$ id=$");
           args.Context.TryRunCommand("alias essential object tame health=1E30 radius=$ id=$");
+          args.Context.TryRunCommand("alias spawn spawn_object $ amount=$ level=$");
 
         }
       });

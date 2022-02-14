@@ -27,8 +27,8 @@
     <Reference Include="assembly_utils_publicized.dll">
       <HintPath>..\Libs\assembly_utils_publicized.dll</HintPath>
     </Reference>
-    <Reference Include="DEV.dll">
-      <HintPath>..\Libs\DEV.dll</HintPath>
+    <Reference Include="ServerDevcommands.dll">
+      <HintPath>..\Libs\ServerDevcommands.dll</HintPath>
     </Reference>
   </ItemGroup>
 

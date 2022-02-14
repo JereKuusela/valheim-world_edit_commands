@@ -1,11 +1,10 @@
 using System.Collections.Generic;
-using DEV;
-using Service;
+using ServerDevcommands;
 using UnityEngine;
 
 namespace WorldEditCommands {
 
-  public class TerrainCommand : BaseCommand {
+  public class TerrainCommand {
     public TerrainCommand() {
       new Terminal.ConsoleCommand("terrain", "[raise/lower/reset/level/paint=value] [radius=0] [smooth=0] [blockcheck] [square] - Terrain manipulation.", delegate (Terminal.ConsoleEventArgs args) {
         if (Player.m_localPlayer == null) {
@@ -57,17 +56,17 @@ namespace WorldEditCommands {
           parameters.Level = height;
         if (split.Length < 2) continue;
         if (split[0] == "radius")
-          parameters.Radius = Mathf.Min(64f, TryFloat(split[1], 0f));
+          parameters.Radius = Mathf.Min(64f, Parse.TryFloat(split[1], 0f));
         if (split[0] == "paint")
           parameters.Paint = split[1];
         if (split[0] == "raise")
-          parameters.Delta = TryFloat(split[1], 0f);
+          parameters.Delta = Parse.TryFloat(split[1], 0f);
         if (split[0] == "lower")
-          parameters.Delta = -TryFloat(split[1], 0f);
+          parameters.Delta = -Parse.TryFloat(split[1], 0f);
         if (split[0] == "smooth")
-          parameters.Smooth = TryFloat(split[1], 0f);
+          parameters.Smooth = Parse.TryFloat(split[1], 0f);
         if (split[0] == "level")
-          parameters.Level = TryFloat(split[1], height);
+          parameters.Level = Parse.TryFloat(split[1], height);
       }
       return parameters;
     }

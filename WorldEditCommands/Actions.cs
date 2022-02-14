@@ -181,13 +181,6 @@ namespace WorldEditCommands {
       item.m_nview.GetZDO().Set("stack", stack);
       return stack;
     }
-    public static void Remove(GameObject obj) {
-      var netView = obj.GetComponent<ZNetView>();
-      // Original code only fully destroyes owned zdos.
-      if (netView && !netView.IsOwner())
-        ZDOMan.instance.m_destroySendList.Add(netView.GetZDO().m_uid);
-      ZNetScene.instance.Destroy(obj);
-    }
     public static void SetRotation(GameObject obj, Quaternion rotation) {
       var view = obj.GetComponent<ZNetView>();
       if (view == null) return;
@@ -202,23 +195,23 @@ namespace WorldEditCommands {
       if (scale != Vector3.one && view.m_syncInitialScale)
         view.SetLocalScale(scale);
     }
-    public static void SetVisual(GameObject obj, string item, int variant) {
-      SetVisual(obj.GetComponent<ItemStand>(), item, variant);
+    public static void SetVisual(GameObject obj, Item item) {
+      SetVisual(obj.GetComponent<ItemStand>(), item);
     }
-    public static void SetVisual(GameObject obj, VisSlot slot, string item, int variant) {
-      SetVisual(obj.GetComponent<Character>(), slot, item, variant);
+    public static void SetVisual(GameObject obj, VisSlot slot, Item item) {
+      SetVisual(obj.GetComponent<Character>(), slot, item);
     }
-    public static void SetVisual(ItemStand obj, string item, int variant) {
-      if (!obj) return;
-      obj.m_nview.GetZDO().Set("item", item);
-      obj.m_nview.GetZDO().Set("variant", variant);
+    public static void SetVisual(ItemStand obj, Item item) {
+      if (!obj || item == null) return;
+      obj.m_nview.GetZDO().Set("item", item.Name);
+      obj.m_nview.GetZDO().Set("variant", item.Variant);
       obj.UpdateVisual();
     }
-    public static void SetVisual(Character obj, VisSlot slot, string item, int variant) {
-      if (!obj) return;
+    public static void SetVisual(Character obj, VisSlot slot, Item item) {
+      if (!obj || item == null) return;
       var equipment = obj.GetComponent<VisEquipment>();
       if (equipment == null) return;
-      equipment.SetItem(slot, item, variant);
+      equipment.SetItem(slot, item.Name, item.Variant);
     }
     public static void Move(ZNetView obj, Vector3 offset, string origin) {
       var zdo = obj.GetZDO();

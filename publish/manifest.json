@@ -1,0 +1,9 @@
+{
+  "name": "No_Map",
+  "version_number": "1.0.1",
+  "website_url": "https://github.com/JereKuusela/valheim-no_map",
+  "description": "Forces the NOMAP console command to hide the map. Use AzuAntiCheat to force using this.",
+  "dependencies": [
+    "denikson-BepInExPack_Valheim-5.4.1700"
+  ]
+}

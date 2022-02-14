@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
-using DEV;
+using ServerDevcommands;
 using UnityEngine;
 
 namespace WorldEditCommands {
 
-  public class SpawnLocationCommand : BaseCommand {
+  public class SpawnLocationCommand {
     public SpawnLocationCommand() {
       new Terminal.ConsoleCommand("spawn_location", "[name] (seed=n pos=x,z,y rot=y refPos=x,z,y refRot=y) - Spawns a given location.", delegate (Terminal.ConsoleEventArgs args) {
         if (args.Length < 2) {
@@ -41,18 +41,18 @@ namespace WorldEditCommands {
           var split = arg.Split('=');
           if (split.Length < 2) continue;
           if (split[0] == "seed")
-            seed = TryInt(split[1], 0);
+            seed = Parse.TryInt(split[1], 0);
           if (split[0] == "rot" || split[0] == "rotation")
-            relativeAngle = TryFloat(split[1], 0);
+            relativeAngle = Parse.TryFloat(split[1], 0);
           if (split[0] == "pos" || split[0] == "position") {
-            relativePosition = TryVectorXZY(split[1].Split(','));
+            relativePosition = Parse.TryVectorXZY(split[1].Split(','));
             snap = split[1].Split(',').Length < 3;
           }
           if (split[0] == "refRot" || split[0] == "refRotation") {
-            baseAngle = TryFloat(split[1], baseAngle);
+            baseAngle = Parse.TryFloat(split[1], baseAngle);
           }
           if (split[0] == "refPos" || split[0] == "refPosition") {
-            basePosition = TryVectorXZY(split[1].Split(','), basePosition);
+            basePosition = Parse.TryVectorXZY(split[1].Split(','), basePosition);
           }
         }
         var baseRotation = Quaternion.Euler(0f, baseAngle, 0f);
@@ -66,10 +66,10 @@ namespace WorldEditCommands {
 
         AddedZDOs.StartTracking();
         ZoneSystem.instance.SpawnLocation(location, seed, spawnPosition, spawnRotation, ZoneSystem.SpawnMode.Full, new List<GameObject>());
-        args.Context.AddString("Spawned: " + name + " at " + PrintVectorXZY(spawnPosition));
+        args.Context.AddString("Spawned: " + name + " at " + Helper.PrintVectorXZY(spawnPosition));
         var spawns = AddedZDOs.StopTracking();
         // Disable player based positioning.
-        var undoCommand = "spawn_location " + name + " refRot=" + baseAngle + " refPos=" + PrintVectorXZY(basePosition) + " seed=" + seed + " rot=" + relativePosition + " " + string.Join(" ", args.Args.Skip(2));
+        var undoCommand = "spawn_location " + name + " refRot=" + baseAngle + " refPos=" + Helper.PrintVectorXZY(basePosition) + " seed=" + seed + " rot=" + relativePosition + " " + string.Join(" ", args.Args.Skip(2));
         var undo = new UndoSpawn(spawns, undoCommand);
 
       }, true, true, optionsFetcher: () => ParameterInfo.LocationIds);
