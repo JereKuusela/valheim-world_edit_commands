@@ -210,7 +210,7 @@ namespace WorldEditCommands {
     public static void SetVisual(Character obj, VisSlot slot, Item item) {
       if (!obj || item == null) return;
       var equipment = obj.GetComponent<VisEquipment>();
-      if (equipment == null) return;
+      if (!equipment) return;
       equipment.SetItem(slot, item.Name, item.Variant);
     }
     public static void Move(ZNetView obj, Vector3 offset, string origin) {

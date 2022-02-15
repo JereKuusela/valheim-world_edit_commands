@@ -6,7 +6,7 @@ using ServerDevcommands;
 namespace WorldEditCommands {
   using NamedOptionsFetchers = Dictionary<string, Func<int, List<string>>>;
   public class SharedObjectAutoComplete {
-    private static List<string> VisualAutoComplete(int index) {
+    public static List<string> VisualAutoComplete(int index) {
       if (index == 0) return ParameterInfo.ItemIds;
       if (index == 1) return ParameterInfo.Create("Visual", "number (0 or more)");
       return null;

@@ -13,10 +13,10 @@ namespace WorldEditCommands {
     public bool Snap = true;
     public bool Tamed = false;
     public bool Hunt = false;
+    public bool UseDefaultRelativePosition = true;
 
     public override bool ParseArgs(string[] args, Terminal terminal) {
       if (!base.ParseArgs(args, terminal)) return false;
-      var useDefaultRelativePosition = true;
       foreach (var arg in args) {
         var split = arg.Split('=');
         var name = split[0];
@@ -36,7 +36,7 @@ namespace WorldEditCommands {
           BaseRotation = Parse.TryAngleYXZ(value, BaseRotation);
         }
         if (split[0] == "pos" || split[0] == "position") {
-          useDefaultRelativePosition = false;
+          UseDefaultRelativePosition = false;
           RelativePosition = Parse.TryVectorXZY(value.Split(','));
           Snap = value.Split(',').Length < 3;
         }
@@ -44,11 +44,11 @@ namespace WorldEditCommands {
           Rotation = Parse.TryVectorYXZRange(value, Vector3.zero);
         }
         if (split[0] == "refPos" || split[0] == "refPosition") {
-          useDefaultRelativePosition = false;
+          UseDefaultRelativePosition = false;
           BasePosition = Parse.TryVectorXZY(value.Split(','), BasePosition);
         }
         if (split[0] == "refPlayer") {
-          useDefaultRelativePosition = false;
+          UseDefaultRelativePosition = false;
           var player = Helper.FindPlayer(value);
           if (player.m_characterID.IsNone()) {
             terminal.AddString("Error: Unable to find the player.");
@@ -62,9 +62,6 @@ namespace WorldEditCommands {
         }
       }
       Radius = Radius == 0f ? 0.5f : Radius;
-      // For usability, spawn in front of the player if nothing is specified (similar to the base game command).
-      if (useDefaultRelativePosition)
-        RelativePosition = new Vector3(2.0f, 0, 0);
       return true;
     }
   }

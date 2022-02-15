@@ -15,7 +15,7 @@ namespace WorldEditCommands {
 
     public static HashSet<string> SupportedOperations = new HashSet<string> {
       "health", "stars", "tame", "wild", "level", "baby", "info", "sleep", "remove", "visual",
-      "helmet", "left_hand", "right_hand", "shoulders", "legs", "utility", "move", "rotate", "scale"
+      "helmet", "left_hand", "right_hand", "shoulders", "legs", "utility", "move", "rotate", "scale", "chest"
     };
     public override bool ParseArgs(string[] args, Terminal terminal) {
       if (!base.ParseArgs(args, terminal)) return false;

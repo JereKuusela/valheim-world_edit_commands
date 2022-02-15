@@ -1,5 +1,3 @@
-TODO: undo/redo seems to spawn_object at wrong position (without default relative?)
-
 # World Edit Commands
 
 Adds new client side commands for advanced world editing.
@@ -43,7 +41,7 @@ Following parameters are available:
 - `stars=integer`: Sets stars for creatures (stars = level - 1).
 - `wild`: Untames creatures.
 
-Vanity parameters:
+Additional vanity parameters:
 
 - `chest=item id,variant`: Sets creatures to have this item as their chest (if supported).
 - `helmet=item id,variant`: Sets creatures to have this item as their helmet (if supported).
@@ -53,6 +51,8 @@ Vanity parameters:
 - `shoulders=item id,variant`: Sets creatures to have this item as their shoulders (if supported).
 - `utility=item id,variant`: Sets creatures to have this item as their utility (if supported).
 - `visual=item id,variant`: Sets item stands to have this item (including enemy weapons). Not all items work without Item Stand All Items mod.
+
+Note: Creatures reset their outfits when attacking.
 
 ### Examples
 
@@ -89,7 +89,7 @@ Following parameters are available:
 - `tame`: Spawned creatures are tamed.
 - `variant=integer`: Style/variant for some spawned items.
 
-Vanity parameters:
+Additional vanity parameters:
 
 - `chest=item id,variant`: Spawned creatures have this item as their chest (if supported).
 - `helmet=item id,variant`: Spawned creatures have this item as their helmet (if supported).
@@ -98,6 +98,8 @@ Vanity parameters:
 - `right_hand=item id,variant`: Spawned creatures have this item on their right hand (if supported).
 - `shoulders=item id,variant`: Spawned creatures have this item as their shoulders (if supported).
 - `utility=item id,variant`: Spawned creatures have this item as their utility (if supported).
+
+Note: Creatures reset their outfits when attacking.
 
 ### Examples
 
@@ -150,9 +152,6 @@ For specific shapes you can wood floors or other objects with the `blockcheck` p
 This mod doesn't unlock the dig limit so all changes will still be capped by it. However the command should be compatible with any mods affecting the dig limit.
 
 The command however supports going over the limit which can lead to unexpected results. For example if you lower terrain by 20 meters and then raise by 10 meters, the second command probably won't do anything because the result is still below the dig limit.
-
-
-- move/rotate won't be synced for structures (others need to releave the area to see the new position).
 
 # Changelog
 

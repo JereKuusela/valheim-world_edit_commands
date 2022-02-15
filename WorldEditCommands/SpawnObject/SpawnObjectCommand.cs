@@ -55,6 +55,11 @@ namespace WorldEditCommands {
         Actions.SetVisual(obj, VisSlot.Utility, pars.Utility);
         Actions.SetVisual(obj, VisSlot.HandLeft, pars.LeftHand);
         Actions.SetVisual(obj, VisSlot.HandRight, pars.RightHand);
+        if (pars.Helmet != null || pars.Chest != null || pars.Shoulders != null || pars.Legs != null || pars.Utility != null || pars.LeftHand != null || pars.RightHand != null) {
+          var zdo = obj.GetComponent<ZNetView>()?.GetZDO();
+          // Temporarily losing the ownership prevents default items replacing the set items.
+          if (zdo != null) zdo.m_owner = 0;
+        }
       }
     }
     public SpawnObjectCommand() {
@@ -72,13 +77,20 @@ namespace WorldEditCommands {
         var count = amount;
         if (itemDrop)
           count = (int)Math.Ceiling((double)count / itemDrop.m_itemData.m_shared.m_maxStackSize);
+
+        // For usability, spawn in front of the player if nothing is specified (similar to the base game command).
+        if (pars.UseDefaultRelativePosition)
+          pars.RelativePosition = new Vector3(2.0f, 0, 0);
         var position = GetPosition(pars.BasePosition, pars.RelativePosition, pars.BaseRotation);
         var spawned = SpawnObject(prefab, position, count, pars.Radius, pars.Snap);
         Manipulate(spawned, pars, amount);
         Player.m_localPlayer.Message(MessageHud.MessageType.TopLeft, "Spawning object " + prefabName, spawned.Count, null);
         args.Context.AddString("Spawned: " + prefabName + " at " + Helper.PrintVectorXZY(position));
         var spawns = spawned.Select(obj => obj.GetComponent<ZNetView>()?.GetZDO()).Where(obj => obj != null).ToList();
-        // Disable player based positioning.
+        // Undo uses refPos which would disable the default relative position. So apply it to the refPos to keep the same position.
+        if (pars.UseDefaultRelativePosition)
+          pars.BasePosition = position;
+        // refPos and refRot override the player based positioning (fixes undo position).
         var undoCommand = "spawn_object " + prefabName + " refRot=" + Helper.PrintAngleYXZ(pars.BaseRotation) + " refPos=" + Helper.PrintVectorXZY(pars.BasePosition) + " " + string.Join(" ", args.Args.Skip(2));
         var undo = new UndoSpawn(spawns, undoCommand);
         UndoManager.Add(undo);
