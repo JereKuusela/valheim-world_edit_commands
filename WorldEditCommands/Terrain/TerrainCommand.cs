@@ -6,6 +6,8 @@ namespace WorldEditCommands {
 
   public class TerrainCommand {
     public TerrainCommand() {
+      Operations.Sort();
+      new TerrainAutoComplete();
       new Terminal.ConsoleCommand("terrain", "[raise/lower/reset/level/paint=value] [radius=0] [smooth=0] [blockcheck] [square] - Terrain manipulation.", delegate (Terminal.ConsoleEventArgs args) {
         if (Player.m_localPlayer == null) {
           Helper.AddMessage(args.Context, "Unable to find the player.");
@@ -13,7 +15,8 @@ namespace WorldEditCommands {
         }
         var pos = Player.m_localPlayer.transform.position;
         var height = ZoneSystem.instance.GetGroundHeight(pos);
-        var pars = ParseArgs(args, height);
+        var pars = new TerrainParameters();
+        if (!pars.ParseArgs(args, args.Context, height)) return;
         var heightMaps = new List<Heightmap>();
         Heightmap.FindHeightmap(pos, pars.Radius, heightMaps);
         var compilerIndices = Terrain.GetCompilerIndices(heightMaps, pos, pars.Radius, pars.Square, pars.BlockCheck);
@@ -39,37 +42,8 @@ namespace WorldEditCommands {
         UndoManager.Add(new UndoTerrain(before, after, pos, pars.Radius));
 
       }, true, true, optionsFetcher: () => Operations);
-      Operations.Sort();
-      new TerrainAutoComplete();
     }
-    private static TerrainParameters ParseArgs(Terminal.ConsoleEventArgs args, float height) {
-      var parameters = new TerrainParameters();
-      foreach (var arg in args.Args) {
-        var split = arg.Split('=');
-        if (split[0] == "reset")
-          parameters.Set = 0f;
-        if (split[0] == "square")
-          parameters.Square = true;
-        if (split[0] == "blockcheck")
-          parameters.BlockCheck = true;
-        if (split[0] == "level")
-          parameters.Level = height;
-        if (split.Length < 2) continue;
-        if (split[0] == "radius")
-          parameters.Radius = Mathf.Min(64f, Parse.TryFloat(split[1], 0f));
-        if (split[0] == "paint")
-          parameters.Paint = split[1];
-        if (split[0] == "raise")
-          parameters.Delta = Parse.TryFloat(split[1], 0f);
-        if (split[0] == "lower")
-          parameters.Delta = -Parse.TryFloat(split[1], 0f);
-        if (split[0] == "smooth")
-          parameters.Smooth = Parse.TryFloat(split[1], 0f);
-        if (split[0] == "level")
-          parameters.Level = Parse.TryFloat(split[1], height);
-      }
-      return parameters;
-    }
+
     public static List<string> Operations = new List<string>(){
       "lower",
       "level",
@@ -78,19 +52,10 @@ namespace WorldEditCommands {
       "paint",
       "blockcheck",
       "square",
+      "radius",
+      "smooth"
     };
 
-  }
-
-  public class TerrainParameters {
-    public float Radius = 1f;
-    public float? Set = null;
-    public float? Delta = null;
-    public float? Level = null;
-    public float Smooth = 0;
-    public string Paint = "";
-    public bool Square = false;
-    public bool BlockCheck = false;
   }
 
 }

@@ -14,6 +14,12 @@ namespace WorldEditCommands {
     public IEnumerable<int> PaintIndices;
   }
 
+  public enum BlockCheck {
+    Off,
+    On,
+    Inverse
+  }
+
   public static class Terrain {
     public static void Save(TerrainComp compiler) {
       compiler.GetComponent<ZNetView>()?.ClaimOwnership();
@@ -24,11 +30,11 @@ namespace WorldEditCommands {
       compiler.Save();
       compiler.m_hmap.Poke(false);
     }
-    public static CompilerIndices GetCompilerIndices(List<Heightmap> heightMaps, Vector3 centerPos, float radius, bool square, bool checkBlock) {
+    public static CompilerIndices GetCompilerIndices(List<Heightmap> heightMaps, Vector3 centerPos, float radius, bool square, BlockCheck blockCheck) {
       return heightMaps.Select(hmap => hmap.GetAndCreateTerrainCompiler()).ToDictionary(comp => comp, comp => {
         return new Indices() {
-          HeightIndices = GetHeightIndices(comp, centerPos, radius, square, checkBlock).ToArray(),
-          PaintIndices = GetPaintIndices(comp, centerPos, radius, square, checkBlock).ToArray()
+          HeightIndices = GetHeightIndices(comp, centerPos, radius, square, blockCheck).ToArray(),
+          PaintIndices = GetPaintIndices(comp, centerPos, radius, square, blockCheck).ToArray()
         };
       }).Where(kvp => kvp.Value.HeightIndices.Count() + kvp.Value.PaintIndices.Count() > 0).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
     }
@@ -129,7 +135,15 @@ namespace WorldEditCommands {
       }
       ClutterSystem.instance?.ResetGrass(pos, radius);
     }
-    private static IEnumerable<HeightIndex> GetHeightIndices(TerrainComp compiler, Vector3 centerPos, float radius, bool square, bool checkBlock) {
+    private static bool CheckBlocking(TerrainComp compiler, int j, int i, BlockCheck blockCheck) {
+      if (blockCheck == BlockCheck.Off) return true;
+      var pos = VertexToWorld(compiler.m_hmap, j, i);
+      var blocked = ZoneSystem.instance.IsBlocked(pos);
+      if (blocked && blockCheck == BlockCheck.On) return false;
+      if (!blocked && blockCheck == BlockCheck.Inverse) return false;
+      return true;
+    }
+    private static IEnumerable<HeightIndex> GetHeightIndices(TerrainComp compiler, Vector3 centerPos, float radius, bool square, BlockCheck blockCheck) {
       var indices = new List<HeightIndex>();
       compiler.m_hmap.WorldToVertex(centerPos, out var x, out var y);
       var maxDistance = radius / compiler.m_hmap.m_scale;
@@ -142,10 +156,7 @@ namespace WorldEditCommands {
           if (j < 0 || j >= max) continue;
           var distance = square ? Math.Max(Math.Abs(j - x), Math.Abs(i - y)) : Vector2.Distance(center, new Vector2((float)j, (float)i));
           if (distance > maxDistance) continue;
-          if (checkBlock) {
-            var pos = VertexToWorld(compiler.m_hmap, j, i);
-            if (ZoneSystem.instance.IsBlocked(pos)) continue;
-          }
+          if (!CheckBlocking(compiler, j, i, blockCheck)) continue;
           indices.Add(new HeightIndex() {
             Index = i * max + j,
             Distance = distance * compiler.m_hmap.m_scale
@@ -155,7 +166,7 @@ namespace WorldEditCommands {
       return indices;
     }
 
-    private static IEnumerable<int> GetPaintIndices(TerrainComp compiler, Vector3 centerPos, float radius, bool square, bool checkBlock) {
+    private static IEnumerable<int> GetPaintIndices(TerrainComp compiler, Vector3 centerPos, float radius, bool square, BlockCheck blockCheck) {
       centerPos = new Vector3(centerPos.x - 0.5f, centerPos.y, centerPos.z - 0.5f);
       var indices = new List<int>();
       compiler.m_hmap.WorldToVertex(centerPos, out var x, out var y);
@@ -171,10 +182,7 @@ namespace WorldEditCommands {
             var distance = Vector2.Distance(center, new Vector2((float)j, (float)i));
             if (distance > maxDistance) continue;
           }
-          if (checkBlock) {
-            var pos = VertexToWorld(compiler.m_hmap, j, i);
-            if (ZoneSystem.instance.IsBlocked(pos)) continue;
-          }
+          if (!CheckBlocking(compiler, j, i, blockCheck)) continue;
           indices.Add(i * max + j);
         }
       }

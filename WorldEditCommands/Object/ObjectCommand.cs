@@ -189,41 +189,49 @@ namespace WorldEditCommands {
       return "¤ made to sleep.";
     }
     private static string SetVisual(ItemStand obj, Item item) {
+      if (item == null) return "Skipped: Invalid item.";
       if (obj == null) return "Skipped: ¤ is not an item stand.";
       Actions.SetVisual(obj, item);
       return $"Visual of ¤ set to {item.Name} with variant {item.Variant} .";
     }
     private static string SetHelmet(Character obj, Item item) {
+      if (item == null) return "Skipped: Invalid item.";
       if (obj == null) return "Skipped: ¤ is not a creature.";
       Actions.SetVisual(obj, VisSlot.Helmet, item);
       return $"Helmet of ¤ set to {item.Name} with variant {item.Variant} .";
     }
     private static string SetLeftHand(Character obj, Item item) {
+      if (item == null) return "Skipped: Invalid item.";
       if (obj == null) return "Skipped: ¤ is not a creature.";
       Actions.SetVisual(obj, VisSlot.HandLeft, item);
       return $"Left hand of ¤ set to {item.Name} with variant {item.Variant} .";
     }
     private static string SetRightHand(Character obj, Item item) {
+      if (item == null) return "Skipped: Invalid item.";
       if (obj == null) return "Skipped: ¤ is not a creature.";
       Actions.SetVisual(obj, VisSlot.HandRight, item);
       return $"Right hand of ¤ set to {item.Name} with variant {item.Variant} .";
     }
     private static string SetChest(Character obj, Item item) {
+      if (item == null) return "Skipped: Invalid item.";
       if (obj == null) return "Skipped: ¤ is not a creature.";
       Actions.SetVisual(obj, VisSlot.Chest, item);
       return $"Chest of ¤ set to {item.Name} with variant {item.Variant} .";
     }
     private static string SetShoulder(Character obj, Item item) {
+      if (item == null) return "Skipped: Invalid item.";
       if (obj == null) return "Skipped: ¤ is not a creature.";
       Actions.SetVisual(obj, VisSlot.Shoulder, item);
       return $"Shoulder of ¤ set to {item.Name} with variant {item.Variant} .";
     }
     private static string SetLegs(Character obj, Item item) {
+      if (item == null) return "Skipped: Invalid item.";
       if (obj == null) return "Skipped: ¤ is not a creature.";
       Actions.SetVisual(obj, VisSlot.Legs, item);
       return $"Legs of ¤ set to {item.Name} with variant {item.Variant} .";
     }
     private static string SetUtility(Character obj, Item item) {
+      if (item == null) return "Skipped: Invalid item.";
       if (obj == null) return "Skipped: ¤ is not a creature.";
       Actions.SetVisual(obj, VisSlot.Utility, item);
       return $"Utility item of ¤ set to {item.Name} with variant {item.Variant} .";
@@ -232,6 +240,9 @@ namespace WorldEditCommands {
       var info = new List<string>();
       info.Add("Id: ¤");
       info.Add("Pos: " + obj.transform.position.ToString("F1"));
+      info.Add("Rot: " + obj.transform.rotation.eulerAngles.ToString("F1"));
+      if (obj.m_syncInitialScale)
+        info.Add("Scale: " + obj.transform.localScale.ToString("F1"));
       var character = obj.GetComponent<Character>();
       if (character) {
         info.Add("Health: " + character.GetHealth().ToString("F0") + " / " + character.GetMaxHealth());

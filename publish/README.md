@@ -136,7 +136,11 @@ Following parameters are available:
 - `level=number`: Sets terrain height to the given altitude. If not given, uses the ground altitude below the player.
 - `paint=value`: Sets the terrain material (dirt, paved, cultivated or grass to reset).
 - `radius=number`: Determines the size of the affected terrain. Capped at 64 meters to prevent changes outside the active play area (causes technical issues).
-- `blockcheck`: If given, excludes terrain that is under structures or other objects.
+- `blockcheck`: Exclude terrain that is under structures or other objects.
+- `blockcheck=on/off/inverse`:
+	- on: Exclude terrain that is under structures or other objects.
+	- off: All terrain is affected (default).
+	- inverse: Only include terrain that is under structures or other objects.
 - `square`: If given, the shape of the affected terrain is a square instead of a circle. Radius becomes half of the edge length.
 - `smooth=number`: Determines how gradually the changes are applied (from 0.0 to 1.0).
 	- 1.0: All of the terrain gets reduced changes (except the very center).

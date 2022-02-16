@@ -3,6 +3,11 @@ using ServerDevcommands;
 
 namespace WorldEditCommands {
   public class TerrainAutoComplete {
+    private static List<string> BlockCheck = new List<string>{
+      "inverse",
+      "off",
+      "on"
+    };
     public TerrainAutoComplete() {
       var paints = new List<string>() {
         "dirt", "paved", "cultivated", "grass"
@@ -13,7 +18,7 @@ namespace WorldEditCommands {
           "reset", (int index) => ParameterInfo.Flag("Reset")
         },
         {
-          "blockcheck", (int index) => ParameterInfo.Flag("Block check")
+          "blockcheck", (int index) => index == 0 ? BlockCheck : null
         },
         {
           "square", (int index) => ParameterInfo.Flag("Square")

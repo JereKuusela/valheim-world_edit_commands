@@ -38,7 +38,7 @@ namespace WorldEditCommands {
         if (name == "move") Offset = Parse.TryVectorXZYRange(value, Vector3.zero);
         if (name == "id") Id = value;
         if (name == "origin") Origin = value.ToLower();
-        if (name == "utility") Visual = new Item(value);
+        if (name == "visual") Visual = new Item(value);
       }
       Radius = Math.Min(Radius, 100f);
       if (Operations.Contains("remove") && Operations.Count > 1) {
