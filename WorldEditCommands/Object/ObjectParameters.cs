@@ -21,7 +21,7 @@ namespace WorldEditCommands {
       if (!base.ParseArgs(args, terminal)) return false;
       foreach (var arg in args) {
         var split = arg.Split('=');
-        var name = split[0];
+        var name = split[0].ToLower();
         if (SupportedOperations.Contains(name)) {
           if (Operations.Contains(name)) {
             Helper.AddMessage(terminal, $"Error: Operation {name} used multiple times.");

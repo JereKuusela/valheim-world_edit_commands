@@ -119,6 +119,7 @@ The `spawn_location [location id]` spawns Point of Interests to the world. The m
 Following parameters are available:
 
 - `seed=number`: Sets the result of randomized locations. If not given, the result is random.
+- `dungeonSeed=number`: Sets the result of next dungeon generation. If not given, the result is random. If the location is not a dungeon, this will carry over to the next dungeon generation.
 - `pos=x,z,y`: Relative position (meters) from the player. If not given, the location will be placed at the player. If y coordinate is not given, the location snaps to the ground.
 - `refPos=x,z,y`: Allows overriding the player's position for the command. Used by `redo` and can be useful for some advanced usage.
 - `rot=y`: Relative rotation (degrees) from the player's rotation.

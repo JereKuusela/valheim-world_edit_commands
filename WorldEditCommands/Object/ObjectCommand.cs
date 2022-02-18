@@ -32,7 +32,7 @@ namespace WorldEditCommands {
       zdos = zdos.Where(zdo => codes.Contains(zdo.GetPrefab()));
       var position = Player.m_localPlayer ? Player.m_localPlayer.transform.position : Vector3.zero;
       if (distance > 0)
-        return zdos.Where(zdo => Utils.DistanceXZ(zdo.GetPosition(), position) <= distance);
+        return zdos.Where(zdo => Vector3.Distance(zdo.GetPosition(), position) <= distance);
       return zdos;
     }
     private static void Execute(Terminal context, ObjectParameters pars, IEnumerable<string> operations, IEnumerable<ZDO> zdos) {

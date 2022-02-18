@@ -16,7 +16,7 @@ namespace WorldEditCommands {
     public bool ParseArgs(Terminal.ConsoleEventArgs args, Terminal terminal, float height) {
       foreach (var arg in args.Args) {
         var split = arg.Split('=');
-        var name = split[0];
+        var name = split[0].ToLower();
         if (name == "reset")
           Set = 0f;
         if (name == "square")
@@ -26,7 +26,7 @@ namespace WorldEditCommands {
         if (name == "blockcheck")
           BlockCheck = BlockCheck.On;
         if (split.Length < 2) continue;
-        var value = split[1];
+        var value = split[1].ToLower();
         if (name == "radius")
           Radius = Mathf.Min(64f, Parse.TryFloat(value, 0f));
         if (name == "paint")

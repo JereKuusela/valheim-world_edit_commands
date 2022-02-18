@@ -19,23 +19,23 @@ namespace WorldEditCommands {
       if (!base.ParseArgs(args, terminal)) return false;
       foreach (var arg in args) {
         var split = arg.Split('=');
-        var name = split[0];
+        var name = split[0].ToLower();
         if (name == "tame" || name == "tamed")
           Tamed = true;
         if (name == "hunt")
           Hunt = true;
         if (split.Length < 2) continue;
         var value = split[1];
-        if (split[0] == "name" || split[0] == "crafter")
+        if (name == "name" || name == "crafter")
           Name = value;
-        if (split[0] == "variant")
+        if (name == "variant")
           Variant = Parse.TryIntRange(value, 0);
-        if (split[0] == "amount")
+        if (name == "amount")
           Amount = Parse.TryIntRange(value);
-        if (split[0] == "refRot" || split[0] == "refRotation") {
+        if (name == "refrot" || name == "refrotation") {
           BaseRotation = Parse.TryAngleYXZ(value, BaseRotation);
         }
-        if (split[0] == "pos" || split[0] == "position") {
+        if (name == "pos" || name == "position") {
           UseDefaultRelativePosition = false;
           RelativePosition = Parse.TryVectorXZY(value.Split(','));
           Snap = value.Split(',').Length < 3;
@@ -43,11 +43,11 @@ namespace WorldEditCommands {
         if (name == "rot" || name == "rotation") {
           Rotation = Parse.TryVectorYXZRange(value, Vector3.zero);
         }
-        if (split[0] == "refPos" || split[0] == "refPosition") {
+        if (name == "refpos" || name == "refposition") {
           UseDefaultRelativePosition = false;
           BasePosition = Parse.TryVectorXZY(value.Split(','), BasePosition);
         }
-        if (split[0] == "refPlayer") {
+        if (name == "refplayer") {
           UseDefaultRelativePosition = false;
           var player = Helper.FindPlayer(value);
           if (player.m_characterID.IsNone()) {

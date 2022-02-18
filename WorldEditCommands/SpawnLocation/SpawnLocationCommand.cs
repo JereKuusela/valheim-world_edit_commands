@@ -26,6 +26,7 @@ namespace WorldEditCommands {
         }
 
         var seed = UnityEngine.Random.Range(0, 99999);
+        var dungeonSeed = int.MinValue;
         var relativeAngle = (float)UnityEngine.Random.Range(0, 16) * 22.5f;
         var baseAngle = 0f;
         var relativePosition = Vector3.zero;
@@ -39,19 +40,22 @@ namespace WorldEditCommands {
         var snap = true;
         foreach (var arg in args.Args) {
           var split = arg.Split('=');
+          var argName = split[0].ToLower();
           if (split.Length < 2) continue;
-          if (split[0] == "seed")
+          if (argName == "seed")
             seed = Parse.TryInt(split[1], 0);
-          if (split[0] == "rot" || split[0] == "rotation")
+          if (argName == "dungeonseed")
+            dungeonSeed = Parse.TryInt(split[1], 0);
+          if (argName == "rot" || argName == "rotation")
             relativeAngle = Parse.TryFloat(split[1], 0);
-          if (split[0] == "pos" || split[0] == "position") {
+          if (argName == "pos" || argName == "position") {
             relativePosition = Parse.TryVectorXZY(split[1].Split(','));
             snap = split[1].Split(',').Length < 3;
           }
-          if (split[0] == "refRot" || split[0] == "refRotation") {
+          if (argName == "refrot" || argName == "refrotation") {
             baseAngle = Parse.TryFloat(split[1], baseAngle);
           }
-          if (split[0] == "refPos" || split[0] == "refPosition") {
+          if (argName == "refpos" || argName == "refposition") {
             basePosition = Parse.TryVectorXZY(split[1].Split(','), basePosition);
           }
         }
@@ -65,6 +69,7 @@ namespace WorldEditCommands {
           spawnPosition.y = value;
 
         AddedZDOs.StartTracking();
+        DungeonGenerator.m_forceSeed = dungeonSeed;
         ZoneSystem.instance.SpawnLocation(location, seed, spawnPosition, spawnRotation, ZoneSystem.SpawnMode.Full, new List<GameObject>());
         args.Context.AddString("Spawned: " + name + " at " + Helper.PrintVectorXZY(spawnPosition));
         var spawns = AddedZDOs.StopTracking();

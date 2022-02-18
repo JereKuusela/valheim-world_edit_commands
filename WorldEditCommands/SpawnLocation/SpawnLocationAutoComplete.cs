@@ -6,6 +6,7 @@ namespace WorldEditCommands {
     public SpawnLocationAutoComplete() {
       var namedParameters = new List<string>() {
         "seed",
+        "dungeonSeed",
         "pos",
         "rot",
         "refPos",
@@ -18,6 +19,9 @@ namespace WorldEditCommands {
       }, new Dictionary<string, System.Func<int, List<string>>>() {
         {
           "seed", (int index) => index == 0 ? ParameterInfo.Create("Location seed", "an integer") : null
+        },
+        {
+          "dungeonSeed", (int index) => index == 0 ? ParameterInfo.Create("Dungeon seed", "an integer") : null
         },
         {
           "pos", ParameterInfo.XZY

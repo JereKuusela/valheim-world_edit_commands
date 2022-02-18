@@ -27,7 +27,7 @@ namespace WorldEditCommands {
     public virtual bool ParseArgs(string[] args, Terminal terminal) {
       foreach (var arg in args) {
         var split = arg.Split('=');
-        var name = split[0];
+        var name = split[0].ToLower();
         if (split.Length < 2) continue;
         var value = split[1];
         if (name == "health" || name == "durability")
