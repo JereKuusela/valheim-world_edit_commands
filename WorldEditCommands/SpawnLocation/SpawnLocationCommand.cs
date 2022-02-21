@@ -76,7 +76,7 @@ namespace WorldEditCommands {
         // Disable player based positioning.
         var undoCommand = "spawn_location " + name + " refRot=" + baseAngle + " refPos=" + Helper.PrintVectorXZY(basePosition) + " seed=" + seed + " rot=" + relativePosition + " " + string.Join(" ", args.Args.Skip(2));
         var undo = new UndoSpawn(spawns, undoCommand);
-
+        UndoManager.Add(undo);
       }, true, true, optionsFetcher: () => ParameterInfo.LocationIds);
       new SpawnLocationAutoComplete();
     }
