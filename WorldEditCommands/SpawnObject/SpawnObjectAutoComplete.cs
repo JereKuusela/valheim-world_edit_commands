@@ -28,9 +28,6 @@ namespace WorldEditCommands {
           "hunt", (int index) => ParameterInfo.Flag("Hunt")
         },
         {
-          "durability", (int index) => index == 0 ? ParameterInfo.Create("Durability", "a number range") : null
-        },
-        {
           "name", (int index) => index == 0 ? ParameterInfo.Create("Name", "a string") : null
         },
         {
@@ -43,19 +40,19 @@ namespace WorldEditCommands {
           "amount", (int index) => index == 0 ? ParameterInfo.Create("Amount", "an integer range") : null
         },
         {
-          "pos", ParameterInfo.XZY
+          "pos", (int index) => ParameterInfo.XZY("pos", "Offset from the player / reference position", index)
         },
         {
-          "refPos", ParameterInfo.XZY
+          "refPos", (int index) => ParameterInfo.XZY("refPos", "Overrides the reference position (player's position)", index)
         },
         {
           "refPlayer", (int index) => index == 0 ? ParameterInfo.PlayerNames : null
         },
         {
-          "rot", ParameterInfo.YXZ
+          "rot", (int index) => ParameterInfo.YXZ("rot", "Rotation from the player / reference rotation", index)
         },
         {
-          "refRot", ParameterInfo.YXZ
+          "refRot", (int index) => ParameterInfo.YXZ("refRot", "Overrides the reference rotation (player's rotation)", index)
         }
       }));
     }

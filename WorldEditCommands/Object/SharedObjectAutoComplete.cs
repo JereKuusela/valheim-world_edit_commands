@@ -6,9 +6,9 @@ using ServerDevcommands;
 namespace WorldEditCommands {
   using NamedOptionsFetchers = Dictionary<string, Func<int, List<string>>>;
   public class SharedObjectAutoComplete {
-    public static List<string> VisualAutoComplete(int index) {
+    public static List<string> VisualAutoComplete(string name, int index) {
       if (index == 0) return ParameterInfo.ItemIds;
-      if (index == 1) return ParameterInfo.Create("Visual", "number (0 or more)");
+      if (index == 1) return ParameterInfo.Create($"${name}=id,<color=yellow>integer</color> | Item variant for items that have multiple variants.");
       return null;
     }
     public static List<string> MergeDefault(List<string> parameters) {
@@ -37,43 +37,43 @@ namespace WorldEditCommands {
           "tame", (int index) => ParameterInfo.Flag("Tame")
         },
         {
-          "left_hand", VisualAutoComplete
+          "left_hand", (int index) => VisualAutoComplete("left_hand", index)
         },
         {
-          "right_hand", VisualAutoComplete
+          "right_hand", (int index) => VisualAutoComplete("right_hand", index)
         },
         {
-          "helmet", VisualAutoComplete
+          "helmet", (int index) => VisualAutoComplete("helmet", index)
         },
         {
-          "chest", VisualAutoComplete
+          "chest", (int index) => VisualAutoComplete("chest", index)
         },
         {
-          "shoulders", VisualAutoComplete
+          "shoulders", (int index) => VisualAutoComplete("shoulders", index)
         },
         {
-          "legs", VisualAutoComplete
+          "legs", (int index) => VisualAutoComplete("legs", index)
         },
         {
-          "utility", VisualAutoComplete
+          "utility", (int index) => VisualAutoComplete("utility", index)
         },
         {
-          "radius", (int index) => index == 0 ? ParameterInfo.Create("Radius", "a number range") : null
+          "radius", (int index) => index == 0 ? ParameterInfo.Create("radius=<color=yellow>number</color> | Maximum spawn distance when spawning multiple objects. Default is 0.5 meters.") : null
         },
         {
-          "durability", (int index) => index == 0 ? ParameterInfo.Create("Durability", "a number range") : null
+          "durability", (int index) => index == 0 ? ParameterInfo.Create("durability=<color=yellow>number</color> or durability=<color=yellow>min-max</color> | Sets current durability/health (+ maximum health for creatures).") : null
         },
         {
-          "health", (int index) => index == 0 ? ParameterInfo.Create("Health", "a number range") : null
+          "health", (int index) => index == 0 ? ParameterInfo.Create("health=<color=yellow>number</color> or health=<color=yellow>min-max</color> | Sets current durability/health (+ maximum health for creatures).") : null
         },
         {
-          "stars", (int index) => index == 0 ? ParameterInfo.Create("Stars", "an integer range") : null
+          "stars", (int index) => index == 0 ? ParameterInfo.Create("stars=<color=yellow>integer</color> or stars=<color=yellow>min-max</color> | Sets creature stars.") : null
         },
         {
-          "level", (int index) => index == 0 ? ParameterInfo.Create("Level", "an integer range") : null
+          "level", (int index) => index == 0 ? ParameterInfo.Create("level=<color=yellow>integer</color> or level=<color=yellow>min-max</color> | Sets creature and item level.") : null
         },
         {
-          "scale", ParameterInfo.Scale
+          "scale",  (int index) => ParameterInfo.Scale("scale", "Scaling for objects that support it", index)
         },
       };
       foreach (var kvp in fetchers) baseFetchers[kvp.Key] = kvp.Value;

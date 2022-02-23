@@ -76,7 +76,7 @@ Following parameters are available:
 - `hunt`: Spawned creatures are in the hunt mode.
 - `level=integer`: Spawned creatures have this amount of level (level = stars + 1).
 - `pos=x,z,y`: Relative position (meters) from the player. If not given, the objects are spawned 2 meters front of the player. If y coordinate is not given, the objects snaps to the ground.
-- `radius=number`: The radius when spawning multiple objects. Default is 0.5 meters.
+- `radius=number`: Maximum spawn distance when spawning multiple objects. Default is 0.5 meters.
 - `refPlayer=name`: Allows overriding the player's position with another player's position.
 - `refPos=x,z,y`: Allows overriding the player's position for the command. Used by `redo` and can be useful for some advanced usage.
 - `refRot=y,x,z`: Allows overriding the player's rotation for the command. Used by `redo` and can be useful for some advanced usage.

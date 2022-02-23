@@ -39,16 +39,17 @@ namespace WorldEditCommands {
           "id", (int index) => index == 0 ? ParameterInfo.Ids : null
         },
         {
-          "move", ParameterInfo.XZY
+          "move", (int index) => ParameterInfo.XZY("move", $"Movement offset based on the player rotation (unless origin is given)", index)
         },
         {
           "rotate", (int index) => {
-            if (index == 0) return ParameterInfo.Create("Y", "number or reset");
-            return ParameterInfo.YXZ(index);
+            var desc = $"Rotation based on the player rotation (unless origin is given)";
+            if (index == 0) return ParameterInfo.Create("rotate=<color=yellow>reset</> or " + ParameterInfo.YXZ("rotate", desc, index)[0]);
+            return ParameterInfo.YXZ("rotate", desc, index);
           }
         },
         {
-          "visual", VisualAutoComplete
+          "visual", (int index) => VisualAutoComplete("visual", index)
         },
         {
           "origin", (int index) => index == 0? ParameterInfo.Origin : null

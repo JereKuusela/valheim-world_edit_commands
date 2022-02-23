@@ -24,10 +24,10 @@ namespace WorldEditCommands {
           "dungeonSeed", (int index) => index == 0 ? ParameterInfo.Create("Dungeon seed", "an integer") : null
         },
         {
-          "pos", ParameterInfo.XZY
+          "pos", (int index) => ParameterInfo.XZY("pos", "Offset from the player / reference position", index)
         },
         {
-          "refPos", ParameterInfo.XZY
+          "refPos", (int index) => ParameterInfo.XZY("refPos", "Overrides the reference position (player's position)", index)
         },
         {
           "rot", (int index) => index == 0 ? ParameterInfo.Create("Rotation", "a number") : null
