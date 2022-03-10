@@ -63,8 +63,9 @@ namespace WorldEditCommands {
       }
     }
     public SpawnObjectCommand() {
-      new SpawnObjectAutoComplete();
-      new Terminal.ConsoleCommand("spawn_object", "[name] ...parameters - Spawns an object.", delegate (Terminal.ConsoleEventArgs args) {
+      var autoComplete = new SpawnObjectAutoComplete();
+      var description = CommandInfo.Create("Spawns an object.", new string[] { "name" }, autoComplete.NamedParameters);
+      new Terminal.ConsoleCommand("spawn_object", description, delegate (Terminal.ConsoleEventArgs args) {
         if (args.Length < 2) return;
         var prefabName = args[1];
         var prefab = Helper.GetPrefab(prefabName);
@@ -94,7 +95,7 @@ namespace WorldEditCommands {
         var undoCommand = "spawn_object " + prefabName + " refRot=" + Helper.PrintAngleYXZ(pars.BaseRotation) + " refPos=" + Helper.PrintVectorXZY(pars.BasePosition) + " " + string.Join(" ", args.Args.Skip(2));
         var undo = new UndoSpawn(spawns, undoCommand);
         UndoManager.Add(undo);
-      }, true, true, optionsFetcher: () => ParameterInfo.Ids);
+      }, true, true, optionsFetcher: () => ParameterInfo.ObjectIds);
     }
   }
 }

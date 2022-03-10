@@ -111,13 +111,14 @@ namespace WorldEditCommands {
         }
       }
       foreach (var view in views) {
-        if (!view || !view.GetZDO().IsValid() || !oldOwner.ContainsKey(view.GetZDO().m_uid)) continue;
+        if (!view || view.GetZDO() == null || !view.GetZDO().IsValid() || !oldOwner.ContainsKey(view.GetZDO().m_uid)) continue;
         view.GetZDO().SetOwner(oldOwner[view.GetZDO().m_uid]);
       }
     }
     public ObjectCommand() {
       var autoComplete = new ObjectAutoComplete();
-      new Terminal.ConsoleCommand("object", "[operation=value] [id=*] [radius=0] - Modifies the targeted object.", delegate (Terminal.ConsoleEventArgs args) {
+      var description = CommandInfo.Create("Modifies the selected object(s).", null, autoComplete.NamedParameters);
+      new Terminal.ConsoleCommand("object", description, delegate (Terminal.ConsoleEventArgs args) {
         if (args.Length < 2) return;
         var pars = new ObjectParameters();
         if (!pars.ParseArgs(args.Args, args.Context)) return;
@@ -128,7 +129,7 @@ namespace WorldEditCommands {
           var view = Helper.GetHovered(args);
           if (!view) return;
           if (!GetPrefabs(pars.Id).Contains(view.GetZDO().GetPrefab())) {
-            Helper.AddMessage(args.Context, $"Skipped: {view.name}  has invalid id.");
+            Helper.AddMessage(args.Context, $"Skipped: {view.name} has invalid id.");
             return;
           }
           zdos = new ZDO[] { view.GetZDO() };

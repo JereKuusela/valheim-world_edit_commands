@@ -58,19 +58,19 @@ namespace WorldEditCommands {
           "utility", (int index) => VisualAutoComplete("utility", index)
         },
         {
-          "radius", (int index) => index == 0 ? ParameterInfo.Create("radius=<color=yellow>number</color> | Maximum spawn distance when spawning multiple objects. Default is 0.5 meters.") : null
+          "radius", (int index) => index == 0 ? ParameterInfo.Create("radius", "number", "Maximum spawn distance when spawning multiple objects. Default is 0.5 meters.") : null
         },
         {
-          "durability", (int index) => index == 0 ? ParameterInfo.Create("durability=<color=yellow>number</color> or durability=<color=yellow>min-max</color> | Sets current durability/health (+ maximum health for creatures).") : null
+          "durability", (int index) => index == 0 ? ParameterInfo.Create("durability", "number", "Sets current durability/health (+ maximum health for creatures).") : null
         },
         {
-          "health", (int index) => index == 0 ? ParameterInfo.Create("health=<color=yellow>number</color> or health=<color=yellow>min-max</color> | Sets current durability/health (+ maximum health for creatures).") : null
+          "health", (int index) => index == 0 ? ParameterInfo.CreateWithMinMax("health", "number", "Sets current durability/health (+ maximum health for creatures).") : null
         },
         {
-          "stars", (int index) => index == 0 ? ParameterInfo.Create("stars=<color=yellow>integer</color> or stars=<color=yellow>min-max</color> | Sets creature stars.") : null
+          "stars", (int index) => index == 0 ? ParameterInfo.Create("stars", "integer", "Sets creature stars.") : null
         },
         {
-          "level", (int index) => index == 0 ? ParameterInfo.Create("level=<color=yellow>integer</color> or level=<color=yellow>min-max</color> | Sets creature and item level.") : null
+          "level", (int index) => index == 0 ? ParameterInfo.Create("level", "integer", "Sets creature and item level.") : null
         },
         {
           "scale",  (int index) => ParameterInfo.Scale("scale", "Scaling for objects that support it", index)

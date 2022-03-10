@@ -39,7 +39,7 @@ namespace WorldEditCommands {
           "id", (int index) => index == 0 ? ParameterInfo.Ids : null
         },
         {
-          "move", (int index) => ParameterInfo.XZY("move", $"Movement offset based on the player rotation (unless origin is given)", index)
+          "move", (int index) => ParameterInfo.XZY("move", "Movement offset based on the player rotation (unless origin is given)", index)
         },
         {
           "rotate", (int index) => {

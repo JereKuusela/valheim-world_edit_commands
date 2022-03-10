@@ -7,7 +7,7 @@ namespace WorldEditCommands {
   public class SpawnObjectAutoComplete : SharedObjectAutoComplete {
     public List<string> NamedParameters;
     public SpawnObjectAutoComplete() {
-      var NamedParameters = MergeDefault(new List<string>() {
+      NamedParameters = MergeDefault(new List<string>() {
         "hunt",
         "durability",
         "name",
@@ -28,16 +28,16 @@ namespace WorldEditCommands {
           "hunt", (int index) => ParameterInfo.Flag("Hunt")
         },
         {
-          "name", (int index) => index == 0 ? ParameterInfo.Create("Name", "a string") : null
+          "name", (int index) => index == 0 ? ParameterInfo.Create("name", "string",  "Name for tameable creatures.") : null
         },
         {
-          "crafter", (int index) => index == 0 ? ParameterInfo.Create("Name", "a crafter") : null
+          "crafter", (int index) => index == 0 ? ParameterInfo.Create("name", "string",  "Crafter for items.") : null
         },
         {
-          "variant", (int index) => index == 0 ? ParameterInfo.Create("Variant", "an integer range") : null
+          "variant", (int index) => index == 0 ? ParameterInfo.CreateWithMinMax("variant", "integer", "Variant for items.") : null
         },
         {
-          "amount", (int index) => index == 0 ? ParameterInfo.Create("Amount", "an integer range") : null
+          "amount", (int index) => index == 0 ? ParameterInfo.CreateWithMinMax("amount", "integer", "Amount of spawned objects.") : null
         },
         {
           "pos", (int index) => ParameterInfo.XZY("pos", "Offset from the player / reference position", index)

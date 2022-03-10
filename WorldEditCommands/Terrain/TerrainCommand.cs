@@ -6,9 +6,9 @@ namespace WorldEditCommands {
 
   public class TerrainCommand {
     public TerrainCommand() {
-      Operations.Sort();
-      new TerrainAutoComplete();
-      new Terminal.ConsoleCommand("terrain", "[raise/lower/reset/level/paint=value] [radius=0] [smooth=0] [blockcheck] [square] - Terrain manipulation.", delegate (Terminal.ConsoleEventArgs args) {
+      var autoComplete = new TerrainAutoComplete();
+      var description = CommandInfo.Create("Manipulates the terrain.", null, autoComplete.NamedParameters);
+      new Terminal.ConsoleCommand("terrain", description, delegate (Terminal.ConsoleEventArgs args) {
         if (Player.m_localPlayer == null) {
           Helper.AddMessage(args.Context, "Unable to find the player.");
           return;
@@ -41,21 +41,7 @@ namespace WorldEditCommands {
         var after = Terrain.GetData(compilerIndices);
         UndoManager.Add(new UndoTerrain(before, after, pos, pars.Radius));
 
-      }, true, true, optionsFetcher: () => Operations);
+      }, true, true, optionsFetcher: () => autoComplete.NamedParameters);
     }
-
-    public static List<string> Operations = new List<string>(){
-      "lower",
-      "level",
-      "raise",
-      "reset",
-      "paint",
-      "blockcheck",
-      "square",
-      "radius",
-      "smooth"
-    };
-
   }
-
 }

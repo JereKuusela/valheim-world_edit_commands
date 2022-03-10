@@ -7,7 +7,9 @@ namespace WorldEditCommands {
 
   public class SpawnLocationCommand {
     public SpawnLocationCommand() {
-      new Terminal.ConsoleCommand("spawn_location", "[name] (seed=n pos=x,z,y rot=y refPos=x,z,y refRot=y) - Spawns a given location.", delegate (Terminal.ConsoleEventArgs args) {
+      var autoComplete = new SpawnLocationAutoComplete();
+      var description = CommandInfo.Create("Spawns a given location.", new string[] { "name" }, autoComplete.NamedParameters);
+      new Terminal.ConsoleCommand("spawn_location", description, delegate (Terminal.ConsoleEventArgs args) {
         if (args.Length < 2) {
           return;
         }
@@ -78,7 +80,6 @@ namespace WorldEditCommands {
         var undo = new UndoSpawn(spawns, undoCommand);
         UndoManager.Add(undo);
       }, true, true, optionsFetcher: () => ParameterInfo.LocationIds);
-      new SpawnLocationAutoComplete();
     }
   }
 }
