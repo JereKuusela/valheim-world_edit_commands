@@ -162,7 +162,7 @@ Following parameters are available:
 
 Any changes made by the mod are compatible with unmodded clients which adds some significant restrictions to some commands.
 
-## Creature style
+### Creature style
 
 Creatures overwrite their style when they try to attack. So altering their style has mainly three uses:
 
@@ -170,7 +170,7 @@ Creatures overwrite their style when they try to attack. So altering their style
 - Decorating tamed creatures while ensuring they are safe.
 - Initially decorating aggresive creatures (as long as it's ok that their style resets during the fight).
 
-## Creature health
+### Creature health
 
 Creatures reset their maximum health if their current health equals the maximum health. To prevent this, the mod sets creature health slightly higer than the max health.
 
@@ -179,20 +179,20 @@ However this means that if the creature is damaged and let to heal back to full,
 - When creating combat scenarios, manually set enemy health if the scenario is not finished.
 - When creating stronger tamed creatures, manually set their health after the combat is over (recommended to bind a key for this).
 
-## Creature / structure invulnerability
+### Creature / structure invulnerability
 
 Setting a very high health like 1E30 will make objects invulnerable. This is because the float variable type has a limited precision so small amounts of damage is rounded down to nothing. This may cause following:
 
 - Lack of support doesn't break structures so build limits can be ignored (since lack of support only causes damage equal to the default max health).
 - `killall` command doesn't kill some creatures (since it only deals very high damage to them).
 
-## Dig limit
+### Dig limit
 
 This mod doesn't unlock the terrain dig limit so all changes will still be capped by the limit (default is +- 8 meters). However the `terrain` command should be compatible with any mods affecting the dig limit.
 
 The command however supports going over the limit which can lead to unexpected results. For example if you lower terrain by 20 meters and then raise by 10 meters, the second command probably won't do anything because the result is still below the dig limit.
 
-## Moving objects
+### Moving objects
 
 Static objects only synchronize their position and rotation when loaded. This means that `object move` and `object rotate` commands won't instantly show for other clients. Instead they have to leave the area.
 
@@ -202,3 +202,5 @@ This shouldn't cause any issues unless objects are moved long distances (which m
 
 - v1.0: 
 	- Initial release.
+
+Thanks for Azumatt for creating the mod icon!
