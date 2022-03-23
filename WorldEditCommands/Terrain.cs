@@ -7,6 +7,8 @@ namespace WorldEditCommands {
   using CompilerIndices = Dictionary<TerrainComp, Indices>;
   public class HeightIndex {
     public int Index;
+    public float DistanceX;
+    public float DistanceY;
     public float Distance;
   }
   public class Indices {
@@ -38,29 +40,43 @@ namespace WorldEditCommands {
         };
       }).Where(kvp => kvp.Value.HeightIndices.Count() + kvp.Value.PaintIndices.Count() > 0).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
     }
-    public static void SetTerrain(CompilerIndices compilerIndices, Vector3 pos, float radius, float smooth, float amount) {
-      Action<TerrainComp, int, float> action = (compiler, index, distance) => {
-        var multipier = CalculateSmooth(smooth, distance);
-        compiler.m_levelDelta[index] = amount * multipier;
+    public static void SetTerrain(CompilerIndices compilerIndices, Vector3 pos, float radius, float smooth, float delta) {
+      Action<TerrainComp, HeightIndex> action = (compiler, heightIndex) => {
+        var multiplier = CalculateSmooth(smooth, heightIndex.Distance);
+        var index = heightIndex.Index;
+        compiler.m_levelDelta[index] = delta * multiplier;
         compiler.m_smoothDelta[index] = 0f;
         compiler.m_modifiedHeight[index] = compiler.m_levelDelta[index] != 0f;
       };
       DoHeightOperation(compilerIndices, pos, radius, action);
     }
     private static float CalculateSmooth(float smooth, float distance) => (1f - distance) >= smooth ? 1f : (1f - distance) / smooth;
+    private static float CalculateSlope(float angle, float distanceX, float distanceY) => Mathf.Sin(angle * Mathf.PI / 180f) * distanceX + Mathf.Cos(angle * Mathf.PI / 180f) * distanceY;
     public static void RaiseTerrain(CompilerIndices compilerIndices, Vector3 pos, float radius, float smooth, float amount) {
-      Action<TerrainComp, int, float> action = (compiler, index, distance) => {
-        var multipier = CalculateSmooth(smooth, distance);
-        compiler.m_levelDelta[index] += multipier * amount + compiler.m_smoothDelta[index];
+      Action<TerrainComp, HeightIndex> action = (compiler, heightIndex) => {
+        var multiplier = CalculateSmooth(smooth, heightIndex.Distance);
+        var index = heightIndex.Index;
+        compiler.m_levelDelta[index] += multiplier * amount + compiler.m_smoothDelta[index];
         compiler.m_smoothDelta[index] = 0f;
         compiler.m_modifiedHeight[index] = compiler.m_levelDelta[index] != 0f;
       };
       DoHeightOperation(compilerIndices, pos, radius, action);
     }
-    public static void LevelTerrain(CompilerIndices compilerIndices, Vector3 pos, float radius, float smooth, float height) {
-      Action<TerrainComp, int, float> action = (compiler, index, distance) => {
-        var multipier = CalculateSmooth(smooth, distance);
-        compiler.m_levelDelta[index] += multipier * (height - compiler.m_hmap.m_heights[index]);
+    public static void LevelTerrain(CompilerIndices compilerIndices, Vector3 pos, float radius, float smooth, float altitude) {
+      Action<TerrainComp, HeightIndex> action = (compiler, heightIndex) => {
+        var multiplier = CalculateSmooth(smooth, heightIndex.Distance);
+        var index = heightIndex.Index;
+        compiler.m_levelDelta[index] += multiplier * (altitude - compiler.m_hmap.m_heights[index]);
+        compiler.m_smoothDelta[index] = 0f;
+        compiler.m_modifiedHeight[index] = compiler.m_levelDelta[index] != 0f;
+      };
+      DoHeightOperation(compilerIndices, pos, radius, action);
+    }
+    public static void SlopeTerrain(CompilerIndices compilerIndices, Vector3 pos, float radius, float angle, float altitude, float amount) {
+      Action<TerrainComp, HeightIndex> action = (compiler, heightIndex) => {
+        var multiplier = CalculateSlope(angle, heightIndex.DistanceX, heightIndex.DistanceY);
+        var index = heightIndex.Index;
+        compiler.m_levelDelta[index] += (altitude - compiler.m_hmap.m_heights[index]) + multiplier * amount / 2f;
         compiler.m_smoothDelta[index] = 0f;
         compiler.m_modifiedHeight[index] = compiler.m_levelDelta[index] != 0f;
       };
@@ -117,11 +133,17 @@ namespace WorldEditCommands {
       }
       ClutterSystem.instance?.ResetGrass(pos, radius);
     }
-    private static void DoHeightOperation(CompilerIndices compilerIndices, Vector3 pos, float radius, Action<TerrainComp, int, float> action) {
+    private static void DoHeightOperation(CompilerIndices compilerIndices, Vector3 pos, float radius, Action<TerrainComp, HeightIndex> action) {
       foreach (var kvp in compilerIndices) {
         var compiler = kvp.Key;
         var indices = kvp.Value.HeightIndices;
-        foreach (var heightIndex in indices) action(compiler, heightIndex.Index, heightIndex.Distance / radius);
+        foreach (var heightIndex in indices) {
+          heightIndex.Distance /= radius;
+          heightIndex.DistanceX /= radius;
+          heightIndex.DistanceY /= radius;
+
+        }
+        foreach (var heightIndex in indices) action(compiler, heightIndex);
         Save(compiler);
       }
       ClutterSystem.instance?.ResetGrass(pos, radius);
@@ -156,9 +178,13 @@ namespace WorldEditCommands {
           if (j < 0 || j >= max) continue;
           var distance = square ? Math.Max(Math.Abs(j - x), Math.Abs(i - y)) : Vector2.Distance(center, new Vector2((float)j, (float)i));
           if (distance > maxDistance) continue;
+          var distanceX = j - x;
+          var distanceY = i - y;
           if (!CheckBlocking(compiler, j, i, blockCheck)) continue;
           indices.Add(new HeightIndex() {
             Index = i * max + j,
+            DistanceX = distanceX,
+            DistanceY = distanceY,
             Distance = distance * compiler.m_hmap.m_scale
           });
         }

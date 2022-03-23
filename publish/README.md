@@ -138,6 +138,11 @@ Following parameters are available:
 - `reset`: Resets terrain height. Ground material is not affected.
 - `level=number`: Sets terrain height to the given altitude. If not given, uses the ground altitude below the player.
 - `paint=value`: Sets the terrain material (dirt, paved, cultivated or grass to reset).
+- `slope=number`: Creates a slope centered at current position with a given height.
+- `refPos=x,z`: Overwrites the player's position. Allows fixing the current position for more precise editing.
+- `offset=x,z,y`: Moves the targeted position while still using the altitude of the player's position.
+- `step=forward,right,up`: Calculates offset based on the radius (and slope height if given).
+- `angle=degrees`: Determines the slope and the step direction. Cardinal directions like n, ne, e, se, s, sw, w and nw work as a value too.
 - `radius=number`: Determines the size of the affected terrain. Capped at 64 meters to prevent changes outside the active play area (causes technical issues).
 - `blockcheck`: Exclude terrain that is under structures or other objects. This can be used to create specific shapes.
 - `blockcheck=on/off/inverse`:
@@ -199,6 +204,13 @@ Static objects only synchronize their position and rotation when loaded. This me
 This shouldn't cause any issues unless objects are moved long distances (which might cause issues anyways).
 
 # Changelog
+
+- v1.1: 
+	- Adds a new parameter `refPos` to the `terrain` command to allow overriding the player's position.
+	- Adds a new parameter `slope` to the `terrain` command to allow creating slopes.
+	- Adds a new parameter `offset` to the `terrain` command to allow moving the targeted position.
+	- Adds a new parameter `step` to the `terrain` command to automatically calculate the offset based on radius.
+	- Adds a new parameter `angle` to the `terrain` command to select the slope and step direction.
 
 - v1.0: 
 	- Initial release.
