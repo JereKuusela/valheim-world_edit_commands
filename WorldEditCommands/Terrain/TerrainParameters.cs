@@ -7,16 +7,34 @@ namespace WorldEditCommands {
     public Vector3 Position = Vector3.zero;
     public Vector3 Offset = Vector3.zero;
     public Vector3 Step = Vector3.zero;
-    public float Radius = 1f;
+    public float Size = 0f;
+    public float? Diameter = null;
+    public float? Width = null;
+    public float? Depth = null;
     public float Angle = 0f;
     public float? Set = null;
     public float? Delta = null;
     public float? Level = null;
     public float Smooth = 0;
     public float? Slope = null;
+    public float SlopeAngle = 0f;
     public string Paint = "";
-    public bool Square = false;
     public BlockCheck BlockCheck = BlockCheck.Off;
+
+    private float ParseAngle(string value) {
+      var angle = 0f;
+      if (value == "n") angle = 0f;
+      else if (value == "ne") angle = 45f;
+      else if (value == "e") angle = 90f;
+      else if (value == "se") angle = 135f;
+      else if (value == "s") angle = 180f;
+      else if (value == "sw") angle = 225;
+      else if (value == "w") angle = 270f;
+      else if (value == "nw") angle = 315;
+      else angle = Parse.TryFloat(value, 0f);
+      angle *= Mathf.PI / 180f;
+      return angle;
+    }
 
     public bool ParseArgs(Terminal.ConsoleEventArgs args, Terminal terminal) {
       var playerPosition = Position;
@@ -34,43 +52,40 @@ namespace WorldEditCommands {
         var name = split[0].ToLower();
         if (name == "reset")
           Set = 0f;
-        if (name == "square")
-          Square = true;
         if (name == "level")
-          Level = Offset.y;
+          Level = Position.y;
         if (name == "blockcheck")
           BlockCheck = BlockCheck.On;
         if (split.Length < 2) continue;
         var value = split[1].ToLower();
-        if (name == "radius")
-          Radius = Parse.TryFloat(value, 0f);
+        var values = Parse.Split(value);
+        if (name == "circle")
+          Diameter = Parse.TryFloat(value, 0f);
+        if (name == "rect") {
+          var size = Parse.TryScale(values);
+          Width = size.x;
+          Depth = size.z;
+        }
         if (name == "paint")
           Paint = value;
-        if (name == "angle") {
-          if (value == "n") Angle = 0f;
-          else if (value == "ne") Angle = 45f;
-          else if (value == "e") Angle = 90f;
-          else if (value == "se") Angle = 135f;
-          else if (value == "s") Angle = 180f;
-          else if (value == "sw") Angle = 225;
-          else if (value == "w") Angle = 270f;
-          else if (value == "nw") Angle = 315;
-          else Angle = Parse.TryFloat(value, 0f);
-        }
+        if (name == "angle")
+          Angle = ParseAngle(value);
         if (name == "raise")
           Delta = Parse.TryFloat(value, 0f);
         if (name == "lower")
           Delta = -Parse.TryFloat(value, 0f);
         if (name == "smooth")
           Smooth = Parse.TryFloat(value, 0f);
-        if (name == "slope")
-          Slope = Parse.TryFloat(value, 0f);
+        if (name == "slope") {
+          Slope = Parse.TryFloat(values, 0, 0f);
+          if (values.Length > 1) SlopeAngle = ParseAngle(values[1]);
+        }
         if (name == "offset")
-          Offset = Parse.TryVectorXZY(Parse.Split(value));
+          Offset = Parse.TryVectorZXY(values);
         if (name == "level")
-          Level = Parse.TryFloat(value, Offset.y);
+          Level = Parse.TryFloat(value, Position.y);
         if (name == "step")
-          Step = Parse.TryVectorXZY(Parse.Split(value));
+          Step = Parse.TryVectorZXY(values);
         if (name == "refPos")
           Position = Parse.TryVectorXZY(Parse.Split(value), Position);
         if (name == "blockcheck") {
@@ -83,26 +98,57 @@ namespace WorldEditCommands {
           }
         }
       }
+      if (Diameter.HasValue && Depth.HasValue) {
+        Helper.AddMessage(terminal, $"Error: circle and rect parameters can't be used together.");
+        return false;
+      }
+      if (!Diameter.HasValue && !Depth.HasValue) {
+        Helper.AddMessage(terminal, $"Error: circle or rect parameter must be used.");
+        return false;
+      }
+      if (Diameter.HasValue) Size = Diameter.Value / 2f;
+      if (Depth.HasValue) Size = Mathf.Max(Depth.Value, Width.Value) / 2;
       if (Step != Vector3.zero) {
-        Offset = Step * Radius * 2;
+        var width = Size;
+        var depth = Size;
+        if (Width.HasValue) width = Width.Value / 2;
+        if (Depth.HasValue) depth = Depth.Value / 2;
+        Offset.x += Step.x * width * 2;
+        Offset.z += Step.z * depth * 2;
         if (Slope.HasValue)
-          Offset.y = Slope.Value * (Step.x + Step.y);
+          Offset.y = Slope.Value * (Step.z + Step.y);
       }
       if (Offset != Vector3.zero) {
         var original = Offset;
-        Offset.x = Mathf.Sin(Angle * Mathf.PI / 180f) * original.x + Mathf.Cos(Angle * Mathf.PI / 180f) * original.z;
-        Offset.z = Mathf.Cos(Angle * Mathf.PI / 180f) * original.x + Mathf.Sin(Angle * Mathf.PI / 180f) * original.z;
+        Offset.x = Mathf.Cos(Angle) * original.x + Mathf.Sin(Angle) * original.z;
+        Offset.z = Mathf.Cos(Angle) * original.z - Mathf.Sin(Angle) * original.x;
         Position += Offset;
       }
-      var maxRadius = 64f - Utils.LengthXZ(Position - playerPosition);
-      if (maxRadius < 0) {
+      var maxDistance = 128f - 2 * Utils.LengthXZ(Position - playerPosition);
+      if (maxDistance < 0) {
         Helper.AddMessage(terminal, $"Error: The edited terrain is too far.");
         return false;
       }
-      if (maxRadius < Radius) {
-        Helper.AddMessage(terminal, $"Note: Radius lowered to {maxRadius.ToString("F1")} to stay within the editing limits.");
+      if (Diameter.HasValue) {
+        if (maxDistance < Diameter) {
+          Helper.AddMessage(terminal, $"Note: Diameter lowered to {maxDistance.ToString("F1")} to stay within the editing limits.");
+        }
+        Diameter = Mathf.Min(maxDistance, Diameter.Value);
       }
-      Radius = Mathf.Min(maxRadius, Radius);
+      if (Width.HasValue) {
+        if (maxDistance < Width) {
+          Helper.AddMessage(terminal, $"Note: Width lowered to {maxDistance.ToString("F1")} to stay within the editing limits.");
+        }
+        Width = Mathf.Min(maxDistance, Width.Value);
+      }
+      if (Depth.HasValue) {
+        if (maxDistance < Depth) {
+          Helper.AddMessage(terminal, $"Note: Height lowered to {maxDistance.ToString("F1")} to stay within the editing limits.");
+        }
+        Depth = Mathf.Min(maxDistance, Depth.Value);
+      }
+      // Circle doesn't use the angle so the slope needs both.
+      if (Diameter.HasValue) SlopeAngle += Angle;
       return true;
     }
   }

@@ -7,13 +7,18 @@ namespace WorldEditCommands {
   using CompilerIndices = Dictionary<TerrainComp, Indices>;
   public class HeightIndex {
     public int Index;
-    public float DistanceX;
-    public float DistanceY;
+    public Vector3 Position;
+    public float DistanceWidth;
+    public float DistanceDepth;
     public float Distance;
+  }
+  public class PaintIndex {
+    public int Index;
+    public Vector3 Position;
   }
   public class Indices {
     public IEnumerable<HeightIndex> HeightIndices;
-    public IEnumerable<int> PaintIndices;
+    public IEnumerable<PaintIndex> PaintIndices;
   }
 
   public enum BlockCheck {
@@ -32,11 +37,39 @@ namespace WorldEditCommands {
       compiler.Save();
       compiler.m_hmap.Poke(false);
     }
-    public static CompilerIndices GetCompilerIndices(List<Heightmap> heightMaps, Vector3 centerPos, float radius, bool square, BlockCheck blockCheck) {
-      return heightMaps.Select(hmap => hmap.GetAndCreateTerrainCompiler()).ToDictionary(comp => comp, comp => {
+    private static Indices FilterByBlockCheck(Indices indices, BlockCheck blockCheck) {
+      indices.HeightIndices = indices.HeightIndices.Where(index => CheckBlocking(index.Position, blockCheck)).ToArray();
+      indices.PaintIndices = indices.PaintIndices.Where(index => CheckBlocking(index.Position, blockCheck)).ToArray();
+      return indices;
+    }
+    private static IEnumerable<TerrainComp> GetTerrainCompilersWithCircle(Vector3 position, float radius) {
+      var heightMaps = new List<Heightmap>();
+      Heightmap.FindHeightmap(position, radius, heightMaps);
+      return heightMaps.Select(hmap => hmap.GetAndCreateTerrainCompiler());
+    }
+    private static IEnumerable<TerrainComp> GetTerrainCompilersWithRect(Vector3 position, float width, float depth, float angle) {
+      var heightMaps = new List<Heightmap>();
+      // Turn the rectable to a square for an upper bound.
+      var maxDimension = Mathf.Max(width, depth);
+      // Rotating increases the square dimensions.
+      var dimensionMultiplier = Mathf.Abs(Mathf.Sin(angle)) + Mathf.Abs(Mathf.Cos(angle));
+      var size = maxDimension * dimensionMultiplier / 2f;
+      Heightmap.FindHeightmap(position, size, heightMaps);
+      return heightMaps.Select(hmap => hmap.GetAndCreateTerrainCompiler());
+    }
+    public static CompilerIndices GetCompilerIndicesWithCircle(Vector3 centerPos, float diameter, BlockCheck blockCheck) {
+      return GetTerrainCompilersWithCircle(centerPos, diameter / 2f).ToDictionary(comp => comp, comp => {
         return new Indices() {
-          HeightIndices = GetHeightIndices(comp, centerPos, radius, square, blockCheck).ToArray(),
-          PaintIndices = GetPaintIndices(comp, centerPos, radius, square, blockCheck).ToArray()
+          HeightIndices = GetHeightIndicesWithCircle(comp, centerPos, diameter).Where(index => CheckBlocking(index.Position, blockCheck)).ToArray(),
+          PaintIndices = GetPaintIndicesWithCircle(comp, centerPos, diameter).Where(index => CheckBlocking(index.Position, blockCheck)).ToArray()
+        };
+      }).Where(kvp => kvp.Value.HeightIndices.Count() + kvp.Value.PaintIndices.Count() > 0).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+    }
+    public static CompilerIndices GetCompilerIndicesWithRect(Vector3 centerPos, float width, float depth, float angle, BlockCheck blockCheck) {
+      return GetTerrainCompilersWithRect(centerPos, width, depth, angle).ToDictionary(comp => comp, comp => {
+        return new Indices() {
+          HeightIndices = GetHeightIndicesWithRect(comp, centerPos, width, depth, angle).Where(index => CheckBlocking(index.Position, blockCheck)).ToArray(),
+          PaintIndices = GetPaintIndicesWithRect(comp, centerPos, width, depth, angle).Where(index => CheckBlocking(index.Position, blockCheck)).ToArray()
         };
       }).Where(kvp => kvp.Value.HeightIndices.Count() + kvp.Value.PaintIndices.Count() > 0).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
     }
@@ -51,7 +84,7 @@ namespace WorldEditCommands {
       DoHeightOperation(compilerIndices, pos, radius, action);
     }
     private static float CalculateSmooth(float smooth, float distance) => (1f - distance) >= smooth ? 1f : (1f - distance) / smooth;
-    private static float CalculateSlope(float angle, float distanceX, float distanceY) => Mathf.Sin(angle * Mathf.PI / 180f) * distanceX + Mathf.Cos(angle * Mathf.PI / 180f) * distanceY;
+    private static float CalculateSlope(float angle, float distanceWidth, float distanceDepth) => Mathf.Sin(angle) * distanceWidth + Mathf.Cos(angle) * distanceDepth;
     public static void RaiseTerrain(CompilerIndices compilerIndices, Vector3 pos, float radius, float smooth, float amount) {
       Action<TerrainComp, HeightIndex> action = (compiler, heightIndex) => {
         var multiplier = CalculateSmooth(smooth, heightIndex.Distance);
@@ -72,9 +105,9 @@ namespace WorldEditCommands {
       };
       DoHeightOperation(compilerIndices, pos, radius, action);
     }
-    public static void SlopeTerrain(CompilerIndices compilerIndices, Vector3 pos, float radius, float angle, float altitude, float amount) {
+    public static void SlopeTerrain(CompilerIndices compilerIndices, Vector3 pos, float radius, float angle, float smooth, float altitude, float amount) {
       Action<TerrainComp, HeightIndex> action = (compiler, heightIndex) => {
-        var multiplier = CalculateSlope(angle, heightIndex.DistanceX, heightIndex.DistanceY);
+        var multiplier = CalculateSlope(angle, heightIndex.DistanceWidth, heightIndex.DistanceDepth) * CalculateSmooth(smooth, heightIndex.Distance);
         var index = heightIndex.Index;
         compiler.m_levelDelta[index] += (altitude - compiler.m_hmap.m_heights[index]) + multiplier * amount / 2f;
         compiler.m_smoothDelta[index] = 0f;
@@ -100,10 +133,10 @@ namespace WorldEditCommands {
             Level = kvp.Key.m_levelDelta[heightIndex.Index],
             Smooth = kvp.Key.m_smoothDelta[heightIndex.Index]
           }).ToArray(),
-          Paints = kvp.Value.PaintIndices.Select(index => new PaintUndoData() {
-            Index = index,
-            PaintModified = kvp.Key.m_modifiedPaint[index],
-            Paint = kvp.Key.m_paintMask[index],
+          Paints = kvp.Value.PaintIndices.Select(paintIndex => new PaintUndoData() {
+            Index = paintIndex.Index,
+            PaintModified = kvp.Key.m_modifiedPaint[paintIndex.Index],
+            Paint = kvp.Key.m_paintMask[paintIndex.Index],
           }).ToArray(),
         };
       });
@@ -137,12 +170,6 @@ namespace WorldEditCommands {
       foreach (var kvp in compilerIndices) {
         var compiler = kvp.Key;
         var indices = kvp.Value.HeightIndices;
-        foreach (var heightIndex in indices) {
-          heightIndex.Distance /= radius;
-          heightIndex.DistanceX /= radius;
-          heightIndex.DistanceY /= radius;
-
-        }
         foreach (var heightIndex in indices) action(compiler, heightIndex);
         Save(compiler);
       }
@@ -152,64 +179,110 @@ namespace WorldEditCommands {
       foreach (var kvp in compilerIndices) {
         var compiler = kvp.Key;
         var indices = kvp.Value.PaintIndices;
-        foreach (var index in indices) action(compiler, index);
+        foreach (var index in indices) action(compiler, index.Index);
         Save(compiler);
       }
       ClutterSystem.instance?.ResetGrass(pos, radius);
     }
-    private static bool CheckBlocking(TerrainComp compiler, int j, int i, BlockCheck blockCheck) {
+    private static bool CheckBlocking(Vector3 position, BlockCheck blockCheck) {
       if (blockCheck == BlockCheck.Off) return true;
-      var pos = VertexToWorld(compiler.m_hmap, j, i);
-      var blocked = ZoneSystem.instance.IsBlocked(pos);
+      var blocked = ZoneSystem.instance.IsBlocked(position);
       if (blocked && blockCheck == BlockCheck.On) return false;
       if (!blocked && blockCheck == BlockCheck.Inverse) return false;
       return true;
     }
-    private static IEnumerable<HeightIndex> GetHeightIndices(TerrainComp compiler, Vector3 centerPos, float radius, bool square, BlockCheck blockCheck) {
+    private static IEnumerable<HeightIndex> GetHeightIndicesWithCircle(TerrainComp compiler, Vector3 centerPos, float diameter) {
       var indices = new List<HeightIndex>();
-      compiler.m_hmap.WorldToVertex(centerPos, out var x, out var y);
-      var maxDistance = radius / compiler.m_hmap.m_scale;
-      var delta = Mathf.CeilToInt(maxDistance);
+      compiler.m_hmap.WorldToVertex(centerPos, out var cx, out var cy);
+      var maxDistance = diameter / 2f / compiler.m_hmap.m_scale;
       var max = compiler.m_width + 1;
-      var center = new Vector2((float)x, (float)y);
-      for (int i = y - delta; i <= y + delta; i++) {
-        if (i < 0 || i >= max) continue;
-        for (int j = x - delta; j <= x + delta; j++) {
-          if (j < 0 || j >= max) continue;
-          var distance = square ? Math.Max(Math.Abs(j - x), Math.Abs(i - y)) : Vector2.Distance(center, new Vector2((float)j, (float)i));
+      var center = new Vector2((float)cx, (float)cy);
+      for (int i = 0; i < max; i++) {
+        for (int j = 0; j < max; j++) {
+          var distance = Vector2.Distance(center, new Vector2((float)j, (float)i));
           if (distance > maxDistance) continue;
-          var distanceX = j - x;
-          var distanceY = i - y;
-          if (!CheckBlocking(compiler, j, i, blockCheck)) continue;
-          indices.Add(new HeightIndex() {
+          var distanceX = j - cx;
+          var distanceY = i - cy;
+          indices.Add(new HeightIndex {
             Index = i * max + j,
-            DistanceX = distanceX,
-            DistanceY = distanceY,
-            Distance = distance * compiler.m_hmap.m_scale
+            Position = VertexToWorld(compiler.m_hmap, j, i),
+            DistanceWidth = distanceX / maxDistance,
+            DistanceDepth = distanceY / maxDistance,
+            Distance = distance / maxDistance
+          });
+        }
+      }
+      return indices;
+    }
+    private static float GetX(int x, int y, float angle) => Mathf.Cos(angle) * x - Mathf.Sin(angle) * y;
+    private static float GetY(int x, int y, float angle) => Mathf.Sin(angle) * x + Mathf.Cos(angle) * y;
+    private static IEnumerable<HeightIndex> GetHeightIndicesWithRect(TerrainComp compiler, Vector3 centerPos, float width, float depth, float angle) {
+      var indices = new List<HeightIndex>();
+      compiler.m_hmap.WorldToVertex(centerPos, out var cx, out var cy);
+      var maxWidth = width / 2f / compiler.m_hmap.m_scale;
+      var maxDepth = depth / 2f / compiler.m_hmap.m_scale;
+      var max = compiler.m_width + 1;
+      for (int x = 0; x < max; x++) {
+        for (int y = 0; y < max; y++) {
+          var dx = x - cx;
+          var dy = y - cy;
+          var distanceX = GetX(dx, dy, angle);
+          var distanceY = GetY(dx, dy, angle);
+          if (Mathf.Abs(distanceX) > maxWidth) continue;
+          if (Mathf.Abs(distanceY) > maxDepth) continue;
+          var distanceWidth = distanceX / maxWidth;
+          var distanceDepth = distanceY / maxDepth;
+          indices.Add(new HeightIndex {
+            Index = y * max + x,
+            Position = VertexToWorld(compiler.m_hmap, x, y),
+            DistanceWidth = distanceWidth,
+            DistanceDepth = distanceDepth,
+            Distance = Mathf.Max(Mathf.Abs(distanceWidth), Mathf.Abs(distanceDepth))
           });
         }
       }
       return indices;
     }
 
-    private static IEnumerable<int> GetPaintIndices(TerrainComp compiler, Vector3 centerPos, float radius, bool square, BlockCheck blockCheck) {
+    private static IEnumerable<PaintIndex> GetPaintIndicesWithRect(TerrainComp compiler, Vector3 centerPos, float width, float depth, float angle) {
       centerPos = new Vector3(centerPos.x - 0.5f, centerPos.y, centerPos.z - 0.5f);
-      var indices = new List<int>();
-      compiler.m_hmap.WorldToVertex(centerPos, out var x, out var y);
-      var maxDistance = radius / compiler.m_hmap.m_scale;
-      var delta = Mathf.CeilToInt(maxDistance);
+      var indices = new List<PaintIndex>();
+      compiler.m_hmap.WorldToVertex(centerPos, out var cx, out var cy);
+      var maxWidth = width / 2f / compiler.m_hmap.m_scale;
+      var maxDepth = depth / 2f / compiler.m_hmap.m_scale;
       var max = compiler.m_width;
-      var center = new Vector2((float)x, (float)y);
-      for (int i = y - delta; i <= y + delta; i++) {
-        if (i < 0 || i >= max) continue;
-        for (int j = x - delta; j <= x + delta; j++) {
-          if (j < 0 || j >= max) continue;
-          if (!square) {
-            var distance = Vector2.Distance(center, new Vector2((float)j, (float)i));
-            if (distance > maxDistance) continue;
-          }
-          if (!CheckBlocking(compiler, j, i, blockCheck)) continue;
-          indices.Add(i * max + j);
+      for (int x = 0; x < max; x++) {
+        for (int y = 0; y < max; y++) {
+          var dx = x - cx;
+          var dy = y - cy;
+          var distanceX = GetX(dx, dy, angle);
+          var distanceY = GetY(dx, dy, angle);
+          if (Mathf.Abs(distanceX) > maxWidth) continue;
+          if (Mathf.Abs(distanceY) > maxDepth) continue;
+          indices.Add(new PaintIndex {
+            Index = y * max + x,
+            Position = VertexToWorld(compiler.m_hmap, x, y)
+          });
+        }
+      }
+      return indices;
+    }
+
+    private static IEnumerable<PaintIndex> GetPaintIndicesWithCircle(TerrainComp compiler, Vector3 centerPos, float diameter) {
+      centerPos = new Vector3(centerPos.x - 0.5f, centerPos.y, centerPos.z - 0.5f);
+      var indices = new List<PaintIndex>();
+      compiler.m_hmap.WorldToVertex(centerPos, out var cx, out var cy);
+      var maxDistance = diameter / 2f / compiler.m_hmap.m_scale;
+      var max = compiler.m_width;
+      var center = new Vector2((float)cx, (float)cy);
+      for (int i = 0; i < max; i++) {
+        for (int j = 0; j < max; j++) {
+          var distance = Vector2.Distance(center, new Vector2((float)j, (float)i));
+          if (distance > maxDistance) continue;
+          indices.Add(new PaintIndex {
+            Index = i * max + j,
+            Position = VertexToWorld(compiler.m_hmap, j, i)
+          });
         }
       }
       return indices;

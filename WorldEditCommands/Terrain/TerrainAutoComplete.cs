@@ -15,8 +15,8 @@ namespace WorldEditCommands {
       "reset",
       "paint",
       "blockcheck",
-      "square",
-      "radius",
+      "rect",
+      "circle",
       "smooth",
       "slope",
       "angle",
@@ -38,37 +38,45 @@ namespace WorldEditCommands {
           "blockcheck", (int index) => index == 0 ? ParameterInfo.Create("blockcheck=<color=yellow>inverse</color>/<color=yellow>off</color>/<color=yellow>on</color>", "When <color=yellow>on</color>, excludes terrain under structures. When <color=yellow>inverse</color>, only includes terrain under structures.") : null
         },
         {
-          "square", (int index) => ParameterInfo.Flag("Square")
+          "rect", (int index) => {
+            if (index == 0) return ParameterInfo.Create("rect=<color=yellow>size</color> or rect=<color=yellow>width</color>,depth (from 0 to 128)", "Size of the included terrain (rectangle).");
+            if (index == 1) return ParameterInfo.Create("rect=width,<color=yellow>depth</color> (from 0 to 128)", "Size of the included terrain (rectangle).");
+            return null;
+          }
         },
         {
-          "angle", (int index) => index == 0 ? ParameterInfo.Create("angle=<color=yellow>number</yellow>/<color=yellow>n</yellow>/<color=yellow>ne</yellow>/<color=yellow>e</yellow>/<color=yellow>se</yellow>/<color=yellow>s</yellow>/<color=yellow>sw</yellow>/<color=yellow>w</yellow>/<color=yellow>nw</yellow> (from 0 to 360)", "Direction of the slope operation.") : null
+          "angle", (int index) => index == 0 ? ParameterInfo.Create("angle=<color=yellow>number</color>/<color=yellow>n</color>/<color=yellow>ne</color>/<color=yellow>e</color>/<color=yellow>se</color>/<color=yellow>s</color>/<color=yellow>sw</color>/<color=yellow>w</color>/<color=yellow>nw</color> (from 0 to 360)", "Direction of the shape.") : null
         },
         {
-          "radius", (int index) => index == 0 ? ParameterInfo.Create("radius=<color=yellow>number</yellow> (from 0 to 64)", "Radius of the included terrain.") : null
+          "circle", (int index) => index == 0 ? ParameterInfo.Create("circle=<color=yellow>number</color> (from 0 to 128)", "Diameter of the included terrain (circle).") : null
         },
         {
-          "offset", (int index) => ParameterInfo.XZY("offset", "Position of the center", index)
+          "offset", (int index) => ParameterInfo.FRU("offset", "Position of the center", index)
         },
         {
           "refPos", (int index) => ParameterInfo.XZY("refPos", "Overrides the player position", index)
         },
         {
-          "step", (int index) => ParameterInfo.XZY("step", "Offset based on radius (forward, right, up)", index)
+          "step", (int index) => ParameterInfo.FRU("step", "Offset based on radius", index)
         },
         {
-          "smooth", (int index) => index == 0 ? ParameterInfo.Create("smooth=<color=yellow>number</yellow> (from 0.0 to 1.0)", "Higher values smoothen the effect near edges.") : null
+          "smooth", (int index) => index == 0 ? ParameterInfo.Create("smooth=<color=yellow>number</color> (from 0.0 to 1.0)", "Higher values smoothen the effect near edges.") : null
         },
         {
-          "slope", (int index) => index == 0 ? ParameterInfo.Create("slope=<color=yellow>number</yellow>", "Creates a slope with altitude difference of a given amount.") : null
+          "slope", (int index) => {
+            if (index == 0) return ParameterInfo.Create("slope=<color=yellow>height</color>,angle=0", "Creates a slope with altitude difference of a given amount.");
+            if (index == 1) return ParameterInfo.Create("slope=height,<color=yellow>angle</color>", "Changes the slope direction (added to the general angle).");
+            return null;
+          }
         },
         {
-          "raise", (int index) => index == 0 ? ParameterInfo.Create("raise=<color=yellow>number</yellow>", "Raises the terrain by a given amount.") : null
+          "raise", (int index) => index == 0 ? ParameterInfo.Create("raise=<color=yellow>number</color>", "Raises the terrain by a given amount.") : null
         },
         {
-          "lower", (int index) => index == 0 ? ParameterInfo.Create("lower=<color=yellow>number</yellow>", "Lowers the terrain by a given amount.") : null
+          "lower", (int index) => index == 0 ? ParameterInfo.Create("lower=<color=yellow>number</color>", "Lowers the terrain by a given amount.") : null
         },
         {
-          "level", (int index) => index == 0 ? ParameterInfo.Create("level or level=<color=yellow>number</yellow>", "Levels the terrain to a given altitude. Without parameters, levels to the terrain altitude below the player.") : null
+          "level", (int index) => index == 0 ? ParameterInfo.Create("level or level=<color=yellow>number</color>", "Levels the terrain to a given altitude. Without parameters, levels to the terrain altitude below the player.") : null
         },
         {
           "paint", (int index) => index == 0 ? paints : null
