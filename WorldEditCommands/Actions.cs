@@ -34,6 +34,24 @@ public static class Actions {
   public static void SetHunt(GameObject obj, bool hunt) {
     SetHunt(obj.GetComponent<BaseAI>(), hunt);
   }
+  public static bool SetPrefab(GameObject obj, string prefab) {
+    return SetPrefab(obj.GetComponent<ZNetView>(), prefab);
+  }
+  public static bool SetPrefab(ZNetView obj, string prefab) {
+    if (!obj) return false;
+    var zdo = obj.GetZDO();
+    if (zdo == null || !zdo.IsValid()) return false;
+    var previous = zdo.GetPrefab();
+    zdo.SetPrefab(prefab.GetStableHashCode());
+    var newObj = ZNetScene.instance.CreateObject(zdo);
+    if (!newObj) {
+      zdo.SetPrefab(previous);
+      return false;
+    }
+    UnityEngine.Object.Destroy(obj.gameObject);
+    ZNetScene.instance.m_instances[zdo] = newObj.GetComponent<ZNetView>();
+    return true;
+  }
   public static void SetHunt(BaseAI obj, bool hunt) {
     if (!obj) return;
     obj.m_huntPlayer = hunt;

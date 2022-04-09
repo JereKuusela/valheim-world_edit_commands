@@ -32,6 +32,7 @@ Following parameters are available:
 - `level=integer`: Sets levels for creatures (level = stars + 1).
 - `move=x,z,y`: Moves objects (meters). Static objects only update their position for other players when they leave the area.
 - `origin=player|object|world`: Base direction for `move` and `rotate`. Default value `player` uses the player's rotation, `object` uses the objects rotation and `world` uses the global coordinate system (x=north/south,y=up/down,z=west/east).
+- `prefab=id`: Replaces the object id with the given id.
 - `radius=number`: Radius for included objects. Capped at 100 meters. If not given, the hovered object is only affected.
 - `remove`: Removes objects. Must use the `id` parameter (`id=*` is ok). Can't be used with other operations.
 - `rotate=y,x,z`: Rotates objects (degrees). Static objects only update their rotation for other players when they leave the area.
@@ -59,6 +60,7 @@ Note: Creatures reset their style when attacking.
 - `object radius=50 move=-5-5,-5,5`: Randomly moves all objects within 50 meters.
 - `object move=5`: Moves the targeted object 5 meters away from you.
 - `object move=0,5 origin=world`: Moves the targeted object 5 meters towards east.
+- `object prefab=Wolf`: Changes the targeted object to a wolf.
 - `alias remove object remove id=$`: Adds a command `remove [object id]` that removes the targeted object if it matches the given object id.
 - `alias remove object remove id=*`: Adds a command `remove` that removes the targeted object without having to specify the id.
 - `alias remove50 object remove radius=50 id=$`: Adds a command `remove50 [object id]` that removes the given objects within 50 meters.
@@ -205,7 +207,8 @@ This shouldn't cause any issues unless objects are moved long distances (which m
 
 # Changelog
 
-- v1.1: 
+- v1.1
+	- Adds a new parameter `prefab` to the `object` command to allow replacing objects.
 	- Adds a new parameter `refPos` to the `terrain` command to allow overriding the player's position.
 	- Adds a new parameter `slope` to the `terrain` command to allow creating slopes.
 	- Adds a new parameter `offset` to the `terrain` command to allow moving the targeted position.
@@ -213,7 +216,7 @@ This shouldn't cause any issues unless objects are moved long distances (which m
 	- Adds a new parameter `angle` to the `terrain` command to select the slope and step direction.
 	- Changes parameters `radius` and `square`of the `terrain` command to `circle` and `rect`.
 
-- v1.0: 
+- v1.0
 	- Initial release.
 
 Thanks for Azumatt for creating the mod icon!

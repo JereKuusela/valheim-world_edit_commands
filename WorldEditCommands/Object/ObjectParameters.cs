@@ -7,6 +7,7 @@ public class ObjectParameters : SharedObjectParameters {
   public Range<Vector3> Rotation = new(Vector3.zero);
   public Range<Vector3> Offset = new(Vector3.zero);
   public string Id = "";
+  public string Prefab = "";
   public string Origin = "player";
   public HashSet<string> Operations = new();
   public bool ResetRotation = false;
@@ -33,7 +34,8 @@ public class ObjectParameters : SharedObjectParameters {
     "move",
     "rotate",
     "scale",
-    "chest"
+    "chest",
+    "prefab"
   };
   public override bool ParseArgs(string[] args, Terminal terminal) {
     if (!base.ParseArgs(args, terminal)) return false;
@@ -55,6 +57,7 @@ public class ObjectParameters : SharedObjectParameters {
       }
       if (name == "move") Offset = Parse.TryVectorXZYRange(value, Vector3.zero);
       if (name == "id") Id = value;
+      if (name == "prefab") Prefab = value;
       if (name == "origin") Origin = value.ToLower();
       if (name == "visual") Visual = new(value);
     }

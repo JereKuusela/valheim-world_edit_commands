@@ -89,6 +89,8 @@ public class ObjectCommand {
           output = SetLegs(character, pars.Legs);
         if (operation == "utility")
           output = SetUtility(character, pars.Utility);
+        if (operation == "prefab")
+          output = SetPrefab(view, pars.Prefab);
         if (operation == "move")
           output = Move(view, Helper.RandomValue(pars.Offset), pars.Origin);
         if (operation == "rotate") {
@@ -190,6 +192,11 @@ public class ObjectCommand {
     if (obj == null) return "Skipped: ¤ is not a creature.";
     Actions.SetSleeping(obj, true);
     return "¤ made to sleep.";
+  }
+  private static string SetPrefab(ZNetView obj, string prefab) {
+    if (Actions.SetPrefab(obj, prefab))
+      return $"Prefab of ¤ set to {prefab}.";
+    return $"Error: Prefab of ¤ was not set to {prefab}. Probably invalid prefab name.";
   }
   private static string SetVisual(ItemStand obj, Item item) {
     if (item == null) return "Skipped: Invalid item.";

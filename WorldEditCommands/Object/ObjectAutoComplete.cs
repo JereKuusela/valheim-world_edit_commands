@@ -14,7 +14,8 @@ public class ObjectAutoComplete : SharedObjectAutoComplete {
       "rotate",
       "remove",
       "origin",
-      "visual"
+      "visual",
+      "prefab"
     });
     AutoComplete.Register(ObjectCommand.Name, (int index) => NamedParameters, WithSharedFetchers(new() {
       {
@@ -39,7 +40,11 @@ public class ObjectAutoComplete : SharedObjectAutoComplete {
       },
       {
         "id",
-        (int index) => index == 0 ? ParameterInfo.Ids : null
+        (int index) => index == 0 ? ParameterInfo.ObjectIds : null
+      },
+      {
+        "prefab",
+        (int index) => index == 0 ? ParameterInfo.ObjectIds : null
       },
       {
         "move",
