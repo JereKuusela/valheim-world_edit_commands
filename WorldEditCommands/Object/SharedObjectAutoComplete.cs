@@ -8,7 +8,7 @@ public class SharedObjectAutoComplete {
   public static List<string> VisualAutoComplete(string name, int index) {
     if (index == 0) return ParameterInfo.ItemIds;
     if (index == 1) return ParameterInfo.Create($"${name}=id,<color=yellow>integer</color> | Item variant for items that have multiple variants.");
-    return null;
+    return ParameterInfo.None;
   }
   public static List<string> WithSharedParameters(List<string> parameters) {
     List<string> namedParameters = new() {
@@ -67,27 +67,27 @@ public class SharedObjectAutoComplete {
       },
       {
         "radius",
-        (int index) => index == 0 ? ParameterInfo.Create("radius", "number", "Maximum spawn distance when spawning multiple objects. Default is 0.5 meters.") : null
+        (int index) => index == 0 ? ParameterInfo.Create("radius", "number", "Maximum spawn distance when spawning multiple objects. Default is 0.5 meters.") : ParameterInfo.None
       },
       {
         "durability",
-        (int index) => index == 0 ? ParameterInfo.Create("durability", "number", "Sets current durability/health (+ maximum health for creatures).") : null
+        (int index) => index == 0 ? ParameterInfo.Create("durability", "number", "Sets current durability/health (+ maximum health for creatures).") : ParameterInfo.None
       },
       {
         "health",
-        (int index) => index == 0 ? ParameterInfo.CreateWithMinMax("health", "number", "Sets current durability/health (+ maximum health for creatures).") : null
+        (int index) => index == 0 ? ParameterInfo.CreateWithMinMax("health", "number", "Sets current durability/health (+ maximum health for creatures).") : ParameterInfo.None
       },
       {
         "stars",
-        (int index) => index == 0 ? ParameterInfo.Create("stars", "integer", "Sets creature stars.") : null
+        (int index) => index == 0 ? ParameterInfo.Create("stars", "integer", "Sets creature stars.") : ParameterInfo.None
       },
       {
         "level",
-        (int index) => index == 0 ? ParameterInfo.Create("level", "integer", "Sets creature and item level.") : null
+        (int index) => index == 0 ? ParameterInfo.Create("level", "integer", "Sets creature and item level.") : ParameterInfo.None
       },
       {
         "model",
-        (int index) => index == 0 ? ParameterInfo.Create("model", "integer", "Sets the creature model (0 for male, 1 for female).") : null
+        (int index) => index == 0 ? ParameterInfo.Create("model", "integer", "Sets the creature model (0 for male, 1 for female).") : ParameterInfo.None
       },
       {
         "scale",

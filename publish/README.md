@@ -27,6 +27,7 @@ Following parameters are available:
 
 - `baby`: Prevents offspring from growing up.
 - `durability=number` or `health=number`: Sets the current durability for items, the current health for structures and the maximum health for creatures. Very high values like 1E30 turn the target invulnerable (including gravity for structures).
+- `fuel=number`: Sets the fuel amount. Without number, prints the fuel amount.
 - `id`: Filters objects by id. Supports starts with, ends with or contains by using "*". Default is `*` that allows all objects which don't start with "_". 
 - `info`: Prints information of objects.
 - `level=integer`: Sets levels for creatures (level = stars + 1).
@@ -214,6 +215,7 @@ This shouldn't cause any issues unless objects are moved long distances (which m
 	- Adds a new parameter `offset` to the `terrain` command to allow moving the targeted position.
 	- Adds a new parameter `step` to the `terrain` command to automatically calculate the offset based on radius.
 	- Adds a new parameter `angle` to the `terrain` command to select the slope and step direction.
+	- Adds a new parameter `fuel` to the `object` command to set or print the fuel amount.
 	- Changes parameters `radius` and `square`of the `terrain` command to `circle` and `rect`.
 
 - v1.0

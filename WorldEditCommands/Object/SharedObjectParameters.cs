@@ -14,13 +14,13 @@ public class SharedObjectParameters {
   public Range<Vector3> Scale = new(Vector3.one);
   public Range<int> Level = new(1);
   public Range<float> Health = new(0f);
-  public Item Helmet = null;
-  public Item LeftHand = null;
-  public Item RightHand = null;
-  public Item Chest = null;
-  public Item Shoulders = null;
-  public Item Legs = null;
-  public Item Utility = null;
+  public Item? Helmet = null;
+  public Item? LeftHand = null;
+  public Item? RightHand = null;
+  public Item? Chest = null;
+  public Item? Shoulders = null;
+  public Item? Legs = null;
+  public Item? Utility = null;
   public float Radius = 0f;
   public Range<int> Model = new(0);
 

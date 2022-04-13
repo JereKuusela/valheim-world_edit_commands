@@ -15,56 +15,49 @@ public class ObjectAutoComplete : SharedObjectAutoComplete {
       "remove",
       "origin",
       "visual",
+      "fuel",
       "prefab"
     });
     AutoComplete.Register(ObjectCommand.Name, (int index) => NamedParameters, WithSharedFetchers(new() {
       {
-        "baby",
-        (int index) => ParameterInfo.Flag("Baby")
+        "baby", (int index) => ParameterInfo.Flag("Baby")
       },
       {
-        "wild",
-        (int index) => ParameterInfo.Flag("Wild")
+        "wild", (int index) => ParameterInfo.Flag("Wild")
       },
       {
-        "remove",
-        (int index) => ParameterInfo.Flag("Remove")
+        "remove", (int index) => ParameterInfo.Flag("Remove")
       },
       {
-        "sleep",
-        (int index) => ParameterInfo.Flag("Sleep")
+        "sleep", (int index) => ParameterInfo.Flag("Sleep")
       },
       {
-        "info",
-        (int index) => ParameterInfo.Flag("Info")
+        "info", (int index) => ParameterInfo.Flag("Info")
       },
       {
-        "id",
-        (int index) => index == 0 ? ParameterInfo.ObjectIds : null
+        "id", (int index) => index == 0 ? ParameterInfo.Ids : ParameterInfo.None
       },
       {
-        "prefab",
-        (int index) => index == 0 ? ParameterInfo.ObjectIds : null
+        "prefab", (int index) => index == 0 ? ParameterInfo.ObjectIds : ParameterInfo.None
       },
       {
-        "move",
-        (int index) => ParameterInfo.XZY("move", "Movement offset based on the player rotation (unless origin is given)", index)
+        "fuel", (int index) => index == 0 ? ParameterInfo.Create("fuel", "number", "Sets or gets the fuel amount.") : ParameterInfo.None
       },
       {
-        "rotate",
-        (int index) => {
+        "move", (int index) => ParameterInfo.XZY("move", "Movement offset based on the player rotation (unless origin is given)", index)
+      },
+      {
+        "rotate", (int index) => {
           var desc = $"Rotation based on the player rotation (unless origin is given)";
           if (index == 0) return ParameterInfo.Create("rotate=<color=yellow>reset</color> or " + ParameterInfo.YXZ("rotate", desc, index)[0]);
           return ParameterInfo.YXZ("rotate", desc, index);
         }
       },
       {
-        "visual",
-        (int index) => VisualAutoComplete("visual", index)
+        "visual", (int index) => VisualAutoComplete("visual", index)
       },
       {
-        "origin",
-        (int index) => index == 0 ? ParameterInfo.Origin : null
+        "origin", (int index) => index == 0 ? ParameterInfo.Origin : ParameterInfo.None
       },
     }));
   }

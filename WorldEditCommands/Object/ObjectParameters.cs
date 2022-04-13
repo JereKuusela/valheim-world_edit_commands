@@ -6,12 +6,13 @@ namespace WorldEditCommands;
 public class ObjectParameters : SharedObjectParameters {
   public Range<Vector3> Rotation = new(Vector3.zero);
   public Range<Vector3> Offset = new(Vector3.zero);
+  public Range<float>? Fuel = null;
   public string Id = "";
   public string Prefab = "";
   public string Origin = "player";
   public HashSet<string> Operations = new();
   public bool ResetRotation = false;
-  public Item Visual = null;
+  public Item? Visual = null;
 
   public static HashSet<string> SupportedOperations = new() {
     "health",
@@ -35,6 +36,7 @@ public class ObjectParameters : SharedObjectParameters {
     "rotate",
     "scale",
     "chest",
+    "fuel",
     "prefab"
   };
   public override bool ParseArgs(string[] args, Terminal terminal) {
@@ -60,6 +62,7 @@ public class ObjectParameters : SharedObjectParameters {
       if (name == "prefab") Prefab = value;
       if (name == "origin") Origin = value.ToLower();
       if (name == "visual") Visual = new(value);
+      if (name == "fuel") Fuel = Parse.TryFloatRange(value, 0f);
     }
     Radius = Math.Min(Radius, 100f);
     if (Operations.Contains("remove") && Operations.Count > 1) {

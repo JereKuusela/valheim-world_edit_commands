@@ -105,7 +105,7 @@ public class TerrainParameters {
       return false;
     }
     if (Diameter.HasValue) Size = Diameter.Value / 2f;
-    if (Depth.HasValue) Size = Mathf.Max(Depth.Value, Width.Value) / 2;
+    if (Depth.HasValue && Width.HasValue) Size = Mathf.Max(Depth.Value, Width.Value) / 2;
     if (Step != Vector3.zero) {
       var width = Size;
       var depth = Size;

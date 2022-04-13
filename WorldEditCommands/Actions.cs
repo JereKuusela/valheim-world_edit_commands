@@ -57,6 +57,13 @@ public static class Actions {
     obj.m_huntPlayer = hunt;
     obj.m_nview.GetZDO().Set("huntplayer", hunt);
   }
+  public static void SetFuel(GameObject obj, float amount) {
+    SetFuel(obj.GetComponent<Fireplace>(), amount);
+  }
+  public static void SetFuel(Fireplace obj, float amount) {
+    if (!obj) return;
+    obj.m_nview.GetZDO().Set("fuel", amount);
+  }
   public static void SetSleeping(GameObject obj, bool sleep) {
     SetSleeping(obj.GetComponent<MonsterAI>(), sleep);
   }
@@ -224,16 +231,16 @@ public static class Actions {
   public static void SetVisual(GameObject obj, Item item) {
     SetVisual(obj.GetComponent<ItemStand>(), item);
   }
-  public static void SetVisual(GameObject obj, VisSlot slot, Item item) {
+  public static void SetVisual(GameObject obj, VisSlot slot, Item? item) {
     SetVisual(obj.GetComponent<Character>(), slot, item);
   }
-  public static void SetVisual(ItemStand obj, Item item) {
+  public static void SetVisual(ItemStand obj, Item? item) {
     if (!obj || item == null) return;
     obj.m_nview.GetZDO().Set("item", item.Name);
     obj.m_nview.GetZDO().Set("variant", item.Variant);
     obj.UpdateVisual();
   }
-  public static void SetVisual(Character obj, VisSlot slot, Item item) {
+  public static void SetVisual(Character obj, VisSlot slot, Item? item) {
     if (!obj || item == null) return;
     var equipment = obj.GetComponent<VisEquipment>();
     if (!equipment) return;

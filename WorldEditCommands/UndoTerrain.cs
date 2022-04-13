@@ -15,14 +15,14 @@ public class PaintUndoData {
   public int Index = -1;
 }
 public class TerrainUndoData {
-  public HeightUndoData[] Heights;
-  public PaintUndoData[] Paints;
+  public HeightUndoData[] Heights = new HeightUndoData[0];
+  public PaintUndoData[] Paints = new PaintUndoData[0];
 }
 
 public class UndoTerrain : UndoAction {
 
-  private Dictionary<Vector3, TerrainUndoData> Before = null;
-  private Dictionary<Vector3, TerrainUndoData> After = null;
+  private Dictionary<Vector3, TerrainUndoData> Before = new();
+  private Dictionary<Vector3, TerrainUndoData> After = new();
   public Vector3 Position;
   public float Radius;
   public UndoTerrain(Dictionary<Vector3, TerrainUndoData> before, Dictionary<Vector3, TerrainUndoData> after, Vector3 position, float radius) {

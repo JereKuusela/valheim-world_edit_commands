@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using ServerDevcommands;
 using UnityEngine;
 namespace WorldEditCommands;
@@ -13,8 +14,10 @@ public class TerrainCommand {
       }
       TerrainParameters pars = new() { Position = Player.m_localPlayer.transform.position };
       if (!pars.ParseArgs(args, args.Context)) return;
-      var compilerIndices = pars.Diameter.HasValue ?
-        Terrain.GetCompilerIndicesWithCircle(pars.Position, pars.Diameter.Value, pars.BlockCheck) :
+      Dictionary<TerrainComp, Indices> compilerIndices = new();
+      if (pars.Diameter.HasValue)
+        Terrain.GetCompilerIndicesWithCircle(pars.Position, pars.Diameter.Value, pars.BlockCheck);
+      if (pars.Width.HasValue && pars.Depth.HasValue)
         Terrain.GetCompilerIndicesWithRect(pars.Position, pars.Width.Value, pars.Depth.Value, pars.Angle, pars.BlockCheck);
       var before = Terrain.GetData(compilerIndices);
       if (pars.Level.HasValue)

@@ -27,19 +27,19 @@ public class SpawnObjectAutoComplete : SharedObjectAutoComplete {
       },
       {
         "name",
-        (int index) => index == 0 ? ParameterInfo.Create("name", "string", "Name for tameable creatures.") : null
+        (int index) => index == 0 ? ParameterInfo.Create("name", "string", "Name for tameable creatures.") : ParameterInfo.None
       },
       {
         "crafter",
-        (int index) => index == 0 ? ParameterInfo.Create("name", "string", "Crafter for items.") : null
+        (int index) => index == 0 ? ParameterInfo.Create("name", "string", "Crafter for items.") : ParameterInfo.None
       },
       {
         "variant",
-        (int index) => index == 0 ? ParameterInfo.CreateWithMinMax("variant", "integer", "Variant for items.") : null
+        (int index) => index == 0 ? ParameterInfo.CreateWithMinMax("variant", "integer", "Variant for items.") : ParameterInfo.None
       },
       {
         "amount",
-        (int index) => index == 0 ? ParameterInfo.CreateWithMinMax("amount", "integer", "Amount of spawned objects.") : null
+        (int index) => index == 0 ? ParameterInfo.CreateWithMinMax("amount", "integer", "Amount of spawned objects.") : ParameterInfo.None
       },
       {
         "pos",
@@ -51,7 +51,7 @@ public class SpawnObjectAutoComplete : SharedObjectAutoComplete {
       },
       {
         "refPlayer",
-        (int index) => index == 0 ? ParameterInfo.PlayerNames : null
+        (int index) => index == 0 ? ParameterInfo.PlayerNames : ParameterInfo.None
       },
       {
         "rot",

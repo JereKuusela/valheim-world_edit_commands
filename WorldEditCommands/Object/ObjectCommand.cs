@@ -61,6 +61,10 @@ public class ObjectCommand {
           output = ChangeHealth(view, Helper.RandomValue(pars.Health));
         if (operation == "stars")
           output = SetStars(character, Helper.RandomValue(pars.Level) - 1);
+        if (operation == "fuel" && pars.Fuel != null)
+          output = SetFuel(view.GetComponent<Fireplace>(), Helper.RandomValue(pars.Fuel));
+        if (operation == "fuel" && pars.Fuel == null)
+          output = PrintFuel(view.GetComponent<Fireplace>());
         if (operation == "tame")
           output = MakeTame(character);
         if (operation == "wild")
@@ -157,6 +161,17 @@ public class ObjectCommand {
     Actions.SetLevel(obj.gameObject, amount + 1);
     return $"¤ stars changed from {previous} to {amount}.";
   }
+  private static string PrintFuel(Fireplace obj) {
+    if (obj == null) return "Skipped: ¤ is not a fireplace.";
+    var amount = obj.m_nview.GetZDO().GetFloat("fuel", 0f);
+    return $"¤ has {amount} fuel.";
+  }
+  private static string SetFuel(Fireplace obj, float amount) {
+    if (obj == null) return "Skipped: ¤ is not a fireplace.";
+    var previous = obj.m_nview.GetZDO().GetFloat("fuel", 0f);
+    Actions.SetFuel(obj, amount);
+    return $"¤ fuel changed from {previous} to {amount}.";
+  }
   private static string Move(ZNetView obj, Vector3 offset, string origin) {
     Actions.Move(obj, offset, origin);
     return $"¤ moved {offset.ToString("F1")} from {origin}.";
@@ -198,43 +213,43 @@ public class ObjectCommand {
       return $"Prefab of ¤ set to {prefab}.";
     return $"Error: Prefab of ¤ was not set to {prefab}. Probably invalid prefab name.";
   }
-  private static string SetVisual(ItemStand obj, Item item) {
+  private static string SetVisual(ItemStand obj, Item? item) {
     if (item == null) return "Skipped: Invalid item.";
     if (obj == null) return "Skipped: ¤ is not an item stand.";
     Actions.SetVisual(obj, item);
     return $"Visual of ¤ set to {item.Name} with variant {item.Variant}.";
   }
-  private static string SetHelmet(Character obj, Item item) {
+  private static string SetHelmet(Character obj, Item? item) {
     if (item == null) return "Skipped: Invalid item.";
     if (obj == null) return "Skipped: ¤ is not a creature.";
     Actions.SetVisual(obj, VisSlot.Helmet, item);
     return $"Helmet of ¤ set to {item.Name} with variant {item.Variant}.";
   }
-  private static string SetLeftHand(Character obj, Item item) {
+  private static string SetLeftHand(Character obj, Item? item) {
     if (item == null) return "Skipped: Invalid item.";
     if (obj == null) return "Skipped: ¤ is not a creature.";
     Actions.SetVisual(obj, VisSlot.HandLeft, item);
     return $"Left hand of ¤ set to {item.Name} with variant {item.Variant}.";
   }
-  private static string SetRightHand(Character obj, Item item) {
+  private static string SetRightHand(Character obj, Item? item) {
     if (item == null) return "Skipped: Invalid item.";
     if (obj == null) return "Skipped: ¤ is not a creature.";
     Actions.SetVisual(obj, VisSlot.HandRight, item);
     return $"Right hand of ¤ set to {item.Name} with variant {item.Variant}.";
   }
-  private static string SetChest(Character obj, Item item) {
+  private static string SetChest(Character obj, Item? item) {
     if (item == null) return "Skipped: Invalid item.";
     if (obj == null) return "Skipped: ¤ is not a creature.";
     Actions.SetVisual(obj, VisSlot.Chest, item);
     return $"Chest of ¤ set to {item.Name} with variant {item.Variant}.";
   }
-  private static string SetShoulder(Character obj, Item item) {
+  private static string SetShoulder(Character obj, Item? item) {
     if (item == null) return "Skipped: Invalid item.";
     if (obj == null) return "Skipped: ¤ is not a creature.";
     Actions.SetVisual(obj, VisSlot.Shoulder, item);
     return $"Shoulder of ¤ set to {item.Name} with variant {item.Variant}.";
   }
-  private static string SetLegs(Character obj, Item item) {
+  private static string SetLegs(Character obj, Item? item) {
     if (item == null) return "Skipped: Invalid item.";
     if (obj == null) return "Skipped: ¤ is not a creature.";
     Actions.SetVisual(obj, VisSlot.Legs, item);
@@ -245,7 +260,7 @@ public class ObjectCommand {
     Actions.SetModel(obj, index);
     return $"Model of ¤ set to {index}.";
   }
-  private static string SetUtility(Character obj, Item item) {
+  private static string SetUtility(Character obj, Item? item) {
     if (item == null) return "Skipped: Invalid item.";
     if (obj == null) return "Skipped: ¤ is not a creature.";
     Actions.SetVisual(obj, VisSlot.Utility, item);

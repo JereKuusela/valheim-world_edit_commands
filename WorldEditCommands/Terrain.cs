@@ -16,8 +16,8 @@ public class PaintIndex {
   public Vector3 Position;
 }
 public class Indices {
-  public IEnumerable<HeightIndex> HeightIndices;
-  public IEnumerable<PaintIndex> PaintIndices;
+  public HeightIndex[] HeightIndices = new HeightIndex[0];
+  public PaintIndex[] PaintIndices = new PaintIndex[0];
 }
 
 public enum BlockCheck {

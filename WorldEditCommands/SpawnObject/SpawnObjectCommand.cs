@@ -20,7 +20,7 @@ public class SpawnObjectCommand {
     return spawned;
   }
 
-  private static SpawnObjectParameters ParseArgs(Terminal.ConsoleEventArgs args) {
+  private static SpawnObjectParameters? ParseArgs(Terminal.ConsoleEventArgs args) {
     SpawnObjectParameters pars = new();
     if (Player.m_localPlayer) {
       pars.BasePosition = Player.m_localPlayer.transform.position;
@@ -88,7 +88,7 @@ public class SpawnObjectCommand {
       Manipulate(spawned, pars, amount);
       Player.m_localPlayer.Message(MessageHud.MessageType.TopLeft, "Spawning object " + prefabName, spawned.Count, null);
       args.Context.AddString("Spawned: " + prefabName + " at " + Helper.PrintVectorXZY(position));
-      var spawns = spawned.Select(obj => obj.GetComponent<ZNetView>()?.GetZDO()).Where(obj => obj != null).ToList();
+      var spawns = spawned.Select(obj => obj.GetComponent<ZNetView>()).Where(obj => obj != null).Select(obj => obj.GetZDO()).ToList();
       // Undo uses refPos which would disable the default relative position. So apply it to the refPos to keep the same position.
       if (pars.UseDefaultRelativePosition)
         pars.BasePosition = position;
