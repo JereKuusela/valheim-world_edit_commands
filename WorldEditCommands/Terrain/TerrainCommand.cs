@@ -20,12 +20,13 @@ public class TerrainCommand {
       if (pars.Width.HasValue && pars.Depth.HasValue)
         compilerIndices = Terrain.GetCompilerIndicesWithRect(pars.Position, pars.Width.Value, pars.Depth.Value, pars.Angle, pars.BlockCheck);
       var before = Terrain.GetData(compilerIndices);
-      if (pars.Level.HasValue)
-        Terrain.LevelTerrain(compilerIndices, pars.Position, pars.Size, pars.Smooth, pars.Level.Value);
       if (pars.Set.HasValue)
         Terrain.SetTerrain(compilerIndices, pars.Position, pars.Size, pars.Smooth, pars.Set.Value);
-      if (pars.Slope.HasValue)
+      // Level would override the slope which can lead to weird results when operating near the dig limit.
+      if (pars.Slope.HasValue && !pars.Level.HasValue)
         Terrain.SlopeTerrain(compilerIndices, pars.Position, pars.Size, pars.SlopeAngle, pars.Smooth, pars.Position.y, pars.Slope.Value);
+      if (pars.Level.HasValue)
+        Terrain.LevelTerrain(compilerIndices, pars.Position, pars.Size, pars.Smooth, pars.Level.Value);
       if (pars.Delta.HasValue)
         Terrain.RaiseTerrain(compilerIndices, pars.Position, pars.Size, pars.Smooth, pars.Delta.Value);
       if (pars.Paint != "") {

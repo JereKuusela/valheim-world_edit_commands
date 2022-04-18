@@ -21,7 +21,7 @@ Remember to bind `undo` and `redo` commands for easier undoing. Recommended also
 
 ## Object
 
-The `object` alters the hovered object or objects within a given radius. The `undo`/`redo` system is supported by saving snapshots of the object.
+The `object [...args]` alters the hovered object or objects within a given radius. The `undo`/`redo` system is supported by saving snapshots of the object.
 
 Following parameters are available:
 
@@ -33,7 +33,7 @@ Following parameters are available:
 - `level=integer`: Sets levels for creatures (level = stars + 1).
 - `move=forward,right,up`: Moves objects (meters). Static objects only update their position for other players when they leave the area.
 - `origin=player|object|world`: Base direction for `move` and `rotate`. Default value `player` uses the player's rotation, `object` uses the objects rotation and `world` uses the global coordinate system (x=north/south,y=up/down,z=west/east).
-- `prefab=id`: Replaces the object id with the given id.
+- `prefab=id`: Replaces the object with the given id.
 - `radius=number`: Radius for included objects. Capped at 100 meters. If not given, the hovered object is only affected.
 - `remove`: Removes objects. Must use the `id` parameter (`id=*` is ok). Can't be used with other operations.
 - `rotate=yaw,roll,pitch`: Rotates objects (degrees). Static objects only update their rotation for other players when they leave the area.
@@ -69,7 +69,7 @@ Note: Creatures reset their style when attacking.
 
 ## Spawn object
 
-The `spawn_object [object id]` spawns objects to the world. The `undo`/`redo` system is supported by saving snapshots of the created objects.
+The `spawn_object [object id] [...args]` spawns objects to the world. The `undo`/`redo` system is supported by saving snapshots of the created objects.
 
 Following parameters are available:
 
@@ -111,7 +111,7 @@ Note: Creatures reset their style when attacking.
 
 ## Spawn location
 
-The `spawn_location [location id]` spawns Point of Interests to the world. The main difference to the `location` command is that the game saving doesn't get disabled and all parameters can be set. The `undo`/`redo` system is supported by saving snapshots of the created objects.
+The `spawn_location [location id] [...args]` spawns Point of Interests to the world. The main difference to the `location` command is that the game saving doesn't get disabled and all parameters can be set. The `undo`/`redo` system is supported by saving snapshots of the created objects.
 
 Following parameters are available:
 
@@ -130,7 +130,7 @@ Following parameters are available:
 
 ## Terrain
 
-The `terrain` command can create different shapes on top of the usual flattening and resetting. The `undo`/`redo` system is supported by saving snapshots of the terrain.
+The `terrain [...args]` command can create different shapes on top of the usual flattening and resetting. The `undo`/`redo` system is supported by saving snapshots of the terrain.
 
 Note: The granularity of the terrain system is 0.5 meters.
 
@@ -162,11 +162,16 @@ Following parameters are available:
 
 ### Examples
 
-- `terrain level radius=10`: Sets terrain height within 10 meters to the same level as below you. 
-- `terrain level terrain raise=4 radius=4 square smooth=1 paint=paved`: Creates a pyramid.
-- `terrain level raise=4 square;terrain lower=4 radius=4 square smooth=1 paint=paved`: Creates a pyramid shaped hole.
-- `alias level terrain level radius=$`: New command to `level [value]` for easier leveling.
-- `alias level terrain level square radius=$`: New command to `level_sq [value]` for easier leveling.
+- `terrain level circle=20`: Sets terrain height within 10 meters (20 meters diameter) to the same level as below you. 
+- `terrain level terrain raise=4 rect=8 smooth=1 paint=paved`: Creates a pyramid.
+- `terrain level raise=4 rect=8;terrain lower=4 rect=8 smooth=1 paint=paved`: Creates a pyramid shaped hole.
+- `terrain level refPos=300,40,-500 rect=10,10000`: Creates a long leveled path. Walk along the path to load new areas and then use the command again to extend the path.
+- `terrain refPos=-23,23 angle=e rect=10 slope=4`: Creates a slope rising towards east.
+- `terrain refPos=-23,23 angle=e rect=10 slope=4 step=1 level`: Creates a level at the end of the slope.
+- `terrain refPos=-23,23 angle=e rect=10 slope=4,e step=1,1`: Creates a slope at right side of the level rising towards south (east of east).
+- `terrain refPos=-23,23 angle=e rect=10 slope=4 step=1,2,1 level`: Creates a level at the end of the slope. The last parameter of step is needed because the slope is not going to the original direction so it won't be raised automatically.
+- `alias level terrain level circle=$`: New command `level [value]` for easier leveling.
+- `alias level terrain level rect=$`: New command `level_sq [value]` for easier leveling.
 
 # Mechanics
 
@@ -211,7 +216,7 @@ This shouldn't cause any issues unless objects are moved long distances (which m
 # Changelog
 
 - v1.1
-	- Adds basic undo to the `object` command.
+	- Adds an basic undo to the `object` command.
 	- Adds a new parameter `prefab` to the `object` command to allow replacing objects.
 	- Adds a new parameter `refPos` to the `terrain` command to allow overriding the player's position.
 	- Adds a new parameter `slope` to the `terrain` command to allow creating slopes.

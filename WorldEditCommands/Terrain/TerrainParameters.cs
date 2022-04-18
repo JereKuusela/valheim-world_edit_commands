@@ -117,8 +117,11 @@ public class TerrainParameters {
       if (Depth.HasValue) depth = Depth.Value / 2;
       Offset.x += Step.x * width * 2;
       Offset.z += Step.z * depth * 2;
-      if (Slope.HasValue)
+      if (Slope.HasValue) {
         Offset.y = Slope.Value * (Step.z + Step.y);
+        // Remove half to level at start of the slope (more intuitive for the users).
+        if (Level.HasValue) Level += Offset.y - 0.5f * Slope.Value;
+      }
     }
     if (Offset != Vector3.zero) {
       var original = Offset;
