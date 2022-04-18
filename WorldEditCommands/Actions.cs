@@ -254,9 +254,9 @@ public static class Actions {
       rotation = Quaternion.identity;
     if (origin == "object")
       rotation = obj.transform.rotation;
-    position += rotation * Vector3.forward * offset.x;
-    position += rotation * Vector3.right * offset.z;
+    position += rotation * Vector3.right * offset.x;
     position += rotation * Vector3.up * offset.y;
+    position += rotation * Vector3.forward * offset.z;
     zdo.SetPosition(position);
     obj.transform.position = position;
   }
@@ -283,5 +283,15 @@ public static class Actions {
   public static void Scale(ZNetView obj, Vector3 scale) {
     if (obj.m_syncInitialScale)
       obj.SetLocalScale(scale);
+  }
+
+  public static void RemoveZDO(ZDO zdo) {
+    if (zdo == null || !zdo.IsValid()) return;
+    if (!zdo.IsOwner())
+      zdo.SetOwner(ZDOMan.instance.GetMyID());
+    if (ZNetScene.instance.m_instances.TryGetValue(zdo, out var view))
+      ZNetScene.instance.Destroy(view.gameObject);
+    else
+      ZDOMan.instance.DestroyZDO(zdo);
   }
 }

@@ -44,13 +44,13 @@ public class ObjectAutoComplete : SharedObjectAutoComplete {
         "fuel", (int index) => index == 0 ? ParameterInfo.Create("fuel", "number", "Sets or gets the fuel amount.") : ParameterInfo.None
       },
       {
-        "move", (int index) => ParameterInfo.XZY("move", "Movement offset based on the player rotation (unless origin is given)", index)
+        "move", (int index) => ParameterInfo.FRU("move", "Movement offset based on the player rotation (unless origin is given)", index)
       },
       {
         "rotate", (int index) => {
-          var desc = $"Rotation based on the player rotation (unless origin is given)";
-          if (index == 0) return ParameterInfo.Create("rotate=<color=yellow>reset</color> or " + ParameterInfo.YXZ("rotate", desc, index)[0]);
-          return ParameterInfo.YXZ("rotate", desc, index);
+          var desc = "Rotation based on the player rotation (unless origin is given)";
+          if (index == 0) return ParameterInfo.Create("rotate=<color=yellow>reset</color> or " + ParameterInfo.YawRollPitch("rotate", desc, index)[0].Substring(1));
+          return ParameterInfo.YawRollPitch("rotate", desc, index);
         }
       },
       {

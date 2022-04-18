@@ -35,12 +35,11 @@ public class AliasesCommand {
         args.Context.TryRunCommand("alias change_utility object utility=$ radius=$ id=$");
         args.Context.TryRunCommand("alias essential object tame health=1E30 radius=$ id=$");
         args.Context.TryRunCommand("alias spawn spawn_object $ amount=$ level=$");
-
       }
     });
     AutoComplete.Register("world_edit_aliases", (int index) => {
       if (index == 0) return new() { "set", "clear" };
-      return null;
+      return ParameterInfo.None;
     });
   }
 }

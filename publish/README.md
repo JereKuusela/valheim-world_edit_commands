@@ -21,7 +21,7 @@ Remember to bind `undo` and `redo` commands for easier undoing. Recommended also
 
 ## Object
 
-The `object` alters the hovered object or objects within a given radius. This command doesn't support the `undo`/`redo` system.
+The `object` alters the hovered object or objects within a given radius. The `undo`/`redo` system is supported by saving snapshots of the object.
 
 Following parameters are available:
 
@@ -31,12 +31,12 @@ Following parameters are available:
 - `id`: Filters objects by id. Supports starts with, ends with or contains by using "*". Default is `*` that allows all objects which don't start with "_". 
 - `info`: Prints information of objects.
 - `level=integer`: Sets levels for creatures (level = stars + 1).
-- `move=x,z,y`: Moves objects (meters). Static objects only update their position for other players when they leave the area.
+- `move=forward,right,up`: Moves objects (meters). Static objects only update their position for other players when they leave the area.
 - `origin=player|object|world`: Base direction for `move` and `rotate`. Default value `player` uses the player's rotation, `object` uses the objects rotation and `world` uses the global coordinate system (x=north/south,y=up/down,z=west/east).
 - `prefab=id`: Replaces the object id with the given id.
 - `radius=number`: Radius for included objects. Capped at 100 meters. If not given, the hovered object is only affected.
 - `remove`: Removes objects. Must use the `id` parameter (`id=*` is ok). Can't be used with other operations.
-- `rotate=y,x,z`: Rotates objects (degrees). Static objects only update their rotation for other players when they leave the area.
+- `rotate=yaw,roll,pitch`: Rotates objects (degrees). Static objects only update their rotation for other players when they leave the area.
 - `rotate=reset`: Resets object rotation. Static objects only update their rotation for other players when they leave the area.
 - `scale=x,z,y`: Scales objects (which support it). A single value sets all of the scales.
 - `sleep`: Makes creatures fall asleep (that support it).
@@ -69,7 +69,7 @@ Note: Creatures reset their style when attacking.
 
 ## Spawn object
 
-The `spawn_object [object id]` spawns object to the world. This is similar to the `spawn` command but has more parameters and `undo`/`redo` system.
+The `spawn_object [object id]` spawns objects to the world. The `undo`/`redo` system is supported by saving snapshots of the created objects.
 
 Following parameters are available:
 
@@ -78,12 +78,12 @@ Following parameters are available:
 - `durability=number` or `health=number`: Overrides the current durability for items, the current health for structures and the maximum health for creatures. Very high values like 1E30 turn the target invulnerable (including gravity for structures).
 - `hunt`: Spawned creatures are in the hunt mode.
 - `level=integer`: Spawned creatures have this amount of level (level = stars + 1).
-- `pos=x,z,y`: Relative position (meters) from the player. If not given, the objects are spawned 2 meters front of the player. If y coordinate is not given, the objects snaps to the ground.
+- `pos=forward,right,up`: Relative position (meters) from the player. If not given, the objects are spawned 2 meters front of the player. If y coordinate is not given, the objects snaps to the ground.
 - `radius=number`: Maximum spawn distance when spawning multiple objects. Default is 0.5 meters.
 - `refPlayer=name`: Allows overriding the player's position with another player's position.
 - `refPos=x,z,y`: Allows overriding the player's position for the command. Used by `redo` and can be useful for some advanced usage.
-- `refRot=y,x,z`: Allows overriding the player's rotation for the command. Used by `redo` and can be useful for some advanced usage.
-- `rot=y,x,z`: Relative rotation (degrees) from the player's rotation.
+- `refRot=yaw,roll,pick`: Allows overriding the player's rotation for the command. Used by `redo` and can be useful for some advanced usage.
+- `rot=yaw,roll,pick`: Relative rotation (degrees) from the player's rotation.
 - `scale=x,z,y`: Scale for the spawned objects (which support it). A single value sets all of the scales.
 - `stars=integer`: Spawned creatures have this amount of stars (stars = level - 1).
 - `tame`: Spawned creatures are tamed.
@@ -111,16 +111,16 @@ Note: Creatures reset their style when attacking.
 
 ## Spawn location
 
-The `spawn_location [location id]` spawns Point of Interests to the world. The main difference to the `test_location` command is that the game saving doesn't get disabled and all parameters can be set. It also supports the `undo`/`redo` system.
+The `spawn_location [location id]` spawns Point of Interests to the world. The main difference to the `location` command is that the game saving doesn't get disabled and all parameters can be set. The `undo`/`redo` system is supported by saving snapshots of the created objects.
 
 Following parameters are available:
 
 - `seed=number`: Sets the result of randomized locations. If not given, the result is random.
 - `dungeonSeed=number`: Sets the result of next dungeon generation. If not given, the result is random. If the location is not a dungeon, this will carry over to the next dungeon generation. Forcing dungeon seed randomize the dungeon room seeds (instead of being based on the room position).
-- `pos=x,z,y`: Relative position (meters) from the player. If not given, the location will be placed at the player. If y coordinate is not given, the location snaps to the ground.
+- `pos=forward,right,up`: Relative position (meters) from the player. If not given, the location will be placed at the player. If y coordinate is not given, the location snaps to the ground.
 - `refPos=x,z,y`: Allows overriding the player's position for the command. Used by `redo` and can be useful for some advanced usage.
-- `rot=y`: Relative rotation (degrees) from the player's rotation.
-- `refRot=y`: Allows overriding the player's rotation for the command. Used by `redo` and can be useful for some advanced usage.
+- `rot=degrees`: Relative rotation (degrees) from the player's rotation.
+- `refRot=degrees`: Allows overriding the player's rotation for the command. Used by `redo` and can be useful for some advanced usage.
 
 ### Examples
 
@@ -130,9 +130,11 @@ Following parameters are available:
 
 ## Terrain
 
-The `terrain` command can create different shapes on top of the usual flattening and resetting. It also supports the `undo`/`redo` system.
+The `terrain` command can create different shapes on top of the usual flattening and resetting. The `undo`/`redo` system is supported by saving snapshots of the terrain.
 
 Note: The granularity of the terrain system is 0.5 meters.
+
+Note: Terrain is only affected in loaded areas. You can use Render Limits mod to increase this area.
 
 Following parameters are available:
 
@@ -142,12 +144,12 @@ Following parameters are available:
 - `level=number`: Sets terrain height to the given altitude. If not given, uses the ground altitude below the player.
 - `paint=value`: Sets the terrain material (dirt, paved, cultivated or grass to reset).
 - `slope=number,angle`: Creates a slope centered at current position with a given height.
-- `refPos=x,z`: Overwrites the player's position. Allows fixing the current position for more precise editing.
-- `offset=x,z,y`: Moves the targeted position while still using the altitude of the player's position.
+- `refPos=x,z,y`: Overwrites the player's position. Allows fixing the current position for more precise editing. The y coordinate can be used to override the current ground altitude.
+- `offset=forward,right,up`: Moves the targeted position while still using the altitude of the player's position.
 - `step=forward,right,up`: Calculates offset based on the radius (and slope height if given).
 - `angle=degrees`: Determines the slope and the step direction. Cardinal directions like n, ne, e, se, s, sw, w and nw work as a value too.
-- `circle=number`: Determines the diamter of the affected terrain. Capped at 128 meters to prevent changes outside the active play area (causes technical issues).
-- `rect=width,depth`: Determines the size of the affected terrain. Capped at 128 meters to prevent changes outside the active play area (causes technical issues).
+- `circle=number`: Determines the diamter of the affected terrain.
+- `rect=width,depth`: Determines the size of the affected terrain.
 - `blockcheck`: Exclude terrain that is under structures or other objects. This can be used to create specific shapes.
 - `blockcheck=on/off/inverse`:
 	- on: Exclude terrain that is under structures or other objects.
@@ -209,6 +211,7 @@ This shouldn't cause any issues unless objects are moved long distances (which m
 # Changelog
 
 - v1.1
+	- Adds basic undo to the `object` command.
 	- Adds a new parameter `prefab` to the `object` command to allow replacing objects.
 	- Adds a new parameter `refPos` to the `terrain` command to allow overriding the player's position.
 	- Adds a new parameter `slope` to the `terrain` command to allow creating slopes.
@@ -216,7 +219,11 @@ This shouldn't cause any issues unless objects are moved long distances (which m
 	- Adds a new parameter `step` to the `terrain` command to automatically calculate the offset based on radius.
 	- Adds a new parameter `angle` to the `terrain` command to select the slope and step direction.
 	- Adds a new parameter `fuel` to the `object` command to set or print the fuel amount.
+	- Changes offset parameter description from `x,z,y` to `forward,right,up`.
+	- Changes rotation parameter description from `y,x,z` to `yaw,roll,pitch`.
 	- Changes parameters `radius` and `square`of the `terrain` command to `circle` and `rect`.
+	- Improves output of some commands.
+	- Removes the size restriction from `circle` and `rect` parameters.
 
 - v1.0
 	- Initial release.

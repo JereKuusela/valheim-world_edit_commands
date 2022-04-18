@@ -16,9 +16,9 @@ public class TerrainCommand {
       if (!pars.ParseArgs(args, args.Context)) return;
       Dictionary<TerrainComp, Indices> compilerIndices = new();
       if (pars.Diameter.HasValue)
-        Terrain.GetCompilerIndicesWithCircle(pars.Position, pars.Diameter.Value, pars.BlockCheck);
+        compilerIndices = Terrain.GetCompilerIndicesWithCircle(pars.Position, pars.Diameter.Value, pars.BlockCheck);
       if (pars.Width.HasValue && pars.Depth.HasValue)
-        Terrain.GetCompilerIndicesWithRect(pars.Position, pars.Width.Value, pars.Depth.Value, pars.Angle, pars.BlockCheck);
+        compilerIndices = Terrain.GetCompilerIndicesWithRect(pars.Position, pars.Width.Value, pars.Depth.Value, pars.Angle, pars.BlockCheck);
       var before = Terrain.GetData(compilerIndices);
       if (pars.Level.HasValue)
         Terrain.LevelTerrain(compilerIndices, pars.Position, pars.Size, pars.Smooth, pars.Level.Value);

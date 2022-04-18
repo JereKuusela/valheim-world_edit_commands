@@ -18,11 +18,11 @@ public class SpawnLocationAutoComplete {
     }, new() {
       {
         "seed",
-        (int index) => index == 0 ? ParameterInfo.Create("seed", "integer", "Sets the location appearance (if randomized).") : null
+        (int index) => index == 0 ? ParameterInfo.Create("seed", "integer", "Sets the location appearance (if randomized).") : ParameterInfo.None
       },
       {
         "dungeonSeed",
-        (int index) => index == 0 ? ParameterInfo.Create("dungeonSeed", "integer", "Sets the room layout for the next dungeon.") : null
+        (int index) => index == 0 ? ParameterInfo.Create("dungeonSeed", "integer", "Sets the room layout for the next dungeon.") : ParameterInfo.None
       },
       {
         "pos",
@@ -34,11 +34,11 @@ public class SpawnLocationAutoComplete {
       },
       {
         "rot",
-        (int index) => index == 0 ? ParameterInfo.Create("rot", "degrees", "Sets the location rotation. Randomized by default.") : null
+        (int index) => index == 0 ? ParameterInfo.Create("rot", "degrees", "Sets the location rotation. Randomized by default.") : ParameterInfo.None
       },
       {
         "refRot",
-        (int index) => index == 0 ? ParameterInfo.Create("refRot", "degrees", "Overrides the reference rotation (player's rotation).") : null
+        (int index) => index == 0 ? ParameterInfo.Create("refRot", "degrees", "Overrides the reference rotation (player's rotation).") : ParameterInfo.None
       }
     });
   }

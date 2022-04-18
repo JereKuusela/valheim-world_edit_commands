@@ -44,7 +44,10 @@ public static class Terrain {
   private static IEnumerable<TerrainComp> GetTerrainCompilersWithCircle(Vector3 position, float radius) {
     List<Heightmap> heightMaps = new();
     Heightmap.FindHeightmap(position, radius, heightMaps);
-    return heightMaps.Select(hmap => hmap.GetAndCreateTerrainCompiler());
+    var pos = ZNet.instance.GetReferencePosition();
+    var zs = ZoneSystem.instance;
+    var ns = ZNetScene.instance;
+    return heightMaps.Where(hmap => ns.InActiveArea(zs.GetZone(hmap.transform.position), pos)).Select(hmap => hmap.GetAndCreateTerrainCompiler());
   }
   private static IEnumerable<TerrainComp> GetTerrainCompilersWithRect(Vector3 position, float width, float depth, float angle) {
     List<Heightmap> heightMaps = new();
@@ -54,7 +57,10 @@ public static class Terrain {
     var dimensionMultiplier = Mathf.Abs(Mathf.Sin(angle)) + Mathf.Abs(Mathf.Cos(angle));
     var size = maxDimension * dimensionMultiplier / 2f;
     Heightmap.FindHeightmap(position, size, heightMaps);
-    return heightMaps.Select(hmap => hmap.GetAndCreateTerrainCompiler());
+    var pos = ZNet.instance.GetReferencePosition();
+    var zs = ZoneSystem.instance;
+    var ns = ZNetScene.instance;
+    return heightMaps.Where(hmap => ns.InActiveArea(zs.GetZone(hmap.transform.position), pos)).Select(hmap => hmap.GetAndCreateTerrainCompiler());
   }
   public static CompilerIndices GetCompilerIndicesWithCircle(Vector3 centerPos, float diameter, BlockCheck blockCheck) {
     return GetTerrainCompilersWithCircle(centerPos, diameter / 2f).ToDictionary(comp => comp, comp => {

@@ -36,6 +36,7 @@ public class TerrainParameters {
 
   public bool ParseArgs(Terminal.ConsoleEventArgs args, Terminal terminal) {
     var playerPosition = Position;
+    Position.y = 0;
     foreach (var arg in args.Args) {
       var split = arg.Split('=');
       var name = split[0].ToLower();
@@ -44,7 +45,12 @@ public class TerrainParameters {
       if (name == "refpos")
         Position = Parse.TryVectorXZY(Parse.Split(value));
     }
-    Position.y = ZoneSystem.instance.GetGroundHeight(Position);
+    if (Position.y <= 0f)
+      Position.y = ZoneSystem.instance.GetGroundHeight(Position);
+    if (Position.y <= 0f) {
+      Helper.AddMessage(terminal, "Error: Unable to find the ground height. Use <color=yellow>refPos</color> with the y coordinate.");
+      return false;
+    }
     foreach (var arg in args.Args) {
       var split = arg.Split('=');
       var name = split[0].ToLower();
@@ -84,8 +90,6 @@ public class TerrainParameters {
         Level = Parse.TryFloat(value, Position.y);
       if (name == "step")
         Step = Parse.TryVectorZXY(values);
-      if (name == "refPos")
-        Position = Parse.TryVectorXZY(Parse.Split(value), Position);
       if (name == "blockcheck") {
         if (value == "on") BlockCheck = BlockCheck.On;
         else if (value == "inverse") BlockCheck = BlockCheck.Inverse;
@@ -121,29 +125,6 @@ public class TerrainParameters {
       Offset.x = Mathf.Cos(Angle) * original.x + Mathf.Sin(Angle) * original.z;
       Offset.z = Mathf.Cos(Angle) * original.z - Mathf.Sin(Angle) * original.x;
       Position += Offset;
-    }
-    var maxDistance = 128f - 2 * Utils.LengthXZ(Position - playerPosition);
-    if (maxDistance < 0) {
-      Helper.AddMessage(terminal, $"Error: The edited terrain is too far.");
-      return false;
-    }
-    if (Diameter.HasValue) {
-      if (maxDistance < Diameter) {
-        Helper.AddMessage(terminal, $"Note: Diameter lowered to {maxDistance.ToString("F1")} to stay within the editing limits.");
-      }
-      Diameter = Mathf.Min(maxDistance, Diameter.Value);
-    }
-    if (Width.HasValue) {
-      if (maxDistance < Width) {
-        Helper.AddMessage(terminal, $"Note: Width lowered to {maxDistance.ToString("F1")} to stay within the editing limits.");
-      }
-      Width = Mathf.Min(maxDistance, Width.Value);
-    }
-    if (Depth.HasValue) {
-      if (maxDistance < Depth) {
-        Helper.AddMessage(terminal, $"Note: Height lowered to {maxDistance.ToString("F1")} to stay within the editing limits.");
-      }
-      Depth = Mathf.Min(maxDistance, Depth.Value);
     }
     // Circle doesn't use the angle so the slope needs both.
     if (Diameter.HasValue) SlopeAngle += Angle;

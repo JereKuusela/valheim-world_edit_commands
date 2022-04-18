@@ -4,12 +4,22 @@ using System.Linq;
 using ServerDevcommands;
 using UnityEngine;
 namespace WorldEditCommands;
+///<summary>Needed to keep track of edited zdos.</summary>
+public class EditInfo {
+  public EditInfo(ZDO zdo) {
+    From = zdo.Clone();
+    To = zdo;
+  }
+  public EditData ToData() => new EditData(From, To);
+  ZDO From;
+  ZDO To;
+}
 public class ObjectCommand {
   public const string Name = "object";
+  public static Dictionary<ZDOID, EditInfo> EditedInfo = new();
   private static bool IsIncluded(string id, string name) {
-    if (id.StartsWith("*", StringComparison.Ordinal) && id.EndsWith("*", StringComparison.Ordinal)) {
+    if (id.StartsWith("*", StringComparison.Ordinal) && id.EndsWith("*", StringComparison.Ordinal))
       return name.Contains(id.Substring(1, id.Length - 3));
-    }
     if (id.StartsWith("*", StringComparison.Ordinal)) return name.EndsWith(id.Substring(1), StringComparison.Ordinal);
     if (id.EndsWith("*", StringComparison.Ordinal)) return name.StartsWith(id.Substring(0, id.Length - 2), StringComparison.Ordinal);
     return id == name;
@@ -35,6 +45,11 @@ public class ObjectCommand {
       return zdos.Where(zdo => Vector3.Distance(zdo.GetPosition(), position) <= distance);
     return zdos;
   }
+  private static void AddData(ZNetView view) {
+    var zdo = view.GetZDO();
+    if (EditedInfo.ContainsKey(zdo.m_uid)) return;
+    EditedInfo[zdo.m_uid] = new EditInfo(zdo);
+  }
   private static void Execute(Terminal context, ObjectParameters pars, IEnumerable<string> operations, IEnumerable<ZDO> zdos) {
     var scene = ZNetScene.instance;
     Dictionary<ZDOID, long> oldOwner = new();
@@ -46,6 +61,8 @@ public class ObjectCommand {
       }
       return true;
     }).Select(zdo => scene.FindInstance(zdo)).ToArray();
+    List<ZDO> removed = new();
+    EditedInfo.Clear();
     foreach (var view in views) {
       oldOwner.Add(view.GetZDO().m_uid, view.GetZDO().m_owner);
       view.ClaimOwnership();
@@ -54,45 +71,44 @@ public class ObjectCommand {
     foreach (var operation in operations) {
       foreach (var view in views) {
         if (!view) continue;
-        var character = view.GetComponent<Character>();
         var output = "";
         var name = Utils.GetPrefabName(view.gameObject);
         if (operation == "durability" || operation == "health")
           output = ChangeHealth(view, Helper.RandomValue(pars.Health));
         if (operation == "stars")
-          output = SetStars(character, Helper.RandomValue(pars.Level) - 1);
+          output = SetStars(view, Helper.RandomValue(pars.Level) - 1);
         if (operation == "fuel" && pars.Fuel != null)
-          output = SetFuel(view.GetComponent<Fireplace>(), Helper.RandomValue(pars.Fuel));
+          output = SetFuel(view, Helper.RandomValue(pars.Fuel));
         if (operation == "fuel" && pars.Fuel == null)
-          output = PrintFuel(view.GetComponent<Fireplace>());
+          output = PrintFuel(view);
         if (operation == "tame")
-          output = MakeTame(character);
+          output = MakeTame(view);
         if (operation == "wild")
-          output = MakeWild(character);
+          output = MakeWild(view);
         if (operation == "baby")
-          output = SetBaby(view.GetComponent<Growup>());
+          output = SetBaby(view);
         if (operation == "info")
           output = GetInfo(view);
         if (operation == "sleep")
-          output = MakeSleep(view.GetComponent<MonsterAI>());
+          output = MakeSleep(view);
         if (operation == "visual")
-          output = SetVisual(view.GetComponent<ItemStand>(), pars.Visual);
+          output = SetVisual(view, pars.Visual);
         if (operation == "model")
-          output = SetModel(character, Helper.RandomValue(pars.Model));
+          output = SetModel(view, Helper.RandomValue(pars.Model));
         if (operation == "helmet")
-          output = SetHelmet(character, pars.Helmet);
+          output = SetHelmet(view, pars.Helmet);
         if (operation == "left_hand")
-          output = SetLeftHand(character, pars.LeftHand);
+          output = SetLeftHand(view, pars.LeftHand);
         if (operation == "right_hand")
-          output = SetRightHand(character, pars.RightHand);
+          output = SetRightHand(view, pars.RightHand);
         if (operation == "chest")
-          output = SetChest(character, pars.Chest);
+          output = SetChest(view, pars.Chest);
         if (operation == "shoulders")
-          output = SetShoulder(character, pars.Shoulders);
+          output = SetShoulder(view, pars.Shoulders);
         if (operation == "legs")
-          output = SetLegs(character, pars.Legs);
+          output = SetLegs(view, pars.Legs);
         if (operation == "utility")
-          output = SetUtility(character, pars.Utility);
+          output = SetUtility(view, pars.Utility);
         if (operation == "prefab")
           output = SetPrefab(view, pars.Prefab);
         if (operation == "move")
@@ -106,7 +122,8 @@ public class ObjectCommand {
         if (operation == "scale")
           output = Scale(view, Helper.RandomValue(pars.Scale));
         if (operation == "remove") {
-          ZNetScene.instance.Destroy(view.gameObject);
+          removed.Add(view.GetZDO().Clone());
+          Actions.RemoveZDO(view.GetZDO());
           output = "Entity ¤ destroyed.";
         }
         // No operation.
@@ -122,6 +139,14 @@ public class ObjectCommand {
       if (!view || view.GetZDO() == null || !view.GetZDO().IsValid() || !oldOwner.ContainsKey(view.GetZDO().m_uid)) continue;
       view.GetZDO().SetOwner(oldOwner[view.GetZDO().m_uid]);
     }
+    if (removed.Count > 0) {
+      UndoRemove undo = new(removed);
+      UndoManager.Add(undo);
+    }
+    if (EditedInfo.Count > 0) {
+      UndoEdit undo = new(EditedInfo.Select(info => info.Value.ToData()));
+      UndoManager.Add(undo);
+    }
   }
   public ObjectCommand() {
     ObjectAutoComplete autoComplete = new();
@@ -135,7 +160,7 @@ public class ObjectCommand {
         zdos = GetZDOs(pars.Id, pars.Radius);
       } else {
         var view = Helper.GetHovered(args);
-        if (!view) return;
+        if (view == null) return;
         if (!GetPrefabs(pars.Id).Contains(view.GetZDO().GetPrefab())) {
           Helper.AddMessage(args.Context, $"Skipped: {view.name} has invalid id.");
           return;
@@ -148,121 +173,156 @@ public class ObjectCommand {
   }
 
   private static string ChangeHealth(ZNetView obj, float amount) {
-    var character = obj.GetComponent<Character>();
-    if (character == null && obj.GetComponent<WearNTear>() == null && obj.GetComponent<TreeLog>() == null && obj.GetComponent<Destructible>() == null && obj.GetComponent<TreeBase>() == null)
+    if (!obj.GetComponent<Character>() || !obj.GetComponent<WearNTear>() && !obj.GetComponent<TreeLog>() || !obj.GetComponent<Destructible>() || !obj.GetComponent<TreeBase>())
       return "Skipped: ¤ is not a creature or a destructible.";
+    AddData(obj);
     var previous = Actions.SetHealth(obj.gameObject, amount);
     var amountStr = amount == 0f ? "default" : amount.ToString("F0");
     return $"¤ health changed from {previous.ToString("F0")} to {amountStr}.";
   }
-  private static string SetStars(Character obj, int amount) {
-    if (obj == null) return "Skipped: ¤ is not a creature.";
+  private static string SetStars(ZNetView view, int amount) {
+    var obj = view.GetComponent<Character>();
+    if (!obj) return "Skipped: ¤ is not a creature.";
+    AddData(view);
     var previous = obj.GetLevel() - 1;
-    Actions.SetLevel(obj.gameObject, amount + 1);
+    Actions.SetLevel(obj, amount + 1);
     return $"¤ stars changed from {previous} to {amount}.";
   }
-  private static string PrintFuel(Fireplace obj) {
-    if (obj == null) return "Skipped: ¤ is not a fireplace.";
-    var amount = obj.m_nview.GetZDO().GetFloat("fuel", 0f);
+  private static string PrintFuel(ZNetView view) {
+    var obj = view.GetComponent<Fireplace>();
+    if (!obj) return "Skipped: ¤ is not a fireplace.";
+    var amount = view.GetZDO().GetFloat("fuel", 0f);
     return $"¤ has {amount} fuel.";
   }
-  private static string SetFuel(Fireplace obj, float amount) {
-    if (obj == null) return "Skipped: ¤ is not a fireplace.";
-    var previous = obj.m_nview.GetZDO().GetFloat("fuel", 0f);
+  private static string SetFuel(ZNetView view, float amount) {
+    var obj = view.GetComponent<Fireplace>();
+    if (!obj) return "Skipped: ¤ is not a fireplace.";
+    AddData(view);
+    var previous = view.GetZDO().GetFloat("fuel", 0f);
     Actions.SetFuel(obj, amount);
     return $"¤ fuel changed from {previous} to {amount}.";
   }
-  private static string Move(ZNetView obj, Vector3 offset, string origin) {
-    Actions.Move(obj, offset, origin);
-    return $"¤ moved {offset.ToString("F1")} from {origin}.";
+  private static string Move(ZNetView view, Vector3 offset, string origin) {
+    AddData(view);
+    Actions.Move(view, offset, origin);
+    return $"¤ moved {offset.ToString("F1")} from the {origin}.";
   }
-  private static string ResetRotation(ZNetView obj) {
-    Actions.ResetRotation(obj);
+  private static string ResetRotation(ZNetView view) {
+    AddData(view);
+    Actions.ResetRotation(view);
     return $"¤ rotation reseted.";
   }
-  private static string Rotate(ZNetView obj, Vector3 rotation, string origin) {
-    Actions.Rotate(obj, rotation, origin);
-    return $"¤ rotated {rotation.ToString("F1")} from {origin}.";
+  private static string Rotate(ZNetView view, Vector3 rotation, string origin) {
+    AddData(view);
+    Actions.Rotate(view, rotation, origin);
+    return $"¤ rotated {rotation.ToString("F1")} from the {origin}.";
   }
-  private static string Scale(ZNetView obj, Vector3 scale) {
-    Actions.Scale(obj, scale);
+  private static string Scale(ZNetView view, Vector3 scale) {
+    AddData(view);
+    Actions.Scale(view, scale);
     return $"¤ scaled to {scale.ToString("F1")}.";
   }
-  private static string SetBaby(Growup obj) {
-    if (obj == null) return "Skipped: ¤ is not an offspring.";
+  private static string SetBaby(ZNetView view) {
+    var obj = view.GetComponent<Growup>();
+    if (!obj) return "Skipped: ¤ is not an offspring.";
+    AddData(view);
     Actions.SetBaby(obj);
     return "¤ growth disabled.";
   }
-  private static string MakeTame(Character obj) {
-    if (obj == null) return "Skipped: ¤ is not a creature.";
+  private static string MakeTame(ZNetView view) {
+    var obj = view.GetComponent<Character>();
+    if (!obj) return "Skipped: ¤ is not a creature.";
+    AddData(view);
     Actions.SetTame(obj, true);
     return "¤ made tame.";
   }
-  private static string MakeWild(Character obj) {
-    if (obj == null) return "Skipped: ¤ is not a creature.";
+  private static string MakeWild(ZNetView view) {
+    var obj = view.GetComponent<Character>();
+    if (!obj) return "Skipped: ¤ is not a creature.";
+    AddData(view);
     Actions.SetTame(obj, false);
     return "¤ made wild.";
   }
-  private static string MakeSleep(MonsterAI obj) {
-    if (obj == null) return "Skipped: ¤ is not a creature.";
+  private static string MakeSleep(ZNetView view) {
+    var obj = view.GetComponent<MonsterAI>();
+    if (!obj) return "Skipped: ¤ is not a creature.";
+    AddData(view);
     Actions.SetSleeping(obj, true);
     return "¤ made to sleep.";
   }
-  private static string SetPrefab(ZNetView obj, string prefab) {
-    if (Actions.SetPrefab(obj, prefab))
+  private static string SetPrefab(ZNetView view, string prefab) {
+    AddData(view);
+    if (Actions.SetPrefab(view, prefab))
       return $"Prefab of ¤ set to {prefab}.";
     return $"Error: Prefab of ¤ was not set to {prefab}. Probably invalid prefab name.";
   }
-  private static string SetVisual(ItemStand obj, Item? item) {
+  private static string SetVisual(ZNetView view, Item? item) {
     if (item == null) return "Skipped: Invalid item.";
-    if (obj == null) return "Skipped: ¤ is not an item stand.";
+    var obj = view.GetComponent<ItemStand>();
+    if (!obj) return "Skipped: ¤ is not an item stand.";
+    AddData(view);
     Actions.SetVisual(obj, item);
     return $"Visual of ¤ set to {item.Name} with variant {item.Variant}.";
   }
-  private static string SetHelmet(Character obj, Item? item) {
+  private static string SetHelmet(ZNetView view, Item? item) {
     if (item == null) return "Skipped: Invalid item.";
-    if (obj == null) return "Skipped: ¤ is not a creature.";
+    var obj = view.GetComponent<Character>();
+    if (!obj) return "Skipped: ¤ is not a creature.";
+    AddData(view);
     Actions.SetVisual(obj, VisSlot.Helmet, item);
     return $"Helmet of ¤ set to {item.Name} with variant {item.Variant}.";
   }
-  private static string SetLeftHand(Character obj, Item? item) {
+  private static string SetLeftHand(ZNetView view, Item? item) {
     if (item == null) return "Skipped: Invalid item.";
-    if (obj == null) return "Skipped: ¤ is not a creature.";
+    var obj = view.GetComponent<Character>();
+    if (!obj) return "Skipped: ¤ is not a creature.";
+    AddData(view);
     Actions.SetVisual(obj, VisSlot.HandLeft, item);
     return $"Left hand of ¤ set to {item.Name} with variant {item.Variant}.";
   }
-  private static string SetRightHand(Character obj, Item? item) {
+  private static string SetRightHand(ZNetView view, Item? item) {
     if (item == null) return "Skipped: Invalid item.";
-    if (obj == null) return "Skipped: ¤ is not a creature.";
+    var obj = view.GetComponent<Character>();
+    if (!obj) return "Skipped: ¤ is not a creature.";
+    AddData(view);
     Actions.SetVisual(obj, VisSlot.HandRight, item);
     return $"Right hand of ¤ set to {item.Name} with variant {item.Variant}.";
   }
-  private static string SetChest(Character obj, Item? item) {
+  private static string SetChest(ZNetView view, Item? item) {
     if (item == null) return "Skipped: Invalid item.";
-    if (obj == null) return "Skipped: ¤ is not a creature.";
+    var obj = view.GetComponent<Character>();
+    if (!obj) return "Skipped: ¤ is not a creature.";
+    AddData(view);
     Actions.SetVisual(obj, VisSlot.Chest, item);
     return $"Chest of ¤ set to {item.Name} with variant {item.Variant}.";
   }
-  private static string SetShoulder(Character obj, Item? item) {
+  private static string SetShoulder(ZNetView view, Item? item) {
     if (item == null) return "Skipped: Invalid item.";
-    if (obj == null) return "Skipped: ¤ is not a creature.";
+    var obj = view.GetComponent<Character>();
+    if (!obj) return "Skipped: ¤ is not a creature.";
+    AddData(view);
     Actions.SetVisual(obj, VisSlot.Shoulder, item);
     return $"Shoulder of ¤ set to {item.Name} with variant {item.Variant}.";
   }
-  private static string SetLegs(Character obj, Item? item) {
+  private static string SetLegs(ZNetView view, Item? item) {
     if (item == null) return "Skipped: Invalid item.";
-    if (obj == null) return "Skipped: ¤ is not a creature.";
+    var obj = view.GetComponent<Character>();
+    if (!obj) return "Skipped: ¤ is not a creature.";
+    AddData(view);
     Actions.SetVisual(obj, VisSlot.Legs, item);
     return $"Legs of ¤ set to {item.Name} with variant {item.Variant}.";
   }
-  private static string SetModel(Character obj, int index) {
-    if (obj == null) return "Skipped: ¤ is not a creature.";
+  private static string SetModel(ZNetView view, int index) {
+    var obj = view.GetComponent<Character>();
+    if (!obj) return "Skipped: ¤ is not a creature.";
     Actions.SetModel(obj, index);
     return $"Model of ¤ set to {index}.";
   }
-  private static string SetUtility(Character obj, Item? item) {
+  private static string SetUtility(ZNetView view, Item? item) {
     if (item == null) return "Skipped: Invalid item.";
-    if (obj == null) return "Skipped: ¤ is not a creature.";
+    var obj = view.GetComponent<Character>();
+    if (!obj) return "Skipped: ¤ is not a creature.";
+    AddData(view);
     Actions.SetVisual(obj, VisSlot.Utility, item);
     return $"Utility item of ¤ set to {item.Name} with variant {item.Variant}.";
   }

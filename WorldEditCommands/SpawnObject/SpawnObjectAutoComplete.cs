@@ -43,7 +43,7 @@ public class SpawnObjectAutoComplete : SharedObjectAutoComplete {
       },
       {
         "pos",
-        (int index) => ParameterInfo.XZY("pos", "Offset from the player / reference position", index)
+        (int index) => ParameterInfo.FRU("pos", "Offset from the player / reference position", index)
       },
       {
         "refPos",
@@ -55,11 +55,11 @@ public class SpawnObjectAutoComplete : SharedObjectAutoComplete {
       },
       {
         "rot",
-        (int index) => ParameterInfo.YXZ("rot", "Rotation from the player / reference rotation", index)
+        (int index) => ParameterInfo.YawRollPitch("rot", "Rotation from the player / reference rotation", index)
       },
       {
         "refRot",
-        (int index) => ParameterInfo.YXZ("refRot", "Overrides the reference rotation (player's rotation)", index)
+        (int index) => ParameterInfo.YawRollPitch("refRot", "Overrides the reference rotation (player's rotation)", index)
       }
     }));
   }
