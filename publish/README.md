@@ -215,6 +215,9 @@ This shouldn't cause any issues unless objects are moved long distances (which m
 
 # Changelog
 
+- v1.2
+	- Fixes `object health` not working.
+
 - v1.1
 	- Adds an basic undo to the `object` command.
 	- Adds a new parameter `prefab` to the `object` command to allow replacing objects.

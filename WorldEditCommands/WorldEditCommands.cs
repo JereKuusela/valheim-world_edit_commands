@@ -1,7 +1,7 @@
 ﻿using BepInEx;
 using HarmonyLib;
 namespace WorldEditCommands;
-[BepInPlugin("valheim.jerekuusela.world_edit_commands", "WorldEditCommands", "1.1.0.0")]
+[BepInPlugin("valheim.jerekuusela.world_edit_commands", "WorldEditCommands", "1.2.0.0")]
 [BepInDependency("valheim.jerekuusela.server_devcommands", "1.17.0.0")]
 public class WorldEditCommands : BaseUnityPlugin {
   public void Awake() {

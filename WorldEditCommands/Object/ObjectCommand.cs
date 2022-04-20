@@ -173,7 +173,7 @@ public class ObjectCommand {
   }
 
   private static string ChangeHealth(ZNetView obj, float amount) {
-    if (!obj.GetComponent<Character>() || !obj.GetComponent<WearNTear>() && !obj.GetComponent<TreeLog>() || !obj.GetComponent<Destructible>() || !obj.GetComponent<TreeBase>())
+    if (!obj.GetComponent<Character>() && !obj.GetComponent<WearNTear>() && !obj.GetComponent<TreeLog>() && !obj.GetComponent<Destructible>() && !obj.GetComponent<TreeBase>())
       return "Skipped: ¤ is not a creature or a destructible.";
     AddData(obj);
     var previous = Actions.SetHealth(obj.gameObject, amount);
