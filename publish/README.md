@@ -216,7 +216,8 @@ This shouldn't cause any issues unless objects are moved long distances (which m
 # Changelog
 
 - v1.2
-	- Fixes `object health` not working.
+	- Fixes the `object health` not working.
+	- Fixes the `terrain` command not working outside the world edge.
 
 - v1.1
 	- Adds an basic undo to the `object` command.

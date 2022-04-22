@@ -36,20 +36,24 @@ public class TerrainParameters {
 
   public bool ParseArgs(Terminal.ConsoleEventArgs args, Terminal terminal) {
     var playerPosition = Position;
-    Position.y = 0;
+    var useGroundHeight = true;
     foreach (var arg in args.Args) {
       var split = arg.Split('=');
       var name = split[0].ToLower();
       if (split.Length < 2) continue;
       var value = split[1].ToLower();
-      if (name == "refpos")
+      if (name == "refpos") {
+        useGroundHeight = Parse.Split(value).Length < 3;
         Position = Parse.TryVectorXZY(Parse.Split(value));
+      }
     }
-    if (Position.y <= 0f)
-      Position.y = ZoneSystem.instance.GetGroundHeight(Position);
-    if (Position.y <= 0f) {
-      Helper.AddMessage(terminal, "Error: Unable to find the ground height. Use <color=yellow>refPos</color> with the y coordinate.");
-      return false;
+    if (useGroundHeight) {
+      if (ZoneSystem.instance.IsZoneLoaded(Position))
+        Position.y = ZoneSystem.instance.GetGroundHeight(Position);
+      else {
+        Helper.AddMessage(terminal, "Error: Unable to find the ground height. Use <color=yellow>refPos</color> with the y coordinate.");
+        return false;
+      }
     }
     foreach (var arg in args.Args) {
       var split = arg.Split('=');
