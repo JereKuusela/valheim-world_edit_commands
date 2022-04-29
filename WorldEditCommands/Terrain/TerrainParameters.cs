@@ -42,7 +42,7 @@ public class TerrainParameters {
       var name = split[0].ToLower();
       if (split.Length < 2) continue;
       var value = split[1].ToLower();
-      if (name == "refpos") {
+      if (name == "from") {
         useGroundHeight = Parse.Split(value).Length < 3;
         Position = Parse.TryVectorXZY(Parse.Split(value));
       }
@@ -51,7 +51,7 @@ public class TerrainParameters {
       if (ZoneSystem.instance.IsZoneLoaded(Position))
         Position.y = ZoneSystem.instance.GetGroundHeight(Position);
       else {
-        Helper.AddMessage(terminal, "Error: Unable to find the ground height. Use <color=yellow>refPos</color> with the y coordinate.");
+        Helper.AddMessage(terminal, "Error: Unable to find the ground height. Use <color=yellow>from</color> with the y coordinate.");
         return false;
       }
     }
@@ -113,7 +113,7 @@ public class TerrainParameters {
         }
       }
     }
-    if (!HandleTarget(args.Args, args.Context)) return false;
+    if (!HandleTo(args.Args, args.Context)) return false;
     if (Diameter.HasValue && Depth.HasValue) {
       Helper.AddMessage(terminal, $"Error: circle and rect parameters can't be used together.");
       return false;
@@ -148,33 +148,33 @@ public class TerrainParameters {
     return true;
   }
 
-  private bool HandleTarget(string[] args, Terminal terminal) {
+  private bool HandleTo(string[] args, Terminal terminal) {
     foreach (var arg in args) {
       var split = arg.Split('=');
       var name = split[0].ToLower();
       if (split.Length < 2) continue;
       var value = split[1].ToLower();
-      if (name == "target") {
-        var target = Parse.TryVectorXZY(Parse.Split(value));
+      if (name == "to") {
+        var to = Parse.TryVectorXZY(Parse.Split(value));
 
         if (Slope == 0 && Parse.Split(value).Length < 3) {
-          if (ZoneSystem.instance.IsZoneLoaded(target))
-            target.y = ZoneSystem.instance.GetGroundHeight(target);
+          if (ZoneSystem.instance.IsZoneLoaded(to))
+            to.y = ZoneSystem.instance.GetGroundHeight(to);
           else {
-            Helper.AddMessage(terminal, "Error: Unable to find the ground height. Use <color=yellow>target</color> with the y coordinate.");
+            Helper.AddMessage(terminal, "Error: Unable to find the ground height. Use <color=yellow>to</color> with the y coordinate.");
             return false;
           }
         }
-        var distance = Utils.DistanceXZ(Position, target);
+        var distance = Utils.DistanceXZ(Position, to);
         if (Diameter.HasValue) Diameter = distance;
         if (Width == 0f) Width = distance;
         if (Depth.HasValue) Depth = distance;
-        Angle = Vector3.SignedAngle(Vector3.forward, Utils.DirectionXZ(target - Position), Vector3.up) * Mathf.PI / 180f;
-        Position.x = (Position.x + target.x) / 2f;
-        Position.z = (Position.z + target.z) / 2f;
+        Angle = Vector3.SignedAngle(Vector3.forward, Utils.DirectionXZ(to - Position), Vector3.up) * Mathf.PI / 180f;
+        Position.x = (Position.x + to.x) / 2f;
+        Position.z = (Position.z + to.z) / 2f;
         if (Slope.HasValue) {
           if (Slope == 0)
-            Slope = target.y - Position.y;
+            Slope = to.y - Position.y;
           Position.y += Slope.Value / 2f;
         }
       }
