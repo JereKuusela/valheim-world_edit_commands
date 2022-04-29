@@ -8,11 +8,14 @@ public class TerrainCommand {
     TerrainAutoComplete autoComplete = new();
     var description = CommandInfo.Create("Manipulates the terrain.", null, autoComplete.NamedParameters);
     new Terminal.ConsoleCommand(Name, description, (Terminal.ConsoleEventArgs args) => {
-      if (Player.m_localPlayer == null) {
+      var player = Player.m_localPlayer;
+      if (!player) {
         Helper.AddMessage(args.Context, "Unable to find the player.");
         return;
       }
-      TerrainParameters pars = new() { Position = Player.m_localPlayer.transform.position };
+      var precision = Mathf.PI / 4f;
+      var angle = precision * Mathf.Round(player.transform.rotation.eulerAngles.y / 45f);
+      TerrainParameters pars = new() { Position = player.transform.position, Angle = angle };
       if (!pars.ParseArgs(args, args.Context)) return;
       Dictionary<TerrainComp, Indices> compilerIndices = new();
       if (pars.Diameter.HasValue)

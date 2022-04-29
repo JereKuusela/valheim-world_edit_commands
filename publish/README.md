@@ -147,7 +147,7 @@ Following parameters are available:
 - `refPos=x,z,y`: Overwrites the player's position. Allows fixing the current position for more precise editing. The y coordinate can be used to override the current ground altitude.
 - `offset=forward,right,up`: Moves the targeted position while still using the altitude of the player's position.
 - `step=forward,right,up`: Calculates offset based on the radius (and slope height if given).
-- `angle=degrees`: Determines the slope and the step direction. Cardinal directions like n, ne, e, se, s, sw, w and nw work as a value too.
+- `angle=degrees`: Determines the slope and the step direction. Cardinal directions like n, ne, e, se, s, sw, w and nw work as a value too. Uses the player's direction if not given (45 degrees precision).
 - `circle=number`: Determines the diamter of the affected terrain.
 - `rect=width,depth`: Determines the size of the affected terrain.
 - `blockcheck`: Exclude terrain that is under structures or other objects. This can be used to create specific shapes.
@@ -216,6 +216,7 @@ This shouldn't cause any issues unless objects are moved long distances (which m
 # Changelog
 
 - v1.2
+	- Changes the `terrain` command to automatically use the player's rotation as the angle (45 degrees precision).
 	- Fixes the `object health` not working.
 	- Fixes the `terrain` command not working outside the world edge.
 
