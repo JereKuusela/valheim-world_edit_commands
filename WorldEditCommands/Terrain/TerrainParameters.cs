@@ -64,6 +64,15 @@ public class TerrainParameters {
         Level = Position.y;
       if (name == "blockcheck")
         BlockCheck = BlockCheck.On;
+      if (name == "circle")
+        Diameter = 0f;
+      if (name == "rect") {
+        Width = 0f;
+        Depth = 0f;
+      }
+      if (name == "slope") {
+        Slope = 0f;
+      }
       if (split.Length < 2) continue;
       var value = split[1].ToLower();
       var values = Parse.Split(value);
@@ -104,6 +113,7 @@ public class TerrainParameters {
         }
       }
     }
+    if (!HandleTarget(args.Args, args.Context)) return false;
     if (Diameter.HasValue && Depth.HasValue) {
       Helper.AddMessage(terminal, $"Error: circle and rect parameters can't be used together.");
       return false;
@@ -135,6 +145,40 @@ public class TerrainParameters {
     }
     // Circle doesn't use the angle so the slope needs both.
     if (Diameter.HasValue) SlopeAngle += Angle;
+    return true;
+  }
+
+  private bool HandleTarget(string[] args, Terminal terminal) {
+    foreach (var arg in args) {
+      var split = arg.Split('=');
+      var name = split[0].ToLower();
+      if (split.Length < 2) continue;
+      var value = split[1].ToLower();
+      if (name == "target") {
+        var target = Parse.TryVectorXZY(Parse.Split(value));
+
+        if (Slope == 0 && Parse.Split(value).Length < 3) {
+          if (ZoneSystem.instance.IsZoneLoaded(target))
+            target.y = ZoneSystem.instance.GetGroundHeight(target);
+          else {
+            Helper.AddMessage(terminal, "Error: Unable to find the ground height. Use <color=yellow>target</color> with the y coordinate.");
+            return false;
+          }
+        }
+        var distance = Utils.DistanceXZ(Position, target);
+        if (Diameter.HasValue) Diameter = distance;
+        if (Width == 0f) Width = distance;
+        if (Depth.HasValue) Depth = distance;
+        Angle = Vector3.SignedAngle(Vector3.forward, Utils.DirectionXZ(target - Position), Vector3.up) * Mathf.PI / 180f;
+        Position.x = (Position.x + target.x) / 2f;
+        Position.z = (Position.z + target.z) / 2f;
+        if (Slope.HasValue) {
+          if (Slope == 0)
+            Slope = target.y - Position.y;
+          Position.y += Slope.Value / 2f;
+        }
+      }
+    }
     return true;
   }
 }

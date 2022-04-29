@@ -147,9 +147,10 @@ Following parameters are available:
 - `refPos=x,z,y`: Overwrites the player's position. Allows fixing the current position for more precise editing. The y coordinate can be used to override the current ground altitude.
 - `offset=forward,right,up`: Moves the targeted position while still using the altitude of the player's position.
 - `step=forward,right,up`: Calculates offset based on the radius (and slope height if given).
-- `angle=degrees`: Determines the slope and the step direction. Cardinal directions like n, ne, e, se, s, sw, w and nw work as a value too. Uses the player's direction if not given (45 degrees precision).
-- `circle=number`: Determines the diamter of the affected terrain.
+- `angle=degrees`: Determines the direction. Cardinal directions like n, ne, e, se, s, sw, w and nw work as a value too. Uses the player's direction if not given (45 degrees precision).
+- `circle=number`: Determines the diameter of the affected terrain.
 - `rect=width,depth`: Determines the size of the affected terrain.
+- `target=x,z,y`: Moves the affected terrain between the current position and this position. Determines angle, slope and circle/rect size automatically.
 - `blockcheck`: Exclude terrain that is under structures or other objects. This can be used to create specific shapes.
 - `blockcheck=on/off/inverse`:
 	- on: Exclude terrain that is under structures or other objects.
@@ -165,6 +166,8 @@ Following parameters are available:
 - `terrain level circle=20`: Sets terrain height within 10 meters (20 meters diameter) to the same level as below you. 
 - `terrain level terrain raise=4 rect=8 smooth=1 paint=paved`: Creates a pyramid.
 - `terrain level raise=4 rect=8;terrain lower=4 rect=8 smooth=1 paint=paved`: Creates a pyramid shaped hole.
+- `terrain slope rect=10 refPos=10,10 target=10,20`: Creates a slope between two positions (10 meters width).
+- `terrain slope=5 rect=10 refPos=10,10 target=10,20`: Creates a 5 meter slope between two positions (10 meters width).
 - `terrain level refPos=300,40,-500 rect=10,10000`: Creates a long leveled path. Walk along the path to load new areas and then use the command again to extend the path.
 - `terrain refPos=-23,23 angle=e rect=10 slope=4`: Creates a slope rising towards east.
 - `terrain refPos=-23,23 angle=e rect=10 slope=4 step=1 level`: Creates a level at the end of the slope.
@@ -216,6 +219,7 @@ This shouldn't cause any issues unless objects are moved long distances (which m
 # Changelog
 
 - v1.2
+	- Adds a new parameter `target` to the `terrain` command which automatically calculates angle, distance and slope.
 	- Changes the `terrain` command to automatically use the player's rotation as the angle (45 degrees precision).
 	- Fixes the `object health` not working.
 	- Fixes the `terrain` command not working outside the world edge.

@@ -21,7 +21,8 @@ public class TerrainAutoComplete {
     "angle",
     "offset",
     "step",
-    "refPos"
+    "refPos",
+    "target"
   };
   public TerrainAutoComplete() {
     NamedParameters.Sort();
@@ -64,6 +65,10 @@ public class TerrainAutoComplete {
       {
         "refPos",
         (int index) => ParameterInfo.XZY("refPos", "Overrides the player position", index)
+      },
+      {
+        "target",
+        (int index) => ParameterInfo.XZY("target", "Determines the angle and circle/rect distance.", index)
       },
       {
         "step",
