@@ -5,6 +5,6 @@
   "description": "Adds new client side commands for advanced world editing.",
   "dependencies": [
     "denikson-BepInExPack_Valheim-5.4.1900",
-    "JereKuusela-Server_devcommands-1.17.0"
+    "JereKuusela-Server_devcommands-1.18.0"
   ]
 }
