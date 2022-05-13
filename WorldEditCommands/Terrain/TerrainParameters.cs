@@ -17,6 +17,9 @@ public class TerrainParameters {
   public float? Slope = null;
   public float SlopeAngle = 0f;
   public string Paint = "";
+  public bool FixedPosition = false;
+  public bool FixedAngle = false;
+  public bool Guide = false;
   public BlockCheck BlockCheck = BlockCheck.Off;
 
   private float ParseAngle(string value) {
@@ -43,6 +46,7 @@ public class TerrainParameters {
       if (split.Length < 2) continue;
       var value = split[1].ToLower();
       if (name == "from") {
+        FixedPosition = true;
         useGroundHeight = Parse.Split(value).Length < 3;
         Position = Parse.TryVectorXZY(Parse.Split(value));
       }
@@ -62,6 +66,8 @@ public class TerrainParameters {
         Set = 0f;
       if (name == "level")
         Level = Position.y;
+      if (name == "guide")
+        Guide = true;
       if (name == "blockcheck")
         BlockCheck = BlockCheck.On;
       if (name == "circle")
@@ -85,8 +91,10 @@ public class TerrainParameters {
       }
       if (name == "paint")
         Paint = value;
-      if (name == "angle")
+      if (name == "angle") {
+        FixedAngle = true;
         Angle = ParseAngle(value);
+      }
       if (name == "raise")
         Delta = Parse.TryFloat(value, 0f);
       if (name == "lower")
@@ -119,6 +127,8 @@ public class TerrainParameters {
       return false;
     }
     if (!Diameter.HasValue && !Depth.HasValue) {
+      // Way to disable the guide.
+      if (Guide) return true;
       Helper.AddMessage(terminal, $"Error: circle or rect parameter must be used.");
       return false;
     }
@@ -169,6 +179,7 @@ public class TerrainParameters {
         if (Diameter.HasValue) Diameter = distance;
         if (Width == 0f) Width = distance;
         if (Depth.HasValue) Depth = distance;
+        FixedAngle = true;
         Angle = Vector3.SignedAngle(Vector3.forward, Utils.DirectionXZ(to - Position), Vector3.up) * Mathf.PI / 180f;
         Position.x = (Position.x + to.x) / 2f;
         Position.z = (Position.z + to.z) / 2f;

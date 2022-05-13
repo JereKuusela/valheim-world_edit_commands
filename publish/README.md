@@ -160,6 +160,7 @@ Following parameters are available:
 	- 1.0: All of the terrain gets reduced changes (except the very center).
 	- 0.5: Half of the terrain gets reduced changes.
 	- 0.0: No reduction (default).
+- `guide`: Visualizes the affected area instead of doing anything.
 
 ### Examples
 
@@ -217,6 +218,9 @@ Static objects only synchronize their position and rotation when loaded. This me
 This shouldn't cause any issues unless objects are moved long distances (which might cause issues anyways).
 
 # Changelog
+
+- v1.3
+	- Adds a new parameter `guide` to the `terrain` command to visualize the area.
 
 - v1.2
 	- Adds a new parameter `to` to the `terrain` command which automatically calculates angle, distance and slope.

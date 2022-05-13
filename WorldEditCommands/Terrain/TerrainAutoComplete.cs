@@ -22,7 +22,8 @@ public class TerrainAutoComplete {
     "offset",
     "step",
     "from",
-    "to"
+    "to",
+    "guide"
   };
   public TerrainAutoComplete() {
     NamedParameters.Sort();
@@ -37,6 +38,10 @@ public class TerrainAutoComplete {
       {
         "reset",
         (int index) => ParameterInfo.Flag("Reset")
+      },
+      {
+        "guide",
+        (int index) => ParameterInfo.Flag("Guide", "Visualizes the output area.")
       },
       {
         "blockcheck",

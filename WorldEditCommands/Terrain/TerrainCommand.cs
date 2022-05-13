@@ -17,6 +17,10 @@ public class TerrainCommand {
       var angle = precision * Mathf.Round(player.transform.rotation.eulerAngles.y / 45f);
       TerrainParameters pars = new() { Position = player.transform.position, Angle = angle };
       if (!pars.ParseArgs(args, args.Context)) return;
+      if (pars.Guide) {
+        TerrainRuler.Create(pars);
+        return;
+      }
       Dictionary<TerrainComp, Indices> compilerIndices = new();
       if (pars.Diameter.HasValue)
         compilerIndices = Terrain.GetCompilerIndicesWithCircle(pars.Position, pars.Diameter.Value, pars.BlockCheck);
