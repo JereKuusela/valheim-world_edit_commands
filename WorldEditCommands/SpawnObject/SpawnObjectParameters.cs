@@ -26,7 +26,7 @@ class SpawnObjectParameters : SharedObjectParameters {
       if (split.Length < 2) continue;
       var value = split[1];
       if (name == "name" || name == "crafter")
-        Name = value;
+        Name = value.Replace("_", " ");
       if (name == "variant")
         Variant = Parse.TryIntRange(value, 0);
       if (name == "amount")

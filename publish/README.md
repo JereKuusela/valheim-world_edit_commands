@@ -74,7 +74,7 @@ The `spawn_object [object id] [...args]` spawns objects to the world. The `undo`
 Following parameters are available:
 
 - `amount=integer`: Amount of spawned objects within a random radius. Items are autostacked.
-- `crafter=value` or `name=value`: Name of the crafter for items or name for tamed creatures (that support naming).
+- `crafter=value` or `name=value`: Name of the crafter for items or name for tamed creatures (that support naming). Character _ is replaced with a space bar.
 - `durability=number` or `health=number`: Overrides the current durability for items, the current health for structures and the maximum health for creatures. Very high values like 1E30 turn the target invulnerable (including gravity for structures).
 - `hunt`: Spawned creatures are in the hunt mode.
 - `level=integer`: Spawned creatures have this amount of level (level = stars + 1).
@@ -224,6 +224,7 @@ This shouldn't cause any issues unless objects are moved long distances (which m
 - v1.3
 	- Adds a new parameter `guide` to the `terrain` command to visualize the area.
 	- Adds new parameters `max` and `min` to the `terrain` command which allow capping the terrain altitude.
+	- Adds support for replacing the character _ with a space bar in crafter names.
 
 - v1.2
 	- Adds a new parameter `to` to the `terrain` command which automatically calculates angle, distance and slope.
