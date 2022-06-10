@@ -7,7 +7,7 @@ public class TerrainCommand {
   public TerrainCommand() {
     TerrainAutoComplete autoComplete = new();
     var description = CommandInfo.Create("Manipulates the terrain.", null, autoComplete.NamedParameters);
-    new Terminal.ConsoleCommand(Name, description, (Terminal.ConsoleEventArgs args) => {
+    new Terminal.ConsoleCommand(Name, description, (args) => {
       var player = Player.m_localPlayer;
       if (!player) {
         Helper.AddMessage(args.Context, "Unable to find the player.");
@@ -36,6 +36,10 @@ public class TerrainCommand {
         Terrain.LevelTerrain(compilerIndices, pars.Position, pars.Size, pars.Smooth, pars.Level.Value);
       if (pars.Delta.HasValue)
         Terrain.RaiseTerrain(compilerIndices, pars.Position, pars.Size, pars.Smooth, pars.Delta.Value);
+      if (pars.Min.HasValue)
+        Terrain.MinTerrain(compilerIndices, pars.Position, pars.Size, pars.Min.Value);
+      if (pars.Max.HasValue)
+        Terrain.MaxTerrain(compilerIndices, pars.Position, pars.Size, pars.Max.Value);
       if (pars.Paint != "") {
         if (pars.Paint == "dirt")
           Terrain.PaintTerrain(compilerIndices, pars.Position, pars.Size, Color.red);

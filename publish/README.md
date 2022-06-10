@@ -138,12 +138,14 @@ Note: Terrain is only affected in loaded areas. You can use Render Limits mod to
 
 Following parameters are available:
 
-- `raise=number`: Raises terrain by X meters. Same as `lower` when a negative value is used.
-- `lower=number`: Lowers terrain by X meters. Same as `raise` when a negative value is used.
+- `raise=meters`: Raises terrain by X meters. Same as `lower` when a negative value is used.
+- `lower=meters`: Lowers terrain by X meters. Same as `raise` when a negative value is used.
 - `reset`: Resets terrain height. Ground material is not affected.
-- `level=number`: Sets terrain height to the given altitude. If not given, uses the ground altitude below the player.
+- `level=altitude`: Sets terrain height to the given altitude. If not given, uses the ground altitude below the player.
+- `max=altitude`: Lowers terrain above the given altitude to the altitude.
+- `min=altitude`: Raises terrain below the given altitude to the altitude.
 - `paint=value`: Sets the terrain material (dirt, paved, cultivated or grass to reset).
-- `slope=number,angle`: Creates a slope centered at current position with a given height.
+- `slope=meters,angle`: Creates a slope centered at current position with a given height.
 - `offset=forward,right,up`: Moves the targeted position while still using the altitude of the player's position.
 - `step=forward,right,up`: Calculates offset based on the radius (and slope height if given).
 - `angle=degrees`: Determines the direction. Cardinal directions like n, ne, e, se, s, sw, w and nw work as a value too. Uses the player's direction if not given (45 degrees precision).
@@ -221,6 +223,7 @@ This shouldn't cause any issues unless objects are moved long distances (which m
 
 - v1.3
 	- Adds a new parameter `guide` to the `terrain` command to visualize the area.
+	- Adds new parameters `max` and `min` to the `terrain` command which allow capping the terrain altitude.
 
 - v1.2
 	- Adds a new parameter `to` to the `terrain` command which automatically calculates angle, distance and slope.

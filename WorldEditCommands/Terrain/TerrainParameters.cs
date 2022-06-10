@@ -13,6 +13,8 @@ public class TerrainParameters {
   public float? Set = null;
   public float? Delta = null;
   public float? Level = null;
+  public float? Min = null;
+  public float? Max = null;
   public float Smooth = 0;
   public float? Slope = null;
   public float SlopeAngle = 0f;
@@ -95,6 +97,10 @@ public class TerrainParameters {
         FixedAngle = true;
         Angle = ParseAngle(value);
       }
+      if (name == "min")
+        Min = Parse.TryFloat(value, float.MinValue);
+      if (name == "max")
+        Max = Parse.TryFloat(value, float.MaxValue);
       if (name == "raise")
         Delta = Parse.TryFloat(value, 0f);
       if (name == "lower")

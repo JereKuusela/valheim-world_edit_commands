@@ -23,7 +23,9 @@ public class TerrainAutoComplete {
     "step",
     "from",
     "to",
-    "guide"
+    "guide",
+    "min",
+    "max"
   };
   public TerrainAutoComplete() {
     NamedParameters.Sort();
@@ -56,6 +58,14 @@ public class TerrainAutoComplete {
         }
       },
       {
+        "min",
+        (int index) => index == 0 ? ParameterInfo.Create("min", "altitude", "Raises terrain below the given altitude to the altitude.") : ParameterInfo.None
+      },
+      {
+        "max",
+        (int index) => index == 0 ? ParameterInfo.Create("max", "altitude", "Raises terrain above the given altitude to the altitude.") : ParameterInfo.None
+      },
+      {
         "angle",
         (int index) => index == 0 ? ParameterInfo.Create("angle=<color=yellow>number</color>/<color=yellow>n</color>/<color=yellow>ne</color>/<color=yellow>e</color>/<color=yellow>se</color>/<color=yellow>s</color>/<color=yellow>sw</color>/<color=yellow>w</color>/<color=yellow>nw</color> (from 0 to 360)", "Direction of the shape.") : ParameterInfo.None
       },
@@ -86,22 +96,22 @@ public class TerrainAutoComplete {
       {
         "slope",
         (int index) => {
-          if (index == 0) return ParameterInfo.Create("slope=<color=yellow>height</color>,angle=0", "Creates a slope with altitude difference of a given amount.");
-          if (index == 1) return ParameterInfo.Create("slope=height,<color=yellow>angle</color>", "Changes the slope direction (added to the general angle).");
+          if (index == 0) return ParameterInfo.Create("slope=<color=yellow>meters</color>,angle=0", "Creates a slope with altitude difference of a given amount.");
+          if (index == 1) return ParameterInfo.Create("slope=meters,<color=yellow>angle</color>", "Changes the slope direction (added to the general angle).");
           return ParameterInfo.None;
         }
       },
       {
         "raise",
-        (int index) => index == 0 ? ParameterInfo.Create("raise=<color=yellow>number</color>", "Raises the terrain by a given amount.") : ParameterInfo.None
+        (int index) => index == 0 ? ParameterInfo.Create("raise", "meters", "Raises the terrain by a given amount.") : ParameterInfo.None
       },
       {
         "lower",
-        (int index) => index == 0 ? ParameterInfo.Create("lower=<color=yellow>number</color>", "Lowers the terrain by a given amount.") : ParameterInfo.None
+        (int index) => index == 0 ? ParameterInfo.Create("lower", "meters", "Lowers the terrain by a given amount.") : ParameterInfo.None
       },
       {
         "level",
-        (int index) => index == 0 ? ParameterInfo.Create("level or level=<color=yellow>number</color>", "Levels the terrain to a given altitude. Without parameters, levels to the terrain altitude below the player.") : ParameterInfo.None
+        (int index) => index == 0 ? ParameterInfo.Create("level or level=<color=yellow>altitude</color>", "Levels the terrain to a given altitude. Without parameters, levels to the terrain altitude below the player.") : ParameterInfo.None
       },
       {
         "paint",

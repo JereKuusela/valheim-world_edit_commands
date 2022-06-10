@@ -151,7 +151,7 @@ public class ObjectCommand {
   public ObjectCommand() {
     ObjectAutoComplete autoComplete = new();
     var description = CommandInfo.Create("Modifies the selected object(s).", null, autoComplete.NamedParameters);
-    new Terminal.ConsoleCommand(Name, description, (Terminal.ConsoleEventArgs args) => {
+    new Terminal.ConsoleCommand(Name, description, (args) => {
       if (args.Length < 2) return;
       ObjectParameters pars = new();
       if (!pars.ParseArgs(args.Args, args.Context)) return;

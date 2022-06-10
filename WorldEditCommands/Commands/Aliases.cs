@@ -2,7 +2,7 @@ using ServerDevcommands;
 namespace WorldEditCommands;
 public class AliasesCommand {
   public AliasesCommand() {
-    new Terminal.ConsoleCommand("world_edit_aliases", "[set/clear] - Sets some useful aliases.", (Terminal.ConsoleEventArgs args) => {
+    new Terminal.ConsoleCommand("world_edit_aliases", "[set/clear] - Sets some useful aliases.", (args) => {
       if (args.Length > 1 && args[1] == "clear") {
         args.Context.TryRunCommand("alias move");
         args.Context.TryRunCommand("alias rotate");

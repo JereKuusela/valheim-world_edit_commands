@@ -66,7 +66,7 @@ public class SpawnObjectCommand {
   public SpawnObjectCommand() {
     SpawnObjectAutoComplete autoComplete = new();
     var description = CommandInfo.Create("Spawns an object.", new[] { "name" }, autoComplete.NamedParameters);
-    new Terminal.ConsoleCommand(Name, description, (Terminal.ConsoleEventArgs args) => {
+    new Terminal.ConsoleCommand(Name, description, (args) => {
       if (args.Length < 2) return;
       var prefabName = args[1];
       var prefab = Helper.GetPrefab(prefabName);

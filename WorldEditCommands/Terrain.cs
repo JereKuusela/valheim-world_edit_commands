@@ -110,6 +110,27 @@ public static class Terrain {
     };
     DoHeightOperation(compilerIndices, pos, radius, action);
   }
+
+  public static void MaxTerrain(CompilerIndices compilerIndices, Vector3 pos, float radius, float altitude) {
+    Action<TerrainComp, HeightIndex> action = (compiler, heightIndex) => {
+      var index = heightIndex.Index;
+      var capped = Mathf.Min(altitude, compiler.m_hmap.m_heights[index]);
+      compiler.m_levelDelta[index] += capped - compiler.m_hmap.m_heights[index];
+      compiler.m_smoothDelta[index] = 0f;
+      compiler.m_modifiedHeight[index] = compiler.m_levelDelta[index] != 0f;
+    };
+    DoHeightOperation(compilerIndices, pos, radius, action);
+  }
+  public static void MinTerrain(CompilerIndices compilerIndices, Vector3 pos, float radius, float altitude) {
+    Action<TerrainComp, HeightIndex> action = (compiler, heightIndex) => {
+      var index = heightIndex.Index;
+      var capped = Mathf.Max(altitude, compiler.m_hmap.m_heights[index]);
+      compiler.m_levelDelta[index] += capped - compiler.m_hmap.m_heights[index];
+      compiler.m_smoothDelta[index] = 0f;
+      compiler.m_modifiedHeight[index] = compiler.m_levelDelta[index] != 0f;
+    };
+    DoHeightOperation(compilerIndices, pos, radius, action);
+  }
   public static void SlopeTerrain(CompilerIndices compilerIndices, Vector3 pos, float radius, float angle, float smooth, float altitude, float amount) {
     Action<TerrainComp, HeightIndex> action = (compiler, heightIndex) => {
       var multiplier = CalculateSlope(angle, heightIndex.DistanceWidth, heightIndex.DistanceDepth) * CalculateSmooth(smooth, heightIndex.Distance);
