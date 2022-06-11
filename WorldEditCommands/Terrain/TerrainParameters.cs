@@ -24,6 +24,7 @@ public class TerrainParameters {
   public bool FixedAngle = false;
   public bool Guide = false;
   public BlockCheck BlockCheck = BlockCheck.Off;
+  public Range<float>? Within = null;
 
   private float ParseAngle(string value) {
     var angle = 0f;
@@ -118,6 +119,8 @@ public class TerrainParameters {
       }
       if (name == "offset")
         Offset = Parse.TryVectorZXY(values);
+      if (name == "within")
+        Within = Parse.TryFloatRange(value);
       if (name == "level")
         Level = Parse.TryFloat(value, Position.y);
       if (name == "step")

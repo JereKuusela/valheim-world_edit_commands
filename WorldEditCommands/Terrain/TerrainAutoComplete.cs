@@ -26,7 +26,8 @@ public class TerrainAutoComplete {
     "to",
     "guide",
     "min",
-    "max"
+    "max",
+    "within"
   };
   public TerrainAutoComplete() {
     NamedParameters.Sort();
@@ -117,6 +118,10 @@ public class TerrainAutoComplete {
       {
         "level",
         (int index) => index == 0 ? ParameterInfo.Create("level or level=<color=yellow>altitude</color>", "Levels the terrain to a given altitude. Without parameters, levels to the terrain altitude below the player.") : ParameterInfo.None
+      },
+      {
+        "within",
+        (int index) => index == 0 ? ParameterInfo.Create("within", "min-max", "Only includes terrain within the given altitude range.") : ParameterInfo.None
       },
       {
         "paint",

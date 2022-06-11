@@ -138,32 +138,33 @@ Note: Terrain is only affected in loaded areas. You can use Render Limits mod to
 
 Following parameters are available:
 
-- `raise=meters`: Raises terrain by X meters. Same as `lower` when a negative value is used.
-- `lower=meters`: Lowers terrain by X meters. Same as `raise` when a negative value is used.
+- `angle=degrees`: Determines the direction. Cardinal directions like n, ne, e, se, s, sw, w and nw work as a value too. Uses the player's direction if not given (45 degrees precision).
+- `blockcheck`: Excludes terrain that is under structures or other objects. This can be used to create specific shapes.
+- `blockcheck=on/off/inverse`:
+	- on: Excludes terrain that is under structures or other objects.
+	- off: All terrain is affected (default).
+	- inverse: Only includes terrain that is under structures or other objects.
+- `circle=number`: Determines the diameter of the affected terrain.
 - `delta=meters`: Sets the difference from the original elevation. Without the parameter, resets terrain altitude changes.
-- `reset`: Resets terrain height and paint changes. Ignores `smooth` parameter.
+- `from=x,z,y`: Overwrites the player's position. Allows fixing the current position for more precise editing. The y coordinate can be used to override the current ground altitude.
+- `guide`: Visualizes the affected area instead of doing anything.
 - `level=altitude`: Sets terrain height to the given altitude. If not given, uses the ground altitude below the player.
+- `lower=meters`: Lowers terrain by X meters. Same as `raise` when a negative value is used.
 - `max=altitude`: Lowers terrain above the given altitude to the altitude.
 - `min=altitude`: Raises terrain below the given altitude to the altitude.
-- `paint=value`: Sets the terrain material (dirt, paved, cultivated or grass to reset).
-- `slope=meters,angle`: Creates a slope centered at current position with a given height.
 - `offset=forward,right,up`: Moves the targeted position while still using the altitude of the player's position.
-- `step=forward,right,up`: Calculates offset based on the radius (and slope height if given).
-- `angle=degrees`: Determines the direction. Cardinal directions like n, ne, e, se, s, sw, w and nw work as a value too. Uses the player's direction if not given (45 degrees precision).
-- `circle=number`: Determines the diameter of the affected terrain.
-- `rect=width,depth`: Determines the size of the affected terrain.
-- `from=x,z,y`: Overwrites the player's position. Allows fixing the current position for more precise editing. The y coordinate can be used to override the current ground altitude.
-- `to=x,z,y`: Moves the affected terrain between the current position and this position. Determines angle, slope and circle/rect size automatically.
-- `blockcheck`: Exclude terrain that is under structures or other objects. This can be used to create specific shapes.
-- `blockcheck=on/off/inverse`:
-	- on: Exclude terrain that is under structures or other objects.
-	- off: All terrain is affected (default).
-	- inverse: Only include terrain that is under structures or other objects.
 - `smooth=number`: Determines how gradually the changes are applied (from 0.0 to 1.0).
 	- 1.0: All of the terrain gets reduced changes (except the very center).
 	- 0.5: Half of the terrain gets reduced changes.
 	- 0.0: No reduction (default).
-- `guide`: Visualizes the affected area instead of doing anything.
+- `paint=value`: Sets the terrain material (dirt, paved, cultivated or grass to reset).
+- `raise=meters`: Raises terrain by X meters. Same as `lower` when a negative value is used.
+- `rect=width,depth`: Determines the size of the affected terrain.
+- `reset`: Resets terrain height and paint changes. Ignores `smooth` parameter.
+- `slope=meters,angle`: Creates a slope centered at current position with a given height.
+- `step=forward,right,up`: Calculates offset based on the radius (and slope height if given).
+- `to=x,z,y`: Moves the affected terrain between the current position and this position. Determines angle, slope and circle/rect size automatically.
+- `within=min-max`: Only includes terrain that is within the given altitude range.
 
 ### Examples
 
@@ -224,6 +225,7 @@ This shouldn't cause any issues unless objects are moved long distances (which m
 
 - v1.3
 	- Adds a new parameter `guide` to the `terrain` command to visualize the area.
+	- Adds a new parameter `within` to the `terrain` command to include only terrain within a given altitude range.
 	- Adds new parameters `max` and `min` to the `terrain` command which allow capping the terrain altitude.
 	- Adds a new parameter `delta` to the `terrain` command which allow directly setting the height difference.
 	- Adds support for replacing the character _ with a space bar in crafter names.

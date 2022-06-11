@@ -1,9 +1,27 @@
+using System;
 using System.Collections.Generic;
 using ServerDevcommands;
 using UnityEngine;
 namespace WorldEditCommands;
 public class TerrainCommand {
   public const string Name = "terrain";
+
+  private TerrainComp[] GetCompilers(TerrainParameters pars) {
+    if (pars.Diameter.HasValue) return Terrain.GetCompilers(pars.Position, pars.Diameter.Value / 2f);
+    if (pars.Width.HasValue && pars.Depth.HasValue) return Terrain.GetCompilers(pars.Position, pars.Width.Value, pars.Depth.Value, pars.Angle);
+    throw new InvalidOperationException("Unable to select any terrain");
+  }
+  private Func<TerrainComp, Indices> GetIndexer(TerrainParameters pars) {
+    if (pars.Diameter.HasValue) return Terrain.CreateIndexer(pars.Position, pars.Diameter.Value);
+    if (pars.Width.HasValue && pars.Depth.HasValue) return Terrain.CreateIndexer(pars.Position, pars.Width.Value, pars.Depth.Value, pars.Angle);
+    throw new InvalidOperationException("Unable to select any terrain");
+  }
+  private List<Func<BaseIndex, bool>> GetFilterers(TerrainParameters pars) {
+    List<Func<BaseIndex, bool>> filterers = new();
+    if (pars.BlockCheck != BlockCheck.Off) filterers.Add(Terrain.CreateBlockCheckFilter(pars.BlockCheck));
+    if (pars.Within != null) filterers.Add(Terrain.CreateAltitudeFilter(pars.Within.Min, pars.Within.Max));
+    return filterers;
+  }
   public TerrainCommand() {
     TerrainAutoComplete autoComplete = new();
     var description = CommandInfo.Create("Manipulates the terrain.", null, autoComplete.NamedParameters);
@@ -21,11 +39,10 @@ public class TerrainCommand {
         TerrainRuler.Create(pars);
         return;
       }
-      Dictionary<TerrainComp, Indices> compilerIndices = new();
-      if (pars.Diameter.HasValue)
-        compilerIndices = Terrain.GetCompilerIndicesWithCircle(pars.Position, pars.Diameter.Value, pars.BlockCheck);
-      if (pars.Width.HasValue && pars.Depth.HasValue)
-        compilerIndices = Terrain.GetCompilerIndicesWithRect(pars.Position, pars.Width.Value, pars.Depth.Value, pars.Angle, pars.BlockCheck);
+      var compilers = GetCompilers(pars);
+      var indicer = GetIndexer(pars);
+      var filterers = GetFilterers(pars);
+      var compilerIndices = Terrain.GetIndices(compilers, indicer, filterers);
       var before = Terrain.GetData(compilerIndices);
       if (pars.Reset)
         Terrain.ResetTerrain(compilerIndices, pars.Position, pars.Size);
