@@ -140,7 +140,8 @@ Following parameters are available:
 
 - `raise=meters`: Raises terrain by X meters. Same as `lower` when a negative value is used.
 - `lower=meters`: Lowers terrain by X meters. Same as `raise` when a negative value is used.
-- `reset`: Resets terrain height. Ground material is not affected.
+- `delta=meters`: Sets the difference from the original elevation. Without the parameter, resets terrain altitude changes.
+- `reset`: Resets terrain height and paint changes. Ignores `smooth` parameter.
 - `level=altitude`: Sets terrain height to the given altitude. If not given, uses the ground altitude below the player.
 - `max=altitude`: Lowers terrain above the given altitude to the altitude.
 - `min=altitude`: Raises terrain below the given altitude to the altitude.
@@ -224,7 +225,9 @@ This shouldn't cause any issues unless objects are moved long distances (which m
 - v1.3
 	- Adds a new parameter `guide` to the `terrain` command to visualize the area.
 	- Adds new parameters `max` and `min` to the `terrain` command which allow capping the terrain altitude.
+	- Adds a new parameter `delta` to the `terrain` command which allow directly setting the height difference.
 	- Adds support for replacing the character _ with a space bar in crafter names.
+	- Changes the `parameter` reset of the `terrain` command to ignore `smooth` parameter and also reset the terrain paint.
 
 - v1.2
 	- Adds a new parameter `to` to the `terrain` command which automatically calculates angle, distance and slope.

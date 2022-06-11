@@ -148,7 +148,16 @@ public static class Terrain {
     };
     DoPaintOperation(compilerIndices, pos, radius, action);
   }
-
+  public static void ResetTerrain(Dictionary<TerrainComp, Indices> compilerIndices, Vector3 pos, float radius) {
+    Action<TerrainComp, HeightIndex> action = (compiler, heightIndex) => {
+      var index = heightIndex.Index;
+      compiler.m_levelDelta[index] = 0f;
+      compiler.m_smoothDelta[index] = 0f;
+      compiler.m_modifiedHeight[index] = false;
+    };
+    DoHeightOperation(compilerIndices, pos, radius, action);
+    PaintTerrain(compilerIndices, pos, radius, Color.black);
+  }
   ///<summary>Returns terrain data of given indices</summary>
   public static Dictionary<Vector3, TerrainUndoData> GetData(CompilerIndices compilerIndices) {
     return compilerIndices.ToDictionary(kvp => kvp.Key.transform.position, kvp => {

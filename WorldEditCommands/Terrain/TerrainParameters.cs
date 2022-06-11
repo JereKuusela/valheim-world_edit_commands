@@ -11,6 +11,7 @@ public class TerrainParameters {
   public float? Depth = null;
   public float Angle = 0f;
   public float? Set = null;
+  public bool Reset = false;
   public float? Delta = null;
   public float? Level = null;
   public float? Min = null;
@@ -65,6 +66,8 @@ public class TerrainParameters {
       var split = arg.Split('=');
       var name = split[0].ToLower();
       if (name == "reset")
+        Reset = true;
+      if (name == "delta")
         Set = 0f;
       if (name == "level")
         Level = Position.y;
@@ -97,6 +100,8 @@ public class TerrainParameters {
         FixedAngle = true;
         Angle = ParseAngle(value);
       }
+      if (name == "delta")
+        Set = Parse.TryFloat(value, 0f);
       if (name == "min")
         Min = Parse.TryFloat(value, float.MinValue);
       if (name == "max")

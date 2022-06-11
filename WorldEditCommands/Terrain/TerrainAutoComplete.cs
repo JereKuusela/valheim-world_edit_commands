@@ -13,6 +13,7 @@ public class TerrainAutoComplete {
     "raise",
     "reset",
     "paint",
+    "delta",
     "blockcheck",
     "rect",
     "circle",
@@ -63,7 +64,7 @@ public class TerrainAutoComplete {
       },
       {
         "max",
-        (int index) => index == 0 ? ParameterInfo.Create("max", "altitude", "Raises terrain above the given altitude to the altitude.") : ParameterInfo.None
+        (int index) => index == 0 ? ParameterInfo.Create("max", "altitude", "Lowers terrain above the given altitude to the altitude.") : ParameterInfo.None
       },
       {
         "angle",
@@ -100,6 +101,10 @@ public class TerrainAutoComplete {
           if (index == 1) return ParameterInfo.Create("slope=meters,<color=yellow>angle</color>", "Changes the slope direction (added to the general angle).");
           return ParameterInfo.None;
         }
+      },
+      {
+        "delta",
+        (int index) => index == 0 ? ParameterInfo.Create("delta", "meters", "Sets the terrain elevation difference from the original.") : ParameterInfo.None
       },
       {
         "raise",

@@ -16,7 +16,8 @@ public class ObjectAutoComplete : SharedObjectAutoComplete {
       "origin",
       "visual",
       "fuel",
-      "prefab"
+      "prefab",
+      "from"
     });
     AutoComplete.Register(ObjectCommand.Name, (int index) => NamedParameters, WithSharedFetchers(new() {
       {
@@ -52,6 +53,10 @@ public class ObjectAutoComplete : SharedObjectAutoComplete {
           if (index == 0) return ParameterInfo.Create("rotate=<color=yellow>reset</color> or " + ParameterInfo.YawRollPitch("rotate", desc, index)[0].Substring(1));
           return ParameterInfo.YawRollPitch("rotate", desc, index);
         }
+      },
+      {
+        "from",
+        (int index) => ParameterInfo.XZY("from", "Overrides the player position. For <color=yellow>rotate</color> sets also the rotation center point.", index)
       },
       {
         "visual", (int index) => VisualAutoComplete("visual", index)

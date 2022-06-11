@@ -36,13 +36,12 @@ public class ObjectCommand {
       values = values.Where(prefab => prefab.name.ToLower() == id);
     return values.Select(prefab => prefab.name.GetStableHashCode()).ToHashSet();
   }
-  public static IEnumerable<ZDO> GetZDOs(string id, float distance) {
+  public static IEnumerable<ZDO> GetZDOs(string id, float distance, Vector3 center) {
     var codes = GetPrefabs(id);
     IEnumerable<ZDO> zdos = ZDOMan.instance.m_objectsByID.Values;
     zdos = zdos.Where(zdo => codes.Contains(zdo.GetPrefab()));
-    var position = Player.m_localPlayer ? Player.m_localPlayer.transform.position : Vector3.zero;
     if (distance > 0)
-      return zdos.Where(zdo => Vector3.Distance(zdo.GetPosition(), position) <= distance);
+      return zdos.Where(zdo => Vector3.Distance(zdo.GetPosition(), center) <= distance);
     return zdos;
   }
   private static void AddData(ZNetView view) {
@@ -117,7 +116,7 @@ public class ObjectCommand {
           if (pars.ResetRotation)
             output = ResetRotation(view);
           else
-            output = Rotate(view, Helper.RandomValue(pars.Rotation), pars.Origin);
+            output = Rotate(view, Helper.RandomValue(pars.Rotation), pars.Origin, pars.From);
         }
         if (operation == "scale")
           output = Scale(view, Helper.RandomValue(pars.Scale));
@@ -154,10 +153,12 @@ public class ObjectCommand {
     new Terminal.ConsoleCommand(Name, description, (args) => {
       if (args.Length < 2) return;
       ObjectParameters pars = new();
+      var player = Player.m_localPlayer;
+      if (player) pars.ReferencePosition = player.transform.position;
       if (!pars.ParseArgs(args.Args, args.Context)) return;
       IEnumerable<ZDO> zdos;
       if (pars.Radius > 0f) {
-        zdos = GetZDOs(pars.Id, pars.Radius);
+        zdos = GetZDOs(pars.Id, pars.Radius, pars.From ?? pars.ReferencePosition);
       } else {
         var view = Helper.GetHovered(args);
         if (view == null) return;
@@ -212,9 +213,9 @@ public class ObjectCommand {
     Actions.ResetRotation(view);
     return $"¤ rotation reseted.";
   }
-  private static string Rotate(ZNetView view, Vector3 rotation, string origin) {
+  private static string Rotate(ZNetView view, Vector3 rotation, string origin, Vector3? center = null) {
     AddData(view);
-    Actions.Rotate(view, rotation, origin);
+    Actions.Rotate(view, rotation, origin, center);
     return $"¤ rotated {rotation.ToString("F1")} from the {origin}.";
   }
   private static string Scale(ZNetView view, Vector3 scale) {

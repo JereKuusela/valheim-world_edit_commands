@@ -261,7 +261,7 @@ public static class Actions {
     obj.transform.position = position;
   }
 
-  public static void Rotate(ZNetView obj, Vector3 relative, string origin) {
+  public static void Rotate(ZNetView obj, Vector3 relative, string origin, Vector3? center = null) {
     var zdo = obj.GetZDO();
     var originRotation = Player.m_localPlayer.transform.rotation;
     if (origin == "world")
@@ -269,7 +269,7 @@ public static class Actions {
     if (origin == "object")
       originRotation = obj.transform.rotation;
     var transform = obj.transform;
-    var position = transform.position;
+    var position = center ?? transform.position;
     transform.RotateAround(position, originRotation * Vector3.up, relative.y);
     transform.RotateAround(position, originRotation * Vector3.forward, relative.x);
     transform.RotateAround(position, originRotation * Vector3.right, relative.z);
