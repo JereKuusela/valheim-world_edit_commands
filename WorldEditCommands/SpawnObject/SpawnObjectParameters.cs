@@ -4,7 +4,7 @@ namespace WorldEditCommands;
 class SpawnObjectParameters : SharedObjectParameters {
   public Quaternion BaseRotation = Quaternion.identity;
   public Range<Vector3> Rotation = new(Vector3.zero);
-  public Vector3 RelativePosition = Vector3.zero;
+  public Range<Vector3> RelativePosition = new(Vector3.zero);
   public Vector3 BasePosition = Vector3.zero;
   public Range<int> Amount = new(1);
   public string Name = "";
@@ -36,7 +36,7 @@ class SpawnObjectParameters : SharedObjectParameters {
       }
       if (name == "pos" || name == "position") {
         UseDefaultRelativePosition = false;
-        RelativePosition = Parse.TryVectorXZY(value.Split(','));
+        RelativePosition = Parse.TryVectorXZYRange(value, Vector3.zero);
         Snap = value.Split(',').Length < 3;
       }
       if (name == "rot" || name == "rotation") {

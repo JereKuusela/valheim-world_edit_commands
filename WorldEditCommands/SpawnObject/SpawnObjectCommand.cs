@@ -6,13 +6,13 @@ using UnityEngine;
 namespace WorldEditCommands;
 public class SpawnObjectCommand {
   public const string Name = "spawn_object";
-  private static List<GameObject> SpawnObject(GameObject prefab, Vector3 position, int count, float radius, bool snap) {
+  private static List<GameObject> SpawnObject(SpawnObjectParameters pars, GameObject prefab, int count) {
     List<GameObject> spawned = new();
     for (int i = 0; i < count; i++) {
-      var spawnPosition = position;
+      var spawnPosition = GetPosition(pars.BasePosition, pars.RelativePosition, pars.BaseRotation);
       if (i > 0)
-        spawnPosition += UnityEngine.Random.insideUnitSphere * radius;
-      if (snap && ZoneSystem.instance.FindFloor(spawnPosition, out var height))
+        spawnPosition += UnityEngine.Random.insideUnitSphere * pars.Radius;
+      if (pars.Snap && ZoneSystem.instance.FindFloor(spawnPosition, out var height))
         spawnPosition.y = height;
       var obj = UnityEngine.Object.Instantiate<GameObject>(prefab, spawnPosition, Quaternion.identity);
       spawned.Add(obj);
@@ -29,11 +29,12 @@ public class SpawnObjectCommand {
     if (!pars.ParseArgs(args.Args, args.Context)) return null;
     return pars;
   }
-  private static Vector3 GetPosition(Vector3 basePosition, Vector3 relativePosition, Quaternion rotation) {
+  private static Vector3 GetPosition(Vector3 basePosition, Range<Vector3> relativePosition, Quaternion rotation) {
+    var relative = Helper.RandomValue(relativePosition);
     var position = basePosition;
-    position += rotation * Vector3.forward * relativePosition.x;
-    position += rotation * Vector3.right * relativePosition.z;
-    position += rotation * Vector3.up * relativePosition.y;
+    position += rotation * Vector3.forward * relative.x;
+    position += rotation * Vector3.right * relative.z;
+    position += rotation * Vector3.up * relative.y;
     return position;
   }
   private static void Manipulate(IEnumerable<GameObject> spawned, SpawnObjectParameters pars, int total) {
@@ -82,9 +83,9 @@ public class SpawnObjectCommand {
 
       // For usability, spawn in front of the player if nothing is specified (similar to the base game command).
       if (pars.UseDefaultRelativePosition)
-        pars.RelativePosition = new(2.0f, 0, 0);
+        pars.RelativePosition = new(new(2.0f, 0, 0));
       var position = GetPosition(pars.BasePosition, pars.RelativePosition, pars.BaseRotation);
-      var spawned = SpawnObject(prefab, position, count, pars.Radius, pars.Snap);
+      var spawned = SpawnObject(pars, prefab, count);
       Manipulate(spawned, pars, amount);
       Player.m_localPlayer.Message(MessageHud.MessageType.TopLeft, "Spawning object " + prefabName, spawned.Count, null);
       args.Context.AddString("Spawned: " + prefabName + " at " + Helper.PrintVectorXZY(position));

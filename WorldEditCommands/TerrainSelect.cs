@@ -66,7 +66,7 @@ public partial class Terrain {
     var ns = ZNetScene.instance;
     return heightMaps.Where(hmap => ns.InActiveArea(zs.GetZone(hmap.transform.position), pos)).Select(hmap => hmap.GetAndCreateTerrainCompiler()).ToArray();
   }
-  public static CompilerIndices FilterEmpty(CompilerIndices indices) {
+  private static CompilerIndices FilterEmpty(CompilerIndices indices) {
     return indices.Where(kvp => kvp.Value.HeightIndices.Count() + kvp.Value.PaintIndices.Count() > 0).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
   }
   public static CompilerIndices GetIndices(IEnumerable<TerrainComp> compilers, Func<TerrainComp, Indices> indexer, IEnumerable<Func<BaseIndex, bool>> filterers) {

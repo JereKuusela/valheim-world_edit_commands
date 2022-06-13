@@ -229,6 +229,7 @@ This shouldn't cause any issues unless objects are moved long distances (which m
 	- Adds new parameters `max` and `min` to the `terrain` command which allow capping the terrain altitude.
 	- Adds a new parameter `delta` to the `terrain` command which allow directly setting the height difference.
 	- Adds support for replacing the character _ with a space bar in crafter names.
+	- Adds min-max support to the `pos` parameter of the `spawn_object` command.
 	- Changes the `parameter` reset of the `terrain` command to ignore `smooth` parameter and also reset the terrain paint.
 
 - v1.2
