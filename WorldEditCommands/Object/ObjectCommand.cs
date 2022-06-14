@@ -86,6 +86,8 @@ public class ObjectCommand {
           output = MakeWild(view);
         if (operation == "baby")
           output = SetBaby(view);
+        if (operation == "respawn")
+          output = Respawn(view);
         if (operation == "info")
           output = GetInfo(view);
         if (operation == "sleep")
@@ -116,7 +118,7 @@ public class ObjectCommand {
           if (pars.ResetRotation)
             output = ResetRotation(view);
           else
-            output = Rotate(view, Helper.RandomValue(pars.Rotation), pars.Origin, pars.From);
+            output = Rotate(view, Helper.RandomValue(pars.Rotation), pars.Origin, pars.Center);
         }
         if (operation == "scale")
           output = Scale(view, Helper.RandomValue(pars.Scale));
@@ -158,7 +160,7 @@ public class ObjectCommand {
       if (!pars.ParseArgs(args.Args, args.Context)) return;
       IEnumerable<ZDO> zdos;
       if (pars.Radius > 0f) {
-        zdos = GetZDOs(pars.Id, pars.Radius, pars.From ?? pars.ReferencePosition);
+        zdos = GetZDOs(pars.Id, pars.Radius, pars.Center ?? pars.ReferencePosition);
       } else {
         var view = Helper.GetHovered(args);
         if (view == null) return;
@@ -229,6 +231,13 @@ public class ObjectCommand {
     AddData(view);
     Actions.SetBaby(obj);
     return "¤ growth disabled.";
+  }
+  private static string Respawn(ZNetView view) {
+    if (!Actions.CanRespawn(view.gameObject))
+      return "Skipped: ¤ is not a loot container, pickable or spawn point.";
+    AddData(view);
+    Actions.Respawn(view.gameObject);
+    return "¤ respawned.";
   }
   private static string MakeTame(ZNetView view) {
     var obj = view.GetComponent<Character>();

@@ -219,6 +219,29 @@ public static class Actions {
     if (scale != Vector3.one && view.m_syncInitialScale)
       view.SetLocalScale(scale);
   }
+  public static void Respawn(GameObject obj) {
+    Respawn(obj.GetComponent<Container>());
+    Respawn(obj.GetComponent<Pickable>());
+    Respawn(obj.GetComponent<CreatureSpawner>());
+  }
+  public static void Respawn(Container obj) {
+    if (!obj) return;
+    if (obj.m_defaultItems.m_drops.Count == 0) return;
+    obj.m_inventory?.RemoveAll();
+    obj.AddDefaultItems();
+  }
+  public static bool CanRespawn(GameObject obj) =>
+    obj.GetComponent<Pickable>() || obj.GetComponent<CreatureSpawner>() || (obj.GetComponent<Container>()?.m_defaultItems.m_drops.Count > 0);
+
+  public static void Respawn(Pickable obj) {
+    if (!obj) return;
+    obj.SetPicked(false);
+  }
+  public static void Respawn(CreatureSpawner obj) {
+    if (!obj) return;
+    obj.m_nview?.GetZDO().Set("spawn_id", ZDOID.None);
+    obj.m_nview?.GetZDO().Set("alive_time", 0L);
+  }
   public static void SetModel(GameObject obj, int index) {
     SetModel(obj.GetComponent<Character>(), index);
   }

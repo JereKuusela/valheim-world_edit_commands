@@ -17,11 +17,15 @@ public class ObjectAutoComplete : SharedObjectAutoComplete {
       "visual",
       "fuel",
       "prefab",
-      "from"
+      "center",
+      "respawn"
     });
     AutoComplete.Register(ObjectCommand.Name, (int index) => NamedParameters, WithSharedFetchers(new() {
       {
         "baby", (int index) => ParameterInfo.Flag("Baby")
+      },
+      {
+        "respawn", (int index) => ParameterInfo.Flag("Respawn")
       },
       {
         "wild", (int index) => ParameterInfo.Flag("Wild")
@@ -55,8 +59,8 @@ public class ObjectAutoComplete : SharedObjectAutoComplete {
         }
       },
       {
-        "from",
-        (int index) => ParameterInfo.XZY("from", "Overrides the player position. For <color=yellow>rotate</color> sets also the rotation center point.", index)
+        "center",
+        (int index) => ParameterInfo.XZY("center", "Overrides the player position. For <color=yellow>rotate</color> sets also the rotation center point.", index)
       },
       {
         "visual", (int index) => VisualAutoComplete("visual", index)

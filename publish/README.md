@@ -26,6 +26,8 @@ The `object [...args]` alters the hovered object or objects within a given radiu
 Following parameters are available:
 
 - `baby`: Prevents offspring from growing up.
+- `center`: Sets `rotate` center point at player position.
+- `center=x,z,y`: Overrides the player position and sets `rotate` center point.
 - `durability=number` or `health=number`: Sets the current durability for items, the current health for structures and the maximum health for creatures. Very high values like 1E30 turn the target invulnerable (including gravity for structures).
 - `fuel=number`: Sets the fuel amount. Without number, prints the fuel amount.
 - `id`: Filters objects by id. Supports starts with, ends with or contains by using "*". Default is `*` that allows all objects which don't start with "_". 
@@ -36,6 +38,7 @@ Following parameters are available:
 - `prefab=id`: Replaces the object with the given id.
 - `radius=number`: Radius for included objects. Capped at 100 meters. If not given, the hovered object is only affected.
 - `remove`: Removes objects. Must use the `id` parameter (`id=*` is ok). Can't be used with other operations.
+- `respawn`: Resets loot chests, pickables and spawn points.
 - `rotate=yaw,roll,pitch`: Rotates objects (degrees). Static objects only update their rotation for other players when they leave the area.
 - `rotate=reset`: Resets object rotation. Static objects only update their rotation for other players when they leave the area.
 - `scale=x,z,y`: Scales objects (which support it). A single value sets all of the scales.
@@ -62,6 +65,7 @@ Note: Creatures reset their style when attacking.
 - `object move=5`: Moves the targeted object 5 meters away from you.
 - `object move=0,5 origin=world`: Moves the targeted object 5 meters towards east.
 - `object prefab=Wolf`: Changes the targeted object to a wolf.
+- `object rotate=90 center radius=10`: Rotates nearby objects around the player.
 - `alias remove object remove id=$`: Adds a command `remove [object id]` that removes the targeted object if it matches the given object id.
 - `alias remove object remove id=*`: Adds a command `remove` that removes the targeted object without having to specify the id.
 - `alias remove50 object remove radius=50 id=$`: Adds a command `remove50 [object id]` that removes the given objects within 50 meters.
@@ -228,6 +232,8 @@ This shouldn't cause any issues unless objects are moved long distances (which m
 	- Adds a new parameter `within` to the `terrain` command to include only terrain within a given altitude range.
 	- Adds new parameters `max` and `min` to the `terrain` command which allow capping the terrain altitude.
 	- Adds a new parameter `delta` to the `terrain` command which allow directly setting the height difference.
+	- Adds a new parameter `center` to the `object` command which allow setting the rotation center point and overriding the player's position.
+	- Adds a new parameter `respawn` to the `object` command which allow reseting loot chests, pickables and spawn points.
 	- Adds support for replacing the character _ with a space bar in crafter names.
 	- Adds min-max support to the `pos` parameter of the `spawn_object` command.
 	- Changes the `parameter` reset of the `terrain` command to ignore `smooth` parameter and also reset the terrain paint.

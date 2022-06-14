@@ -7,13 +7,14 @@ public class ObjectParameters : SharedObjectParameters {
   public Range<Vector3> Rotation = new(Vector3.zero);
   public Range<Vector3> Offset = new(Vector3.zero);
   public Vector3 ReferencePosition = new();
-  public Vector3? From = null;
+  public Vector3? Center = null;
   public Range<float>? Fuel = null;
   public string Id = "";
   public string Prefab = "";
   public string Origin = "player";
   public HashSet<string> Operations = new();
   public bool ResetRotation = false;
+  public bool Respawn = false;
   public Item? Visual = null;
 
   public static HashSet<string> SupportedOperations = new() {
@@ -39,7 +40,8 @@ public class ObjectParameters : SharedObjectParameters {
     "scale",
     "chest",
     "fuel",
-    "prefab"
+    "prefab",
+    "respawn"
   };
   public override bool ParseArgs(string[] args, Terminal terminal) {
     if (!base.ParseArgs(args, terminal)) return false;
@@ -53,14 +55,15 @@ public class ObjectParameters : SharedObjectParameters {
         }
         Operations.Add(name);
       }
-      if (name == "from") From = ReferencePosition;
+      if (name == "center") Center = ReferencePosition;
+      if (name == "respawn") Respawn = true;
       if (split.Length < 2) continue;
       var value = split[1];
       if (name == "rotate") {
         if (value == "reset") ResetRotation = true;
         else Rotation = Parse.TryVectorYXZRange(value, Vector3.zero);
       }
-      if (name == "from") From = Parse.TryVectorXZY(Parse.Split(value));
+      if (name == "center") Center = Parse.TryVectorXZY(Parse.Split(value));
       if (name == "move") Offset = Parse.TryVectorZXYRange(value, Vector3.zero);
       if (name == "id") Id = value;
       if (name == "prefab") Prefab = value;
