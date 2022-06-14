@@ -136,6 +136,8 @@ Following parameters are available:
 
 The `terrain [...args]` command can create different shapes on top of the usual flattening and resetting. The `undo`/`redo` system is supported by saving snapshots of the terrain.
 
+Note: If you have trouble understanding the affected area, try the `guide` parameter.
+
 Note: The granularity of the terrain system is 0.5 meters.
 
 Note: Terrain is only affected in loaded areas. You can use Render Limits mod to increase this area.
