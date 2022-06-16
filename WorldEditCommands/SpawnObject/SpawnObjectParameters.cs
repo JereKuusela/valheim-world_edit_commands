@@ -1,11 +1,13 @@
+using System;
 using ServerDevcommands;
 using UnityEngine;
 namespace WorldEditCommands;
 class SpawnObjectParameters : SharedObjectParameters {
-  public Quaternion BaseRotation = Quaternion.identity;
+  public Quaternion BaseRotation;
   public Range<Vector3> Rotation = new(Vector3.zero);
   public Range<Vector3> RelativePosition = new(Vector3.zero);
-  public Vector3 BasePosition = Vector3.zero;
+  public Vector3 From;
+  public Vector3? To = null;
   public Range<int> Amount = new(1);
   public string Name = "";
   public Range<int> Variant = new(0);
@@ -14,8 +16,16 @@ class SpawnObjectParameters : SharedObjectParameters {
   public bool Hunt = false;
   public bool UseDefaultRelativePosition = true;
 
-  public override bool ParseArgs(string[] args, Terminal terminal) {
-    if (!base.ParseArgs(args, terminal)) return false;
+  public SpawnObjectParameters(Terminal.ConsoleEventArgs args) {
+    if (Player.m_localPlayer) {
+      From = Player.m_localPlayer.transform.position;
+      BaseRotation = Player.m_localPlayer.transform.rotation;
+    }
+    ParseArgs(args.Args);
+  }
+
+  protected override void ParseArgs(string[] args) {
+    base.ParseArgs(args);
     foreach (var arg in args) {
       var split = arg.Split('=');
       var name = split[0].ToLower();
@@ -42,25 +52,27 @@ class SpawnObjectParameters : SharedObjectParameters {
       if (name == "rot" || name == "rotation") {
         Rotation = Parse.TryVectorYXZRange(value, Vector3.zero);
       }
-      if (name == "refpos" || name == "refposition") {
+      if (name == "from") {
         UseDefaultRelativePosition = false;
-        BasePosition = Parse.TryVectorXZY(value.Split(','), BasePosition);
+        From = Parse.TryVectorXZY(value.Split(','), From);
+      }
+      if (name == "to") {
+        UseDefaultRelativePosition = false;
+        To = Parse.TryVectorXZY(value.Split(','), From);
       }
       if (name == "refplayer") {
         UseDefaultRelativePosition = false;
         var player = Helper.FindPlayer(value);
         if (player.m_characterID.IsNone()) {
-          terminal.AddString("Error: Unable to find the player.");
-          return false;
+          throw new InvalidOperationException("Unable to find the player.");
         } else if (!player.m_publicPosition) {
-          terminal.AddString("Error: Player doesn't have a public position.");
-          return false;
+          throw new InvalidOperationException("Player doesn't have a public position.");
         } else {
-          BasePosition = player.m_position;
+          From = player.m_position;
         }
       }
     }
-    Radius = Radius == 0f ? 0.5f : Radius;
-    return true;
+    if (To.HasValue && Radius.HasValue)
+      throw new InvalidOperationException("<color=yellow>radius</color> can't be used with <color=yellow>to</color>.");
   }
 }

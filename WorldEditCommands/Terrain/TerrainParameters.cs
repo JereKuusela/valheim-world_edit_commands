@@ -1,3 +1,4 @@
+using System;
 using ServerDevcommands;
 using UnityEngine;
 namespace WorldEditCommands;
@@ -26,6 +27,25 @@ public class TerrainParameters {
   public BlockCheck BlockCheck = BlockCheck.Off;
   public Range<float>? Within = null;
 
+  public TerrainParameters(Terminal.ConsoleEventArgs args) {
+    if (Player.m_localPlayer) {
+      var precision = Mathf.PI / 4f;
+      Position = Player.m_localPlayer.transform.position;
+      Angle = precision * Mathf.Round(Player.m_localPlayer.transform.rotation.eulerAngles.y / 45f);
+    }
+    ParseArgs(args.Args);
+  }
+
+  public RulerParameters ToRuler() => new() {
+    Angle = Angle,
+    Diameter = Diameter,
+    Width = Width,
+    Depth = Depth,
+    Position = Position,
+    FixedPosition = FixedPosition,
+    FixedAngle = FixedAngle
+  };
+
   private float ParseAngle(string value) {
     var angle = 0f;
     if (value == "n") angle = 0f;
@@ -41,10 +61,10 @@ public class TerrainParameters {
     return angle;
   }
 
-  public bool ParseArgs(Terminal.ConsoleEventArgs args, Terminal terminal) {
+  protected void ParseArgs(string[] args) {
     var playerPosition = Position;
     var useGroundHeight = true;
-    foreach (var arg in args.Args) {
+    foreach (var arg in args) {
       var split = arg.Split('=');
       var name = split[0].ToLower();
       if (split.Length < 2) continue;
@@ -59,11 +79,10 @@ public class TerrainParameters {
       if (ZoneSystem.instance.IsZoneLoaded(Position))
         Position.y = ZoneSystem.instance.GetGroundHeight(Position);
       else {
-        Helper.AddMessage(terminal, "Error: Unable to find the ground height. Use <color=yellow>from</color> with the y coordinate.");
-        return false;
+        throw new InvalidOperationException("Unable to find the ground height. Use <color=yellow>from</color> with the y coordinate.");
       }
     }
-    foreach (var arg in args.Args) {
+    foreach (var arg in args) {
       var split = arg.Split('=');
       var name = split[0].ToLower();
       if (name == "reset")
@@ -129,22 +148,17 @@ public class TerrainParameters {
         if (value == "on") BlockCheck = BlockCheck.On;
         else if (value == "inverse") BlockCheck = BlockCheck.Inverse;
         else if (value == "off") BlockCheck = BlockCheck.Off;
-        else {
-          Helper.AddMessage(terminal, $"Error: Invalid value {value} for blockcheck.");
-          return false;
-        }
+        else throw new InvalidOperationException($"Invalid value {value} for blockcheck.");
       }
     }
-    if (!HandleTo(args.Args, args.Context)) return false;
-    if (Diameter.HasValue && Depth.HasValue) {
-      Helper.AddMessage(terminal, $"Error: circle and rect parameters can't be used together.");
-      return false;
-    }
+    HandleTo(args);
+    if (Diameter.HasValue && Depth.HasValue)
+      throw new InvalidOperationException($"<color=yellow>circle</color> and <color=yellow>rect</color> parameters can't be used together.");
+
     if (!Diameter.HasValue && !Depth.HasValue) {
       // Way to disable the guide.
-      if (Guide) return true;
-      Helper.AddMessage(terminal, $"Error: circle or rect parameter must be used.");
-      return false;
+      if (Guide) return;
+      throw new InvalidOperationException($"<color=yellow>circle</color> or <color=yellow>rect</color> parameter must be used.");
     }
     if (Diameter.HasValue) Size = Diameter.Value / 2f;
     if (Depth.HasValue && Width.HasValue) Size = Mathf.Max(Depth.Value, Width.Value) / 2;
@@ -169,10 +183,9 @@ public class TerrainParameters {
     }
     // Circle doesn't use the angle so the slope needs both.
     if (Diameter.HasValue) SlopeAngle += Angle;
-    return true;
   }
 
-  private bool HandleTo(string[] args, Terminal terminal) {
+  private void HandleTo(string[] args) {
     foreach (var arg in args) {
       var split = arg.Split('=');
       var name = split[0].ToLower();
@@ -184,10 +197,8 @@ public class TerrainParameters {
         if (Slope == 0 && Parse.Split(value).Length < 3) {
           if (ZoneSystem.instance.IsZoneLoaded(to))
             to.y = ZoneSystem.instance.GetGroundHeight(to);
-          else {
-            Helper.AddMessage(terminal, "Error: Unable to find the ground height. Use <color=yellow>to</color> with the y coordinate.");
-            return false;
-          }
+          else
+            throw new InvalidOperationException("Unable to find the ground height. Use <color=yellow>to</color> with the y coordinate.");
         }
         var distance = Utils.DistanceXZ(Position, to);
         if (Diameter.HasValue) Diameter = distance;
@@ -204,6 +215,5 @@ public class TerrainParameters {
         }
       }
     }
-    return true;
   }
 }

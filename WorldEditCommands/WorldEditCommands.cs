@@ -1,7 +1,7 @@
 ﻿using BepInEx;
 using HarmonyLib;
 namespace WorldEditCommands;
-[BepInPlugin("valheim.jerekuusela.world_edit_commands", "WorldEditCommands", "1.3.0.0")]
+[BepInPlugin("valheim.jerekuusela.world_edit_commands", "WorldEditCommands", "1.4.0.0")]
 [BepInDependency("valheim.jerekuusela.server_devcommands", "1.20.0.0")]
 public class WorldEditCommands : BaseUnityPlugin {
   public void Awake() {
@@ -10,7 +10,7 @@ public class WorldEditCommands : BaseUnityPlugin {
   }
 
   public void LateUpdate() {
-    TerrainRuler.Update();
+    Ruler.Update();
   }
 }
 [HarmonyPatch(typeof(Terminal), "InitTerminal")]

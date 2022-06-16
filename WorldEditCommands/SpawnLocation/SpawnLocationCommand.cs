@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using ServerDevcommands;
 using UnityEngine;
@@ -8,24 +9,15 @@ public class SpawnLocationCommand {
   public SpawnLocationCommand() {
     SpawnLocationAutoComplete autoComplete = new();
     var description = CommandInfo.Create("Spawns a given location.", new[] { "name" }, autoComplete.NamedParameters);
-    new Terminal.ConsoleCommand(Name, description, (args) => {
-      if (args.Length < 2) {
-        return;
-      }
+    Helper.Command(Name, description, (args) => {
+      Helper.ArgsCheck(args, 2, "Missing location id.");
       var obj = ZoneSystem.instance;
       var name = args[1];
       var location = obj.GetLocation(name);
-      if (location == null) {
-        ZLog.Log("Missing location:" + name);
-        args.Context.AddString("Missing location:" + name);
-        return;
-      }
-      if (location.m_prefab == null) {
-        ZLog.Log("Missing prefab in location:" + name);
-        args.Context.AddString("Missing location:" + name);
-        return;
-      }
-
+      if (location == null)
+        throw new InvalidOperationException($"Can't find location {name}.");
+      if (location.m_prefab == null)
+        throw new InvalidOperationException($"Can't find prefab for location {name}.");
       var seed = UnityEngine.Random.Range(0, 99999);
       var dungeonSeed = int.MinValue;
       var relativeAngle = (float)UnityEngine.Random.Range(0, 16) * 22.5f;
@@ -56,7 +48,7 @@ public class SpawnLocationCommand {
         if (argName == "refrot" || argName == "refrotation") {
           baseAngle = Parse.TryFloat(split[1], baseAngle);
         }
-        if (argName == "refpos" || argName == "refposition") {
+        if (argName == "from") {
           basePosition = Parse.TryVectorXZY(split[1].Split(','), basePosition);
         }
       }
@@ -78,6 +70,6 @@ public class SpawnLocationCommand {
       var undoCommand = "spawn_location " + name + " refRot=" + baseAngle + " refPos=" + Helper.PrintVectorXZY(basePosition) + " seed=" + seed + " rot=" + relativePosition + " " + string.Join(" ", args.Args.Skip(2));
       UndoSpawn undo = new(spawns, undoCommand);
       UndoManager.Add(undo);
-    }, true, true, optionsFetcher: () => ParameterInfo.LocationIds);
+    }, () => ParameterInfo.LocationIds);
   }
 }

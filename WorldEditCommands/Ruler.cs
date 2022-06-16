@@ -1,7 +1,17 @@
 using System;
 using UnityEngine;
 namespace WorldEditCommands;
-public class TerrainRuler {
+
+public class RulerParameters {
+  public float? Diameter;
+  public float? Width;
+  public float? Depth;
+  public Vector3 Position;
+  public float Angle;
+  public bool FixedPosition;
+  public bool FixedAngle;
+}
+public class Ruler {
   private static GameObject? Projector = null;
   private static CircleProjector? BaseProjector = null;
 
@@ -21,7 +31,7 @@ public class TerrainRuler {
       Projector.transform.rotation = Player.m_localPlayer.transform.rotation;
 
   }
-  private static GameObject InitializeGameObject(TerrainParameters pars) {
+  private static GameObject InitializeGameObject(RulerParameters pars) {
     Projector = new();
     Projector.layer = LayerMask.NameToLayer("character_trigger");
     MoveWithPlayer = !pars.FixedPosition;
@@ -32,7 +42,7 @@ public class TerrainRuler {
       Projector.transform.rotation = Quaternion.Euler(0f, 180f * pars.Angle / Mathf.PI, 0f);
     return Projector;
   }
-  public static void InitializeProjector(TerrainParameters pars, GameObject obj) {
+  public static void InitializeProjector(RulerParameters pars, GameObject obj) {
     if (BaseProjector == null)
       BaseProjector = GetBaseProjector();
     if (pars.Diameter.HasValue) {
@@ -51,7 +61,7 @@ public class TerrainRuler {
       rect.m_nrOfSegments = Math.Max(3, (int)((rect.m_depth + rect.m_width) * 2));
     }
   }
-  public static void Create(TerrainParameters pars) {
+  public static void Create(RulerParameters pars) {
     Remove();
     if (pars.Diameter == null && pars.Width == null && pars.Depth == null) return;
     var obj = InitializeGameObject(pars);

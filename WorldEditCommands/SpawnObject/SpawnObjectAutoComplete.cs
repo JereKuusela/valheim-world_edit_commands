@@ -14,8 +14,9 @@ public class SpawnObjectAutoComplete : SharedObjectAutoComplete {
       "pos",
       "rot",
       "refPlayer",
-      "refPos",
-      "refRot"
+      "from",
+      "refRot",
+      "to"
     });
     AutoComplete.Register(SpawnObjectCommand.Name, (int index) => {
       if (index == 0) return ParameterInfo.Ids;
@@ -43,11 +44,15 @@ public class SpawnObjectAutoComplete : SharedObjectAutoComplete {
       },
       {
         "pos",
-        (int index) => ParameterInfo.FRU("pos", "Offset from the player / reference position", index)
+        (int index) => ParameterInfo.FRU("pos", "Offset from the player position", index)
       },
       {
-        "refPos",
-        (int index) => ParameterInfo.XZY("refPos", "Overrides the reference position (player's position)", index)
+        "to",
+        (int index) => ParameterInfo.XZY("to", "End position for multiple objects", index)
+      },
+      {
+        "from",
+        (int index) => ParameterInfo.XZY("from", "Overrides the player position", index)
       },
       {
         "refPlayer",
@@ -55,11 +60,11 @@ public class SpawnObjectAutoComplete : SharedObjectAutoComplete {
       },
       {
         "rot",
-        (int index) => ParameterInfo.YawRollPitch("rot", "Rotation from the player / reference rotation", index)
+        (int index) => ParameterInfo.YawRollPitch("rot", "Rotation from the player rotation", index)
       },
       {
         "refRot",
-        (int index) => ParameterInfo.YawRollPitch("refRot", "Overrides the reference rotation (player's rotation)", index)
+        (int index) => ParameterInfo.YawRollPitch("refRot", "Overrides the player rotation", index)
       }
     }));
   }

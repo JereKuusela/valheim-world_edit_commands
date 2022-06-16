@@ -18,7 +18,8 @@ public class ObjectAutoComplete : SharedObjectAutoComplete {
       "fuel",
       "prefab",
       "center",
-      "respawn"
+      "respawn",
+      "guide"
     });
     AutoComplete.Register(ObjectCommand.Name, (int index) => NamedParameters, WithSharedFetchers(new() {
       {
@@ -50,6 +51,10 @@ public class ObjectAutoComplete : SharedObjectAutoComplete {
       },
       {
         "move", (int index) => ParameterInfo.FRU("move", "Movement offset based on the player rotation (unless origin is given)", index)
+      },
+      {
+        "guide",
+        (int index) => ParameterInfo.Flag("Guide", "Visualizes the affected area.")
       },
       {
         "rotate", (int index) => {

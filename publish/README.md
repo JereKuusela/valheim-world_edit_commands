@@ -30,6 +30,7 @@ Following parameters are available:
 - `center=x,z,y`: Overrides the player position and sets `rotate` center point.
 - `durability=number` or `health=number`: Sets the current durability for items, the current health for structures and the maximum health for creatures. Very high values like 1E30 turn the target invulnerable (including gravity for structures).
 - `fuel=number`: Sets the fuel amount. Without number, prints the fuel amount.
+- `guide`: Visualizes the affected area instead of doing anything. Turn off by not giving the `radius`.
 - `id`: Filters objects by id. Supports starts with, ends with or contains by using "*". Default is `*` that allows all objects which don't start with "_". 
 - `info`: Prints information of objects.
 - `level=integer`: Sets levels for creatures (level = stars + 1).
@@ -153,7 +154,7 @@ Following parameters are available:
 - `circle=number`: Determines the diameter of the affected terrain.
 - `delta=meters`: Sets the difference from the original elevation. Without the parameter, resets terrain altitude changes.
 - `from=x,z,y`: Overwrites the player's position. Allows fixing the current position for more precise editing. The y coordinate can be used to override the current ground altitude.
-- `guide`: Visualizes the affected area instead of doing anything.
+- `guide`: Visualizes the affected area instead of doing anything. Turn off by not giving the `circle` or `rect` parameters.
 - `level=altitude`: Sets terrain height to the given altitude. If not given, uses the ground altitude below the player.
 - `lower=meters`: Lowers terrain by X meters. Same as `raise` when a negative value is used.
 - `max=altitude`: Lowers terrain above the given altitude to the altitude.
@@ -228,6 +229,11 @@ Static objects only synchronize their position and rotation when loaded. This me
 This shouldn't cause any issues unless objects are moved long distances (which might cause issues anyways).
 
 # Changelog
+
+- v1.4
+	- Adds a new parameter `to` to the `spawn_object` command to even distribute multiple object.
+	- Adds a new parameter `guide` to the `object` command to visualize the affected area.
+	- Renames the parameter `refPos` to the `from` (like in the `terrain` command).
 
 - v1.3
 	- Adds a new parameter `guide` to the `terrain` command to visualize the area.

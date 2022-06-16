@@ -7,7 +7,7 @@ public class SpawnLocationAutoComplete {
     "dungeonSeed",
     "pos",
     "rot",
-    "refPos",
+    "from",
     "refRot"
   };
   public SpawnLocationAutoComplete() {
@@ -29,8 +29,8 @@ public class SpawnLocationAutoComplete {
         (int index) => ParameterInfo.XZY("pos", "Offset from the player / reference position", index)
       },
       {
-        "refPos",
-        (int index) => ParameterInfo.XZY("refPos", "Overrides the reference position (player's position)", index)
+        "from",
+        (int index) => ParameterInfo.XZY("from", "Overrides the reference position (player's position)", index)
       },
       {
         "rot",

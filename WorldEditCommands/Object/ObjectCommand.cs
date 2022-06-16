@@ -152,15 +152,15 @@ public class ObjectCommand {
   public ObjectCommand() {
     ObjectAutoComplete autoComplete = new();
     var description = CommandInfo.Create("Modifies the selected object(s).", null, autoComplete.NamedParameters);
-    new Terminal.ConsoleCommand(Name, description, (args) => {
-      if (args.Length < 2) return;
-      ObjectParameters pars = new();
-      var player = Player.m_localPlayer;
-      if (player) pars.ReferencePosition = player.transform.position;
-      if (!pars.ParseArgs(args.Args, args.Context)) return;
+    Helper.Command(Name, description, (args) => {
+      ObjectParameters pars = new(args);
+      if (pars.Operations.Contains("guide")) {
+        Ruler.Create(pars.ToRuler());
+        return;
+      }
       IEnumerable<ZDO> zdos;
       if (pars.Radius > 0f) {
-        zdos = GetZDOs(pars.Id, pars.Radius, pars.Center ?? pars.ReferencePosition);
+        zdos = GetZDOs(pars.Id, pars.Radius.Value, pars.Center ?? pars.From);
       } else {
         var view = Helper.GetHovered(args);
         if (view == null) return;
@@ -172,7 +172,7 @@ public class ObjectCommand {
       }
       Execute(args.Context, pars, pars.Operations, zdos);
 
-    }, true, true, optionsFetcher: () => autoComplete.NamedParameters);
+    }, () => autoComplete.NamedParameters);
   }
 
   private static string ChangeHealth(ZNetView obj, float amount) {

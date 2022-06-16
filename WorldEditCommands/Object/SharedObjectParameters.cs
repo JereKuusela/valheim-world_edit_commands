@@ -21,10 +21,10 @@ public class SharedObjectParameters {
   public Item? Shoulders = null;
   public Item? Legs = null;
   public Item? Utility = null;
-  public float Radius = 0f;
+  public float? Radius = null;
   public Range<int> Model = new(0);
 
-  public virtual bool ParseArgs(string[] args, Terminal terminal) {
+  protected virtual void ParseArgs(string[] args) {
     foreach (var arg in args) {
       var split = arg.Split('=');
       var name = split[0].ToLower();
@@ -55,6 +55,5 @@ public class SharedObjectParameters {
       if (name == "legs") Legs = new(value);
       if (name == "utility") Utility = new(value);
     }
-    return true;
   }
 }

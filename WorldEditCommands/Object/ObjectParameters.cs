@@ -6,7 +6,7 @@ namespace WorldEditCommands;
 public class ObjectParameters : SharedObjectParameters {
   public Range<Vector3> Rotation = new(Vector3.zero);
   public Range<Vector3> Offset = new(Vector3.zero);
-  public Vector3 ReferencePosition = new();
+  public Vector3 From;
   public Vector3? Center = null;
   public Range<float>? Fuel = null;
   public string Id = "";
@@ -41,21 +41,34 @@ public class ObjectParameters : SharedObjectParameters {
     "chest",
     "fuel",
     "prefab",
-    "respawn"
+    "respawn",
+    "guide"
   };
-  public override bool ParseArgs(string[] args, Terminal terminal) {
-    if (!base.ParseArgs(args, terminal)) return false;
+
+  public ObjectParameters(Terminal.ConsoleEventArgs args) {
+    if (Player.m_localPlayer) {
+      From = Player.m_localPlayer.transform.position;
+    }
+    ParseArgs(args.Args);
+  }
+
+  public RulerParameters ToRuler() => new() {
+    Diameter = Radius * 2,
+    Position = From,
+    FixedPosition = Center != null
+  };
+
+  protected override void ParseArgs(string[] args) {
+    base.ParseArgs(args);
     foreach (var arg in args) {
       var split = arg.Split('=');
       var name = split[0].ToLower();
       if (SupportedOperations.Contains(name)) {
-        if (Operations.Contains(name)) {
-          Helper.AddMessage(terminal, $"Error: Operation {name} used multiple times.");
-          return false;
-        }
+        if (Operations.Contains(name))
+          throw new InvalidOperationException($"Operation {name} used multiple times.");
         Operations.Add(name);
       }
-      if (name == "center") Center = ReferencePosition;
+      if (name == "center") Center = From;
       if (name == "respawn") Respawn = true;
       if (split.Length < 2) continue;
       var value = split[1];
@@ -71,16 +84,12 @@ public class ObjectParameters : SharedObjectParameters {
       if (name == "visual") Visual = new(value);
       if (name == "fuel") Fuel = Parse.TryFloatRange(value, 0f);
     }
-    Radius = Math.Min(Radius, 100f);
-    if (Operations.Contains("remove") && Operations.Count > 1) {
-      Helper.AddMessage(terminal, "Error: Remove can't be used with other operations.");
-      return false;
-    }
-    if (Operations.Contains("remove") && Id == "") {
-      Helper.AddMessage(terminal, "Error: Remove can't be used without id.");
-      return false;
-    }
+    if (Operations.Contains("remove") && Operations.Count > 1)
+      throw new InvalidOperationException("Remove can't be used with other operations.");
+    if (Operations.Count == 0)
+      throw new InvalidOperationException("Missing the operation.");
+    if (Operations.Contains("remove") && Id == "")
+      throw new InvalidOperationException("Remove can't be used without id.");
     if (Id == "") Id = "*";
-    return true;
   }
 }

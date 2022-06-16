@@ -25,18 +25,10 @@ public class TerrainCommand {
   public TerrainCommand() {
     TerrainAutoComplete autoComplete = new();
     var description = CommandInfo.Create("Manipulates the terrain.", null, autoComplete.NamedParameters);
-    new Terminal.ConsoleCommand(Name, description, (args) => {
-      var player = Player.m_localPlayer;
-      if (!player) {
-        Helper.AddMessage(args.Context, "Unable to find the player.");
-        return;
-      }
-      var precision = Mathf.PI / 4f;
-      var angle = precision * Mathf.Round(player.transform.rotation.eulerAngles.y / 45f);
-      TerrainParameters pars = new() { Position = player.transform.position, Angle = angle };
-      if (!pars.ParseArgs(args, args.Context)) return;
+    Helper.Command(Name, description, (args) => {
+      TerrainParameters pars = new(args);
       if (pars.Guide) {
-        TerrainRuler.Create(pars);
+        Ruler.Create(pars.ToRuler());
         return;
       }
       var compilers = GetCompilers(pars);
@@ -74,6 +66,6 @@ public class TerrainCommand {
       UndoTerrain undo = new(before, after, pars.Position, pars.Size);
       UndoManager.Add(undo);
 
-    }, true, true, optionsFetcher: () => autoComplete.NamedParameters);
+    }, () => autoComplete.NamedParameters);
   }
 }
