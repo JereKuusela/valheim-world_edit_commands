@@ -19,7 +19,8 @@ public class ObjectAutoComplete : SharedObjectAutoComplete {
       "prefab",
       "center",
       "respawn",
-      "guide"
+      "guide",
+      "from"
     });
     AutoComplete.Register(ObjectCommand.Name, (int index) => NamedParameters, WithSharedFetchers(new() {
       {
@@ -65,6 +66,10 @@ public class ObjectAutoComplete : SharedObjectAutoComplete {
       },
       {
         "center",
+        (int index) => ParameterInfo.XZY("center", "Overrides the player position. For <color=yellow>rotate</color> sets also the rotation center point.", index)
+      },
+      {
+        "from",
         (int index) => ParameterInfo.XZY("center", "Overrides the player position. For <color=yellow>rotate</color> sets also the rotation center point.", index)
       },
       {

@@ -76,7 +76,7 @@ public class ObjectParameters : SharedObjectParameters {
         if (value == "reset") ResetRotation = true;
         else Rotation = Parse.TryVectorYXZRange(value, Vector3.zero);
       }
-      if (name == "center") Center = Parse.TryVectorXZY(Parse.Split(value));
+      if (name == "center" || name == "from") Center = Parse.TryVectorXZY(Parse.Split(value));
       if (name == "move") Offset = Parse.TryVectorZXYRange(value, Vector3.zero);
       if (name == "id") Id = value;
       if (name == "prefab") Prefab = value;
