@@ -26,6 +26,10 @@ public class ObjectAutoComplete : SharedObjectAutoComplete {
       {
         "baby", (int index) => ParameterInfo.Flag("Baby")
       },
+
+      {
+        "mirror", (int index) => ParameterInfo.Flag("Mirror")
+      },
       {
         "respawn", (int index) => ParameterInfo.Flag("Respawn")
       },

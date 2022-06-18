@@ -114,6 +114,8 @@ public class ObjectCommand {
           output = SetPrefab(view, pars.Prefab);
         if (operation == "move")
           output = Move(view, Helper.RandomValue(pars.Offset), pars.Origin);
+        if (operation == "mirror" && pars.Center.HasValue)
+          output = Mirror(view, pars.Center.Value);
         if (operation == "rotate") {
           if (pars.ResetRotation)
             output = ResetRotation(view);
@@ -214,6 +216,11 @@ public class ObjectCommand {
     AddData(view);
     Actions.ResetRotation(view);
     return $"¤ rotation reseted.";
+  }
+  private static string Mirror(ZNetView view, Vector3 center) {
+    AddData(view);
+    Actions.Mirror(view, center);
+    return $"¤ mirrored.";
   }
   private static string Rotate(ZNetView view, Vector3 rotation, string origin, Vector3? center = null) {
     AddData(view);

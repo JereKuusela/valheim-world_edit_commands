@@ -42,7 +42,8 @@ public class ObjectParameters : SharedObjectParameters {
     "fuel",
     "prefab",
     "respawn",
-    "guide"
+    "guide",
+    "mirror"
   };
 
   public ObjectParameters(Terminal.ConsoleEventArgs args) {
@@ -68,7 +69,7 @@ public class ObjectParameters : SharedObjectParameters {
           throw new InvalidOperationException($"Operation {name} used multiple times.");
         Operations.Add(name);
       }
-      if (name == "center") Center = From;
+      if (name == "center" || name == "mirror") Center = From;
       if (name == "respawn") Respawn = true;
       if (split.Length < 2) continue;
       var value = split[1];

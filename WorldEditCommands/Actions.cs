@@ -298,6 +298,15 @@ public static class Actions {
     transform.RotateAround(position, originRotation * Vector3.right, relative.z);
     zdo.SetRotation(obj.transform.rotation);
   }
+  public static void Mirror(ZNetView obj, Vector3 center) {
+    var tr = obj.transform;
+    tr.position = new(2 * center.x - tr.position.x, tr.position.y, tr.position.z);
+    var angles = tr.eulerAngles;
+    tr.rotation = Quaternion.Euler(angles.x, -angles.y, angles.z);
+    var zdo = obj.GetZDO();
+    zdo.SetPosition(tr.position);
+    zdo.SetRotation(tr.rotation);
+  }
   public static void ResetRotation(ZNetView obj) {
     var zdo = obj.GetZDO();
     zdo.SetRotation(Quaternion.identity);

@@ -35,6 +35,7 @@ Following parameters are available:
 - `id`: Filters objects by id. Supports starts with, ends with or contains by using "*". Default is `*` that allows all objects which don't start with "_". 
 - `info`: Prints information of objects.
 - `level=integer`: Sets levels for creatures (level = stars + 1).
+- `mirror`: Mirrors the position and rotation based on the player position. Always mirrors the x-axis.
 - `move=forward,right,up`: Moves objects (meters). Static objects only update their position for other players when they leave the area.
 - `origin=player|object|world`: Base direction for `move` and `rotate`. Default value `player` uses the player's rotation, `object` uses the objects rotation and `world` uses the global coordinate system (x=north/south,y=up/down,z=west/east).
 - `prefab=id`: Replaces the object with the given id.
@@ -234,6 +235,7 @@ This shouldn't cause any issues unless objects are moved long distances (which m
 - v1.4
 	- Adds a new parameter `to` to the `spawn_object` command to even distribute multiple object.
 	- Adds a new parameter `guide` to the `object` command to visualize the affected area.
+	- Adds a new parameter `mirror` to the `object` command to mirror the position and rotation of objects.
 	- Adds a new parameter `from` to the `object` command with same behavior as the `center` parameter.
 	- Renames the parameter `refPos` to the `from` (like in the `terrain` command).
 
