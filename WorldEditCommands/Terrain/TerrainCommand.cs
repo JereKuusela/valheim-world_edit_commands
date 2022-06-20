@@ -7,12 +7,12 @@ public class TerrainCommand {
   public const string Name = "terrain";
 
   private TerrainComp[] GetCompilers(TerrainParameters pars) {
-    if (pars.Diameter.HasValue) return Terrain.GetCompilers(pars.Position, pars.Diameter.Value / 2f);
+    if (pars.Radius.HasValue) return Terrain.GetCompilers(pars.Position, pars.Radius.Value);
     if (pars.Width.HasValue && pars.Depth.HasValue) return Terrain.GetCompilers(pars.Position, pars.Width.Value, pars.Depth.Value, pars.Angle);
     throw new InvalidOperationException("Unable to select any terrain");
   }
   private Func<TerrainComp, Indices> GetIndexer(TerrainParameters pars) {
-    if (pars.Diameter.HasValue) return Terrain.CreateIndexer(pars.Position, pars.Diameter.Value);
+    if (pars.Radius.HasValue) return Terrain.CreateIndexer(pars.Position, pars.Radius.Value);
     if (pars.Width.HasValue && pars.Depth.HasValue) return Terrain.CreateIndexer(pars.Position, pars.Width.Value, pars.Depth.Value, pars.Angle);
     throw new InvalidOperationException("Unable to select any terrain");
   }

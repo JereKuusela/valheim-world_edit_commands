@@ -153,7 +153,7 @@ Following parameters are available:
 	- on: Excludes terrain that is under structures or other objects.
 	- off: All terrain is affected (default).
 	- inverse: Only includes terrain that is under structures or other objects.
-- `circle=number`: Determines the diameter of the affected terrain.
+- `circle=number`: Determines the radius of the affected terrain.
 - `delta=meters`: Sets the difference from the original elevation. Without the parameter, resets terrain altitude changes.
 - `from=x,z,y`: Overwrites the player's position. Allows fixing the current position for more precise editing. The y coordinate can be used to override the current ground altitude.
 - `guide`: Visualizes the affected area instead of doing anything. Turn off by not giving the `circle` or `rect` parameters.
@@ -177,16 +177,16 @@ Following parameters are available:
 
 ### Examples
 
-- `terrain level circle=20`: Sets terrain height within 10 meters (20 meters diameter) to the same level as below you. 
-- `terrain level terrain raise=4 rect=8 smooth=1 paint=paved`: Creates a pyramid.
-- `terrain level raise=4 rect=8;terrain lower=4 rect=8 smooth=1 paint=paved`: Creates a pyramid shaped hole.
-- `terrain slope rect=10 from=10,10 to=10,20`: Creates a slope between two positions (10 meters width).
-- `terrain slope=5 rect=10 from=10,10 to=10,20`: Creates a 5 meter slope between two positions (10 meters width).
-- `terrain level from=300,40,-500 rect=10,10000`: Creates a long leveled path. Walk along the path to load new areas and then use the command again to extend the path.
-- `terrain from=-23,23 angle=e rect=10 slope=4`: Creates a slope rising towards east.
-- `terrain from=-23,23 angle=e rect=10 slope=4 step=1 level`: Creates a level at the end of the slope.
-- `terrain from=-23,23 angle=e rect=10 slope=4,e step=1,1`: Creates a slope at right side of the level rising towards south (east of east).
-- `terrain from=-23,23 angle=e rect=10 slope=4 step=1,2,1 level`: Creates a level at the end of the slope. The last parameter of step is needed because the slope is not going to the original direction so it won't be raised automatically.
+- `terrain level circle=10`: Sets terrain height within 10 meters (20 meters diameter) to the same level as below you. 
+- `terrain level terrain raise=4 rect=4 smooth=1 paint=paved`: Creates a pyramid.
+- `terrain level raise=4 rect=4;terrain lower=4 rect=4 smooth=1 paint=paved`: Creates a pyramid shaped hole.
+- `terrain slope rect=5 from=10,10 to=10,20`: Creates a slope between two positions (10 meters width).
+- `terrain slope=5 rect=5 from=10,10 to=10,20`: Creates a 5 meter slope between two positions (10 meters width).
+- `terrain level from=300,40,-500 rect=5,10000`: Creates a long leveled path. Walk along the path to load new areas and then use the command again to extend the path.
+- `terrain from=-23,23 angle=e rect=5 slope=4`: Creates a slope rising towards east.
+- `terrain from=-23,23 angle=e rect=5 slope=4 step=1 level`: Creates a level at the end of the slope.
+- `terrain from=-23,23 angle=e rect=5 slope=4,e step=1,1`: Creates a slope at right side of the level rising towards south (east of east).
+- `terrain from=-23,23 angle=e rect=5 slope=4 step=1,2,1 level`: Creates a level at the end of the slope. The last parameter of step is needed because the slope is not going to the original direction so it won't be raised automatically.
 - `alias level terrain level circle=$`: New command `level [value]` for easier leveling.
 - `alias level terrain level rect=$`: New command `level_sq [value]` for easier leveling.
 
@@ -237,6 +237,7 @@ This shouldn't cause any issues unless objects are moved long distances (which m
 	- Adds a new parameter `guide` to the `object` command to visualize the affected area.
 	- Adds a new parameter `mirror` to the `object` command to mirror the position and rotation of objects.
 	- Adds a new parameter `from` to the `object` command with same behavior as the `center` parameter.
+	- Changes the `circle` and `rect` parameters of the `terrain` command to have half of the size (matches radius of other commands).
 	- Renames the parameter `refPos` to the `from` (like in the `terrain` command).
 
 - v1.3

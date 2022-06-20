@@ -3,7 +3,7 @@ using UnityEngine;
 namespace WorldEditCommands;
 
 public class RulerParameters {
-  public float? Diameter;
+  public float? Radius;
   public float? Width;
   public float? Depth;
   public Vector3 Position;
@@ -45,25 +45,25 @@ public class Ruler {
   public static void InitializeProjector(RulerParameters pars, GameObject obj) {
     if (BaseProjector == null)
       BaseProjector = GetBaseProjector();
-    if (pars.Diameter.HasValue) {
+    if (pars.Radius.HasValue) {
       var circle = obj.AddComponent<CircleProjector>();
       circle.m_prefab = BaseProjector.m_prefab;
       circle.m_mask = BaseProjector.m_mask;
-      circle.m_radius = pars.Diameter.Value / 2f;
+      circle.m_radius = pars.Radius.Value;
       circle.m_nrOfSegments = Math.Max(3, (int)(circle.m_radius * 4));
     }
     if (pars.Depth.HasValue && pars.Width.HasValue) {
       var rect = obj.AddComponent<RectangleProjector>();
       rect.m_prefab = BaseProjector.m_prefab;
       rect.m_mask = BaseProjector.m_mask;
-      rect.m_depth = pars.Depth.Value / 2f;
-      rect.m_width = pars.Width.Value / 2f;
+      rect.m_depth = pars.Depth.Value;
+      rect.m_width = pars.Width.Value;
       rect.m_nrOfSegments = Math.Max(3, (int)((rect.m_depth + rect.m_width) * 2));
     }
   }
   public static void Create(RulerParameters pars) {
     Remove();
-    if (pars.Diameter == null && pars.Width == null && pars.Depth == null) return;
+    if (pars.Radius == null && pars.Width == null && pars.Depth == null) return;
     var obj = InitializeGameObject(pars);
     InitializeProjector(pars, InitializeGameObject(pars));
   }

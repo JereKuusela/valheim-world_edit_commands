@@ -28,11 +28,11 @@ public enum BlockCheck {
 }
 
 public partial class Terrain {
-  public static Func<TerrainComp, Indices> CreateIndexer(Vector3 centerPos, float diameter) {
+  public static Func<TerrainComp, Indices> CreateIndexer(Vector3 centerPos, float radius) {
     return (TerrainComp comp) => {
       return new() {
-        HeightIndices = GetHeightIndicesWithCircle(comp, centerPos, diameter).ToArray(),
-        PaintIndices = GetPaintIndicesWithCircle(comp, centerPos, diameter).ToArray()
+        HeightIndices = GetHeightIndicesWithCircle(comp, centerPos, radius).ToArray(),
+        PaintIndices = GetPaintIndicesWithCircle(comp, centerPos, radius).ToArray()
       };
     };
   }
@@ -59,7 +59,7 @@ public partial class Terrain {
     var maxDimension = Mathf.Max(width, depth);
     // Rotating increases the square dimensions.
     var dimensionMultiplier = Mathf.Abs(Mathf.Sin(angle)) + Mathf.Abs(Mathf.Cos(angle));
-    var size = maxDimension * dimensionMultiplier / 2f;
+    var size = maxDimension * dimensionMultiplier;
     Heightmap.FindHeightmap(position, size, heightMaps);
     var pos = ZNet.instance.GetReferencePosition();
     var zs = ZoneSystem.instance;
@@ -93,10 +93,10 @@ public partial class Terrain {
       return height >= min && height <= max;
     };
   }
-  private static IEnumerable<HeightIndex> GetHeightIndicesWithCircle(TerrainComp compiler, Vector3 centerPos, float diameter) {
+  private static IEnumerable<HeightIndex> GetHeightIndicesWithCircle(TerrainComp compiler, Vector3 centerPos, float radius) {
     List<HeightIndex> indices = new();
     compiler.m_hmap.WorldToVertex(centerPos, out var cx, out var cy);
-    var maxDistance = diameter / 2f / compiler.m_hmap.m_scale;
+    var maxDistance = radius / compiler.m_hmap.m_scale;
     var max = compiler.m_width + 1;
     Vector2 center = new((float)cx, (float)cy);
     for (int i = 0; i < max; i++) {
@@ -128,8 +128,8 @@ public partial class Terrain {
   private static IEnumerable<HeightIndex> GetHeightIndicesWithRect(TerrainComp compiler, Vector3 centerPos, float width, float depth, float angle) {
     List<HeightIndex> indices = new();
     compiler.m_hmap.WorldToVertex(centerPos, out var cx, out var cy);
-    var maxWidth = width / 2f / compiler.m_hmap.m_scale;
-    var maxDepth = depth / 2f / compiler.m_hmap.m_scale;
+    var maxWidth = width / compiler.m_hmap.m_scale;
+    var maxDepth = depth / compiler.m_hmap.m_scale;
     var max = compiler.m_width + 1;
     for (int x = 0; x < max; x++) {
       for (int y = 0; y < max; y++) {

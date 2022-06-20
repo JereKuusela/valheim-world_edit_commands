@@ -7,7 +7,7 @@ public class TerrainParameters {
   public Vector3 Offset = Vector3.zero;
   public Vector3 Step = Vector3.zero;
   public float Size = 0f;
-  public float? Diameter = null;
+  public float? Radius = null;
   public float? Width = null;
   public float? Depth = null;
   public float Angle = 0f;
@@ -38,7 +38,7 @@ public class TerrainParameters {
 
   public RulerParameters ToRuler() => new() {
     Angle = Angle,
-    Diameter = Diameter,
+    Radius = Radius,
     Width = Width,
     Depth = Depth,
     Position = Position,
@@ -96,7 +96,7 @@ public class TerrainParameters {
       if (name == "blockcheck")
         BlockCheck = BlockCheck.On;
       if (name == "circle")
-        Diameter = 0f;
+        Radius = 0f;
       if (name == "rect") {
         Width = 0f;
         Depth = 0f;
@@ -108,7 +108,7 @@ public class TerrainParameters {
       var value = split[1].ToLower();
       var values = Parse.Split(value);
       if (name == "circle")
-        Diameter = Parse.TryFloat(value, 0f);
+        Radius = Parse.TryFloat(value, 0f);
       if (name == "rect") {
         var size = Parse.TryScale(values);
         Width = size.x;
@@ -152,21 +152,21 @@ public class TerrainParameters {
       }
     }
     HandleTo(args);
-    if (Diameter.HasValue && Depth.HasValue)
+    if (Radius.HasValue && Depth.HasValue)
       throw new InvalidOperationException($"<color=yellow>circle</color> and <color=yellow>rect</color> parameters can't be used together.");
 
-    if (!Diameter.HasValue && !Depth.HasValue) {
+    if (!Radius.HasValue && !Depth.HasValue) {
       // Way to disable the guide.
       if (Guide) return;
       throw new InvalidOperationException($"<color=yellow>circle</color> or <color=yellow>rect</color> parameter must be used.");
     }
-    if (Diameter.HasValue) Size = Diameter.Value / 2f;
-    if (Depth.HasValue && Width.HasValue) Size = Mathf.Max(Depth.Value, Width.Value) / 2;
+    if (Radius.HasValue) Size = Radius.Value;
+    if (Depth.HasValue && Width.HasValue) Size = Mathf.Max(Depth.Value, Width.Value);
     if (Step != Vector3.zero) {
       var width = Size;
       var depth = Size;
-      if (Width.HasValue) width = Width.Value / 2;
-      if (Depth.HasValue) depth = Depth.Value / 2;
+      if (Width.HasValue) width = Width.Value;
+      if (Depth.HasValue) depth = Depth.Value;
       Offset.x += Step.x * width * 2;
       Offset.z += Step.z * depth * 2;
       if (Slope.HasValue) {
@@ -182,7 +182,7 @@ public class TerrainParameters {
       Position += Offset;
     }
     // Circle doesn't use the angle so the slope needs both.
-    if (Diameter.HasValue) SlopeAngle += Angle;
+    if (Radius.HasValue) SlopeAngle += Angle;
   }
 
   private void HandleTo(string[] args) {
@@ -201,9 +201,9 @@ public class TerrainParameters {
             throw new InvalidOperationException("Unable to find the ground height. Use <color=yellow>to</color> with the y coordinate.");
         }
         var distance = Utils.DistanceXZ(Position, to);
-        if (Diameter.HasValue) Diameter = distance;
-        if (Width == 0f) Width = distance;
-        if (Depth.HasValue) Depth = distance;
+        if (Radius.HasValue) Radius = distance / 2f;
+        if (Width == 0f) Width = distance / 2f;
+        if (Depth.HasValue) Depth = distance / 2f;
         FixedAngle = true;
         Angle = Vector3.SignedAngle(Vector3.forward, Utils.DirectionXZ(to - Position), Vector3.up) * Mathf.PI / 180f;
         Position.x = (Position.x + to.x) / 2f;

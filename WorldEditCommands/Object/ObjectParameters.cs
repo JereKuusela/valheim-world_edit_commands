@@ -54,7 +54,7 @@ public class ObjectParameters : SharedObjectParameters {
   }
 
   public RulerParameters ToRuler() => new() {
-    Diameter = Radius * 2,
+    Radius = Radius,
     Position = From,
     FixedPosition = Center != null
   };
