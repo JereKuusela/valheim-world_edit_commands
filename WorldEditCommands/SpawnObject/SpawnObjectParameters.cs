@@ -52,7 +52,7 @@ class SpawnObjectParameters : SharedObjectParameters {
       if (name == "rot" || name == "rotation") {
         Rotation = Parse.TryVectorYXZRange(value, Vector3.zero);
       }
-      if (name == "from") {
+      if (name == "from" || name == "refpos") {
         UseDefaultRelativePosition = false;
         From = Parse.TryVectorXZY(value.Split(','), From);
       }

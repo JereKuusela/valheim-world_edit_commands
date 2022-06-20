@@ -48,7 +48,7 @@ public class SpawnLocationCommand {
         if (argName == "refrot" || argName == "refrotation") {
           baseAngle = Parse.TryFloat(split[1], baseAngle);
         }
-        if (argName == "from") {
+        if (argName == "from" || argName == "refpos") {
           basePosition = Parse.TryVectorXZY(split[1].Split(','), basePosition);
         }
       }
@@ -67,7 +67,7 @@ public class SpawnLocationCommand {
       args.Context.AddString("Spawned: " + name + " at " + Helper.PrintVectorXZY(spawnPosition));
       var spawns = AddedZDOs.StopTracking();
       // Disable player based positioning.
-      var undoCommand = "spawn_location " + name + " refRot=" + baseAngle + " refPos=" + Helper.PrintVectorXZY(basePosition) + " seed=" + seed + " rot=" + relativePosition + " " + string.Join(" ", args.Args.Skip(2));
+      var undoCommand = "spawn_location " + name + " refRot=" + baseAngle + " from=" + Helper.PrintVectorXZY(basePosition) + " seed=" + seed + " rot=" + relativePosition + " " + string.Join(" ", args.Args.Skip(2));
       UndoSpawn undo = new(spawns, undoCommand);
       UndoManager.Add(undo);
     }, () => ParameterInfo.LocationIds);

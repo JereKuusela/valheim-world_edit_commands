@@ -1,11 +1,14 @@
 ﻿using BepInEx;
 using HarmonyLib;
 namespace WorldEditCommands;
-[BepInPlugin("valheim.jerekuusela.world_edit_commands", "WorldEditCommands", "1.4.0.0")]
-[BepInDependency("valheim.jerekuusela.server_devcommands", "1.20.0.0")]
+[BepInPlugin(GUID, NAME, VERSION)]
+[BepInDependency("server_devcommands", "1.21")]
 public class WorldEditCommands : BaseUnityPlugin {
+  public const string GUID = "world_edit_commands";
+  public const string NAME = "World Edit Commands";
+  public const string VERSION = "1.4";
   public void Awake() {
-    Harmony harmony = new("valheim.jerekuusela.world_edit_commands");
+    Harmony harmony = new(GUID);
     harmony.PatchAll();
   }
 

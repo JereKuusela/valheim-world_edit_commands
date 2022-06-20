@@ -88,11 +88,11 @@ public class SpawnObjectCommand {
       Player.m_localPlayer.Message(MessageHud.MessageType.TopLeft, "Spawning object " + prefabName, spawned.Count, null);
       args.Context.AddString("Spawned: " + prefabName + " at " + Helper.PrintVectorXZY(position));
       var spawns = spawned.Select(obj => obj.GetComponent<ZNetView>()).Where(obj => obj != null).Select(obj => obj.GetZDO()).ToList();
-      // Undo uses refPos which would disable the default relative position. So apply it to the refPos to keep the same position.
+      // Undo uses refPos which would disable the default relative position. So apply it to the from to keep the same position.
       if (pars.UseDefaultRelativePosition)
         pars.From = position;
-      // refPos and refRot override the player based positioning (fixes undo position).
-      var undoCommand = "spawn_object " + prefabName + " refRot=" + Helper.PrintAngleYXZ(pars.BaseRotation) + " refPos=" + Helper.PrintVectorXZY(pars.From) + " " + string.Join(" ", args.Args.Skip(2));
+      // from and refRot override the player based positioning (fixes undo position).
+      var undoCommand = "spawn_object " + prefabName + " refRot=" + Helper.PrintAngleYXZ(pars.BaseRotation) + " from=" + Helper.PrintVectorXZY(pars.From) + " " + string.Join(" ", args.Args.Skip(2));
       UndoSpawn undo = new(spawns, undoCommand);
       UndoManager.Add(undo);
     }, () => ParameterInfo.ObjectIds);

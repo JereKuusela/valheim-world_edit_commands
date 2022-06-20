@@ -83,17 +83,18 @@ Following parameters are available:
 - `amount=integer`: Amount of spawned objects within a random radius. Items are autostacked.
 - `crafter=value` or `name=value`: Name of the crafter for items or name for tamed creatures (that support naming). Character _ is replaced with a space bar.
 - `durability=number` or `health=number`: Overrides the current durability for items, the current health for structures and the maximum health for creatures. Very high values like 1E30 turn the target invulnerable (including gravity for structures).
+- `from=x,z,y`: Allows overriding the player's position for the command. Used by `redo` and can be useful for some advanced usage.
 - `hunt`: Spawned creatures are in the hunt mode.
 - `level=integer`: Spawned creatures have this amount of level (level = stars + 1).
 - `pos=forward,right,up`: Relative position (meters) from the player. If not given, the objects are spawned 2 meters front of the player. If y coordinate is not given, the objects snaps to the ground.
 - `radius=number`: Maximum spawn distance when spawning multiple objects. Default is 0.5 meters.
 - `refPlayer=name`: Allows overriding the player's position with another player's position.
-- `refPos=x,z,y`: Allows overriding the player's position for the command. Used by `redo` and can be useful for some advanced usage.
 - `refRot=yaw,roll,pick`: Allows overriding the player's rotation for the command. Used by `redo` and can be useful for some advanced usage.
 - `rot=yaw,roll,pick`: Relative rotation (degrees) from the player's rotation.
 - `scale=x,z,y`: Scale for the spawned objects (which support it). A single value sets all of the scales.
 - `stars=integer`: Spawned creatures have this amount of stars (stars = level - 1).
 - `tame`: Spawned creatures are tamed.
+- `to=x,z,y`: Distributes the objects between the player and target position.
 - `variant=integer`: Style/variant for some spawned items.
 
 Additional style parameters:
@@ -124,8 +125,8 @@ Following parameters are available:
 
 - `seed=number`: Sets the result of randomized locations. If not given, the result is random.
 - `dungeonSeed=number`: Sets the result of next dungeon generation. If not given, the result is random. If the location is not a dungeon, this will carry over to the next dungeon generation. Forcing dungeon seed randomize the dungeon room seeds (instead of being based on the room position).
+- `from=x,z,y`: Allows overriding the player's position for the command. Used by `redo` and can be useful for some advanced usage.
 - `pos=forward,right,up`: Relative position (meters) from the player. If not given, the location will be placed at the player. If y coordinate is not given, the location snaps to the ground.
-- `refPos=x,z,y`: Allows overriding the player's position for the command. Used by `redo` and can be useful for some advanced usage.
 - `rot=degrees`: Relative rotation (degrees) from the player's rotation.
 - `refRot=degrees`: Allows overriding the player's rotation for the command. Used by `redo` and can be useful for some advanced usage.
 
