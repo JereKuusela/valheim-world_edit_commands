@@ -157,8 +157,8 @@ public partial class Terrain {
     centerPos = new(centerPos.x - 0.5f, centerPos.y, centerPos.z - 0.5f);
     List<PaintIndex> indices = new();
     compiler.m_hmap.WorldToVertex(centerPos, out var cx, out var cy);
-    var maxWidth = width / 2f / compiler.m_hmap.m_scale;
-    var maxDepth = depth / 2f / compiler.m_hmap.m_scale;
+    var maxWidth = width / compiler.m_hmap.m_scale;
+    var maxDepth = depth / compiler.m_hmap.m_scale;
     var max = compiler.m_width;
     for (int x = 0; x < max; x++) {
       for (int y = 0; y < max; y++) {
@@ -177,11 +177,11 @@ public partial class Terrain {
     return indices;
   }
 
-  private static IEnumerable<PaintIndex> GetPaintIndicesWithCircle(TerrainComp compiler, Vector3 centerPos, float diameter) {
+  private static IEnumerable<PaintIndex> GetPaintIndicesWithCircle(TerrainComp compiler, Vector3 centerPos, float radius) {
     centerPos = new(centerPos.x - 0.5f, centerPos.y, centerPos.z - 0.5f);
     List<PaintIndex> indices = new();
     compiler.m_hmap.WorldToVertex(centerPos, out var cx, out var cy);
-    var maxDistance = diameter / 2f / compiler.m_hmap.m_scale;
+    var maxDistance = radius / compiler.m_hmap.m_scale;
     var max = compiler.m_width;
     Vector2 center = new(cx, cy);
     for (int i = 0; i < max; i++) {
