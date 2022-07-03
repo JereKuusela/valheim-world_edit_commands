@@ -2,11 +2,11 @@
 using HarmonyLib;
 namespace WorldEditCommands;
 [BepInPlugin(GUID, NAME, VERSION)]
-[BepInDependency("server_devcommands", "1.21")]
+[BepInDependency("server_devcommands", "1.22")]
 public class WorldEditCommands : BaseUnityPlugin {
   public const string GUID = "world_edit_commands";
   public const string NAME = "World Edit Commands";
-  public const string VERSION = "1.4";
+  public const string VERSION = "1.5";
   public void Awake() {
     Harmony harmony = new(GUID);
     harmony.PatchAll();

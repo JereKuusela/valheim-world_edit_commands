@@ -233,6 +233,9 @@ This shouldn't cause any issues unless objects are moved long distances (which m
 
 # Changelog
 
+- v1.5
+	- Fixes painting using wrong circle or rectangle size.
+
 - v1.4
 	- Adds a new parameter `to` to the `spawn_object` command to even distribute multiple object.
 	- Adds a new parameter `guide` to the `object` command to visualize the affected area.
