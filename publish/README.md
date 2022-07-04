@@ -2,12 +2,9 @@
 
 Adds new client side commands for advanced world editing.
 
-# Manual Installation:
+Check any modding [guide](https://youtu.be/WfvA5a5tNHo) for installation instructions.
 
-1. Install the [BepInExPack Valheim](https://valheim.thunderstore.io/package/denikson/BepInExPack_Valheim).
-2. Install the [Server Devcommands](https://valheim.thunderstore.io/package/JereKuusela/Server_devcommands/) mod.
-3. Download the latest zip.
-4. Extract it in the \<GameDirectory\>\BepInEx\plugins\ folder.
+Install also [Server Devcommands](https://valheim.thunderstore.io/package/JereKuusela/Server_devcommands/).
 
 # Commands
 
