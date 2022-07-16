@@ -5,6 +5,17 @@ using UnityEngine;
 namespace WorldEditCommands;
 public class TerrainCommand {
   public const string Name = "terrain";
+  public static Dictionary<string, Color> Paints = new() {
+    {"grass", Color.black},
+    {"patches", new(0f, 0.75f, 0f)},
+    {"grass_dark", new(0.6f, 0.5f, 0f)},
+    {"dirt", Color.red},
+    {"cultivated", Color.green},
+    {"paved", Color.blue},
+    {"paved_moss", new(0f, 0f, 0.5f)},
+    {"paved_dirt", new(1f, 0f, 0.5f)},
+    {"paved_dark", new(0f, 1f, 0.5f)},
+  };
 
   private TerrainComp[] GetCompilers(TerrainParameters pars) {
     if (pars.Radius.HasValue) return Terrain.GetCompilers(pars.Position, pars.Radius.Value);
@@ -52,14 +63,13 @@ public class TerrainCommand {
       if (pars.Max.HasValue)
         Terrain.MaxTerrain(compilerIndices, pars.Position, pars.Size, pars.Max.Value);
       if (pars.Paint != "") {
-        if (pars.Paint == "dirt")
-          Terrain.PaintTerrain(compilerIndices, pars.Position, pars.Size, Color.red);
-        if (pars.Paint == "paved")
-          Terrain.PaintTerrain(compilerIndices, pars.Position, pars.Size, Color.blue);
-        if (pars.Paint == "cultivated")
-          Terrain.PaintTerrain(compilerIndices, pars.Position, pars.Size, Color.green);
-        if (pars.Paint == "grass")
-          Terrain.PaintTerrain(compilerIndices, pars.Position, pars.Size, Color.black);
+        var split = pars.Paint.Split(',');
+        if (split.Length > 2) {
+          Color color = new(Parse.TryFloat(split, 0), Parse.TryFloat(split, 1), Parse.TryFloat(split, 2), Parse.TryFloat(split, 3, 1f));
+          Terrain.PaintTerrain(compilerIndices, pars.Position, pars.Size, color);
+        } else if (Paints.TryGetValue(pars.Paint, out var color)) {
+          Terrain.PaintTerrain(compilerIndices, pars.Position, pars.Size, color);
+        }
       }
 
       var after = Terrain.GetData(compilerIndices);

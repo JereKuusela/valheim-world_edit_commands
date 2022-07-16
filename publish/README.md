@@ -167,6 +167,7 @@ Following parameters are available:
 	- 0.5: Half of the terrain gets reduced changes.
 	- 0.0: No reduction (default).
 - `paint=value`: Sets the terrain material (dirt, paved, cultivated or grass to reset).
+- `paint=dirt,cultivated,paved`: Sets custom terrain material (values from 0.0 to 1.0).
 - `raise=meters`: Raises terrain by X meters. Same as `lower` when a negative value is used.
 - `rect=width,depth`: Determines the size of the affected terrain.
 - `reset`: Resets terrain height and paint changes. Ignores `smooth` parameter.

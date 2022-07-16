@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using ServerDevcommands;
 namespace WorldEditCommands;
 public class TerrainAutoComplete {
@@ -31,12 +32,7 @@ public class TerrainAutoComplete {
   };
   public TerrainAutoComplete() {
     NamedParameters.Sort();
-    List<string> paints = new() {
-      "dirt",
-      "paved",
-      "cultivated",
-      "grass"
-    };
+    var paints = TerrainCommand.Paints.Keys.ToList();
     paints.Sort();
     AutoComplete.Register(TerrainCommand.Name, (int index) => NamedParameters, new() {
       {
@@ -125,7 +121,12 @@ public class TerrainAutoComplete {
       },
       {
         "paint",
-        (int index) => index == 0 ? paints : ParameterInfo.None
+        (int index) => {
+          if (index == 0) return paints;
+          if (index == 1) return ParameterInfo.Create("paint=dirt,<color=yellow>cultivated</color>,paved", "Custom color (values from 0.0 to 1.0).");
+          if (index == 2) return ParameterInfo.Create("paint=dirt,cultivated,<color=yellow>paved</color>", "Custom color (values from 0.0 to 1.0).");
+          return ParameterInfo.None;
+        }
       },
     });
   }

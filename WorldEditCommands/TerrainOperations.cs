@@ -75,6 +75,12 @@ public partial class Terrain {
     };
     DoPaintOperation(compilerIndices, pos, radius, action);
   }
+  public static void ClearPaint(CompilerIndices compilerIndices, Vector3 pos, float radius) {
+    Action<TerrainComp, int> action = (compiler, index) => {
+      compiler.m_modifiedPaint[index] = false;
+    };
+    DoPaintOperation(compilerIndices, pos, radius, action);
+  }
   public static void ResetTerrain(Dictionary<TerrainComp, Indices> compilerIndices, Vector3 pos, float radius) {
     Action<TerrainComp, HeightIndex> action = (compiler, heightIndex) => {
       var index = heightIndex.Index;
@@ -83,7 +89,7 @@ public partial class Terrain {
       compiler.m_modifiedHeight[index] = false;
     };
     DoHeightOperation(compilerIndices, pos, radius, action);
-    PaintTerrain(compilerIndices, pos, radius, Color.black);
+    ClearPaint(compilerIndices, pos, radius);
   }
   private static void DoHeightOperation(CompilerIndices compilerIndices, Vector3 pos, float radius, Action<TerrainComp, HeightIndex> action) {
     foreach (var kvp in compilerIndices) {
