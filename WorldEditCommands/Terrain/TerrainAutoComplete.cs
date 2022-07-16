@@ -54,8 +54,8 @@ public class TerrainAutoComplete {
       {
         "rect",
         (int index) => {
-          if (index == 0) return ParameterInfo.Create("rect=<color=yellow>size</color> or rect=<color=yellow>width</color>,depth (from 0 to 128)", "Size of the included terrain (rectangle).");
-          if (index == 1) return ParameterInfo.Create("rect=width,<color=yellow>depth</color> (from 0 to 128)", "Size of the included terrain (rectangle).");
+          if (index == 0) return ParameterInfo.Create("rect=<color=yellow>size</color> or rect=<color=yellow>width</color>,depth", "Size of the included terrain (rectangle).");
+          if (index == 1) return ParameterInfo.Create("rect=width,<color=yellow>depth</color>", "Size of the included terrain (rectangle).");
           return ParameterInfo.None;
         }
       },
@@ -73,7 +73,7 @@ public class TerrainAutoComplete {
       },
       {
         "circle",
-        (int index) => index == 0 ? ParameterInfo.Create("circle=<color=yellow>number</color> (from 0 to 128)", "Diameter of the included terrain (circle).") : ParameterInfo.None
+        (int index) => index == 0 ? ParameterInfo.Create("circle=<color=yellow>number</color>", "Radius of the included terrain.") : ParameterInfo.None
       },
       {
         "offset",

@@ -36,13 +36,26 @@ public class ObjectCommand {
       values = values.Where(prefab => prefab.name.ToLower() == id);
     return values.Select(prefab => prefab.name.GetStableHashCode()).ToHashSet();
   }
-  public static IEnumerable<ZDO> GetZDOs(string id, float distance, Vector3 center) {
+  private static float GetX(float x, float y, float angle) => Mathf.Cos(angle) * x - Mathf.Sin(angle) * y;
+  private static float GetY(float x, float y, float angle) => Mathf.Sin(angle) * x + Mathf.Cos(angle) * y;
+  private static bool Within(Vector3 position, Vector3 center, float angle, float width, float depth, float height) {
+    var dx = position.x - center.x;
+    var dz = position.z - center.z;
+    var distanceX = GetX(dx, dz, angle);
+    var distanceZ = GetY(dx, dz, angle);
+    if (position.y - center.y > (height == 0f ? 1000f : height)) return false;
+    if (Mathf.Abs(distanceX) > width) return false;
+    if (Mathf.Abs(distanceZ) > depth) return false;
+    return true;
+  }
+  private static bool Within(Vector3 position, Vector3 center, float radius, float height) {
+    return Utils.DistanceXZ(position, center) <= radius && position.y - center.y <= (height == 0f ? 1000f : height);
+  }
+  public static IEnumerable<ZDO> GetZDOs(string id, Func<Vector3, bool> checker) {
     var codes = GetPrefabs(id);
     IEnumerable<ZDO> zdos = ZDOMan.instance.m_objectsByID.Values;
     zdos = zdos.Where(zdo => codes.Contains(zdo.GetPrefab()));
-    if (distance > 0)
-      return zdos.Where(zdo => Vector3.Distance(zdo.GetPosition(), center) <= distance);
-    return zdos;
+    return zdos.Where(zdo => checker(zdo.GetPosition()));
   }
   private static void AddData(ZNetView view) {
     var zdo = view.GetZDO();
@@ -161,8 +174,10 @@ public class ObjectCommand {
         return;
       }
       IEnumerable<ZDO> zdos;
-      if (pars.Radius > 0f) {
-        zdos = GetZDOs(pars.Id, pars.Radius.Value, pars.Center ?? pars.From);
+      if (pars.Radius.HasValue) {
+        zdos = GetZDOs(pars.Id, position => Within(position, pars.Center ?? pars.From, pars.Radius.Value, pars.Height));
+      } else if (pars.Width.HasValue && pars.Depth.HasValue) {
+        zdos = GetZDOs(pars.Id, position => Within(position, pars.Center ?? pars.From, pars.Angle, pars.Width.Value, pars.Depth.Value, pars.Height));
       } else {
         var view = Helper.GetHovered(args);
         if (view == null) return;

@@ -65,7 +65,15 @@ public class SpawnObjectAutoComplete : SharedObjectAutoComplete {
       {
         "refRot",
         (int index) => ParameterInfo.YawRollPitch("refRot", "Overrides the player rotation", index)
-      }
+      },
+      {
+        "circle",
+        (int index) => index == 0 ? ParameterInfo.Create("circle=<color=yellow>number</color>", "Maximum spawn distance when spawning multiple objects. Default is 0.5 meters.") : ParameterInfo.None
+      },
+      {
+        "radius",
+        (int index) => index == 0 ? ParameterInfo.Create("radius=<color=yellow>number</color>", "Maximum spawn distance when spawning multiple objects. Default is 0.5 meters.") : ParameterInfo.None
+      },
     }));
   }
 }

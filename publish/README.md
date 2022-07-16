@@ -22,9 +22,11 @@ The `object [...args]` alters the hovered object or objects within a given radiu
 
 Following parameters are available:
 
+- `angle=degrees`: Direction of the rectangle when used with `rect`.
 - `baby`: Prevents offspring from growing up.
 - `center`: Sets `rotate` center point at player position.
 - `center=x,z,y`: Overrides the player position and sets `rotate` center point.
+- `circle=number` or `radius=number`: Radius for included objects. If not given, the hovered object is only affected.
 - `durability=number` or `health=number`: Sets the current durability for items, the current health for structures and the maximum health for creatures. Very high values like 1E30 turn the target invulnerable (including gravity for structures).
 - `fuel=number`: Sets the fuel amount. Without number, prints the fuel amount.
 - `from=x,z,y`: Same as the `center`.
@@ -36,7 +38,7 @@ Following parameters are available:
 - `move=forward,right,up`: Moves objects (meters). Static objects only update their position for other players when they leave the area.
 - `origin=player|object|world`: Base direction for `move` and `rotate`. Default value `player` uses the player's rotation, `object` uses the objects rotation and `world` uses the global coordinate system (x=north/south,y=up/down,z=west/east).
 - `prefab=id`: Replaces the object with the given id.
-- `radius=number`: Radius for included objects. Capped at 100 meters. If not given, the hovered object is only affected.
+- `rect=width,depth`: Area for included objects. If not given, the hovered object is only affected.
 - `remove`: Removes objects. Must use the `id` parameter (`id=*` is ok). Can't be used with other operations.
 - `respawn`: Resets loot chests, pickables and spawn points.
 - `rotate=yaw,roll,pitch`: Rotates objects (degrees). Static objects only update their rotation for other players when they leave the area.
@@ -229,6 +231,10 @@ Static objects only synchronize their position and rotation when loaded. This me
 This shouldn't cause any issues unless objects are moved long distances (which might cause issues anyways).
 
 # Changelog
+
+- v1.6
+	- Adds rectangle support to the `object` command.
+	- Adds height support to the `object` command.
 
 - v1.5
 	- Fixes painting using wrong circle or rectangle size.

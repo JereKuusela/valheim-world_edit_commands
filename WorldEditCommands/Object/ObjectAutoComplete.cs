@@ -20,13 +20,14 @@ public class ObjectAutoComplete : SharedObjectAutoComplete {
       "center",
       "respawn",
       "guide",
-      "from"
+      "from",
+      "rect",
+      "angle"
     });
     AutoComplete.Register(ObjectCommand.Name, (int index) => NamedParameters, WithSharedFetchers(new() {
       {
         "baby", (int index) => ParameterInfo.Flag("Baby")
       },
-
       {
         "mirror", (int index) => ParameterInfo.Flag("Mirror")
       },
@@ -81,6 +82,26 @@ public class ObjectAutoComplete : SharedObjectAutoComplete {
       },
       {
         "origin", (int index) => index == 0 ? ParameterInfo.Origin : ParameterInfo.None
+      },
+      {
+        "rect",
+        (int index) => {
+          if (index == 0) return ParameterInfo.Create("rect=<color=yellow>size</color> or rect=<color=yellow>width</color>,depth", "Area of affected objects.");
+          if (index == 1) return ParameterInfo.Create("rect=width,<color=yellow>depth</color>", "Area of affected objects.");
+          return ParameterInfo.None;
+        }
+      },
+      {
+        "angle",
+        (int index) => index == 0 ? ParameterInfo.Create("angle=<color=yellow>degrees</color>", "Direction of the rectangle when used with <color=yellow>rect</color>.") : ParameterInfo.None
+      },
+      {
+        "circle",
+        (int index) => index == 0 ? ParameterInfo.Create("circle=<color=yellow>number</color>", "Radius of affected objects.") : ParameterInfo.None
+      },
+      {
+        "radius",
+        (int index) => index == 0 ? ParameterInfo.Create("radius=<color=yellow>number</color>", "Radius of affected objects.") : ParameterInfo.None
       },
     }));
   }

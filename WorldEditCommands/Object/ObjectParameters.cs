@@ -16,6 +16,10 @@ public class ObjectParameters : SharedObjectParameters {
   public bool ResetRotation = false;
   public bool Respawn = false;
   public Item? Visual = null;
+  public float Angle = 0f;
+  public float? Width;
+  public float? Depth;
+  public float Height = 0f;
 
   public static HashSet<string> SupportedOperations = new() {
     "health",
@@ -73,17 +77,27 @@ public class ObjectParameters : SharedObjectParameters {
       if (name == "respawn") Respawn = true;
       if (split.Length < 2) continue;
       var value = split[1];
+      var values = Parse.Split(value);
       if (name == "rotate") {
         if (value == "reset") ResetRotation = true;
         else Rotation = Parse.TryVectorYXZRange(value, Vector3.zero);
       }
-      if (name == "center" || name == "from") Center = Parse.TryVectorXZY(Parse.Split(value));
+      if (name == "center" || name == "from") Center = Parse.TryVectorXZY(values);
       if (name == "move") Offset = Parse.TryVectorZXYRange(value, Vector3.zero);
       if (name == "id") Id = value;
       if (name == "prefab") Prefab = value;
       if (name == "origin") Origin = value.ToLower();
       if (name == "visual") Visual = new(value);
       if (name == "fuel") Fuel = Parse.TryFloatRange(value, 0f);
+      if (name == "rect") {
+        var size = Parse.TryScale(values);
+        Width = size.x;
+        Depth = size.z;
+      }
+      if (name == "height")
+        Height = Parse.TryFloat(value, 0f);
+      if (name == "angle")
+        Angle = Parse.TryFloat(value, 0f) * Mathf.PI / 180f;
     }
     if (Operations.Contains("remove") && Operations.Count > 1)
       throw new InvalidOperationException("Remove can't be used with other operations.");
@@ -92,5 +106,7 @@ public class ObjectParameters : SharedObjectParameters {
     if (Operations.Contains("remove") && Id == "")
       throw new InvalidOperationException("Remove can't be used without id.");
     if (Id == "") Id = "*";
+    if (Radius.HasValue && Depth.HasValue)
+      throw new InvalidOperationException($"<color=yellow>circle</color> and <color=yellow>rect</color> parameters can't be used together.");
   }
 }

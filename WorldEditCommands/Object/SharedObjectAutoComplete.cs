@@ -66,10 +66,6 @@ public class SharedObjectAutoComplete {
         (int index) => VisualAutoComplete("utility", index)
       },
       {
-        "radius",
-        (int index) => index == 0 ? ParameterInfo.Create("radius", "number", "Maximum spawn distance when spawning multiple objects. Default is 0.5 meters.") : ParameterInfo.None
-      },
-      {
         "durability",
         (int index) => index == 0 ? ParameterInfo.Create("durability", "number", "Sets current durability/health (+ maximum health for creatures).") : ParameterInfo.None
       },

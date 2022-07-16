@@ -43,7 +43,7 @@ public class SharedObjectParameters {
         Level = Parse.TryIntRange(value);
       if (name == "level" || name == "levels")
         Level = Parse.TryIntRange(value);
-      if (name == "radius" || name == "range")
+      if (name == "radius" || name == "range" || name == "circle")
         Radius = Parse.TryFloat(value);
       if (name == "sc" || name == "scale")
         Scale = Parse.TryScaleRange(value);
