@@ -22,7 +22,8 @@ public class ObjectAutoComplete : SharedObjectAutoComplete {
       "guide",
       "from",
       "rect",
-      "angle"
+      "angle",
+      "creator"
     });
     AutoComplete.Register(ObjectCommand.Name, (int index) => NamedParameters, WithSharedFetchers(new() {
       {
@@ -102,6 +103,10 @@ public class ObjectAutoComplete : SharedObjectAutoComplete {
       {
         "radius",
         (int index) => index == 0 ? ParameterInfo.Create("radius=<color=yellow>number</color>", "Radius of affected objects.") : ParameterInfo.None
+      },
+      {
+        "creator",
+        (int index) => index == 0 ? ParameterInfo.Create("creator=<color=yellow>player ID</color>", "Sets creator of objects (0 for no creator).") : ParameterInfo.None
       },
     }));
   }

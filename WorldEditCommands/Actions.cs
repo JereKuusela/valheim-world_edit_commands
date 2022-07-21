@@ -52,32 +52,36 @@ public static class Actions {
     ZNetScene.instance.m_instances[zdo] = newObj.GetComponent<ZNetView>();
     return true;
   }
+  private static int HashHuntplayer = "huntplayer".GetStableHashCode();
   public static void SetHunt(BaseAI obj, bool hunt) {
     if (!obj) return;
     obj.m_huntPlayer = hunt;
-    obj.m_nview.GetZDO().Set("huntplayer", hunt);
+    obj.m_nview.GetZDO().Set(HashHuntplayer, hunt);
   }
   public static void SetFuel(GameObject obj, float amount) {
     SetFuel(obj.GetComponent<Fireplace>(), amount);
   }
+  private static int HashFuel = "fuel".GetStableHashCode();
   public static void SetFuel(Fireplace obj, float amount) {
     if (!obj) return;
-    obj.m_nview.GetZDO().Set("fuel", amount);
+    obj.m_nview.GetZDO().Set(HashFuel, amount);
   }
   public static void SetSleeping(GameObject obj, bool sleep) {
     SetSleeping(obj.GetComponent<MonsterAI>(), sleep);
   }
+  private static int HashSleeping = "sleeping".GetStableHashCode();
   public static void SetSleeping(MonsterAI obj, bool sleep) {
     if (!obj) return;
     obj.m_sleeping = sleep;
-    obj.m_nview.GetZDO().Set("sleeping", sleep);
+    obj.m_nview.GetZDO().Set(HashSleeping, sleep);
   }
   public static void SetBaby(GameObject obj) {
     SetBaby(obj.GetComponent<Growup>());
   }
+  private static int HashSpawntime = "spawntime".GetStableHashCode();
   public static void SetBaby(Growup obj) {
     if (!obj) return;
-    obj.m_nview.GetZDO().Set("spawntime", DateTime.MaxValue.Ticks);
+    obj.m_nview.GetZDO().Set(HashSpawntime, DateTime.MaxValue.Ticks);
   }
   public static void SetLevel(GameObject obj, int level) {
     if (level < 1) return;
@@ -89,11 +93,13 @@ public static class Actions {
     if (obj.GetLevel() != level)
       obj.SetLevel(level); // Ok to use (no owner check).
   }
+  private static int HashQuality = "quality".GetStableHashCode();
   public static void SetLevel(ItemDrop obj, int level) {
     if (!obj) return;
     obj.m_itemData.m_quality = level;
-    obj.m_nview.GetZDO().Set("quality", level);
+    obj.m_nview.GetZDO().Set(HashQuality, level);
   }
+  private static int HashHealth = "health".GetStableHashCode();
   public static float GetHealth(ZNetView obj) {
     var zdo = obj.GetZDO();
     var itemDrop = obj.GetComponent<ItemDrop>();
@@ -101,13 +107,13 @@ public static class Actions {
     var character = obj.GetComponent<Character>();
     if (character) return character.GetHealth();
     var wearNTear = obj.GetComponent<WearNTear>();
-    if (wearNTear) return zdo.GetFloat("health", wearNTear.m_health);
+    if (wearNTear) return zdo.GetFloat(HashHealth, wearNTear.m_health);
     var destructible = obj.GetComponent<Destructible>();
-    if (destructible) return zdo.GetFloat("health", destructible.m_health);
+    if (destructible) return zdo.GetFloat(HashHealth, destructible.m_health);
     var treeLog = obj.GetComponent<TreeLog>();
-    if (treeLog) return zdo.GetFloat("health", treeLog.m_health);
+    if (treeLog) return zdo.GetFloat(HashHealth, treeLog.m_health);
     var treeBase = obj.GetComponent<TreeBase>();
-    if (treeBase) return zdo.GetFloat("health", treeBase.m_health);
+    if (treeBase) return zdo.GetFloat(HashHealth, treeBase.m_health);
     return -1;
   }
   public static float SetHealth(GameObject obj, float health) {
@@ -140,69 +146,88 @@ public static class Actions {
   public static float SetHealth(WearNTear obj, float health) {
     if (!obj) return 0f;
     if (health == 0) health = obj.m_health;
-    var previous = obj.m_nview.GetZDO().GetFloat("health", obj.m_health);
-    obj.m_nview.GetZDO().Set("health", health);
+    var previous = obj.m_nview.GetZDO().GetFloat(HashHealth, obj.m_health);
+    obj.m_nview.GetZDO().Set(HashHealth, health);
     return previous;
   }
   public static float SetHealth(TreeLog obj, float health) {
     if (!obj) return 0f;
     if (health == 0) health = obj.m_health;
-    var previous = obj.m_nview.GetZDO().GetFloat("health", obj.m_health);
-    obj.m_nview.GetZDO().Set("health", health);
+    var previous = obj.m_nview.GetZDO().GetFloat(HashHealth, obj.m_health);
+    obj.m_nview.GetZDO().Set(HashHealth, health);
     return previous;
   }
   public static float SetHealth(Destructible obj, float health) {
     if (!obj) return 0f;
     if (health == 0) health = obj.m_health;
-    var previous = obj.m_nview.GetZDO().GetFloat("health", obj.m_health);
-    obj.m_nview.GetZDO().Set("health", health);
+    var previous = obj.m_nview.GetZDO().GetFloat(HashHealth, obj.m_health);
+    obj.m_nview.GetZDO().Set(HashHealth, health);
     return previous;
   }
   public static float SetHealth(TreeBase obj, float health) {
     if (!obj) return 0f;
     if (health == 0) health = obj.m_health;
-    var previous = obj.m_nview.GetZDO().GetFloat("health", obj.m_health);
-    obj.m_nview.GetZDO().Set("health", health);
+    var previous = obj.m_nview.GetZDO().GetFloat(HashHealth, obj.m_health);
+    obj.m_nview.GetZDO().Set(HashHealth, health);
     return previous;
   }
+  private static int HashDurability = "durability".GetStableHashCode();
   public static float SetHealth(ItemDrop obj, float health) {
     if (!obj) return 0f;
     if (health == 0) health = obj.m_itemData.GetMaxDurability();
     var previous = obj.m_itemData.m_durability;
     obj.m_itemData.m_durability = health;
-    obj.m_nview.GetZDO().Set("durability", obj.m_itemData.m_durability);
+    obj.m_nview.GetZDO().Set(HashDurability, obj.m_itemData.m_durability);
+    return previous;
+  }
+
+  public static float SetCreator(GameObject obj, long creator) {
+    if (obj.GetComponent<Piece>() is { } piece) return SetCreator(piece, creator);
+    return 0;
+  }
+  private static int HashCreator = "creator".GetStableHashCode();
+  public static long SetCreator(Piece obj, long creator) {
+    if (!obj) return 0L;
+    var previous = obj.GetCreator();
+    obj.m_creator = creator;
+    obj.m_nview.GetZDO().Set(HashCreator, creator);
     return previous;
   }
   public static void SetVariant(GameObject obj, int variant) {
     SetVariant(obj.GetComponent<ItemDrop>(), variant);
   }
+  private static int HashVariant = "variant".GetStableHashCode();
   public static void SetVariant(ItemDrop obj, int variant) {
     if (!obj) return;
     obj.m_itemData.m_variant = variant;
-    obj.m_nview.GetZDO().Set("variant", variant);
+    obj.m_nview.GetZDO().Set(HashVariant, variant);
   }
   public static void SetName(GameObject obj, string name) {
     SetName(obj.GetComponent<Tameable>(), name);
     SetName(obj.GetComponent<ItemDrop>(), name);
   }
+  private static int HashTamedName = "TamedName".GetStableHashCode();
   public static void SetName(Tameable obj, string name) {
     if (!obj) return;
-    obj.m_nview.GetZDO().Set("TamedName", name);
+    obj.m_nview.GetZDO().Set(HashTamedName, name);
   }
+  private static int HashCrafterID = "crafterID".GetStableHashCode();
+  private static int HashCrafterName = "crafterName".GetStableHashCode();
   public static void SetName(ItemDrop obj, string name) {
     if (!obj) return;
     obj.m_itemData.m_crafterID = name == "" ? 0 : -1;
-    obj.m_nview.GetZDO().Set("crafterID", obj.m_itemData.m_crafterID);
+    obj.m_nview.GetZDO().Set(HashCrafterID, obj.m_itemData.m_crafterID);
     obj.m_itemData.m_crafterName = name;
-    obj.m_nview.GetZDO().Set("crafterName", name);
+    obj.m_nview.GetZDO().Set(HashCrafterName, name);
   }
+  private static int HashStack = "stack".GetStableHashCode();
   public static int SetStack(GameObject obj, int remaining) {
     if (remaining <= 0) return 0;
     var item = obj.GetComponent<ItemDrop>();
     if (!item) return 0;
     var stack = Math.Min(remaining, item.m_itemData.m_shared.m_maxStackSize);
     item.m_itemData.m_stack = stack;
-    item.m_nview.GetZDO().Set("stack", stack);
+    item.m_nview.GetZDO().Set(HashStack, stack);
     return stack;
   }
   public static void SetRotation(GameObject obj, Quaternion rotation) {
@@ -237,10 +262,11 @@ public static class Actions {
     if (!obj) return;
     obj.SetPicked(false);
   }
+  private static int HashAliveTime = "alive_time".GetStableHashCode();
   public static void Respawn(CreatureSpawner obj) {
     if (!obj) return;
     obj.m_nview?.GetZDO().Set("spawn_id", ZDOID.None);
-    obj.m_nview?.GetZDO().Set("alive_time", 0L);
+    obj.m_nview?.GetZDO().Set(HashAliveTime, 0L);
   }
   public static void SetModel(GameObject obj, int index) {
     SetModel(obj.GetComponent<Character>(), index);
@@ -257,10 +283,11 @@ public static class Actions {
   public static void SetVisual(GameObject obj, VisSlot slot, Item? item) {
     SetVisual(obj.GetComponent<Character>(), slot, item);
   }
+  private static int HashItem = "item".GetStableHashCode();
   public static void SetVisual(ItemStand obj, Item? item) {
     if (!obj || item == null) return;
-    obj.m_nview.GetZDO().Set("item", item.Name);
-    obj.m_nview.GetZDO().Set("variant", item.Variant);
+    obj.m_nview.GetZDO().Set(HashItem, item.Name);
+    obj.m_nview.GetZDO().Set(HashVariant, item.Variant);
     obj.UpdateVisual();
   }
   public static void SetVisual(Character obj, VisSlot slot, Item? item) {

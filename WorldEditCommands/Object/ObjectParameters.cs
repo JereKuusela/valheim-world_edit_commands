@@ -17,6 +17,7 @@ public class ObjectParameters : SharedObjectParameters {
   public bool Respawn = false;
   public Item? Visual = null;
   public float Angle = 0f;
+  public long Creator = 0;
   public float? Width;
   public float? Depth;
   public float Height = 0f;
@@ -47,7 +48,8 @@ public class ObjectParameters : SharedObjectParameters {
     "prefab",
     "respawn",
     "guide",
-    "mirror"
+    "mirror",
+    "creator"
   };
 
   public ObjectParameters(Terminal.ConsoleEventArgs args) {
@@ -96,6 +98,8 @@ public class ObjectParameters : SharedObjectParameters {
       }
       if (name == "height")
         Height = Parse.TryFloat(value, 0f);
+      if (name == "creator")
+        Creator = Parse.TryLong(value, 0L);
       if (name == "angle")
         Angle = Parse.TryFloat(value, 0f) * Mathf.PI / 180f;
     }

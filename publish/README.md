@@ -26,6 +26,7 @@ Following parameters are available:
 - `baby`: Prevents offspring from growing up.
 - `center`: Sets `rotate` center point at player position.
 - `center=x,z,y`: Overrides the player position and sets `rotate` center point.
+- `creator=player id`: Sets the piece creator. Use 0 for no creator.
 - `circle=number` or `radius=number`: Radius for included objects. If not given, the hovered object is only affected.
 - `durability=number` or `health=number`: Sets the current durability for items, the current health for structures and the maximum health for creatures. Very high values like 1E30 turn the target invulnerable (including gravity for structures).
 - `fuel=number`: Sets the fuel amount. Without number, prints the fuel amount.
@@ -236,6 +237,7 @@ This shouldn't cause any issues unless objects are moved long distances (which m
 - v1.6
 	- Adds rectangle support to the `object` command.
 	- Adds height support to the `object` command.
+	- Adds a new parameter `creator` to the `object` command.
 
 - v1.5
 	- Fixes painting using wrong circle or rectangle size.

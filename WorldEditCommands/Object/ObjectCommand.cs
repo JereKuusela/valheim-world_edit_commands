@@ -43,13 +43,14 @@ public class ObjectCommand {
     var dz = position.z - center.z;
     var distanceX = GetX(dx, dz, angle);
     var distanceZ = GetY(dx, dz, angle);
+    if (center.y - position.y > 1000f) return false;
     if (position.y - center.y > (height == 0f ? 1000f : height)) return false;
     if (Mathf.Abs(distanceX) > width) return false;
     if (Mathf.Abs(distanceZ) > depth) return false;
     return true;
   }
   private static bool Within(Vector3 position, Vector3 center, float radius, float height) {
-    return Utils.DistanceXZ(position, center) <= radius && position.y - center.y <= (height == 0f ? 1000f : height);
+    return Utils.DistanceXZ(position, center) <= radius && center.y - position.y < 1000f && position.y - center.y <= (height == 0f ? 1000f : height);
   }
   public static IEnumerable<ZDO> GetZDOs(string id, Func<Vector3, bool> checker) {
     var codes = GetPrefabs(id);
@@ -91,6 +92,8 @@ public class ObjectCommand {
           output = SetStars(view, Helper.RandomValue(pars.Level) - 1);
         if (operation == "fuel" && pars.Fuel != null)
           output = SetFuel(view, Helper.RandomValue(pars.Fuel));
+        if (operation == "creator")
+          output = SetCreator(view, pars.Creator);
         if (operation == "fuel" && pars.Fuel == null)
           output = PrintFuel(view);
         if (operation == "tame")
@@ -281,6 +284,13 @@ public class ObjectCommand {
     AddData(view);
     Actions.SetSleeping(obj, true);
     return "¤ made to sleep.";
+  }
+  private static string SetCreator(ZNetView view, long creator) {
+    var obj = view.GetComponent<Piece>();
+    if (!obj) return "Skipped: ¤ is not a piece.";
+    AddData(view);
+    var previous = Actions.SetCreator(obj, creator);
+    return $"Prefab of ¤ set from {previous} to {creator}.";
   }
   private static string SetPrefab(ZNetView view, string prefab) {
     AddData(view);
