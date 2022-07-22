@@ -1,6 +1,6 @@
 # World Edit Commands
 
-Adds new client side commands for advanced world editing.
+Adds new commands for advanced world editing.
 
 Install on the admin client (modding [guide](https://youtu.be/WfvA5a5tNHo)).
 
