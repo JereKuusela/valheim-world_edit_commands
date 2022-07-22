@@ -2,7 +2,7 @@
 
 Adds new client side commands for advanced world editing.
 
-Check any modding [guide](https://youtu.be/WfvA5a5tNHo) for installation instructions.
+Install on the admin client (modding [guide](https://youtu.be/WfvA5a5tNHo)).
 
 Install also [Server Devcommands](https://valheim.thunderstore.io/package/JereKuusela/Server_devcommands/).
 
@@ -32,6 +32,7 @@ Following parameters are available:
 - `fuel=number`: Sets the fuel amount. Without number, prints the fuel amount.
 - `from=x,z,y`: Same as the `center`.
 - `guide`: Visualizes the affected area instead of doing anything. Turn off by not giving the `radius`.
+- `height`: Maximum height from the `center` point (default is 1000 meters).
 - `id`: Filters objects by id. Supports starts with, ends with or contains by using "*". Default is `*` that allows all objects which don't start with "_". 
 - `info`: Prints information of objects.
 - `level=integer`: Sets levels for creatures (level = stars + 1).
