@@ -168,7 +168,7 @@ Following parameters are available:
 	- 1.0: All of the terrain gets reduced changes (except the very center).
 	- 0.5: Half of the terrain gets reduced changes.
 	- 0.0: No reduction (default).
-- `paint=value`: Sets the terrain material (dirt, paved, cultivated or grass to reset).
+- `paint=value`: Sets the terrain material (cultivated, grass, grass_dark,dirt, patches, paved, paved_dark, paved_dirt or paved_moss).
 - `paint=dirt,cultivated,paved`: Sets custom terrain material (values from 0.0 to 1.0).
 - `raise=meters`: Raises terrain by X meters. Same as `lower` when a negative value is used.
 - `rect=width,depth`: Determines the size of the affected terrain.
@@ -239,6 +239,8 @@ This shouldn't cause any issues unless objects are moved long distances (which m
 	- Adds rectangle support to the `object` command.
 	- Adds height support to the `object` command.
 	- Adds a new parameter `creator` to the `object` command.
+	- Adds new paints to the `terrain` command.
+	- Adds support for custom paint color the `terrain` command.
 
 - v1.5
 	- Fixes painting using wrong circle or rectangle size.
@@ -268,23 +270,5 @@ This shouldn't cause any issues unless objects are moved long distances (which m
 	- Changes the `terrain` command to automatically use the player's rotation as the angle (45 degrees precision).
 	- Fixes the `object health` not working.
 	- Fixes the `terrain` command not working outside the world edge.
-
-- v1.1
-	- Adds an basic undo to the `object` command.
-	- Adds a new parameter `prefab` to the `object` command to allow replacing objects.
-	- Adds a new parameter `refPos` to the `terrain` command to allow overriding the player's position.
-	- Adds a new parameter `slope` to the `terrain` command to allow creating slopes.
-	- Adds a new parameter `offset` to the `terrain` command to allow moving the targeted position.
-	- Adds a new parameter `step` to the `terrain` command to automatically calculate the offset based on radius.
-	- Adds a new parameter `angle` to the `terrain` command to select the slope and step direction.
-	- Adds a new parameter `fuel` to the `object` command to set or print the fuel amount.
-	- Changes offset parameter description from `x,z,y` to `forward,right,up`.
-	- Changes rotation parameter description from `y,x,z` to `yaw,roll,pitch`.
-	- Changes parameters `radius` and `square`of the `terrain` command to `circle` and `rect`.
-	- Improves output of some commands.
-	- Removes the size restriction from `circle` and `rect` parameters.
-
-- v1.0
-	- Initial release.
 
 Thanks for Azumatt for creating the mod icon!
