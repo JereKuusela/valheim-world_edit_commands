@@ -39,9 +39,21 @@ public class ObjectAutoComplete : SharedObjectAutoComplete {
       "creator",
       "growth",
       "wear",
-      "chance"
+      "chance",
+      "collision",
+      "show",
+      "interact"
     });
     AutoComplete.Register(ObjectCommand.Name, (int index) => NamedParameters, WithSharedFetchers(new() {
+      {
+        "collision", (int index) => ParameterInfo.Create("collision=<color=yellow>true/false</color> or no value to toggle.", "Sets object collision.")
+      },
+      {
+        "show", (int index) => ParameterInfo.Create("show=<color=yellow>true/false</color> or no value to toggle.", "Sets object visibility.")
+      },
+      {
+        "interact", (int index) => ParameterInfo.Create("interact=<color=yellow>true/false</color> or no value to toggle.", "Sets object interactability.")
+      },
       {
         "baby", (int index) => ParameterInfo.Flag("Baby")
       },

@@ -6,13 +6,15 @@ using UnityEngine;
 namespace WorldEditCommands;
 ///<summary>Needed to keep track of edited zdos.</summary>
 public class EditInfo {
-  public EditInfo(ZDO zdo) {
+  public EditInfo(ZDO zdo, bool refresh = false) {
     From = zdo.Clone();
     To = zdo;
+    Refresh = refresh;
   }
-  public EditData ToData() => new EditData(From, To);
+  public EditData ToData() => new EditData(From, To, Refresh);
   ZDO From;
   ZDO To;
+  public bool Refresh;
 }
 public class ObjectCommand {
   public static System.Random Random = new();
@@ -63,10 +65,13 @@ public class ObjectCommand {
     zdos = zdos.Where(zdo => codes.Contains(zdo.GetPrefab()));
     return zdos.Where(zdo => checker(zdo.GetPosition()));
   }
-  private static void AddData(ZNetView view) {
+  private static void AddData(ZNetView view, bool refresh = false) {
     var zdo = view.GetZDO();
-    if (EditedInfo.ContainsKey(zdo.m_uid)) return;
-    EditedInfo[zdo.m_uid] = new EditInfo(zdo);
+    if (EditedInfo.TryGetValue(zdo.m_uid, out var info)) {
+      if (refresh) info.Refresh = refresh;
+      return;
+    }
+    EditedInfo[zdo.m_uid] = new EditInfo(zdo, refresh);
   }
   private static void Execute(Terminal context, ObjectParameters pars, IEnumerable<string> operations, IEnumerable<ZDO> zdos) {
     var scene = ZNetScene.instance;
@@ -137,6 +142,12 @@ public class ObjectCommand {
           output = SetUtility(view, pars.Utility);
         if (operation == "prefab")
           output = SetPrefab(view, pars.Prefab);
+        if (operation == "collision")
+          output = SetCollision(view, pars.Collision);
+        if (operation == "interact")
+          output = SetInteract(view, pars.Interact);
+        if (operation == "show")
+          output = SetRender(view, pars.Show);
         if (operation == "wear")
           output = SetWear(view, pars.Wear);
         if (operation == "growth")
@@ -306,7 +317,7 @@ public class ObjectCommand {
     return $"Prefab of ¤ set from {previous} to {creator}.";
   }
   private static string SetPrefab(ZNetView view, string prefab) {
-    AddData(view);
+    AddData(view, true);
     if (Actions.SetPrefab(view, prefab))
       return $"Prefab of ¤ set to {prefab}.";
     return $"Error: Prefab of ¤ was not set to {prefab}. Probably invalid prefab name.";
@@ -317,6 +328,21 @@ public class ObjectCommand {
     AddData(view);
     Actions.SetWear(obj, growth);
     return $"Wear of ¤ set to {growth}.";
+  }
+  private static string SetCollision(ZNetView view, bool? value) {
+    var result = Actions.SetCollision(view, value);
+    AddData(view, true);
+    return $"Collision of ¤ set to {result}.";
+  }
+  private static string SetInteract(ZNetView view, bool? value) {
+    var result = Actions.SetInteract(view, value);
+    AddData(view);
+    return $"Interact of ¤ set to {result}.";
+  }
+  private static string SetRender(ZNetView view, bool? value) {
+    var result = Actions.SetRender(view, value);
+    AddData(view, true);
+    return $"Render of ¤ set to {result}.";
   }
   private static string SetGrowth(ZNetView view, string growth) {
     var obj = view.GetComponent<Plant>();

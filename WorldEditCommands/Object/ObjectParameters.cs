@@ -24,6 +24,9 @@ public class ObjectParameters : SharedObjectParameters {
   public float? Depth;
   public float Height = 0f;
   public float Chance = 1f;
+  public bool? Show;
+  public bool? Collision;
+  public bool? Interact;
 
   public static HashSet<string> SupportedOperations = new() {
     "health",
@@ -54,7 +57,10 @@ public class ObjectParameters : SharedObjectParameters {
     "mirror",
     "creator",
     "wear",
-    "growth"
+    "growth",
+    "collision",
+    "show",
+    "interact"
   };
 
   public ObjectParameters(Terminal.ConsoleEventArgs args) {
@@ -92,6 +98,18 @@ public class ObjectParameters : SharedObjectParameters {
       if (name == "center" || name == "from") Center = Parse.TryVectorXZY(values);
       if (name == "move") Offset = Parse.TryVectorZXYRange(value, Vector3.zero);
       if (name == "id") Id = value;
+      if (name == "collision") {
+        Collision = Parse.Boolean(value);
+        if (Collision == null) throw new InvalidOperationException("Invalid true/false value for <color=yellow>collision</color>.");
+      }
+      if (name == "interact") {
+        Interact = Parse.Boolean(value);
+        if (Interact == null) throw new InvalidOperationException("Invalid true/false value for <color=yellow>interact</color>.");
+      }
+      if (name == "show") {
+        Show = Parse.Boolean(value);
+        if (Show == null) throw new InvalidOperationException("Invalid true/false value for <color=yellow>show</color>.");
+      }
       if (name == "prefab") Prefab = value;
       if (name == "wear") Wear = value;
       if (name == "growth") Growth = value;
@@ -111,6 +129,8 @@ public class ObjectParameters : SharedObjectParameters {
       if (name == "angle")
         Angle = Parse.TryFloat(value, 0f) * Mathf.PI / 180f;
     }
+    if (Operations.Contains("collision") && Operations.Contains("nocollision"))
+      throw new InvalidOperationException($"<color=yellow>collision</color> and <color=yellow>nocollision</color> parameters can't be used together.");
     if (Operations.Contains("remove") && Operations.Count > 1)
       throw new InvalidOperationException("Remove can't be used with other operations.");
     if (Operations.Count == 0)

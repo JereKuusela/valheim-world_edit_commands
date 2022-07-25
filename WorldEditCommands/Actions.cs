@@ -3,10 +3,58 @@ using UnityEngine;
 namespace WorldEditCommands;
 public static class Actions {
 
+  private static int CollisionHash = "override_collision".GetStableHashCode();
+  public static bool SetCollision(ZNetView obj, bool? value) {
+    var zdo = obj.GetZDO();
+    if (value == null) value = !zdo.GetBool(CollisionHash, true);
+    if (value.Value) {
+      if (zdo.m_ints != null) {
+        zdo.m_ints.Remove(CollisionHash);
+        zdo.IncreseDataRevision();
+      }
+    } else {
+      zdo.Set(CollisionHash, value.Value);
+    }
+    var newObj = ZNetScene.instance.CreateObject(zdo);
+    UnityEngine.Object.Destroy(obj.gameObject);
+    ZNetScene.instance.m_instances[zdo] = newObj.GetComponent<ZNetView>();
+    return value.Value;
+  }
+  private static int RenderHash = "override_render".GetStableHashCode();
+  public static bool SetRender(ZNetView obj, bool? value) {
+    var zdo = obj.GetZDO();
+    if (value == null) value = !zdo.GetBool(RenderHash, true);
+    if (value.Value) {
+      if (zdo.m_ints != null) {
+        zdo.m_ints.Remove(RenderHash);
+        zdo.IncreseDataRevision();
+      }
+    } else {
+      zdo.Set(RenderHash, value.Value);
+    }
+    var newObj = ZNetScene.instance.CreateObject(zdo);
+    UnityEngine.Object.Destroy(obj.gameObject);
+    ZNetScene.instance.m_instances[zdo] = newObj.GetComponent<ZNetView>();
+    return value.Value;
+  }
+  private static int InteractHash = "override_interact".GetStableHashCode();
+  public static bool SetInteract(ZNetView obj, bool? value) {
+    var zdo = obj.GetZDO();
+    if (value == null) value = !zdo.GetBool(InteractHash, true);
+    if (value.Value) {
+      if (zdo.m_ints != null) {
+        zdo.m_ints.Remove(InteractHash);
+        zdo.IncreseDataRevision();
+      }
+    } else {
+      zdo.Set(InteractHash, value.Value);
+    }
+    return value.Value;
+  }
+  private static int WearHash = "override_wear".GetStableHashCode();
   public static void SetWear(GameObject obj, string value) {
     SetWear(obj.GetComponent<WearNTear>(), value);
   }
-  private static int WearHash = "override_wear".GetStableHashCode();
   private static int WearNumber(string value) {
     if (value == "broken") return 0;
     if (value == "damaged") return 1;
@@ -18,8 +66,10 @@ public static class Actions {
     var zdo = obj.m_nview.GetZDO();
     var number = WearNumber(value);
     if (number < 0) {
-      zdo.m_ints.Remove(WearHash);
-      zdo.IncreseDataRevision();
+      if (zdo.m_ints != null) {
+        zdo.m_ints.Remove(WearHash);
+        zdo.IncreseDataRevision();
+      }
     } else {
       zdo.Set(WearHash, number);
     }
@@ -41,12 +91,12 @@ public static class Actions {
     var zdo = obj.m_nview.GetZDO();
     var number = GrowthNumber(value);
     if (number < 0) {
-      zdo.m_ints.Remove(GrowthHash);
+      if (zdo.m_ints != null)
+        zdo.m_ints.Remove(GrowthHash);
       zdo.Set(HashPlantTime, ZNet.instance.GetTime().Ticks);
-      zdo.IncreseDataRevision();
     } else {
-      zdo.Set(HashPlantTime, DateTime.MaxValue.Ticks / 2L);
       zdo.Set(GrowthHash, number);
+      zdo.Set(HashPlantTime, DateTime.MaxValue.Ticks / 2L);
     }
     obj.m_updateTime = 0f;
   }

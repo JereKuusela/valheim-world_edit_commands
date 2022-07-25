@@ -6,6 +6,13 @@ using UnityEngine;
 namespace WorldEditCommands;
 
 public class UndoHelper {
+  public static void Refresh(ZDO zdo) {
+    if (ZNetScene.instance.m_instances.TryGetValue(zdo, out var obj)) {
+      var newObj = ZNetScene.instance.CreateObject(zdo);
+      UnityEngine.Object.Destroy(obj.gameObject);
+      ZNetScene.instance.m_instances[zdo] = newObj.GetComponent<ZNetView>();
+    }
+  }
   public static void CopyData(ZDO from, ZDO to) {
     from = from.Clone();
     var refresh = to.m_prefab != from.m_prefab;
@@ -81,14 +88,16 @@ public class UndoRemove : MonoBehaviour, UndoAction {
 
 
 public class EditData {
-  public EditData(ZDO previous, ZDO current) {
+  public EditData(ZDO previous, ZDO current, bool refresh) {
     Zdo = current;
     Previous = previous.Clone();
     Current = current.Clone();
+    Refresh = refresh;
   }
   public ZDO Zdo;
   public ZDO Previous;
   public ZDO Current;
+  public bool Refresh;
 }
 public class UndoEdit : MonoBehaviour, UndoAction {
   private EditData[] Data;
@@ -96,13 +105,19 @@ public class UndoEdit : MonoBehaviour, UndoAction {
     Data = data.ToArray();
   }
   public void Undo() {
-    foreach (var data in Data) UndoHelper.CopyData(data.Previous, data.Zdo);
+    foreach (var data in Data) {
+      UndoHelper.CopyData(data.Previous, data.Zdo);
+      if (data.Refresh) UndoHelper.Refresh(data.Zdo);
+    }
   }
 
   public string UndoMessage() => $"Undo: Changed {UndoHelper.Print(Data.Select(data => data.Zdo))}";
 
   public void Redo() {
-    foreach (var data in Data) UndoHelper.CopyData(data.Current, data.Zdo);
+    foreach (var data in Data) {
+      UndoHelper.CopyData(data.Current, data.Zdo);
+      if (data.Refresh) UndoHelper.Refresh(data.Zdo);
+    }
   }
   public string RedoMessage() => $"Redo: Changed {UndoHelper.Print(Data.Select(data => data.Zdo))}";
 }
