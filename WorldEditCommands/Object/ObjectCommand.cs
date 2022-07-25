@@ -15,6 +15,11 @@ public class EditInfo {
   ZDO To;
 }
 public class ObjectCommand {
+  public static System.Random Random = new();
+  public static bool Roll(float value) {
+    if (value >= 1f) return true;
+    return Random.NextDouble() < value;
+  }
   public const string Name = "object";
   public static Dictionary<ZDOID, EditInfo> EditedInfo = new();
   private static bool IsIncluded(string id, string name) {
@@ -70,6 +75,10 @@ public class ObjectCommand {
       var view = scene.FindInstance(zdo);
       if (!view || !view.GetZDO().IsValid()) {
         context.AddString($"Skipped: {view.name} is not loaded.");
+        return false;
+      }
+      if (!Roll(pars.Chance)) {
+        context.AddString($"Skipped: {view.name} (chance).");
         return false;
       }
       return true;
@@ -128,6 +137,10 @@ public class ObjectCommand {
           output = SetUtility(view, pars.Utility);
         if (operation == "prefab")
           output = SetPrefab(view, pars.Prefab);
+        if (operation == "wear")
+          output = SetWear(view, pars.Wear);
+        if (operation == "growth")
+          output = SetGrowth(view, pars.Growth);
         if (operation == "move")
           output = Move(view, Helper.RandomValue(pars.Offset), pars.Origin);
         if (operation == "mirror" && pars.Center.HasValue)
@@ -297,6 +310,20 @@ public class ObjectCommand {
     if (Actions.SetPrefab(view, prefab))
       return $"Prefab of ¤ set to {prefab}.";
     return $"Error: Prefab of ¤ was not set to {prefab}. Probably invalid prefab name.";
+  }
+  private static string SetWear(ZNetView view, string growth) {
+    var obj = view.GetComponent<WearNTear>();
+    if (!obj) return "Skipped: ¤ is not a structure.";
+    AddData(view);
+    Actions.SetWear(obj, growth);
+    return $"Wear of ¤ set to {growth}.";
+  }
+  private static string SetGrowth(ZNetView view, string growth) {
+    var obj = view.GetComponent<Plant>();
+    if (!obj) return "Skipped: ¤ is not a plant.";
+    AddData(view);
+    Actions.SetGrowth(obj, growth);
+    return $"Growth of ¤ set to {growth}.";
   }
   private static string SetVisual(ZNetView view, Item? item) {
     if (item == null) return "Skipped: Invalid item.";

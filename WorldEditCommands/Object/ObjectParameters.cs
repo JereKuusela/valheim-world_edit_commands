@@ -12,6 +12,8 @@ public class ObjectParameters : SharedObjectParameters {
   public string Id = "";
   public string Prefab = "";
   public string Origin = "player";
+  public string Wear = "";
+  public string Growth = "";
   public HashSet<string> Operations = new();
   public bool ResetRotation = false;
   public bool Respawn = false;
@@ -21,6 +23,7 @@ public class ObjectParameters : SharedObjectParameters {
   public float? Width;
   public float? Depth;
   public float Height = 0f;
+  public float Chance = 1f;
 
   public static HashSet<string> SupportedOperations = new() {
     "health",
@@ -49,7 +52,9 @@ public class ObjectParameters : SharedObjectParameters {
     "respawn",
     "guide",
     "mirror",
-    "creator"
+    "creator",
+    "wear",
+    "growth"
   };
 
   public ObjectParameters(Terminal.ConsoleEventArgs args) {
@@ -88,9 +93,12 @@ public class ObjectParameters : SharedObjectParameters {
       if (name == "move") Offset = Parse.TryVectorZXYRange(value, Vector3.zero);
       if (name == "id") Id = value;
       if (name == "prefab") Prefab = value;
+      if (name == "wear") Wear = value;
+      if (name == "growth") Growth = value;
       if (name == "origin") Origin = value.ToLower();
       if (name == "visual") Visual = new(value);
       if (name == "fuel") Fuel = Parse.TryFloatRange(value, 0f);
+      if (name == "chance") Chance = Parse.TryFloat(value, 1f);
       if (name == "rect") {
         var size = Parse.TryScale(values);
         Width = size.x;

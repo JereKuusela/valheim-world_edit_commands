@@ -3,6 +3,19 @@ using ServerDevcommands;
 namespace WorldEditCommands;
 public class ObjectAutoComplete : SharedObjectAutoComplete {
   public List<string> NamedParameters;
+  public static List<string> Wears = new() {
+      "default",
+      "broken",
+      "damaged",
+      "healthy"
+  };
+  public static List<string> Growths = new() {
+      "big",
+      "big_bad",
+      "default",
+      "small",
+      "small_bad"
+  };
   public ObjectAutoComplete() {
     NamedParameters = WithSharedParameters(new() {
       "baby",
@@ -23,7 +36,10 @@ public class ObjectAutoComplete : SharedObjectAutoComplete {
       "from",
       "rect",
       "angle",
-      "creator"
+      "creator",
+      "growth",
+      "wear",
+      "chance"
     });
     AutoComplete.Register(ObjectCommand.Name, (int index) => NamedParameters, WithSharedFetchers(new() {
       {
@@ -107,6 +123,18 @@ public class ObjectAutoComplete : SharedObjectAutoComplete {
       {
         "creator",
         (int index) => index == 0 ? ParameterInfo.Create("creator=<color=yellow>player ID</color>", "Sets creator of objects (0 for no creator).") : ParameterInfo.None
+      },
+      {
+        "chance",
+        (int index) => index == 0 ? ParameterInfo.Create("chance=<color=yellow>number</color>", "Chance to affect the object (from 0.0 to 1.0).") : ParameterInfo.None
+      },
+      {
+        "wear",
+        (int index) => index == 0 ? Wears : ParameterInfo.None
+      },
+      {
+        "growth",
+        (int index) => index == 0 ? Growths : ParameterInfo.None
       },
     }));
   }

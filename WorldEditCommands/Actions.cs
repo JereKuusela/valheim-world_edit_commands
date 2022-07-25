@@ -2,6 +2,54 @@ using System;
 using UnityEngine;
 namespace WorldEditCommands;
 public static class Actions {
+
+  public static void SetWear(GameObject obj, string value) {
+    SetWear(obj.GetComponent<WearNTear>(), value);
+  }
+  private static int WearHash = "override_wear".GetStableHashCode();
+  private static int WearNumber(string value) {
+    if (value == "broken") return 0;
+    if (value == "damaged") return 1;
+    if (value == "healthy") return 2;
+    return -1;
+  }
+  public static void SetWear(WearNTear obj, string value) {
+    if (!obj) return;
+    var zdo = obj.m_nview.GetZDO();
+    var number = WearNumber(value);
+    if (number < 0) {
+      zdo.m_ints.Remove(WearHash);
+      zdo.IncreseDataRevision();
+    } else {
+      zdo.Set(WearHash, number);
+    }
+  }
+  public static void SetGrowth(GameObject obj, string value) {
+    SetGrowth(obj.GetComponent<Plant>(), value);
+  }
+  private static int GrowthHash = "override_growth".GetStableHashCode();
+  private static int GrowthNumber(string value) {
+    if (value == "small") return 0;
+    if (value == "small_bad") return 1;
+    if (value == "big") return 2;
+    if (value == "big_bad") return 3;
+    return -1;
+  }
+  private static int HashPlantTime = "plantTime".GetStableHashCode();
+  public static void SetGrowth(Plant obj, string value) {
+    if (!obj) return;
+    var zdo = obj.m_nview.GetZDO();
+    var number = GrowthNumber(value);
+    if (number < 0) {
+      zdo.m_ints.Remove(GrowthHash);
+      zdo.Set(HashPlantTime, ZNet.instance.GetTime().Ticks);
+      zdo.IncreseDataRevision();
+    } else {
+      zdo.Set(HashPlantTime, DateTime.MaxValue.Ticks / 2L);
+      zdo.Set(GrowthHash, number);
+    }
+    obj.m_updateTime = 0f;
+  }
   public static void SetTame(GameObject obj, bool tame) {
     SetTame(obj.GetComponent<Character>(), tame);
   }
