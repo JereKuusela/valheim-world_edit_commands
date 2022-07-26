@@ -27,6 +27,7 @@ Following parameters are available:
 - `center`: Sets `rotate` center point at player position.
 - `center=x,z,y`: Overrides the player position and sets `rotate` center point.
 - `creator=player id`: Sets the piece creator. Use 0 for no creator.
+- `chance=number`: Randomly filters included objects. For example 0.5 includes about half of the objects (50%).
 - `circle=number` or `radius=number`: Radius for included objects. If not given, the hovered object is only affected.
 - `durability=number` or `health=number`: Sets the current durability for items, the current health for structures and the maximum health for creatures. Very high values like 1E30 turn the target invulnerable (including gravity for structures).
 - `fuel=number`: Sets the fuel amount. Without number, prints the fuel amount.
@@ -62,6 +63,14 @@ Additional style parameters:
 - `visual=item id,variant`: Sets item stands to have this item (including enemy weapons). Not all items work without Item Stand All Items mod.
 
 Note: Creatures reset their style when attacking.
+
+For Structure Tweaks mod:
+
+- `collision=true/false`: Sets whether the object has collision. Without a value, toggles the collision.
+- `growth=big/big_bad/default/small/small_bad`: Overrides the plant visual wear (and prevents growth).
+- `interact=true/false`: Sets whether the object can be interacted with. Without a value, toggles the interactability.
+- `show=true/false`: Sets whether the object is visible. Without a value, toggles the visibility.
+- `wear=default/broken/damaged/healthy`: Overrides the object visual wear.
 
 ### Examples
 
@@ -235,6 +244,10 @@ This shouldn't cause any issues unless objects are moved long distances (which m
 
 # Changelog
 
+- v1.7
+	- Adds a new parameter `chance` to the `object` command.
+	- Adds new parameter `collision`, `growth`,`interact`, `show` and `wear` to the `object` command (for Structure Tweaks mod).
+
 - v1.6
 	- Adds rectangle support to the `object` command.
 	- Adds height support to the `object` command.
@@ -263,12 +276,5 @@ This shouldn't cause any issues unless objects are moved long distances (which m
 	- Adds support for replacing the character _ with a space bar in crafter names.
 	- Adds min-max support to the `pos` parameter of the `spawn_object` command.
 	- Changes the `parameter` reset of the `terrain` command to ignore `smooth` parameter and also reset the terrain paint.
-
-- v1.2
-	- Adds a new parameter `to` to the `terrain` command which automatically calculates angle, distance and slope.
-	- Changes the parameter `refPos` of `terrain` command to `from` (renamed).
-	- Changes the `terrain` command to automatically use the player's rotation as the angle (45 degrees precision).
-	- Fixes the `object health` not working.
-	- Fixes the `terrain` command not working outside the world edge.
 
 Thanks for Azumatt for creating the mod icon!
