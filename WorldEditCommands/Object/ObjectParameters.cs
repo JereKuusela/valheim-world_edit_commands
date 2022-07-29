@@ -27,6 +27,7 @@ public class ObjectParameters : SharedObjectParameters {
   public bool? Show;
   public bool? Collision;
   public bool? Interact;
+  public ObjectType ObjectType = ObjectType.All;
 
   public static HashSet<string> SupportedOperations = new() {
     "health",
@@ -117,6 +118,8 @@ public class ObjectParameters : SharedObjectParameters {
       if (name == "visual") Visual = new(value);
       if (name == "fuel") Fuel = Parse.TryFloatRange(value, 0f);
       if (name == "chance") Chance = Parse.TryFloat(value, 1f);
+      if (name == "type" && value == "creature") ObjectType = ObjectType.Character;
+      if (name == "type" && value == "structure") ObjectType = ObjectType.Structure;
       if (name == "rect") {
         var size = Parse.TryScale(values);
         Width = size.x;
@@ -135,8 +138,8 @@ public class ObjectParameters : SharedObjectParameters {
       throw new InvalidOperationException("Remove can't be used with other operations.");
     if (Operations.Count == 0)
       throw new InvalidOperationException("Missing the operation.");
-    if (Operations.Contains("remove") && Id == "")
-      throw new InvalidOperationException("Remove can't be used without id.");
+    if (Operations.Contains("remove") && Id == "" && ObjectType == ObjectType.All)
+      throw new InvalidOperationException("Remove can't be used without <color=yellow>id</color> or <color=yellow>type</color>.");
     if (Id == "") Id = "*";
     if (Radius.HasValue && Depth.HasValue)
       throw new InvalidOperationException($"<color=yellow>circle</color> and <color=yellow>rect</color> parameters can't be used together.");

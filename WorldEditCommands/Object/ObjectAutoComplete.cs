@@ -16,6 +16,10 @@ public class ObjectAutoComplete : SharedObjectAutoComplete {
       "small",
       "small_bad"
   };
+  public static List<string> ObjectTypes = new() {
+      "creature",
+      "structure"
+  };
   public ObjectAutoComplete() {
     NamedParameters = WithSharedParameters(new() {
       "baby",
@@ -42,11 +46,15 @@ public class ObjectAutoComplete : SharedObjectAutoComplete {
       "chance",
       "collision",
       "show",
-      "interact"
+      "interact",
+      "type"
     });
     AutoComplete.Register(ObjectCommand.Name, (int index) => NamedParameters, WithSharedFetchers(new() {
       {
         "collision", (int index) => ParameterInfo.Create("collision=<color=yellow>true/false</color> or no value to toggle.", "Sets object collision.")
+      },
+      {
+        "type", (int index) => ObjectTypes
       },
       {
         "show", (int index) => ParameterInfo.Create("show=<color=yellow>true/false</color> or no value to toggle.", "Sets object visibility.")

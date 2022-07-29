@@ -49,6 +49,7 @@ Following parameters are available:
 - `scale=x,z,y`: Scales objects (which support it). A single value sets all of the scales.
 - `sleep`: Makes creatures fall asleep (that support it).
 - `stars=integer`: Sets stars for creatures (stars = level - 1).
+- `type=creature/structure`: Only selects creatures or structures.
 - `wild`: Untames creatures.
 
 Additional style parameters:
@@ -247,6 +248,7 @@ This shouldn't cause any issues unless objects are moved long distances (which m
 - v1.7
 	- Adds a new parameter `chance` to the `object` command.
 	- Adds new parameter `collision`, `growth`,`interact`, `show` and `wear` to the `object` command (for Structure Tweaks mod).
+	- Adds a new paramater `type` to the `object` command to filter by object type.
 
 - v1.6
 	- Adds rectangle support to the `object` command.

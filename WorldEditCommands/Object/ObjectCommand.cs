@@ -4,6 +4,13 @@ using System.Linq;
 using ServerDevcommands;
 using UnityEngine;
 namespace WorldEditCommands;
+
+public enum ObjectType {
+  All,
+  Character,
+  Structure
+}
+
 ///<summary>Needed to keep track of edited zdos.</summary>
 public class EditInfo {
   public EditInfo(ZDO zdo, bool refresh = false) {
@@ -59,10 +66,15 @@ public class ObjectCommand {
   private static bool Within(Vector3 position, Vector3 center, float radius, float height) {
     return Utils.DistanceXZ(position, center) <= radius && center.y - position.y < 1000f && position.y - center.y <= (height == 0f ? 1000f : height);
   }
-  public static IEnumerable<ZDO> GetZDOs(string id, Func<Vector3, bool> checker) {
+  public static IEnumerable<ZDO> GetZDOs(string id, ObjectType type, Func<Vector3, bool> checker) {
     var codes = GetPrefabs(id);
     IEnumerable<ZDO> zdos = ZDOMan.instance.m_objectsByID.Values;
+    var scene = ZNetScene.instance;
     zdos = zdos.Where(zdo => codes.Contains(zdo.GetPrefab()));
+    if (type == ObjectType.Structure)
+      zdos = zdos.Where(zdo => scene.GetPrefab(zdo.GetPrefab()).GetComponent<Piece>());
+    if (type == ObjectType.Character)
+      zdos = zdos.Where(zdo => scene.GetPrefab(zdo.GetPrefab()).GetComponent<Character>());
     return zdos.Where(zdo => checker(zdo.GetPosition()));
   }
   private static void AddData(ZNetView view, bool refresh = false) {
@@ -202,9 +214,9 @@ public class ObjectCommand {
       }
       IEnumerable<ZDO> zdos;
       if (pars.Radius.HasValue) {
-        zdos = GetZDOs(pars.Id, position => Within(position, pars.Center ?? pars.From, pars.Radius.Value, pars.Height));
+        zdos = GetZDOs(pars.Id, pars.ObjectType, position => Within(position, pars.Center ?? pars.From, pars.Radius.Value, pars.Height));
       } else if (pars.Width.HasValue && pars.Depth.HasValue) {
-        zdos = GetZDOs(pars.Id, position => Within(position, pars.Center ?? pars.From, pars.Angle, pars.Width.Value, pars.Depth.Value, pars.Height));
+        zdos = GetZDOs(pars.Id, pars.ObjectType, position => Within(position, pars.Center ?? pars.From, pars.Angle, pars.Width.Value, pars.Depth.Value, pars.Height));
       } else {
         var view = Helper.GetHovered(args);
         if (view == null) return;
