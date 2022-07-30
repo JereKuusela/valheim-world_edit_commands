@@ -12,8 +12,8 @@ public class ObjectParameters : SharedObjectParameters {
   public string Id = "";
   public string Prefab = "";
   public string Origin = "player";
-  public string Wear = "";
-  public string Growth = "";
+  public Wear Wear = Wear.Default;
+  public Growth Growth = Growth.Default;
   public HashSet<string> Operations = new();
   public bool ResetRotation = false;
   public bool Respawn = false;
@@ -112,8 +112,13 @@ public class ObjectParameters : SharedObjectParameters {
         if (Show == null) throw new InvalidOperationException("Invalid true/false value for <color=yellow>show</color>.");
       }
       if (name == "prefab") Prefab = value;
-      if (name == "wear") Wear = value;
-      if (name == "growth") Growth = value;
+      if (name == "wear" && value == "broken") Wear = Wear.Broken;
+      if (name == "wear" && value == "damaged") Wear = Wear.Damaged;
+      if (name == "wear" && value == "healthy") Wear = Wear.Healthy;
+      if (name == "growth" && value == "big") Growth = Growth.HealthyGrown;
+      if (name == "growth" && value == "big_bad") Growth = Growth.UnhealthyGrown;
+      if (name == "growth" && value == "small") Growth = Growth.Healthy;
+      if (name == "growth" && value == "small_bad") Growth = Growth.Unhealthy;
       if (name == "origin") Origin = value.ToLower();
       if (name == "visual") Visual = new(value);
       if (name == "fuel") Fuel = Parse.TryFloatRange(value, 0f);

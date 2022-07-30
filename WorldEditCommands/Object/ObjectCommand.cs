@@ -334,12 +334,12 @@ public class ObjectCommand {
       return $"Prefab of ¤ set to {prefab}.";
     return $"Error: Prefab of ¤ was not set to {prefab}. Probably invalid prefab name.";
   }
-  private static string SetWear(ZNetView view, string growth) {
+  private static string SetWear(ZNetView view, Wear wear) {
     var obj = view.GetComponent<WearNTear>();
     if (!obj) return "Skipped: ¤ is not a structure.";
     AddData(view);
-    Actions.SetWear(obj, growth);
-    return $"Wear of ¤ set to {growth}.";
+    Actions.SetWear(obj, wear);
+    return $"Wear of ¤ set to {wear}.";
   }
   private static string SetCollision(ZNetView view, bool? value) {
     var result = Actions.SetCollision(view, value);
@@ -356,7 +356,7 @@ public class ObjectCommand {
     AddData(view, true);
     return $"Render of ¤ set to {result}.";
   }
-  private static string SetGrowth(ZNetView view, string growth) {
+  private static string SetGrowth(ZNetView view, Growth growth) {
     var obj = view.GetComponent<Plant>();
     if (!obj) return "Skipped: ¤ is not a plant.";
     AddData(view);
