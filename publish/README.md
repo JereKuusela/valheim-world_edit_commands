@@ -2,7 +2,7 @@
 
 Adds new commands for advanced world editing.
 
-Install on the admin client (modding [guide](https://youtu.be/WfvA5a5tNHo)).
+Install on the admin client (modding [guide](https://youtu.be/L9ljm2eKLrk)).
 
 Install also [Server Devcommands](https://valheim.thunderstore.io/package/JereKuusela/Server_devcommands/).
 
@@ -26,8 +26,8 @@ Following parameters are available:
 - `baby`: Prevents offspring from growing up.
 - `center`: Sets `rotate` center point at player position.
 - `center=x,z,y`: Overrides the player position and sets `rotate` center point.
-- `creator=player id`: Sets the piece creator. Use 0 for no creator.
 - `chance=number`: Randomly filters included objects. For example 0.5 includes about half of the objects (50%).
+- `creator=player id`: Sets the piece creator. Use 0 for no creator.
 - `circle=number` or `radius=number`: Radius for included objects. If not given, the hovered object is only affected.
 - `durability=number` or `health=number`: Sets the current durability for items, the current health for structures and the maximum health for creatures. Very high values like 1E30 turn the target invulnerable (including gravity for structures).
 - `fuel=number`: Sets the fuel amount. Without number, prints the fuel amount.

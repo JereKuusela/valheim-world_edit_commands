@@ -13,7 +13,7 @@ public class SpawnLocationCommand {
       Helper.ArgsCheck(args, 2, "Missing location id.");
       var obj = ZoneSystem.instance;
       var name = args[1];
-      var location = obj.GetLocation(name);
+      var location = obj.GetLocation(name.GetStableHashCode());
       if (location == null)
         throw new InvalidOperationException($"Can't find location {name}.");
       if (location.m_prefab == null)
