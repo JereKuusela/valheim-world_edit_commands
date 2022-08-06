@@ -36,20 +36,20 @@ public class SpawnLocationCommand {
         var argName = split[0].ToLower();
         if (split.Length < 2) continue;
         if (argName == "seed")
-          seed = Parse.TryInt(split[1], 0);
+          seed = Parse.Int(split[1], 0);
         if (argName == "dungeonseed")
-          dungeonSeed = Parse.TryInt(split[1], 0);
+          dungeonSeed = Parse.Int(split[1], 0);
         if (argName == "rot" || argName == "rotation")
-          relativeAngle = Parse.TryFloat(split[1], 0);
+          relativeAngle = Parse.Float(split[1], 0);
         if (argName == "pos" || argName == "position") {
-          relativePosition = Parse.TryVectorXZY(split[1].Split(','));
+          relativePosition = Parse.VectorXZY(split[1].Split(','));
           snap = split[1].Split(',').Length < 3;
         }
         if (argName == "refrot" || argName == "refrotation") {
-          baseAngle = Parse.TryFloat(split[1], baseAngle);
+          baseAngle = Parse.Float(split[1], baseAngle);
         }
         if (argName == "from" || argName == "refpos") {
-          basePosition = Parse.TryVectorXZY(split[1].Split(','), basePosition);
+          basePosition = Parse.VectorXZY(split[1].Split(','), basePosition);
         }
       }
       var baseRotation = Quaternion.Euler(0f, baseAngle, 0f);

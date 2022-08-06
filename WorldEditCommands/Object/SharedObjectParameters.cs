@@ -6,8 +6,8 @@ public class Item {
   public int Variant;
   public Item(string value) {
     var values = Parse.Split(value);
-    Name = Parse.TryString(values, 0);
-    Variant = Parse.TryInt(values, 1, 0);
+    Name = Parse.String(values, 0);
+    Variant = Parse.Int(values, 1, 0);
   }
 }
 public class SharedObjectParameters {
@@ -31,22 +31,22 @@ public class SharedObjectParameters {
       if (split.Length < 2) continue;
       var value = split[1];
       if (name == "health" || name == "durability")
-        Health = Parse.TryFloatRange(value, 0);
+        Health = Parse.FloatRange(value, 0);
       if (name == "stars" || name == "star") {
-        Level = Parse.TryIntRange(value, 0);
+        Level = Parse.IntRange(value, 0);
         Level.Max++;
         Level.Min++;
       }
       if (name == "model")
-        Model = Parse.TryIntRange(value, 0);
+        Model = Parse.IntRange(value, 0);
       if (name == "level" || name == "levels")
-        Level = Parse.TryIntRange(value);
+        Level = Parse.IntRange(value);
       if (name == "level" || name == "levels")
-        Level = Parse.TryIntRange(value);
+        Level = Parse.IntRange(value);
       if (name == "radius" || name == "range" || name == "circle")
-        Radius = Parse.TryFloat(value);
+        Radius = Parse.Float(value);
       if (name == "sc" || name == "scale")
-        Scale = Parse.TryScaleRange(value);
+        Scale = Parse.ScaleRange(value);
       if (name == "helmet") Helmet = new(value);
       if (name == "left_hand") LeftHand = new(value);
       if (name == "right_hand") RightHand = new(value);

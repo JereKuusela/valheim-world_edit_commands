@@ -56,7 +56,7 @@ public class TerrainParameters {
     else if (value == "sw") angle = 225;
     else if (value == "w") angle = 270f;
     else if (value == "nw") angle = 315;
-    else angle = Parse.TryFloat(value, 0f);
+    else angle = Parse.Float(value, 0f);
     angle *= Mathf.PI / 180f;
     return angle;
   }
@@ -72,7 +72,7 @@ public class TerrainParameters {
       if (name == "from") {
         FixedPosition = true;
         useGroundHeight = Parse.Split(value).Length < 3;
-        Position = Parse.TryVectorXZY(Parse.Split(value));
+        Position = Parse.VectorXZY(Parse.Split(value));
       }
     }
     if (useGroundHeight) {
@@ -108,9 +108,9 @@ public class TerrainParameters {
       var value = split[1].ToLower();
       var values = Parse.Split(value);
       if (name == "circle")
-        Radius = Parse.TryFloat(value, 0f);
+        Radius = Parse.Float(value, 0f);
       if (name == "rect") {
-        var size = Parse.TryScale(values);
+        var size = Parse.Scale(values);
         Width = size.x;
         Depth = size.z;
       }
@@ -121,29 +121,29 @@ public class TerrainParameters {
         Angle = ParseAngle(value);
       }
       if (name == "delta")
-        Set = Parse.TryFloat(value, 0f);
+        Set = Parse.Float(value, 0f);
       if (name == "min")
-        Min = Parse.TryFloat(value, float.MinValue);
+        Min = Parse.Float(value, float.MinValue);
       if (name == "max")
-        Max = Parse.TryFloat(value, float.MaxValue);
+        Max = Parse.Float(value, float.MaxValue);
       if (name == "raise")
-        Delta = Parse.TryFloat(value, 0f);
+        Delta = Parse.Float(value, 0f);
       if (name == "lower")
-        Delta = -Parse.TryFloat(value, 0f);
+        Delta = -Parse.Float(value, 0f);
       if (name == "smooth")
-        Smooth = Parse.TryFloat(value, 0f);
+        Smooth = Parse.Float(value, 0f);
       if (name == "slope") {
-        Slope = Parse.TryFloat(values, 0, 0f);
+        Slope = Parse.Float(values, 0, 0f);
         if (values.Length > 1) SlopeAngle = ParseAngle(values[1]);
       }
       if (name == "offset")
-        Offset = Parse.TryVectorZXY(values);
+        Offset = Parse.VectorZXY(values);
       if (name == "within")
-        Within = Parse.TryFloatRange(value);
+        Within = Parse.FloatRange(value);
       if (name == "level")
-        Level = Parse.TryFloat(value, Position.y);
+        Level = Parse.Float(value, Position.y);
       if (name == "step")
-        Step = Parse.TryVectorZXY(values);
+        Step = Parse.VectorZXY(values);
       if (name == "blockcheck") {
         if (value == "on") BlockCheck = BlockCheck.On;
         else if (value == "inverse") BlockCheck = BlockCheck.Inverse;
@@ -192,7 +192,7 @@ public class TerrainParameters {
       if (split.Length < 2) continue;
       var value = split[1].ToLower();
       if (name == "to") {
-        var to = Parse.TryVectorXZY(Parse.Split(value));
+        var to = Parse.VectorXZY(Parse.Split(value));
 
         if (Slope == 0 && Parse.Split(value).Length < 3) {
           if (ZoneSystem.instance.IsZoneLoaded(to))

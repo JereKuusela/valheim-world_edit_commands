@@ -53,15 +53,11 @@ public class ObjectAutoComplete : SharedObjectAutoComplete {
       "show",
       "interact",
       "type",
-      "fall",
-      "remove"
+      "fall"
     });
     AutoComplete.Register(ObjectCommand.Name, (int index) => NamedParameters, WithSharedFetchers(new() {
       {
         "collision", (int index) => ParameterInfo.Create("collision=<color=yellow>true/false</color> or no value to toggle.", "Sets object collision.")
-      },
-      {
-        "remove", (int index) => ParameterInfo.Create("remove=<color=yellow>true/false</color> or no value to toggle.", "Sets whether the object can be removed with hammer.")
       },
       {
         "fall", (int index) => FallTypes

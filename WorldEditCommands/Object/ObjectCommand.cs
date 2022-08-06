@@ -158,8 +158,6 @@ public class ObjectCommand {
           output = SetCollision(view, pars.Collision);
         if (operation == "interact")
           output = SetInteract(view, pars.Interact);
-        if (operation == "remove")
-          output = SetRemove(view, pars.Remove);
         if (operation == "show")
           output = SetRender(view, pars.Show);
         if (operation == "wear")
@@ -361,13 +359,6 @@ public class ObjectCommand {
     var result = Actions.SetInteract(view, value);
     AddData(view);
     return $"Interact of ¤ set to {result}.";
-  }
-  private static string SetRemove(ZNetView view, bool? value) {
-    var obj = view.GetComponent<Piece>();
-    if (!obj) return "Skipped: ¤ is not a structure.";
-    var result = Actions.SetRemove(view, value);
-    AddData(view);
-    return $"Remove of ¤ set to {result}.";
   }
   private static string SetRender(ZNetView view, bool? value) {
     var result = Actions.SetRender(view, value);

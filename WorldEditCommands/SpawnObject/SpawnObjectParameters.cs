@@ -38,27 +38,27 @@ class SpawnObjectParameters : SharedObjectParameters {
       if (name == "name" || name == "crafter")
         Name = value.Replace("_", " ");
       if (name == "variant")
-        Variant = Parse.TryIntRange(value, 0);
+        Variant = Parse.IntRange(value, 0);
       if (name == "amount")
-        Amount = Parse.TryIntRange(value);
+        Amount = Parse.IntRange(value);
       if (name == "refrot" || name == "refrotation") {
-        BaseRotation = Parse.TryAngleYXZ(value, BaseRotation);
+        BaseRotation = Parse.AngleYXZ(value, BaseRotation);
       }
       if (name == "pos" || name == "position") {
         UseDefaultRelativePosition = false;
-        RelativePosition = Parse.TryVectorXZYRange(value, Vector3.zero);
+        RelativePosition = Parse.VectorXZYRange(value, Vector3.zero);
         Snap = value.Split(',').Length < 3;
       }
       if (name == "rot" || name == "rotation") {
-        Rotation = Parse.TryVectorYXZRange(value, Vector3.zero);
+        Rotation = Parse.VectorYXZRange(value, Vector3.zero);
       }
       if (name == "from" || name == "refpos") {
         UseDefaultRelativePosition = false;
-        From = Parse.TryVectorXZY(value.Split(','), From);
+        From = Parse.VectorXZY(value.Split(','), From);
       }
       if (name == "to") {
         UseDefaultRelativePosition = false;
-        To = Parse.TryVectorXZY(value.Split(','), From);
+        To = Parse.VectorXZY(value.Split(','), From);
       }
       if (name == "refplayer") {
         UseDefaultRelativePosition = false;

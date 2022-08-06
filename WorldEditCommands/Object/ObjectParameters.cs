@@ -64,8 +64,7 @@ public class ObjectParameters : SharedObjectParameters {
     "collision",
     "show",
     "interact",
-    "fall",
-    "remove"
+    "fall"
   };
 
   public ObjectParameters(Terminal.ConsoleEventArgs args) {
@@ -98,10 +97,10 @@ public class ObjectParameters : SharedObjectParameters {
       var values = Parse.Split(value);
       if (name == "rotate") {
         if (value == "reset") ResetRotation = true;
-        else Rotation = Parse.TryVectorYXZRange(value, Vector3.zero);
+        else Rotation = Parse.VectorYXZRange(value, Vector3.zero);
       }
-      if (name == "center" || name == "from") Center = Parse.TryVectorXZY(values);
-      if (name == "move") Offset = Parse.TryVectorZXYRange(value, Vector3.zero);
+      if (name == "center" || name == "from") Center = Parse.VectorXZY(values);
+      if (name == "move") Offset = Parse.VectorZXYRange(value, Vector3.zero);
       if (name == "id") Id = value;
       if (name == "collision") {
         Collision = Parse.Boolean(value);
@@ -110,10 +109,6 @@ public class ObjectParameters : SharedObjectParameters {
       if (name == "interact") {
         Interact = Parse.Boolean(value);
         if (Interact == null) throw new InvalidOperationException("Invalid true/false value for <color=yellow>interact</color>.");
-      }
-      if (name == "remove") {
-        Remove = Parse.Boolean(value);
-        if (Remove == null) throw new InvalidOperationException("Invalid true/false value for <color=yellow>remove</color>.");
       }
       if (name == "show") {
         Show = Parse.Boolean(value);
@@ -132,21 +127,21 @@ public class ObjectParameters : SharedObjectParameters {
       if (name == "fall" && value == "off") Fall = Fall.Off;
       if (name == "origin") Origin = value.ToLower();
       if (name == "visual") Visual = new(value);
-      if (name == "fuel") Fuel = Parse.TryFloatRange(value, 0f);
-      if (name == "chance") Chance = Parse.TryFloat(value, 1f);
+      if (name == "fuel") Fuel = Parse.FloatRange(value, 0f);
+      if (name == "chance") Chance = Parse.Float(value, 1f);
       if (name == "type" && value == "creature") ObjectType = ObjectType.Character;
       if (name == "type" && value == "structure") ObjectType = ObjectType.Structure;
       if (name == "rect") {
-        var size = Parse.TryScale(values);
+        var size = Parse.Scale(values);
         Width = size.x;
         Depth = size.z;
       }
       if (name == "height")
-        Height = Parse.TryFloat(value, 0f);
+        Height = Parse.Float(value, 0f);
       if (name == "creator")
-        Creator = Parse.TryLong(value, 0L);
+        Creator = Parse.Long(value, 0L);
       if (name == "angle")
-        Angle = Parse.TryFloat(value, 0f) * Mathf.PI / 180f;
+        Angle = Parse.Float(value, 0f) * Mathf.PI / 180f;
     }
     if (Operations.Contains("collision") && Operations.Contains("nocollision"))
       throw new InvalidOperationException($"<color=yellow>collision</color> and <color=yellow>nocollision</color> parameters can't be used together.");

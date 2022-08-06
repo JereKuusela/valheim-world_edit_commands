@@ -1,6 +1,4 @@
 using System;
-using System.Runtime.CompilerServices;
-using System.Runtime.Versioning;
 using UnityEngine;
 namespace WorldEditCommands;
 public enum Growth {
@@ -70,19 +68,6 @@ public static class Actions {
     }
     return value.Value;
   }
-  public static bool SetRemove(ZNetView obj, bool? value) {
-    var zdo = obj.GetZDO();
-    if (value == null) value = !zdo.GetBool(Hash.Remove, true);
-    if (value.Value) {
-      if (zdo.m_ints != null) {
-        zdo.m_ints.Remove(Hash.Remove);
-        zdo.IncreseDataRevision();
-      }
-    } else {
-      zdo.Set(Hash.Remove, value.Value);
-    }
-    return value.Value;
-  }
   public static void SetWear(GameObject obj, Wear wear) {
     SetWear(obj.GetComponent<WearNTear>(), wear);
   }
@@ -105,7 +90,7 @@ public static class Actions {
       zdo.Set(Hash.Wear, number);
     }
   }
-  
+
   public static void SetFall(GameObject obj, Fall fall) {
     SetFall(obj.GetComponent<StaticPhysics>(), fall);
   }
@@ -128,7 +113,7 @@ public static class Actions {
       zdo.Set(Hash.Fall, number);
     }
     var newObj = Refresh(zdo, obj.gameObject);
-    if (newObj.GetComponent<StaticPhysics>() is {} sp) {
+    if (newObj.GetComponent<StaticPhysics>() is { } sp) {
       sp.m_createTime = Time.time - 30f;
       sp.SUpdate();
     }

@@ -65,7 +65,7 @@ public class TerrainCommand {
       if (pars.Paint != "") {
         var split = pars.Paint.Split(',');
         if (split.Length > 2) {
-          Color color = new(Parse.TryFloat(split, 0), Parse.TryFloat(split, 1), Parse.TryFloat(split, 2), Parse.TryFloat(split, 3, 1f));
+          Color color = new(Parse.Float(split, 0), Parse.Float(split, 1), Parse.Float(split, 2), Parse.Float(split, 3, 1f));
           Terrain.PaintTerrain(compilerIndices, pars.Position, pars.Size, color);
         } else if (Paints.TryGetValue(pars.Paint, out var color)) {
           Terrain.PaintTerrain(compilerIndices, pars.Position, pars.Size, color);
