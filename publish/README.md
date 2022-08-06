@@ -68,10 +68,11 @@ Note: Creatures reset their style when attacking.
 For Structure Tweaks mod:
 
 - `collision=true/false`: Sets whether the object has collision. Without a value, toggles the collision.
-- `growth=big/big_bad/default/small/small_bad`: Overrides the plant visual wear (and prevents growth).
+- `fall=off/solid/terrain`: Overrides the fall behavior.
+- `growth=big/big_bad/small/small_bad`: Overrides the plant visual wear (and prevents growth).
 - `interact=true/false`: Sets whether the object can be interacted with. Without a value, toggles the interactability.
 - `show=true/false`: Sets whether the object is visible. Without a value, toggles the visibility.
-- `wear=default/broken/damaged/healthy`: Overrides the object visual wear.
+- `wear=broken/damaged/healthy`: Overrides the object visual wear.
 
 ### Examples
 
@@ -244,6 +245,9 @@ Static objects only synchronize their position and rotation when loaded. This me
 This shouldn't cause any issues unless objects are moved long distances (which might cause issues anyways).
 
 # Changelog
+
+- v1.8
+	- Adds new parameter `fall` to the `object` command (for Structure Tweaks mod).
 
 - v1.7
 	- Adds a new parameter `chance` to the `object` command.
