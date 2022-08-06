@@ -1,4 +1,6 @@
 using System;
+using System.Runtime.CompilerServices;
+using System.Runtime.Versioning;
 using UnityEngine;
 namespace WorldEditCommands;
 public enum Growth {
@@ -14,6 +16,12 @@ public enum Wear {
   Damaged,
   Healthy
 }
+public enum Fall {
+  Default,
+  Off,
+  Terrain,
+  Solid
+}
 public static class Actions {
   public static bool SetCollision(ZNetView obj, bool? value) {
     var zdo = obj.GetZDO();
@@ -26,10 +34,14 @@ public static class Actions {
     } else {
       zdo.Set(Hash.Collision, value.Value);
     }
-    var newObj = ZNetScene.instance.CreateObject(zdo);
-    UnityEngine.Object.Destroy(obj.gameObject);
-    ZNetScene.instance.m_instances[zdo] = newObj.GetComponent<ZNetView>();
+    Refresh(zdo, obj.gameObject);
     return value.Value;
+  }
+  private static GameObject Refresh(ZDO zdo, GameObject obj) {
+    var newObj = ZNetScene.instance.CreateObject(zdo);
+    UnityEngine.Object.Destroy(obj);
+    ZNetScene.instance.m_instances[zdo] = newObj.GetComponent<ZNetView>();
+    return newObj;
   }
   public static bool SetRender(ZNetView obj, bool? value) {
     var zdo = obj.GetZDO();
@@ -42,9 +54,7 @@ public static class Actions {
     } else {
       zdo.Set(Hash.Render, value.Value);
     }
-    var newObj = ZNetScene.instance.CreateObject(zdo);
-    UnityEngine.Object.Destroy(obj.gameObject);
-    ZNetScene.instance.m_instances[zdo] = newObj.GetComponent<ZNetView>();
+    Refresh(zdo, obj.gameObject);
     return value.Value;
   }
   public static bool SetInteract(ZNetView obj, bool? value) {
@@ -57,6 +67,19 @@ public static class Actions {
       }
     } else {
       zdo.Set(Hash.Interact, value.Value);
+    }
+    return value.Value;
+  }
+  public static bool SetRemove(ZNetView obj, bool? value) {
+    var zdo = obj.GetZDO();
+    if (value == null) value = !zdo.GetBool(Hash.Remove, true);
+    if (value.Value) {
+      if (zdo.m_ints != null) {
+        zdo.m_ints.Remove(Hash.Remove);
+        zdo.IncreseDataRevision();
+      }
+    } else {
+      zdo.Set(Hash.Remove, value.Value);
     }
     return value.Value;
   }
@@ -80,6 +103,34 @@ public static class Actions {
       }
     } else {
       zdo.Set(Hash.Wear, number);
+    }
+  }
+  
+  public static void SetFall(GameObject obj, Fall fall) {
+    SetFall(obj.GetComponent<StaticPhysics>(), fall);
+  }
+  private static int FallNumber(Fall fall) {
+    if (fall == Fall.Off) return 0;
+    if (fall == Fall.Terrain) return 1;
+    if (fall == Fall.Solid) return 2;
+    return -1;
+  }
+  public static void SetFall(StaticPhysics obj, Fall fall) {
+    if (!obj) return;
+    var zdo = obj.m_nview.GetZDO();
+    var number = FallNumber(fall);
+    if (number < 0) {
+      if (zdo.m_ints != null) {
+        zdo.m_ints.Remove(Hash.Fall);
+        zdo.IncreseDataRevision();
+      }
+    } else {
+      zdo.Set(Hash.Fall, number);
+    }
+    var newObj = Refresh(zdo, obj.gameObject);
+    if (newObj.GetComponent<StaticPhysics>() is {} sp) {
+      sp.m_createTime = Time.time - 30f;
+      sp.SUpdate();
     }
   }
   public static void SetGrowth(GameObject obj, Growth growth) {

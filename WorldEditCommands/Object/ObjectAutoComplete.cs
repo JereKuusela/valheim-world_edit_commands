@@ -20,6 +20,11 @@ public class ObjectAutoComplete : SharedObjectAutoComplete {
       "creature",
       "structure"
   };
+  public static List<string> FallTypes = new() {
+      "off",
+      "solid",
+      "terrain"
+  };
   public ObjectAutoComplete() {
     NamedParameters = WithSharedParameters(new() {
       "baby",
@@ -47,11 +52,19 @@ public class ObjectAutoComplete : SharedObjectAutoComplete {
       "collision",
       "show",
       "interact",
-      "type"
+      "type",
+      "fall",
+      "remove"
     });
     AutoComplete.Register(ObjectCommand.Name, (int index) => NamedParameters, WithSharedFetchers(new() {
       {
         "collision", (int index) => ParameterInfo.Create("collision=<color=yellow>true/false</color> or no value to toggle.", "Sets object collision.")
+      },
+      {
+        "remove", (int index) => ParameterInfo.Create("remove=<color=yellow>true/false</color> or no value to toggle.", "Sets whether the object can be removed with hammer.")
+      },
+      {
+        "fall", (int index) => FallTypes
       },
       {
         "type", (int index) => ObjectTypes

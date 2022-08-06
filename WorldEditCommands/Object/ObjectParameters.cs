@@ -14,6 +14,8 @@ public class ObjectParameters : SharedObjectParameters {
   public string Origin = "player";
   public Wear Wear = Wear.Default;
   public Growth Growth = Growth.Default;
+  public Fall Fall = Fall.Default;
+  public bool? Remove;
   public HashSet<string> Operations = new();
   public bool ResetRotation = false;
   public bool Respawn = false;
@@ -61,7 +63,9 @@ public class ObjectParameters : SharedObjectParameters {
     "growth",
     "collision",
     "show",
-    "interact"
+    "interact",
+    "fall",
+    "remove"
   };
 
   public ObjectParameters(Terminal.ConsoleEventArgs args) {
@@ -107,6 +111,10 @@ public class ObjectParameters : SharedObjectParameters {
         Interact = Parse.Boolean(value);
         if (Interact == null) throw new InvalidOperationException("Invalid true/false value for <color=yellow>interact</color>.");
       }
+      if (name == "remove") {
+        Remove = Parse.Boolean(value);
+        if (Remove == null) throw new InvalidOperationException("Invalid true/false value for <color=yellow>remove</color>.");
+      }
       if (name == "show") {
         Show = Parse.Boolean(value);
         if (Show == null) throw new InvalidOperationException("Invalid true/false value for <color=yellow>show</color>.");
@@ -119,6 +127,9 @@ public class ObjectParameters : SharedObjectParameters {
       if (name == "growth" && value == "big_bad") Growth = Growth.UnhealthyGrown;
       if (name == "growth" && value == "small") Growth = Growth.Healthy;
       if (name == "growth" && value == "small_bad") Growth = Growth.Unhealthy;
+      if (name == "fall" && value == "solid") Fall = Fall.Solid;
+      if (name == "fall" && value == "terrain") Fall = Fall.Terrain;
+      if (name == "fall" && value == "off") Fall = Fall.Off;
       if (name == "origin") Origin = value.ToLower();
       if (name == "visual") Visual = new(value);
       if (name == "fuel") Fuel = Parse.TryFloatRange(value, 0f);

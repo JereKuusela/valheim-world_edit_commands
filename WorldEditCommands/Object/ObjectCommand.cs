@@ -158,10 +158,14 @@ public class ObjectCommand {
           output = SetCollision(view, pars.Collision);
         if (operation == "interact")
           output = SetInteract(view, pars.Interact);
+        if (operation == "remove")
+          output = SetRemove(view, pars.Remove);
         if (operation == "show")
           output = SetRender(view, pars.Show);
         if (operation == "wear")
           output = SetWear(view, pars.Wear);
+        if (operation == "fall")
+          output = SetFall(view, pars.Fall);
         if (operation == "growth")
           output = SetGrowth(view, pars.Growth);
         if (operation == "move")
@@ -341,6 +345,13 @@ public class ObjectCommand {
     Actions.SetWear(obj, wear);
     return $"Wear of ¤ set to {wear}.";
   }
+  private static string SetFall(ZNetView view, Fall fall) {
+    var obj = view.GetComponent<StaticPhysics>();
+    if (!obj) return "Skipped: ¤ is not a static object.";
+    AddData(view, true);
+    Actions.SetFall(obj, fall);
+    return $"Fall of ¤ set to {fall}.";
+  }
   private static string SetCollision(ZNetView view, bool? value) {
     var result = Actions.SetCollision(view, value);
     AddData(view, true);
@@ -350,6 +361,13 @@ public class ObjectCommand {
     var result = Actions.SetInteract(view, value);
     AddData(view);
     return $"Interact of ¤ set to {result}.";
+  }
+  private static string SetRemove(ZNetView view, bool? value) {
+    var obj = view.GetComponent<Piece>();
+    if (!obj) return "Skipped: ¤ is not a structure.";
+    var result = Actions.SetRemove(view, value);
+    AddData(view);
+    return $"Remove of ¤ set to {result}.";
   }
   private static string SetRender(ZNetView view, bool? value) {
     var result = Actions.SetRender(view, value);
