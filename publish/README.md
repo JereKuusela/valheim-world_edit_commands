@@ -29,6 +29,7 @@ Following parameters are available:
 - `chance=number`: Randomly filters included objects. For example 0.5 includes about half of the objects (50%).
 - `creator=player id`: Sets the piece creator. Use 0 for no creator.
 - `circle=number` or `radius=number`: Radius for included objects. If not given, the hovered object is only affected.
+- `connect`: Includes entire structures.
 - `durability=number` or `health=number`: Sets the current durability for items, the current health for structures and the maximum health for creatures. Very high values like 1E30 turn the target invulnerable (including gravity for structures).
 - `fuel=number`: Sets the fuel amount. Without number, prints the fuel amount.
 - `from=x,z,y`: Same as the `center`.
@@ -71,6 +72,7 @@ For Structure Tweaks mod:
 - `fall=off/solid/terrain`: Overrides the fall behavior.
 - `growth=big/big_bad/small/small_bad`: Overrides the plant visual wear (and prevents growth).
 - `interact=true/false`: Sets whether the object can be interacted with. Without a value, toggles the interactability.
+- `restrict=true/false`: Sets whether the portal restricts some items. Without a value, toggles the restriction.
 - `show=true/false`: Sets whether the object is visible. Without a value, toggles the visibility.
 - `wear=broken/damaged/healthy`: Overrides the object visual wear.
 
@@ -247,7 +249,8 @@ This shouldn't cause any issues unless objects are moved long distances (which m
 # Changelog
 
 - v1.8
-	- Adds new parameter `fall` to the `object` command (for Structure Tweaks mod).
+	- Adds new parameters `fall` and `restrict` to the `object` command (for Structure Tweaks mod).
+	- Adds a new parameter `connect` to the `object` command.
 
 - v1.7
 	- Adds a new parameter `chance` to the `object` command.

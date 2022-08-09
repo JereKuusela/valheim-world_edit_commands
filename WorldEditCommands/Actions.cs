@@ -35,6 +35,19 @@ public static class Actions {
     Refresh(zdo, obj.gameObject);
     return value.Value;
   }
+  public static bool SetRestrict(ZNetView obj, bool? value) {
+    var zdo = obj.GetZDO();
+    if (value == null) value = !zdo.GetBool(Hash.Restrict, true);
+    if (value.Value) {
+      if (zdo.m_ints != null) {
+        zdo.m_ints.Remove(Hash.Restrict);
+        zdo.IncreseDataRevision();
+      }
+    } else {
+      zdo.Set(Hash.Restrict, value.Value);
+    }
+    return value.Value;
+  }
   private static GameObject Refresh(ZDO zdo, GameObject obj) {
     var newObj = ZNetScene.instance.CreateObject(zdo);
     UnityEngine.Object.Destroy(obj);

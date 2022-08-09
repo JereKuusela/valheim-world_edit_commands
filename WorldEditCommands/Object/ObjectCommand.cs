@@ -2,14 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ServerDevcommands;
+using Service;
 using UnityEngine;
 namespace WorldEditCommands;
-
-public enum ObjectType {
-  All,
-  Character,
-  Structure
-}
 
 ///<summary>Needed to keep track of edited zdos.</summary>
 public class EditInfo {
@@ -31,52 +26,6 @@ public class ObjectCommand {
   }
   public const string Name = "object";
   public static Dictionary<ZDOID, EditInfo> EditedInfo = new();
-  private static bool IsIncluded(string id, string name) {
-    if (id.StartsWith("*", StringComparison.Ordinal) && id.EndsWith("*", StringComparison.Ordinal))
-      return name.Contains(id.Substring(1, id.Length - 3));
-    if (id.StartsWith("*", StringComparison.Ordinal)) return name.EndsWith(id.Substring(1), StringComparison.Ordinal);
-    if (id.EndsWith("*", StringComparison.Ordinal)) return name.StartsWith(id.Substring(0, id.Length - 2), StringComparison.Ordinal);
-    return id == name;
-  }
-  public static IEnumerable<int> GetPrefabs(string id) {
-    id = id.ToLower();
-    IEnumerable<GameObject> values = ZNetScene.instance.m_namedPrefabs.Values;
-    values = values.Where(prefab => prefab.name != "Player");
-    if (id == "*")
-      values = values.Where(prefab => !prefab.name.StartsWith("_", StringComparison.Ordinal));
-    else if (id.Contains("*"))
-      values = values.Where(prefab => IsIncluded(id, prefab.name.ToLower()));
-    else
-      values = values.Where(prefab => prefab.name.ToLower() == id);
-    return values.Select(prefab => prefab.name.GetStableHashCode()).ToHashSet();
-  }
-  private static float GetX(float x, float y, float angle) => Mathf.Cos(angle) * x - Mathf.Sin(angle) * y;
-  private static float GetY(float x, float y, float angle) => Mathf.Sin(angle) * x + Mathf.Cos(angle) * y;
-  private static bool Within(Vector3 position, Vector3 center, float angle, float width, float depth, float height) {
-    var dx = position.x - center.x;
-    var dz = position.z - center.z;
-    var distanceX = GetX(dx, dz, angle);
-    var distanceZ = GetY(dx, dz, angle);
-    if (center.y - position.y > 1000f) return false;
-    if (position.y - center.y > (height == 0f ? 1000f : height)) return false;
-    if (Mathf.Abs(distanceX) > width) return false;
-    if (Mathf.Abs(distanceZ) > depth) return false;
-    return true;
-  }
-  private static bool Within(Vector3 position, Vector3 center, float radius, float height) {
-    return Utils.DistanceXZ(position, center) <= radius && center.y - position.y < 1000f && position.y - center.y <= (height == 0f ? 1000f : height);
-  }
-  public static IEnumerable<ZDO> GetZDOs(string id, ObjectType type, Func<Vector3, bool> checker) {
-    var codes = GetPrefabs(id);
-    IEnumerable<ZDO> zdos = ZDOMan.instance.m_objectsByID.Values;
-    var scene = ZNetScene.instance;
-    zdos = zdos.Where(zdo => codes.Contains(zdo.GetPrefab()));
-    if (type == ObjectType.Structure)
-      zdos = zdos.Where(zdo => scene.GetPrefab(zdo.GetPrefab()).GetComponent<Piece>());
-    if (type == ObjectType.Character)
-      zdos = zdos.Where(zdo => scene.GetPrefab(zdo.GetPrefab()).GetComponent<Character>());
-    return zdos.Where(zdo => checker(zdo.GetPosition()));
-  }
   private static void AddData(ZNetView view, bool refresh = false) {
     var zdo = view.GetZDO();
     if (EditedInfo.TryGetValue(zdo.m_uid, out var info)) {
@@ -85,11 +34,10 @@ public class ObjectCommand {
     }
     EditedInfo[zdo.m_uid] = new EditInfo(zdo, refresh);
   }
-  private static void Execute(Terminal context, ObjectParameters pars, IEnumerable<string> operations, IEnumerable<ZDO> zdos) {
+  private static void Execute(Terminal context, ObjectParameters pars, IEnumerable<string> operations, ZNetView[] views) {
     var scene = ZNetScene.instance;
     Dictionary<ZDOID, long> oldOwner = new();
-    var views = zdos.Where(zdo => {
-      var view = scene.FindInstance(zdo);
+    views = views.Where(view => {
       if (!view || !view.GetZDO().IsValid()) {
         context.AddString($"Skipped: {view.name} is not loaded.");
         return false;
@@ -99,7 +47,7 @@ public class ObjectCommand {
         return false;
       }
       return true;
-    }).Select(zdo => scene.FindInstance(zdo)).ToArray();
+    }).ToArray();
     List<ZDO> removed = new();
     EditedInfo.Clear();
     foreach (var view in views) {
@@ -156,6 +104,8 @@ public class ObjectCommand {
           output = SetPrefab(view, pars.Prefab);
         if (operation == "collision")
           output = SetCollision(view, pars.Collision);
+        if (operation == "restrict")
+          output = SetRestrict(view, pars.Restrict);
         if (operation == "interact")
           output = SetInteract(view, pars.Interact);
         if (operation == "show")
@@ -214,21 +164,25 @@ public class ObjectCommand {
         Ruler.Create(pars.ToRuler());
         return;
       }
-      IEnumerable<ZDO> zdos;
-      if (pars.Radius.HasValue) {
-        zdos = GetZDOs(pars.Id, pars.ObjectType, position => Within(position, pars.Center ?? pars.From, pars.Radius.Value, pars.Height));
+      ZNetView[] views;
+      if (pars.Connect) {
+        var view = Helper.GetHovered(args);
+        if (view == null) return;
+        views = Selector.GetConnected(view);
+      } else if (pars.Radius.HasValue) {
+        views = Selector.GetNearby(pars.Id, pars.ObjectType, position => Selector.Within(position, pars.Center ?? pars.From, pars.Radius.Value, pars.Height));
       } else if (pars.Width.HasValue && pars.Depth.HasValue) {
-        zdos = GetZDOs(pars.Id, pars.ObjectType, position => Within(position, pars.Center ?? pars.From, pars.Angle, pars.Width.Value, pars.Depth.Value, pars.Height));
+        views = Selector.GetNearby(pars.Id, pars.ObjectType, position => Selector.Within(position, pars.Center ?? pars.From, pars.Angle, pars.Width.Value, pars.Depth.Value, pars.Height));
       } else {
         var view = Helper.GetHovered(args);
         if (view == null) return;
-        if (!GetPrefabs(pars.Id).Contains(view.GetZDO().GetPrefab())) {
+        if (!Selector.GetPrefabs(pars.Id).Contains(view.GetZDO().GetPrefab())) {
           Helper.AddMessage(args.Context, $"Skipped: {view.name} has invalid id.");
           return;
         }
-        zdos = new[] { view.GetZDO() };
+        views = new[] { view };
       }
-      Execute(args.Context, pars, pars.Operations, zdos);
+      Execute(args.Context, pars, pars.Operations, views);
 
     }, () => autoComplete.NamedParameters);
   }
@@ -349,6 +303,11 @@ public class ObjectCommand {
     AddData(view, true);
     Actions.SetFall(obj, fall);
     return $"Fall of ¤ set to {fall}.";
+  }
+  private static string SetRestrict(ZNetView view, bool? value) {
+    var result = Actions.SetRestrict(view, value);
+    AddData(view);
+    return $"Restrict of ¤ set to {result}.";
   }
   private static string SetCollision(ZNetView view, bool? value) {
     var result = Actions.SetCollision(view, value);

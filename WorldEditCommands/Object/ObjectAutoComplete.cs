@@ -53,9 +53,14 @@ public class ObjectAutoComplete : SharedObjectAutoComplete {
       "show",
       "interact",
       "type",
-      "fall"
+      "fall",
+      "restrict",
+      "connect"
     });
     AutoComplete.Register(ObjectCommand.Name, (int index) => NamedParameters, WithSharedFetchers(new() {
+      {
+        "restrict", (int index) => ParameterInfo.Create("restrict=<color=yellow>true/false</color> or no value to toggle.", "Sets portal item restriction.")
+      },
       {
         "collision", (int index) => ParameterInfo.Create("collision=<color=yellow>true/false</color> or no value to toggle.", "Sets object collision.")
       },
@@ -64,6 +69,9 @@ public class ObjectAutoComplete : SharedObjectAutoComplete {
       },
       {
         "type", (int index) => ObjectTypes
+      },
+      {
+        "connect", (int index) => ParameterInfo.Flag("Connect")
       },
       {
         "show", (int index) => ParameterInfo.Create("show=<color=yellow>true/false</color> or no value to toggle.", "Sets object visibility.")

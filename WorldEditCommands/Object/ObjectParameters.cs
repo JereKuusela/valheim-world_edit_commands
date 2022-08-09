@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using ServerDevcommands;
+using Service;
 using UnityEngine;
 namespace WorldEditCommands;
 public class ObjectParameters : SharedObjectParameters {
@@ -28,7 +29,9 @@ public class ObjectParameters : SharedObjectParameters {
   public float Chance = 1f;
   public bool? Show;
   public bool? Collision;
+  public bool? Restrict;
   public bool? Interact;
+  public bool Connect;
   public ObjectType ObjectType = ObjectType.All;
 
   public static HashSet<string> SupportedOperations = new() {
@@ -64,7 +67,8 @@ public class ObjectParameters : SharedObjectParameters {
     "collision",
     "show",
     "interact",
-    "fall"
+    "fall",
+    "restrict"
   };
 
   public ObjectParameters(Terminal.ConsoleEventArgs args) {
@@ -92,6 +96,7 @@ public class ObjectParameters : SharedObjectParameters {
       }
       if (name == "center" || name == "mirror") Center = From;
       if (name == "respawn") Respawn = true;
+      if (name == "connect") Connect = true;
       if (split.Length < 2) continue;
       var value = split[1];
       var values = Parse.Split(value);
@@ -102,6 +107,10 @@ public class ObjectParameters : SharedObjectParameters {
       if (name == "center" || name == "from") Center = Parse.VectorXZY(values);
       if (name == "move") Offset = Parse.VectorZXYRange(value, Vector3.zero);
       if (name == "id") Id = value;
+      if (name == "restrict") {
+        Restrict = Parse.Boolean(value);
+        if (Restrict == null) throw new InvalidOperationException("Invalid true/false value for <color=yellow>restrict</color>.");
+      }
       if (name == "collision") {
         Collision = Parse.Boolean(value);
         if (Collision == null) throw new InvalidOperationException("Invalid true/false value for <color=yellow>collision</color>.");
@@ -143,16 +152,18 @@ public class ObjectParameters : SharedObjectParameters {
       if (name == "angle")
         Angle = Parse.Float(value, 0f) * Mathf.PI / 180f;
     }
-    if (Operations.Contains("collision") && Operations.Contains("nocollision"))
-      throw new InvalidOperationException($"<color=yellow>collision</color> and <color=yellow>nocollision</color> parameters can't be used together.");
     if (Operations.Contains("remove") && Operations.Count > 1)
       throw new InvalidOperationException("Remove can't be used with other operations.");
     if (Operations.Count == 0)
       throw new InvalidOperationException("Missing the operation.");
-    if (Operations.Contains("remove") && Id == "" && ObjectType == ObjectType.All)
-      throw new InvalidOperationException("Remove can't be used without <color=yellow>id</color> or <color=yellow>type</color>.");
+    if (Operations.Contains("remove") && Id == "" && ObjectType == ObjectType.All && (Radius > 0 || Width > 0 || Depth > 0 || Connect))
+      throw new InvalidOperationException("Area remove can't be used without <color=yellow>id</color> or <color=yellow>type</color>.");
     if (Id == "") Id = "*";
     if (Radius.HasValue && Depth.HasValue)
       throw new InvalidOperationException($"<color=yellow>circle</color> and <color=yellow>rect</color> parameters can't be used together.");
+    if (Radius.HasValue && Connect)
+      throw new InvalidOperationException($"<color=yellow>circle</color> and <color=yellow>connect</color> parameters can't be used together.");
+    if (Depth.HasValue && Connect)
+      throw new InvalidOperationException($"<color=yellow>connect</color> and <color=yellow>rect</color> parameters can't be used together.");
   }
 }

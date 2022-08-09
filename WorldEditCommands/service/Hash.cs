@@ -6,6 +6,7 @@ public static class Hash {
   public static int Interact = "override_interact".GetStableHashCode();
   public static int Render = "override_render".GetStableHashCode();
   public static int Collision = "override_collision".GetStableHashCode();
+  public static int Restrict = "override_restrict".GetStableHashCode();
   public static int Health = "health".GetStableHashCode();
   public static int Level = "level".GetStableHashCode();
   public static int Text = "text".GetStableHashCode();
