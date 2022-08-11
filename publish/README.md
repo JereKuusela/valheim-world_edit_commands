@@ -275,15 +275,4 @@ This shouldn't cause any issues unless objects are moved long distances (which m
 	- Changes the `circle` and `rect` parameters of the `terrain` command to have half of the size (matches radius of other commands).
 	- Renames the parameter `refPos` to the `from` (like in the `terrain` command).
 
-- v1.3
-	- Adds a new parameter `guide` to the `terrain` command to visualize the area.
-	- Adds a new parameter `within` to the `terrain` command to include only terrain within a given altitude range.
-	- Adds new parameters `max` and `min` to the `terrain` command which allow capping the terrain altitude.
-	- Adds a new parameter `delta` to the `terrain` command which allow directly setting the height difference.
-	- Adds a new parameter `center` to the `object` command which allow setting the rotation center point and overriding the player's position.
-	- Adds a new parameter `respawn` to the `object` command which allow reseting loot chests, pickables and spawn points.
-	- Adds support for replacing the character _ with a space bar in crafter names.
-	- Adds min-max support to the `pos` parameter of the `spawn_object` command.
-	- Changes the `parameter` reset of the `terrain` command to ignore `smooth` parameter and also reset the terrain paint.
-
 Thanks for Azumatt for creating the mod icon!
