@@ -54,6 +54,7 @@ public static class Actions {
     ZNetScene.instance.m_instances[zdo] = newObj.GetComponent<ZNetView>();
     return newObj;
   }
+  private static GameObject Refresh(ZNetView view) => Refresh(view.GetZDO(), view.gameObject);
   public static bool SetRender(ZNetView obj, bool? value) {
     var zdo = obj.GetZDO();
     if (value == null) value = !zdo.GetBool(Hash.Render, true);
@@ -104,6 +105,70 @@ public static class Actions {
     }
   }
 
+  public static void SetSpawn(ZNetView obj, string spawn) {
+    if (!obj) return;
+    var zdo = obj.GetZDO();
+    if (spawn == "") {
+      if (zdo.m_ints != null) {
+        zdo.m_ints.Remove(Hash.Spawn);
+        zdo.IncreseDataRevision();
+      }
+    } else {
+      zdo.Set(Hash.Spawn, spawn.GetStableHashCode());
+    }
+    Refresh(obj);
+  }
+  private static void SetFloat(ZNetView obj, float value, int hash, bool refresh = false) {
+    if (!obj) return;
+    var zdo = obj.GetZDO();
+    if (value < 0f) {
+      if (zdo.m_floats != null) {
+        zdo.m_floats.Remove(hash);
+        zdo.IncreseDataRevision();
+      }
+    } else {
+      zdo.Set(hash, value);
+    }
+    if (refresh)
+      Refresh(obj);
+  }
+  private static void SetInt(ZNetView obj, int value, int hash, bool refresh = false) {
+    if (!obj) return;
+    var zdo = obj.GetZDO();
+    if (value < 0) {
+      if (zdo.m_ints != null) {
+        zdo.m_ints.Remove(hash);
+        zdo.IncreseDataRevision();
+      }
+    } else {
+      zdo.Set(hash, value);
+    }
+    if (refresh)
+      Refresh(obj);
+  }
+  private static void SetString(ZNetView obj, string value, int hash, bool refresh = false) {
+    if (!obj) return;
+    var zdo = obj.GetZDO();
+    if (value == "") {
+      if (zdo.m_strings != null) {
+        zdo.m_strings.Remove(hash);
+        zdo.IncreseDataRevision();
+      }
+    } else {
+      zdo.Set(hash, value);
+    }
+    if (refresh)
+      Refresh(obj);
+  }
+  public static void SetStatus(ZNetView obj, string value) => SetString(obj, value, Hash.Status, true);
+  public static void SetEvent(ZNetView obj, string value) => SetString(obj, value, Hash.Event, true);
+  public static void SetEffect(ZNetView obj, string value) => SetString(obj, value, Hash.Effect, true);
+  public static void SetWeather(ZNetView obj, string value) => SetString(obj, value, Hash.Weather, true);
+  public static void SetRespawn(ZNetView obj, float value) => SetFloat(obj, value, Hash.Respawn, true);
+  public static void SetSpawnHealth(ZNetView obj, float value) => SetFloat(obj, value, Hash.SpawnHealth, true);
+  public static void SetAmount(ZNetView obj, int value) => SetInt(obj, value, Hash.Amount, true);
+  public static void SetMinLevel(ZNetView obj, int value) => SetInt(obj, value, Hash.MinLevel, true);
+  public static void SetMaxLevel(ZNetView obj, int value) => SetInt(obj, value, Hash.MaxLevel, true);
   public static void SetFall(GameObject obj, Fall fall) {
     SetFall(obj.GetComponent<StaticPhysics>(), fall);
   }

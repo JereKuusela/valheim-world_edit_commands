@@ -20,6 +20,16 @@ public class ObjectParameters : SharedObjectParameters {
   public HashSet<string> Operations = new();
   public bool ResetRotation = false;
   public bool Respawn = false;
+  public float? RespawnTime;
+  public int? Minlevel;
+  public int? MaxLevel;
+  public int? Amount;
+  public float? SpawnHealth;
+  public string Spawn = "";
+  public string Effect = "";
+  public string Event = "";
+  public string Status = "";
+  public string Weather = "";
   public Item? Visual = null;
   public float Angle = 0f;
   public long Creator = 0;
@@ -68,7 +78,17 @@ public class ObjectParameters : SharedObjectParameters {
     "show",
     "interact",
     "fall",
-    "restrict"
+    "restrict",
+    "spawn",
+    "minlevel",
+    "maxlevel",
+    "amount",
+    "respawntime",
+    "weather",
+    "effect",
+    "status",
+    "event",
+    "spawnhealth"
   };
 
   public ObjectParameters(Terminal.ConsoleEventArgs args) {
@@ -95,7 +115,6 @@ public class ObjectParameters : SharedObjectParameters {
         Operations.Add(name);
       }
       if (name == "center" || name == "mirror") Center = From;
-      if (name == "respawn") Respawn = true;
       if (name == "connect") Connect = true;
       if (split.Length < 2) continue;
       var value = split[1];
@@ -151,6 +170,16 @@ public class ObjectParameters : SharedObjectParameters {
         Creator = Parse.Long(value, 0L);
       if (name == "angle")
         Angle = Parse.Float(value, 0f) * Mathf.PI / 180f;
+      if (name == "respawntime") RespawnTime = Parse.Float(value, -1f);
+      if (name == "spawnhealth") SpawnHealth = Parse.Float(value, -1f);
+      if (name == "minlevel") Minlevel = Parse.Int(value, -1);
+      if (name == "maxlevel") MaxLevel = Parse.Int(value, -1);
+      if (name == "amount") Amount = Parse.Int(value, -1);
+      if (name == "spawn") Spawn = value;
+      if (name == "weather") Weather = value;
+      if (name == "status") Status = value;
+      if (name == "event") Event = value;
+      if (name == "effect") Effect = value;
     }
     if (Operations.Contains("remove") && Operations.Count > 1)
       throw new InvalidOperationException("Remove can't be used with other operations.");

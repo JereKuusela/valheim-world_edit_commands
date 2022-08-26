@@ -55,9 +55,32 @@ public class ObjectAutoComplete : SharedObjectAutoComplete {
       "type",
       "fall",
       "restrict",
-      "connect"
+      "connect",
+      "minlevel",
+      "maxlevel",
+      "amount",
+      "spawn",
+      "spawnhealth",
+      "respawntime",
+      "status",
+      "effect",
+      "event",
+      "weather"
     });
     AutoComplete.Register(ObjectCommand.Name, (int index) => NamedParameters, WithSharedFetchers(new() {
+      {
+        "status", (int index) => index == 0 ? ParameterInfo.Create("status=<color=yellow>radius</color>,id", "Adds status area.") : index == 1 ? ParameterInfo.StatusEffects : ParameterInfo.None
+      },
+      {
+        "effect", (int index) => index == 0 ? ParameterInfo.Create("effect=<color=yellow>radius</color>,id", "Adds effect area."): index == 1 ? ParameterInfo.EffectAreas : ParameterInfo.None
+      },
+      {
+        "weather", (int index) => index == 0 ? ParameterInfo.Create("weather=<color=yellow>radius</color>,id,instant", "Adds weather area.") : index == 1 ? ParameterInfo.Environments : index == 2
+          ? ParameterInfo.Create("weather=radius,id,<color=yellow>instant</color>", "Adds weather area.") : ParameterInfo.None
+      },
+      {
+        "event", (int index) => index == 0 ? ParameterInfo.Create("event=<color=yellow>radius</color>,id", "Adds event area.") : index == 1 ? ParameterInfo.Events : ParameterInfo.None
+      },
       {
         "restrict", (int index) => ParameterInfo.Create("restrict=<color=yellow>true/false</color> or no value to toggle.", "Sets portal item restriction.")
       },
@@ -65,10 +88,28 @@ public class ObjectAutoComplete : SharedObjectAutoComplete {
         "collision", (int index) => ParameterInfo.Create("collision=<color=yellow>true/false</color> or no value to toggle.", "Sets object collision.")
       },
       {
-        "fall", (int index) => FallTypes
+        "minlevel", (int index) => ParameterInfo.Create("minlevel=<color=yellow>number</color> (-1 to reset).", "Sets spawn point minimum level.")
       },
       {
-        "type", (int index) => ObjectTypes
+        "maxlevel", (int index) => ParameterInfo.Create("maxlevel=<color=yellow>number</color> (-1 to reset).", "Sets spawn point maximum level.")
+      },
+      {
+        "spawnhealth", (int index) => ParameterInfo.Create("spawnhealth=<color=yellow>number</color> (-1 to reset).", "Sets spawn point spawned creature health.")
+      },
+      {
+        "amount", (int index) => ParameterInfo.Create("amount=<color=yellow>number/false</color> (-1 to reset).", "Sets pickable amount.")
+      },
+      {
+        "respawntime", (int index) => ParameterInfo.Create("respawntime=<color=yellow>minutes/false</color> (-1 to reset).", "Sets pickable and spawn point respawn time.")
+      },
+      {
+        "spawn", (int index) => index == 0 ? ParameterInfo.ObjectIds : ParameterInfo.None
+      },
+      {
+        "fall", (int index) => index == 0 ? FallTypes : ParameterInfo.None
+      },
+      {
+        "type", (int index) => index == 0 ? ObjectTypes : ParameterInfo.None
       },
       {
         "connect", (int index) => ParameterInfo.Flag("Connect")

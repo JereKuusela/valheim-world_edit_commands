@@ -1,5 +1,15 @@
 public static class Hash {
   public static int PlantTime = "plantTime".GetStableHashCode();
+  public static int Status = "override_status".GetStableHashCode();
+  public static int Weather = "override_weather".GetStableHashCode();
+  public static int Event = "override_event".GetStableHashCode();
+  public static int Effect = "override_effect".GetStableHashCode();
+  public static int Respawn = "override_respawn".GetStableHashCode();
+  public static int SpawnHealth = "override_health".GetStableHashCode();
+  public static int Spawn = "override_spawn".GetStableHashCode();
+  public static int MinLevel = "override_minimum_level".GetStableHashCode();
+  public static int MaxLevel = "override_maximum_level".GetStableHashCode();
+  public static int Amount = "override_amount".GetStableHashCode();
   public static int Wear = "override_wear".GetStableHashCode();
   public static int Fall = "override_fall".GetStableHashCode();
   public static int Growth = "override_growth".GetStableHashCode();

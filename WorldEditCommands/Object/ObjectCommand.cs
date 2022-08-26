@@ -62,7 +62,7 @@ public class ObjectCommand {
         var name = Utils.GetPrefabName(view.gameObject);
         if (operation == "durability" || operation == "health")
           output = ChangeHealth(view, Helper.RandomValue(pars.Health));
-        if (operation == "stars")
+        if (operation == "stars" || operation == "level")
           output = SetStars(view, Helper.RandomValue(pars.Level) - 1);
         if (operation == "fuel" && pars.Fuel != null)
           output = SetFuel(view, Helper.RandomValue(pars.Fuel));
@@ -76,6 +76,26 @@ public class ObjectCommand {
           output = MakeWild(view);
         if (operation == "baby")
           output = SetBaby(view);
+        if (operation == "spawn")
+          output = Spawn(view, pars.Spawn);
+        if (operation == "effect")
+          output = Effect(view, pars.Effect);
+        if (operation == "weather")
+          output = Weather(view, pars.Weather);
+        if (operation == "event")
+          output = Event(view, pars.Event);
+        if (operation == "status")
+          output = Status(view, pars.Status);
+        if (operation == "minlevel" && pars.Minlevel != null)
+          output = MinLevel(view, pars.Minlevel.Value);
+        if (operation == "maxlevel" && pars.MaxLevel != null)
+          output = MaxLevel(view, pars.MaxLevel.Value);
+        if (operation == "amount" && pars.Amount.HasValue)
+          output = Amount(view, pars.Amount.Value);
+        if (operation == "respawntime" && pars.RespawnTime.HasValue)
+          output = Respawn(view, pars.RespawnTime.Value);
+        if (operation == "spawnhealth" && pars.SpawnHealth.HasValue)
+          output = SpawnHealth(view, pars.SpawnHealth.Value);
         if (operation == "respawn")
           output = Respawn(view);
         if (operation == "info")
@@ -255,6 +275,69 @@ public class ObjectCommand {
     AddData(view);
     Actions.Respawn(view.gameObject);
     return "¤ respawned.";
+  }
+  private static string Amount(ZNetView view, int value) {
+    if (!view.GetComponent<Pickable>())
+      return "Skipped: ¤ is not a pickable.";
+    AddData(view, true);
+    Actions.SetAmount(view, value);
+    return $"¤ amount set to {value}.";
+  }
+  private const string DEFAULT = "default";
+  private static string MinLevel(ZNetView view, int value) {
+    if (!view.GetComponent<CreatureSpawner>())
+      return "Skipped: ¤ is not a spawn point.";
+    AddData(view, true);
+    Actions.SetMinLevel(view, value);
+    return $"¤ minimum level set to {(value < 0 ? DEFAULT : value)}.";
+  }
+  private static string Spawn(ZNetView view, string value) {
+    if (!view.GetComponent<CreatureSpawner>() && !view.GetComponent<Pickable>())
+      return "Skipped: ¤ is not a pickable or spawn point.";
+    AddData(view, true);
+    Actions.SetSpawn(view, value);
+    return $"¤ spawn prefab set to {(value == "" ? DEFAULT : value)}.";
+  }
+  private static string Effect(ZNetView view, string value) {
+    AddData(view, true);
+    Actions.SetEffect(view, value);
+    return $"¤ effect set to {value}.";
+  }
+  private static string Weather(ZNetView view, string value) {
+    AddData(view, true);
+    Actions.SetWeather(view, value);
+    return $"¤ weather set to {value}.";
+  }
+  private static string Event(ZNetView view, string value) {
+    AddData(view, true);
+    Actions.SetEvent(view, value);
+    return $"¤ event set to {value}.";
+  }
+  private static string Status(ZNetView view, string value) {
+    AddData(view, true);
+    Actions.SetStatus(view, value);
+    return $"¤ status set to {value}.";
+  }
+  private static string MaxLevel(ZNetView view, int value) {
+    if (!view.GetComponent<CreatureSpawner>())
+      return "Skipped: ¤ is not a spawn point.";
+    AddData(view, true);
+    Actions.SetMaxLevel(view, value);
+    return $"¤ maximum level set to {(value < 0 ? DEFAULT : value)}.";
+  }
+  private static string Respawn(ZNetView view, float value) {
+    if (!view.GetComponent<CreatureSpawner>() && !view.GetComponent<Pickable>())
+      return "Skipped: ¤ is not a pickable or spawn point.";
+    AddData(view, true);
+    Actions.SetRespawn(view, value);
+    return $"¤ respawn time set to {(value < 0 ? DEFAULT : value)} minutes.";
+  }
+  private static string SpawnHealth(ZNetView view, float value) {
+    if (!view.GetComponent<CreatureSpawner>())
+      return "Skipped: ¤ is not a spawn point.";
+    AddData(view, true);
+    Actions.SetSpawnHealth(view, value);
+    return $"¤ spawn health set to {(value < 0 ? DEFAULT : value)}.";
   }
   private static string MakeTame(ZNetView view) {
     var obj = view.GetComponent<Character>();

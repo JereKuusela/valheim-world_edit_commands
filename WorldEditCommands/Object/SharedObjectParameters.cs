@@ -41,8 +41,6 @@ public class SharedObjectParameters {
         Model = Parse.IntRange(value, 0);
       if (name == "level" || name == "levels")
         Level = Parse.IntRange(value);
-      if (name == "level" || name == "levels")
-        Level = Parse.IntRange(value);
       if (name == "radius" || name == "range" || name == "circle")
         Radius = Parse.Float(value);
       if (name == "sc" || name == "scale")
