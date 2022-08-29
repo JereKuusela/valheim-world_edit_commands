@@ -248,6 +248,9 @@ This shouldn't cause any issues unless objects are moved long distances (which m
 
 # Changelog
 
+- v1.9
+	- Adds smelter support to the `object fuel` command.
+
 - v1.8
 	- Adds new parameters `fall` and `restrict` to the `object` command (for Structure Tweaks mod).
 	- Adds a new parameter `connect` to the `object` command.

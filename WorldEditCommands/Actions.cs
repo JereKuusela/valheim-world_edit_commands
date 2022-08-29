@@ -275,12 +275,9 @@ public static class Actions {
     obj.m_huntPlayer = hunt;
     obj.m_nview.GetZDO().Set(Hash.HuntPlayer, hunt);
   }
-  public static void SetFuel(GameObject obj, float amount) {
-    SetFuel(obj.GetComponent<Fireplace>(), amount);
-  }
-  public static void SetFuel(Fireplace obj, float amount) {
-    if (!obj) return;
-    obj.m_nview.GetZDO().Set(Hash.Fuel, amount);
+  public static void SetFuel(ZNetView view, float amount) {
+    if (!view) return;
+    view.GetZDO().Set(Hash.Fuel, amount);
   }
   public static void SetSleeping(GameObject obj, bool sleep) {
     SetSleeping(obj.GetComponent<MonsterAI>(), sleep);

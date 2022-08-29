@@ -230,11 +230,11 @@ public class ObjectCommand {
     return $"¤ has {amount} fuel.";
   }
   private static string SetFuel(ZNetView view, float amount) {
-    var obj = view.GetComponent<Fireplace>();
-    if (!obj) return "Skipped: ¤ is not a fireplace.";
+    var smelter = view.GetComponent<Smelter>();
+    if (!view.GetComponent<Fireplace>() && (!smelter || !smelter.m_fuelItem)) return "Skipped: ¤ is not a fireplace or smelter.";
     AddData(view);
     var previous = view.GetZDO().GetFloat("fuel", 0f);
-    Actions.SetFuel(obj, amount);
+    Actions.SetFuel(view, amount);
     return $"¤ fuel changed from {previous} to {amount}.";
   }
   private static string Move(ZNetView view, Vector3 offset, string origin) {
@@ -365,7 +365,7 @@ public class ObjectCommand {
     if (!obj) return "Skipped: ¤ is not a piece.";
     AddData(view);
     var previous = Actions.SetCreator(obj, creator);
-    return $"Prefab of ¤ set from {previous} to {creator}.";
+    return $"Creator of ¤ set from {previous} to {creator}.";
   }
   private static string SetPrefab(ZNetView view, string prefab) {
     AddData(view, true);

@@ -6,10 +6,9 @@ namespace WorldEditCommands;
 public class WorldEditCommands : BaseUnityPlugin {
   public const string GUID = "world_edit_commands";
   public const string NAME = "World Edit Commands";
-  public const string VERSION = "1.8";
+  public const string VERSION = "1.9";
   public void Awake() {
-    Harmony harmony = new(GUID);
-    harmony.PatchAll();
+    new Harmony(GUID).PatchAll();
   }
 
   public void LateUpdate() {
