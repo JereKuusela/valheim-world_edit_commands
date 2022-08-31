@@ -88,13 +88,13 @@ public class ObjectAutoComplete : SharedObjectAutoComplete {
         "collision", (int index) => ParameterInfo.Create("collision=<color=yellow>true/false</color> or no value to toggle.", "Sets object collision.")
       },
       {
-        "minlevel", (int index) => ParameterInfo.Create("minlevel=<color=yellow>number</color> (-1 to reset).", "Sets spawn point minimum level.")
+        "minlevel", (int index) => ParameterInfo.Create("minlevel=<color=yellow>number</color> (-1 to reset).", "Sets the minimum level of spawn points.")
       },
       {
-        "maxlevel", (int index) => ParameterInfo.Create("maxlevel=<color=yellow>number</color> (-1 to reset).", "Sets spawn point maximum level.")
+        "maxlevel", (int index) => ParameterInfo.Create("maxlevel=<color=yellow>number</color> (-1 to reset).", "Sets the maximum level of spawn points.")
       },
       {
-        "spawnhealth", (int index) => ParameterInfo.Create("spawnhealth=<color=yellow>number</color> (-1 to reset).", "Sets spawn point spawned creature health.")
+        "spawnhealth", (int index) => ParameterInfo.Create("spawnhealth=<color=yellow>number</color> (-1 to reset).", "Sets the creature health of spawn points.")
       },
       {
         "amount", (int index) => ParameterInfo.Create("amount=<color=yellow>number/false</color> (-1 to reset).", "Sets pickable amount.")

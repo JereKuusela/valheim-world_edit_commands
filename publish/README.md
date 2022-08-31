@@ -68,13 +68,23 @@ Note: Creatures reset their style when attacking.
 
 For Structure Tweaks mod:
 
+- `amount=[number]`: Sets pickable amount.
+- `effect=[radius,id]`: Adds forced effect area (heat, fire, player base, burning, no monsters, warm cozy area).
+- `event=[radius,id]`: Adds forced random event area.
 - `collision=true/false`: Sets whether the object has collision. Without a value, toggles the collision.
 - `fall=off/solid/terrain`: Overrides the fall behavior.
 - `growth=big/big_bad/small/small_bad`: Overrides the plant visual wear (and prevents growth).
 - `interact=true/false`: Sets whether the object can be interacted with. Without a value, toggles the interactability.
+- `minlevel=[number]`: Sets the minimum level of spawn points.
+- `maxlevel=[number]`: Sets the maximum level of spawn points.
 - `restrict=true/false`: Sets whether the portal restricts some items. Without a value, toggles the restriction.
+- `respawntime=[minutes]`: Sets pickable and spawn point respawn time.
 - `show=true/false`: Sets whether the object is visible. Without a value, toggles the visibility.
+- `spawnhealth=[id]`: Sets the object of pickables and spawn points.
+- `spawnhealth=[number]`: Sets the creature health of spawn points.
+- `status=[radius,id]`: Adds forced status effect area.
 - `wear=broken/damaged/healthy`: Overrides the object visual wear.
+- `weather=[radius,id,instant]`: Adds forced weather area. If third parameter is given, the weather changes instantly.
 
 ### Examples
 
@@ -250,6 +260,7 @@ This shouldn't cause any issues unless objects are moved long distances (which m
 
 - v1.9
 	- Adds smelter support to the `object fuel` command.
+	- Adds new parameters `amount`, `event`, `effect`, `maxlevel`, `minlevel`, `respawntime`, `spawn`, `status` and `weather` to the `object` command (for Structure Tweaks mod).
 
 - v1.8
 	- Adds new parameters `fall` and `restrict` to the `object` command (for Structure Tweaks mod).
