@@ -54,7 +54,7 @@ public static class Actions {
     ZNetScene.instance.m_instances[zdo] = newObj.GetComponent<ZNetView>();
     return newObj;
   }
-  private static GameObject Refresh(ZNetView view) => Refresh(view.GetZDO(), view.gameObject);
+  public static GameObject Refresh(ZNetView view) => Refresh(view.GetZDO(), view.gameObject);
   public static bool SetRender(ZNetView obj, bool? value) {
     var zdo = obj.GetZDO();
     if (value == null) value = !zdo.GetBool(Hash.Render, true);
@@ -105,57 +105,59 @@ public static class Actions {
     }
   }
 
-  public static void SetSpawn(ZNetView obj, string spawn) {
+  public static void SetComponent(ZNetView obj, string spawn) => SetString(obj, spawn, Hash.Component, true);
+  public static void SetFloat(ZNetView obj, float? value, int hash, bool refresh = false) {
     if (!obj) return;
     var zdo = obj.GetZDO();
-    if (spawn == "") {
-      if (zdo.m_ints != null) {
-        zdo.m_ints.Remove(Hash.Spawn);
-        zdo.IncreseDataRevision();
-      }
-    } else {
-      zdo.Set(Hash.Spawn, spawn.GetStableHashCode());
-    }
-    Refresh(obj);
-  }
-  private static void SetFloat(ZNetView obj, float value, int hash, bool refresh = false) {
-    if (!obj) return;
-    var zdo = obj.GetZDO();
-    if (value < 0f) {
+    if (value.HasValue)
+      zdo.Set(hash, value.Value);
+    else {
       if (zdo.m_floats != null) {
         zdo.m_floats.Remove(hash);
         zdo.IncreseDataRevision();
       }
-    } else {
-      zdo.Set(hash, value);
     }
     if (refresh)
       Refresh(obj);
   }
-  private static void SetInt(ZNetView obj, int value, int hash, bool refresh = false) {
+  public static void SetInt(ZNetView obj, int? value, int hash, bool refresh = false) {
     if (!obj) return;
     var zdo = obj.GetZDO();
-    if (value < 0) {
+    if (value.HasValue)
+      zdo.Set(hash, value.Value);
+    else {
       if (zdo.m_ints != null) {
         zdo.m_ints.Remove(hash);
         zdo.IncreseDataRevision();
       }
-    } else {
-      zdo.Set(hash, value);
     }
     if (refresh)
       Refresh(obj);
   }
-  private static void SetString(ZNetView obj, string value, int hash, bool refresh = false) {
+  public static void SetPrefab(ZNetView obj, string? value, int hash, bool refresh = false) {
     if (!obj) return;
     var zdo = obj.GetZDO();
-    if (value == "") {
+    if (value != null)
+      zdo.Set(hash, value.GetStableHashCode());
+    else {
+      if (zdo.m_ints != null) {
+        zdo.m_ints.Remove(hash);
+        zdo.IncreseDataRevision();
+      }
+    }
+    if (refresh)
+      Refresh(obj);
+  }
+  public static void SetString(ZNetView obj, string? value, int hash, bool refresh = false) {
+    if (!obj) return;
+    var zdo = obj.GetZDO();
+    if (value != null)
+      zdo.Set(hash, value);
+    else {
       if (zdo.m_strings != null) {
         zdo.m_strings.Remove(hash);
         zdo.IncreseDataRevision();
       }
-    } else {
-      zdo.Set(hash, value);
     }
     if (refresh)
       Refresh(obj);
@@ -164,11 +166,7 @@ public static class Actions {
   public static void SetEvent(ZNetView obj, string value) => SetString(obj, value, Hash.Event, true);
   public static void SetEffect(ZNetView obj, string value) => SetString(obj, value, Hash.Effect, true);
   public static void SetWeather(ZNetView obj, string value) => SetString(obj, value, Hash.Weather, true);
-  public static void SetRespawn(ZNetView obj, float value) => SetFloat(obj, value, Hash.Respawn, true);
-  public static void SetSpawnHealth(ZNetView obj, float value) => SetFloat(obj, value, Hash.SpawnHealth, true);
-  public static void SetAmount(ZNetView obj, int value) => SetInt(obj, value, Hash.Amount, true);
-  public static void SetMinLevel(ZNetView obj, int value) => SetInt(obj, value, Hash.MinLevel, true);
-  public static void SetMaxLevel(ZNetView obj, int value) => SetInt(obj, value, Hash.MaxLevel, true);
+
   public static void SetFall(GameObject obj, Fall fall) {
     SetFall(obj.GetComponent<StaticPhysics>(), fall);
   }
@@ -251,9 +249,6 @@ public static class Actions {
   }
   public static void SetHunt(GameObject obj, bool hunt) {
     SetHunt(obj.GetComponent<BaseAI>(), hunt);
-  }
-  public static bool SetPrefab(GameObject obj, string prefab) {
-    return SetPrefab(obj.GetComponent<ZNetView>(), prefab);
   }
   public static bool SetPrefab(ZNetView obj, string prefab) {
     if (!obj) return false;

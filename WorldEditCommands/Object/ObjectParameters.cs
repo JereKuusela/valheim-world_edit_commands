@@ -20,12 +20,6 @@ public class ObjectParameters : SharedObjectParameters {
   public HashSet<string> Operations = new();
   public bool ResetRotation = false;
   public bool Respawn = false;
-  public float? RespawnTime;
-  public int? Minlevel;
-  public int? MaxLevel;
-  public int? Amount;
-  public float? SpawnHealth;
-  public string Spawn = "";
   public string Effect = "";
   public string Event = "";
   public string Status = "";
@@ -42,6 +36,7 @@ public class ObjectParameters : SharedObjectParameters {
   public bool? Restrict;
   public bool? Interact;
   public bool Connect;
+  public string Component = "";
   public ObjectType ObjectType = ObjectType.All;
 
   public static HashSet<string> SupportedOperations = new() {
@@ -80,6 +75,7 @@ public class ObjectParameters : SharedObjectParameters {
     "fall",
     "restrict",
     "spawn",
+    "spawnitem",
     "minlevel",
     "maxlevel",
     "amount",
@@ -88,7 +84,8 @@ public class ObjectParameters : SharedObjectParameters {
     "effect",
     "status",
     "event",
-    "spawnhealth"
+    "spawnhealth",
+    "component"
   };
 
   public ObjectParameters(Terminal.ConsoleEventArgs args) {
@@ -170,16 +167,11 @@ public class ObjectParameters : SharedObjectParameters {
         Creator = Parse.Long(value, 0L);
       if (name == "angle")
         Angle = Parse.Float(value, 0f) * Mathf.PI / 180f;
-      if (name == "respawntime") RespawnTime = Parse.Float(value, -1f);
-      if (name == "spawnhealth") SpawnHealth = Parse.Float(value, -1f);
-      if (name == "minlevel") Minlevel = Parse.Int(value, -1);
-      if (name == "maxlevel") MaxLevel = Parse.Int(value, -1);
-      if (name == "amount") Amount = Parse.Int(value, -1);
-      if (name == "spawn") Spawn = value;
       if (name == "weather") Weather = value;
       if (name == "status") Status = value;
       if (name == "event") Event = value;
       if (name == "effect") Effect = value;
+      if (name == "component") Component = value;
     }
     if (Operations.Contains("remove") && Operations.Count > 1)
       throw new InvalidOperationException("Remove can't be used with other operations.");

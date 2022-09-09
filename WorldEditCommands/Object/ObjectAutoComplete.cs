@@ -25,6 +25,13 @@ public class ObjectAutoComplete : SharedObjectAutoComplete {
       "solid",
       "terrain"
   };
+  public static List<string> Components = new() {
+      "altar",
+      "pickable",
+      "spawner",
+      "spawnpoint",
+      "runestone"
+  };
   public ObjectAutoComplete() {
     NamedParameters = WithSharedParameters(new() {
       "baby",
@@ -65,7 +72,9 @@ public class ObjectAutoComplete : SharedObjectAutoComplete {
       "status",
       "effect",
       "event",
-      "weather"
+      "weather",
+      "spawnitem",
+      "component"
     });
     AutoComplete.Register(ObjectCommand.Name, (int index) => NamedParameters, WithSharedFetchers(new() {
       {
@@ -80,6 +89,9 @@ public class ObjectAutoComplete : SharedObjectAutoComplete {
       },
       {
         "event", (int index) => index == 0 ? ParameterInfo.Create("event=<color=yellow>radius</color>,id", "Adds event area.") : index == 1 ? ParameterInfo.Events : ParameterInfo.None
+      },
+      {
+        "component", (int index) => Components
       },
       {
         "restrict", (int index) => ParameterInfo.Create("restrict=<color=yellow>true/false</color> or no value to toggle.", "Sets portal item restriction.")
@@ -104,6 +116,9 @@ public class ObjectAutoComplete : SharedObjectAutoComplete {
       },
       {
         "spawn", (int index) => index == 0 ? ParameterInfo.ObjectIds : ParameterInfo.None
+      },
+      {
+        "spawnitem", (int index) => index == 0 ? ParameterInfo.ItemIds : ParameterInfo.None
       },
       {
         "fall", (int index) => index == 0 ? FallTypes : ParameterInfo.None
