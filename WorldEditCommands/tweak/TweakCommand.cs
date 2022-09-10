@@ -30,13 +30,12 @@ public abstract class TweakCommand {
         context.AddString($"Skipped: {view.name} (chance).");
         return false;
       }
-      if (!view.GetComponent(Component)) {
+      if (!view.GetComponentInChildren(Component)) {
         context.AddString($"Skipped: {view.name} doesn't have the component.");
         return false;
       }
       return true;
     }).ToArray();
-    List<ZDO> removed = new();
     EditedInfo.Clear();
     foreach (var view in views) {
       var zdo = view.GetZDO();
@@ -71,10 +70,7 @@ public abstract class TweakCommand {
     foreach (var view in views) {
       if (!view || view.GetZDO() == null || !view.GetZDO().IsValid() || !oldOwner.ContainsKey(view.GetZDO().m_uid)) continue;
       view.GetZDO().SetOwner(oldOwner[view.GetZDO().m_uid]);
-    }
-    if (removed.Count > 0) {
-      UndoRemove undo = new(removed);
-      UndoManager.Add(undo);
+      Actions.Refresh(view);
     }
     if (EditedInfo.Count > 0) {
       UndoEdit undo = new(EditedInfo.Select(info => info.Value.ToData()));
