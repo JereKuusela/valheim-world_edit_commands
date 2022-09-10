@@ -48,15 +48,15 @@ public class TweakSpawnPointCommand : TweakCommand {
     SupportedOperations.Add("spawn", typeof(string));
     SupportedOperations.Add("spawneffect", typeof(string[]));
 
-    AutoComplete.Add("minlevel", (int index) => index == 0 ? ParameterInfo.Create("minlevel=<color=yellow>number</color>. No value to reset.", "Sets the minimum level.") : ParameterInfo.None);
-    AutoComplete.Add("maxlevel", (int index) => index == 0 ? ParameterInfo.Create("maxlevel=<color=yellow>number</color>. No value to reset.", "Sets the maximum level.") : ParameterInfo.None);
-    AutoComplete.Add("triggernoise", (int index) => index == 0 ? ParameterInfo.Create("triggernoise=<color=yellow>meters</color>", "Sets how loud noise activates the spawn point. No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("triggerdistance", (int index) => index == 0 ? ParameterInfo.Create("triggerdistance=<color=yellow>meters</color>", "Sets how far distance activates the spawn point. No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("spawncondition", (int index) => index == 0 ? ParameterInfo.Create("spawncondition=<color=yellow>flag</color>", "Sum up: 1 = day only, 2 = night only.") : ParameterInfo.None);
-    AutoComplete.Add("respawn", (int index) => index == 0 ? ParameterInfo.Create("respawn=<color=yellow>minutes/false</color>. No value to reset.", "Sets the respawn time.") : ParameterInfo.None);
-    AutoComplete.Add("spawnhealth", (int index) => index == 0 ? ParameterInfo.Create("spawnhealth=<color=yellow>number</color>. No value to reset.", "Sets the creature health.") : ParameterInfo.None);
+    AutoComplete.Add("minlevel", (int index) => index == 0 ? ParameterInfo.Create("minlevel=<color=yellow>number</color>", "Minimum level (level 1 = no star). No value to reset.") : ParameterInfo.None);
+    AutoComplete.Add("maxlevel", (int index) => index == 0 ? ParameterInfo.Create("maxlevel=<color=yellow>number</color>", "Maximum level (level 1 = no star). No value to reset.") : ParameterInfo.None);
+    AutoComplete.Add("triggernoise", (int index) => index == 0 ? ParameterInfo.Create("triggernoise=<color=yellow>meters</color>", "Required noise to activate the spawn point. No value to reset.") : ParameterInfo.None);
+    AutoComplete.Add("triggerdistance", (int index) => index == 0 ? ParameterInfo.Create("triggerdistance=<color=yellow>meters</color>", "Required distance to activate the spawn point. No value to reset.") : ParameterInfo.None);
+    AutoComplete.Add("spawncondition", (int index) => index == 0 ? ParameterInfo.Create("spawncondition=<color=yellow>flag</color>", "1 = day only, 2 = night only.") : ParameterInfo.None);
+    AutoComplete.Add("respawn", (int index) => index == 0 ? ParameterInfo.Create("respawn=<color=yellow>minutes/false</color>", "Respawn time. No value to reset.") : ParameterInfo.None);
+    AutoComplete.Add("spawnhealth", (int index) => index == 0 ? ParameterInfo.Create("spawnhealth=<color=yellow>number</color>", "Overrides the creature health. No value to reset.") : ParameterInfo.None);
     AutoComplete.Add("spawn", (int index) => index == 0 ? ParameterInfo.ObjectIds : ParameterInfo.None);
-    AutoComplete.Add("spawneffect", TweakAutoComplete.Effect);
+    AutoComplete.Add("spawneffect", (int index) => TweakAutoComplete.Effect("spawneffect", index));
     Init("tweak_spawnpoint", "Modify spawn points");
   }
 }

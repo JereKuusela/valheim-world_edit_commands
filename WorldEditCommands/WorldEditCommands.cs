@@ -1,4 +1,5 @@
 ﻿using BepInEx;
+using BepInEx.Bootstrap;
 using HarmonyLib;
 namespace WorldEditCommands;
 [BepInPlugin(GUID, NAME, VERSION)]
@@ -9,6 +10,10 @@ public class WorldEditCommands : BaseUnityPlugin {
   public const string VERSION = "1.10";
   public void Awake() {
     new Harmony(GUID).PatchAll();
+  }
+  public static bool IsSpawnerTweaks = false;
+  public void Start() {
+    IsSpawnerTweaks = Chainloader.PluginInfos.ContainsKey("spawner_tweaks") || Chainloader.PluginInfos.ContainsKey("logic_tweaks");
   }
 
   public void LateUpdate() {
@@ -23,9 +28,11 @@ public class SetCommands {
     new ObjectCommand();
     new TerrainCommand();
     new AliasesCommand();
-    new TweakAltarCommand();
-    new TweakPickableCommand();
-    new TweakSpawnerCommand();
-    new TweakSpawnPointCommand();
+    if (WorldEditCommands.IsSpawnerTweaks) {
+      new TweakAltarCommand();
+      new TweakPickableCommand();
+      new TweakSpawnerCommand();
+      new TweakSpawnPointCommand();
+    }
   }
 }

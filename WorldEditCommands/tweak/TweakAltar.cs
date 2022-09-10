@@ -22,8 +22,6 @@ public class TweakAltarCommand : TweakCommand {
     throw new NotImplementedException();
   }
   protected override string DoOperation(ZNetView view, string operation, float? value) {
-    if (operation == "spawnhealth")
-      return TweakActions.SpawnHealth(view, value);
     if (operation == "delay")
       return TweakActions.Delay(view, value);
     if (operation == "spawnoffset")
@@ -36,10 +34,6 @@ public class TweakAltarCommand : TweakCommand {
   }
 
   protected override string DoOperation(ZNetView view, string operation, int? value) {
-    if (operation == "minlevel")
-      return TweakActions.MinLevel(view, value);
-    if (operation == "maxlevel")
-      return TweakActions.MaxLevel(view, value);
     if (operation == "amount")
       return TweakActions.Amount(view, value);
     throw new NotImplementedException();
@@ -57,9 +51,6 @@ public class TweakAltarCommand : TweakCommand {
 
   public TweakAltarCommand() {
     Component = typeof(OfferingBowl);
-    SupportedOperations.Add("minlevel", typeof(int));
-    SupportedOperations.Add("maxlevel", typeof(int));
-    SupportedOperations.Add("spawnhealth", typeof(float));
     SupportedOperations.Add("delay", typeof(float));
     SupportedOperations.Add("spawnradius", typeof(float));
     SupportedOperations.Add("amount", typeof(int));
@@ -76,25 +67,22 @@ public class TweakAltarCommand : TweakCommand {
     SupportedOperations.Add("itemstandprefix", typeof(string));
     SupportedOperations.Add("globalkey", typeof(string));
 
-    AutoComplete.Add("minlevel", (int index) => index == 0 ? ParameterInfo.Create("minlevel=<color=yellow>number</color>", "Sets the minimum level. No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("maxlevel", (int index) => index == 0 ? ParameterInfo.Create("maxlevel=<color=yellow>number</color>", "Sets the maximum level. No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("amount", (int index) => index == 0 ? ParameterInfo.Create("amount=<color=yellow>number</color>", "Sets the amount of needed items. No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("spawnhealth", (int index) => index == 0 ? ParameterInfo.Create("spawnhealth=<color=yellow>number</color>", "Sets the creature health. No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("spawnmaxy", (int index) => index == 0 ? ParameterInfo.Create("spawnmaxy=<color=yellow>number</color>", "Sets the maximum height difference from the altar. No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("delay", (int index) => index == 0 ? ParameterInfo.Create("delay=<color=yellow>seconds</color>", "Sets the spawn delay. No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("spawnoffset", (int index) => index == 0 ? ParameterInfo.Create("spawnoffset=<color=yellow>meters</color>", "Sets the spawn distance from the ground. No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("spawnradius", (int index) => index == 0 ? ParameterInfo.Create("spawnradius=<color=yellow>meters</color>", "Sets the spawn radius. No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("itemstandrange", (int index) => index == 0 ? ParameterInfo.Create("itemstandrange=<color=yellow>meters</color>", "Sets the radius for included item stands. No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("text", (int index) => index == 0 ? ParameterInfo.Create("text=<color=yellow>text</color>", "Sets the use text. Use _ as the space. No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("name", (int index) => index == 0 ? ParameterInfo.Create("name=<color=yellow>text</color>", "Sets the name. Use _ as the space. No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("itemstandprefix", (int index) => index == 0 ? ParameterInfo.Create("itemstandprefix=<color=yellow>text</color>", "Sets the prefix for included item stands. No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("globalkey", (int index) => index == 0 ? ParameterInfo.Create("text=<color=yellow>key</color>", "Sets the global key when used, Start with - to remove the key. No value to reset.") : ParameterInfo.None);
+    AutoComplete.Add("amount", (int index) => index == 0 ? ParameterInfo.Create("amount=<color=yellow>number</color>", "Amount of needed items. No value to reset.") : ParameterInfo.None);
+    AutoComplete.Add("spawnmaxy", (int index) => index == 0 ? ParameterInfo.Create("spawnmaxy=<color=yellow>number</color>", "Maximum height difference from the altar. No value to reset.") : ParameterInfo.None);
+    AutoComplete.Add("delay", (int index) => index == 0 ? ParameterInfo.Create("delay=<color=yellow>seconds</color>", "Duration of the spawning. No value to reset.") : ParameterInfo.None);
+    AutoComplete.Add("spawnoffset", (int index) => index == 0 ? ParameterInfo.Create("spawnoffset=<color=yellow>meters</color>", "Spawn distance from the ground. No value to reset.") : ParameterInfo.None);
+    AutoComplete.Add("spawnradius", (int index) => index == 0 ? ParameterInfo.Create("spawnradius=<color=yellow>meters</color>", "Maximum spawn radius. No value to reset.") : ParameterInfo.None);
+    AutoComplete.Add("itemstandrange", (int index) => index == 0 ? ParameterInfo.Create("itemstandrange=<color=yellow>meters</color>", "Radius for included item stands. No value to reset.") : ParameterInfo.None);
+    AutoComplete.Add("text", (int index) => index == 0 ? ParameterInfo.Create("text=<color=yellow>text</color>", "Use text. Use _ as the space. No value to reset.") : ParameterInfo.None);
+    AutoComplete.Add("name", (int index) => index == 0 ? ParameterInfo.Create("name=<color=yellow>text</color>", "Display name. Use _ as the space. No value to reset.") : ParameterInfo.None);
+    AutoComplete.Add("itemstandprefix", (int index) => index == 0 ? ParameterInfo.Create("itemstandprefix=<color=yellow>text</color>", "Prefix for included item stands. No value to reset.") : ParameterInfo.None);
+    AutoComplete.Add("globalkey", (int index) => index == 0 ? ParameterInfo.Create("text=<color=yellow>key</color>", "Sets the global key when used. Start with - to remove the key. No value to reset.") : ParameterInfo.None);
     AutoComplete.Add("spawn", (int index) => index == 0 ? ParameterInfo.ObjectIds : ParameterInfo.None);
     AutoComplete.Add("spawnitem", (int index) => index == 0 ? ParameterInfo.ItemIds : ParameterInfo.None);
-    AutoComplete.Add("starteffect", TweakAutoComplete.Effect);
-    AutoComplete.Add("useeffect", TweakAutoComplete.Effect);
-    AutoComplete.Add("spawneffect", TweakAutoComplete.Effect);
-    AutoComplete.Add("itemoffset", (int index) => ParameterInfo.XZY("itemoffset", "Offset for the item position", index));
+    AutoComplete.Add("spawneffect", (int index) => TweakAutoComplete.Effect("spawneffect", index));
+    AutoComplete.Add("starteffect", (int index) => TweakAutoComplete.Effect("starteffect", index));
+    AutoComplete.Add("useeffect", (int index) => TweakAutoComplete.Effect("useeffect", index));
+    AutoComplete.Add("itemoffset", (int index) => ParameterInfo.XZY("itemoffset", "Offset when spawning items. Also sets the <color=yellow>useeffect</color> position.", index));
     Init("tweak_altar", "Modify altars");
   }
 }

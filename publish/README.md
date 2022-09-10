@@ -86,6 +86,62 @@ For Structure Tweaks mod:
 - `wear=broken/damaged/healthy`: Overrides the object visual wear.
 - `weather=radius,id,instant`: Adds forced weather area. If third parameter is given, the weather changes instantly.
 
+### Spawner Tweaks mod
+
+Four new commands that share many parameters with the `object` command.
+
+All values can be reseted by providing no value to the parameter.
+
+`tweak_altar`:
+- `amount=number`: Amount of needed items to interact.
+- `delay=seconds`: Duration of the spawning.
+- `itemstandprefix=text`: Prefix for included item stands.
+- `itemstandrange=meters`: Radius for included item stands.
+- `itemoffset=x,z,y`: Offset when spawning items. Also sets the `useeffect` position.
+- `name=text`: Display name. Use _ as the space.
+- `spawn=id`: Spawned item or object.
+- `spawneffect=id,flag`: Effect when the spawn happens. For random rotation, use 1 as the flag.
+- `spawnitem=id`: Required item.
+- `spawnmaxy=meters`: Maximum height difference from the altar.
+- `spawnoffset=meters`: Spawn distance from the ground.
+- `spawnradius=meters`: Maximum spawn radius.
+- `starteffect=id,flag`: Effect when the spawn is started. For random rotation, use 1 as the flag.
+- `text=text`: Use text. Use _ as the space.
+- `useeffect=id,flag`: Effect when used. For random rotation, use 1 as the flag.
+
+`tweak_pickable`:
+- `amount=number`: Amount of dropped items.
+- `name=text`: Display name. Use _ as the space.
+- `respawn=minutes`: Respawn time.
+- `spawn=id`: Spawned item or object.
+- `spawnoffset=meters`: Spawn distance from the ground.
+- `useeffect=id,flag`: Effect when used. For random rotation, use 1 as the flag.
+
+`tweak_spawner`:
+- `farradius=meters`: Radius for `maxtotal`.
+- `respawn=seconds`: Respawn time.
+- `levelchance=percent`: Level up chance (from 0 to 100).
+- `maxnear=number`: Maximum amount of spawns within the `nearradius`.
+- `maxtotal=number`: Maximum amount of spawns within the `farradius`.
+- `nearradius=meters`: Radius for `maxnear`.
+- `respawn=seconds`: Respawn time.
+- `spawn=id,weight,minlevel,maxlevel`: Spawned item or object. Weight is the relative chance compared to other spawns.
+- `spawncondition=flag`: Sum up: 1 = day only, 2 = night only, 4 = ground only.
+- `spawneffect=id,flag`: Effect when the spawn happens. For random rotation, use 1 as the flag.
+- `spawnradius=meters`: Maximum spawn radius.
+- `triggerdistance=meters`: Required distance to activate the spawner.
+
+`tweak_spawnpoint`:
+- `maxlevel=number`: Maximum level (level 1 = no star).
+- `minlevel=number`: Minimum level (level 1 = no star).
+- `respawn=minutes`: Respawn time.
+- `spawn=id`: Spawned item or object.
+- `spawncondition=flag`: 1 = day only, 2 = night only.
+- `spawneffect=id,flag`: Effect when the spawn happens. For random rotation, use 1 as the flag.
+- `spawnhealth=number`: Overrides the creature health.
+- `triggerdistance=meters`: Required distance to activate the spawn point.
+- `triggernoise=meters`: Required noise to activate the spawn point.
+
 ### Examples
 
 - `object radius=50 move=-5-5,-5,5`: Randomly moves all objects within 50 meters.
@@ -257,6 +313,9 @@ Static objects only synchronize their position and rotation when loaded. This me
 This shouldn't cause any issues unless objects are moved long distances (which might cause issues anyways).
 
 # Changelog
+
+- v1.10
+	- Adds new commands `tweak_altar`, `tweak_pickable`, `tweak_spawner` and `tweak_spawnpoint` for Spawner Tweaks mod.
 
 - v1.9
 	- Adds smelter support to the `object fuel` command.
