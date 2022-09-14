@@ -61,7 +61,7 @@ public class TweakParameters {
         else if (type == typeof(string[]))
           Operations[name] = (Operations[name] as string[]).Append(value).ToArray();
         else
-          Operations[name] = value.Replace("_", " ");
+          Operations[name] = value;
       }
       var values = Parse.Split(value);
       if (name == "center" || name == "from") Center = Parse.VectorXZY(values);

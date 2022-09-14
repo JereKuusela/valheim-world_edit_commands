@@ -320,6 +320,9 @@ This shouldn't cause any issues unless objects are moved long distances (which m
 
 # Changelog
 
+- v1.11
+	- Fixes ids which have underscore not working with `tweak_*` commands.
+
 - v1.10
 	- Adds new commands `tweak_altar`, `tweak_pickable`, `tweak_spawner` and `tweak_spawnpoint` for Spawner Tweaks mod.
 

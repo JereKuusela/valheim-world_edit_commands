@@ -29,10 +29,12 @@ public static class TweakActions {
     return $"¤ global key set to {Print(value)}.";
   }
   public static string Name(ZNetView view, string? value) {
+    value = value == null ? value : value.Replace("_", " ");
     Actions.SetString(view, value, Hash.OverrideName);
     return $"¤ name set to {Print(value)}.";
   }
   public static string Text(ZNetView view, string? value) {
+    value = value == null ? value : value.Replace("_", " ");
     Actions.SetString(view, value, Hash.OverrideText);
     return $"¤ text set to {Print(value)}.";
   }
