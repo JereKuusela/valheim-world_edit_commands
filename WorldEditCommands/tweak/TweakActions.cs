@@ -109,7 +109,7 @@ public static class TweakActions {
     return $"¤ spawn health set to {Print(value)}.";
   }
   public static string TriggerDistance(ZNetView view, float? value) {
-    Actions.SetFloat(view, value, Hash.SpawnHealth);
+    Actions.SetFloat(view, value, Hash.TriggerDistance);
     return $"¤ trigger distance set to {Print(value)}.";
   }
   public static string TriggerNoise(ZNetView view, float? value) {
@@ -117,8 +117,8 @@ public static class TweakActions {
     return $"¤ trigger noise set to {Print(value)} meters.";
   }
   public static string LevelChance(ZNetView view, float? value) {
-    Actions.SetFloat(view, value, Hash.TriggerDistance);
-    return $"¤ level up chance set to {Print(value)} meters.";
+    Actions.SetFloat(view, value, Hash.LevelChance);
+    return $"¤ level up chance set to {Print(value)} %.";
   }
   public static string SpawnRadius(ZNetView view, float? value) {
     Actions.SetFloat(view, value, Hash.SpawnRadius);

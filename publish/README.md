@@ -98,9 +98,14 @@ All values can be reseted by providing no value to the parameter.
 - `itemstandprefix=text`: Prefix for included item stands.
 - `itemstandrange=meters`: Radius for included item stands.
 - `itemoffset=x,z,y`: Offset when spawning items. Also sets the `useeffect` position.
+- `levelchance=percent`: Level up chance (from 0 to 100).
+- `maxlevel=number`: Maximum level (level 1 = no star).
+- `minlevel=number`: Minimum level (level 1 = no star).
 - `name=text`: Display name. Use _ as the space.
+- `respawn=minutes`: Respawn time.
 - `spawn=id`: Spawned item or object.
 - `spawneffect=id,flag`: Effect when the spawn happens. For random rotation, use 1 as the flag.
+- `spawnhealth=number`: Overrides the creature health.
 - `spawnitem=id`: Required item.
 - `spawnmaxy=meters`: Maximum height difference from the altar.
 - `spawnoffset=meters`: Spawn distance from the ground.
@@ -132,6 +137,7 @@ All values can be reseted by providing no value to the parameter.
 - `triggerdistance=meters`: Required distance to activate the spawner.
 
 `tweak_spawnpoint`:
+- `levelchance=percent`: Level up chance (from 0 to 100).
 - `maxlevel=number`: Maximum level (level 1 = no star).
 - `minlevel=number`: Minimum level (level 1 = no star).
 - `respawn=minutes`: Respawn time.

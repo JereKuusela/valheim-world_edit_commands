@@ -10,7 +10,9 @@ public class TweakSpawnPointCommand : TweakCommand {
     throw new NotImplementedException();
   }
   protected override string DoOperation(ZNetView view, string operation, float? value) {
-    if (operation == "respawntime")
+    if (operation == "levelchance")
+      return TweakActions.LevelChance(view, value);
+    if (operation == "respawn")
       return TweakActions.Respawn(view, value);
     if (operation == "spawnhealth")
       return TweakActions.SpawnHealth(view, value);
@@ -42,6 +44,7 @@ public class TweakSpawnPointCommand : TweakCommand {
     SupportedOperations.Add("minlevel", typeof(int));
     SupportedOperations.Add("maxlevel", typeof(int));
     SupportedOperations.Add("spawncondition", typeof(int));
+    SupportedOperations.Add("levelchance", typeof(float));
     SupportedOperations.Add("triggerdistance", typeof(float));
     SupportedOperations.Add("respawn", typeof(float));
     SupportedOperations.Add("spawnhealth", typeof(float));
@@ -54,6 +57,7 @@ public class TweakSpawnPointCommand : TweakCommand {
     AutoComplete.Add("triggerdistance", (int index) => index == 0 ? ParameterInfo.Create("triggerdistance=<color=yellow>meters</color>", "Required distance to activate the spawn point. No value to reset.") : ParameterInfo.None);
     AutoComplete.Add("spawncondition", (int index) => index == 0 ? ParameterInfo.Create("spawncondition=<color=yellow>flag</color>", "1 = day only, 2 = night only.") : ParameterInfo.None);
     AutoComplete.Add("respawn", (int index) => index == 0 ? ParameterInfo.Create("respawn=<color=yellow>minutes/false</color>", "Respawn time. No value to reset.") : ParameterInfo.None);
+    AutoComplete.Add("levelchance", (int index) => index == 0 ? ParameterInfo.Create("levelchance=<color=yellow>percent</color>", "Level up chance (from 0 to 100). No value to reset.") : ParameterInfo.None);
     AutoComplete.Add("spawnhealth", (int index) => index == 0 ? ParameterInfo.Create("spawnhealth=<color=yellow>number</color>", "Overrides the creature health. No value to reset.") : ParameterInfo.None);
     AutoComplete.Add("spawn", (int index) => index == 0 ? ParameterInfo.ObjectIds : ParameterInfo.None);
     AutoComplete.Add("spawneffect", (int index) => TweakAutoComplete.Effect("spawneffect", index));
