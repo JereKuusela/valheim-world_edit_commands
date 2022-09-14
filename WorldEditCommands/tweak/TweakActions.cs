@@ -5,7 +5,7 @@ public static class TweakActions {
   private const string DEFAULT = "default";
   private static string HashFirst(string value) {
     var split = value.Split(',');
-    split[0] = split[0].GetStableHashCode().ToString();
+    split[0] = Actions.GetId(split[0]).ToString();
     return string.Join(",", split);
   }
 

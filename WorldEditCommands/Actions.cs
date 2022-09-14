@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 namespace WorldEditCommands;
 public enum Growth {
@@ -134,11 +136,17 @@ public static class Actions {
     if (refresh)
       Refresh(obj);
   }
+  private static Dictionary<string, int> IdToHash = new();
+  public static int GetId(string id) {
+    if (IdToHash.Count == 0) IdToHash = ZNetScene.instance.m_namedPrefabs.ToDictionary(kvp => kvp.Value.name.ToLower(), kvp => kvp.Key);
+    if (IdToHash.TryGetValue(id.ToLower(), out var value)) return value;
+    return id.GetStableHashCode();
+  }
   public static void SetPrefab(ZNetView obj, string? value, int hash, bool refresh = false) {
     if (!obj) return;
     var zdo = obj.GetZDO();
     if (value != null)
-      zdo.Set(hash, value.GetStableHashCode());
+      zdo.Set(hash, GetId(value));
     else {
       if (zdo.m_ints != null) {
         zdo.m_ints.Remove(hash);
