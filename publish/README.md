@@ -346,12 +346,4 @@ This shouldn't cause any issues unless objects are moved long distances (which m
 - v1.5
 	- Fixes painting using wrong circle or rectangle size.
 
-- v1.4
-	- Adds a new parameter `to` to the `spawn_object` command to even distribute multiple object.
-	- Adds a new parameter `guide` to the `object` command to visualize the affected area.
-	- Adds a new parameter `mirror` to the `object` command to mirror the position and rotation of objects.
-	- Adds a new parameter `from` to the `object` command with same behavior as the `center` parameter.
-	- Changes the `circle` and `rect` parameters of the `terrain` command to have half of the size (matches radius of other commands).
-	- Renames the parameter `refPos` to the `from` (like in the `terrain` command).
-
 Thanks for Azumatt for creating the mod icon!
