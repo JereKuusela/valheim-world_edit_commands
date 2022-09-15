@@ -41,6 +41,7 @@ public class TweakSpawnPointCommand : TweakCommand {
 
   public TweakSpawnPointCommand() {
     Component = typeof(CreatureSpawner);
+    ComponentName = "spawnpoint";
     SupportedOperations.Add("minlevel", typeof(int));
     SupportedOperations.Add("maxlevel", typeof(int));
     SupportedOperations.Add("spawncondition", typeof(int));

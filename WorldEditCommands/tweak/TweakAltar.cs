@@ -61,6 +61,7 @@ public class TweakAltarCommand : TweakCommand {
 
   public TweakAltarCommand() {
     Component = typeof(OfferingBowl);
+    ComponentName = "altar";
     SupportedOperations.Add("minlevel", typeof(int));
     SupportedOperations.Add("maxlevel", typeof(int));
     SupportedOperations.Add("delay", typeof(float));

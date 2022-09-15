@@ -66,22 +66,28 @@ Additional style parameters:
 
 Note: Creatures reset their style when attacking.
 
-For Structure Tweaks mod:
+### Examples
 
-- `amount=number`: Sets the amount of pickables.
+- `object radius=50 move=-5-5,-5,5`: Randomly moves all objects within 50 meters.
+- `object move=5`: Moves the targeted object 5 meters away from you.
+- `object move=0,5 origin=world`: Moves the targeted object 5 meters towards east.
+- `object prefab=Wolf`: Changes the targeted object to a wolf.
+- `object rotate=90 center radius=10`: Rotates nearby objects around the player.
+- `alias remove object remove id=$`: Adds a command `remove [object id]` that removes the targeted object if it matches the given object id.
+- `alias remove object remove id=*`: Adds a command `remove` that removes the targeted object without having to specify the id.
+- `alias remove50 object remove radius=50 id=$`: Adds a command `remove50 [object id]` that removes the given objects within 50 meters.
+- `alias essential object tame health=1E30 radius=$ id=$`: Adds a command `essential [radius] [object id]` that tames and turns objects invulnerable within a given radius and with a given id. If radius and id is not given, then affects the hovered object.
+
+### Structure Tweaks mod
+
 - `effect=radius,id`: Adds forced effect area (heat, fire, player base, burning, no monsters, warm cozy area).
 - `event=radius,id`: Adds forced random event area.
 - `collision=true/false`: Sets whether the object has collision. Without a value, toggles the collision.
 - `fall=off/solid/terrain`: Overrides the fall behavior.
 - `growth=big/big_bad/small/small_bad`: Overrides the plant visual wear (and prevents growth).
 - `interact=true/false`: Sets whether the object can be interacted with. Without a value, toggles the interactability.
-- `maxlevel=number`: Sets the maximum level of spawn points.
-- `minlevel=number`: Sets the minimum level of spawn points.
 - `restrict=true/false`: Sets whether the portal restricts some items. Without a value, toggles the restriction.
-- `respawntime=minutes`: Sets pickable and spawn point respawn time.
 - `show=true/false`: Sets whether the object is visible. Without a value, toggles the visibility.
-- `spawn=id`: Sets the object of pickables and spawn points.
-- `spawnhealth=number`: Sets the creature health of spawn points.
 - `status=radius,id`: Adds forced status effect area.
 - `wear=broken/damaged/healthy`: Overrides the object visual wear.
 - `weather=radius,id,instant`: Adds forced weather area. If third parameter is given, the weather changes instantly.
@@ -90,7 +96,7 @@ For Structure Tweaks mod:
 
 Four new commands that share many parameters with the `object` command.
 
-All values can be reseted by providing no value to the parameter.
+All values can be reseted by providing no value to the parameter. `force` parameter automatically adds the component if missing.
 
 `tweak_altar`:
 - `amount=number`: Amount of needed items to interact.
@@ -150,15 +156,8 @@ All values can be reseted by providing no value to the parameter.
 
 ### Examples
 
-- `object radius=50 move=-5-5,-5,5`: Randomly moves all objects within 50 meters.
-- `object move=5`: Moves the targeted object 5 meters away from you.
-- `object move=0,5 origin=world`: Moves the targeted object 5 meters towards east.
-- `object prefab=Wolf`: Changes the targeted object to a wolf.
-- `object rotate=90 center radius=10`: Rotates nearby objects around the player.
-- `alias remove object remove id=$`: Adds a command `remove [object id]` that removes the targeted object if it matches the given object id.
-- `alias remove object remove id=*`: Adds a command `remove` that removes the targeted object without having to specify the id.
-- `alias remove50 object remove radius=50 id=$`: Adds a command `remove50 [object id]` that removes the given objects within 50 meters.
-- `alias essential object tame health=1E30 radius=$ id=$`: Adds a command `essential [radius] [object id]` that tames and turns objects invulnerable within a given radius and with a given id. If radius and id is not given, then affects the hovered object.
+- `tweak_spawner spawn=Boar spawn=Deer`: Makes a spawner spawn both boars and deer.
+- `tweak_spawner force spawn=lightningaoe respawn=1 spawnradius=10`: Makes any object to spawn lightning every second.
 
 ## Spawn object
 
@@ -321,6 +320,7 @@ This shouldn't cause any issues unless objects are moved long distances (which m
 # Changelog
 
 - v1.11
+	- Adds a new parameter `force` to the `tweak_*` commands.
 	- Fixes ids which have underscore not working with `tweak_*` commands.
 	- Fixes ids of `tweak_*` commands being case sensitive.
 	- Fixes the `durability` operation missing from the `object` command.
@@ -347,8 +347,5 @@ This shouldn't cause any issues unless objects are moved long distances (which m
 	- Adds a new parameter `creator` to the `object` command.
 	- Adds new paints to the `terrain` command.
 	- Adds support for custom paint color the `terrain` command.
-
-- v1.5
-	- Fixes painting using wrong circle or rectangle size.
 
 Thanks for Azumatt for creating the mod icon!

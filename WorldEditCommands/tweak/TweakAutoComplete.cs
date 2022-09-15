@@ -21,6 +21,7 @@ public class TweakAutoComplete {
       "chance",
       "type",
       "connect",
+      "force"
     };
     parameters.AddRange(namedParameters);
     return parameters.Distinct().OrderBy(s => s).ToList();
@@ -32,6 +33,9 @@ public class TweakAutoComplete {
       },
       {
         "connect", (int index) => ParameterInfo.Flag("Connect")
+      },
+      {
+        "force", (int index) => ParameterInfo.Flag("Force", "Sets the component if missing.")
       },
       {
         "id", (int index) => index == 0 ? ParameterInfo.Ids : ParameterInfo.None

@@ -45,6 +45,7 @@ public class TweakSpawnerCommand : TweakCommand {
 
   public TweakSpawnerCommand() {
     Component = typeof(SpawnArea);
+    ComponentName = "spawner";
     SupportedOperations.Add("globalkey", typeof(string));
     SupportedOperations.Add("maxnear", typeof(int));
     SupportedOperations.Add("maxtotal", typeof(int));

@@ -107,7 +107,7 @@ public static class Actions {
     }
   }
 
-  public static void SetComponent(ZNetView obj, string spawn) => SetString(obj, spawn, Hash.Component, true);
+  public static void SetComponent(ZNetView obj, string name, bool refresh = true) => SetString(obj, name, Hash.Component, refresh);
   public static void SetFloat(ZNetView obj, float? value, int hash, bool refresh = false) {
     if (!obj) return;
     var zdo = obj.GetZDO();

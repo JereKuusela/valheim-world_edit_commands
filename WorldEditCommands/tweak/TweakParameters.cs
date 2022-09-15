@@ -16,6 +16,7 @@ public class TweakParameters {
   public float? Depth;
   public float Height = 0f;
   public float Chance = 1f;
+  public bool Force;
   public bool Connect;
   public ObjectType ObjectType = ObjectType.All;
 
@@ -51,6 +52,7 @@ public class TweakParameters {
           Operations.Add(name, null);
       }
       if (name == "connect") Connect = true;
+      if (name == "force") Force = true;
       if (split.Length < 2) continue;
       var value = split[1];
       if (SupportedOperations.TryGetValue(name, out type)) {
@@ -81,7 +83,7 @@ public class TweakParameters {
       if (name == "angle")
         Angle = Parse.Float(value, 0f) * Mathf.PI / 180f;
     }
-    if (Operations.Count == 0)
+    if (Operations.Count == 0 && !Force)
       throw new InvalidOperationException("Missing the operation.");
     if (Id == "") Id = "*";
     if (Radius.HasValue && Depth.HasValue)

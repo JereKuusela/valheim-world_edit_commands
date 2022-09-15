@@ -32,6 +32,7 @@ public class TweakPickableCommand : TweakCommand {
 
   public TweakPickableCommand() {
     Component = typeof(Pickable);
+    ComponentName = "pickable";
     SupportedOperations.Add("amount", typeof(int));
     SupportedOperations.Add("respawn", typeof(float));
     SupportedOperations.Add("spawnoffset", typeof(float));

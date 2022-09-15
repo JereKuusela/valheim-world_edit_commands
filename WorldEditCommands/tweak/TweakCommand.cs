@@ -14,11 +14,12 @@ public abstract class TweakCommand {
   }
   private static Dictionary<ZDOID, EditInfo> EditedInfo = new();
   protected Type Component = typeof(int);
+  protected string ComponentName = "";
   protected abstract string DoOperation(ZNetView view, string operation, string? value);
   protected abstract string DoOperation(ZNetView view, string operation, float? value);
   protected abstract string DoOperation(ZNetView view, string operation, string[] value);
   protected abstract string DoOperation(ZNetView view, string operation, int? value);
-  private void Execute(Terminal context, float chance, Dictionary<string, object?> operations, ZNetView[] views) {
+  private void Execute(Terminal context, float chance, bool force, Dictionary<string, object?> operations, ZNetView[] views) {
     var scene = ZNetScene.instance;
     Dictionary<ZDOID, long> oldOwner = new();
     views = views.Where(view => {
@@ -31,6 +32,10 @@ public abstract class TweakCommand {
         return false;
       }
       if (!view.GetComponentInChildren(Component)) {
+        if (force) {
+          Actions.SetComponent(view, ComponentName, false);
+          return true;
+        }
         context.AddString($"Skipped: {view.name} doesn't have the component.");
         return false;
       }
@@ -104,7 +109,7 @@ public abstract class TweakCommand {
         }
         views = new[] { view };
       }
-      Execute(args.Context, pars.Chance, pars.Operations, views);
+      Execute(args.Context, pars.Chance, pars.Force, pars.Operations, views);
 
     }, () => namedParameters);
   }
