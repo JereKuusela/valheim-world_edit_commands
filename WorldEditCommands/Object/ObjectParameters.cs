@@ -41,6 +41,7 @@ public class ObjectParameters : SharedObjectParameters {
 
   public static HashSet<string> SupportedOperations = new() {
     "health",
+    "durability",
     "stars",
     "tame",
     "wild",
