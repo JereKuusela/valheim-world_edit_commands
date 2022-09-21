@@ -24,6 +24,7 @@ public class ObjectParameters : SharedObjectParameters {
   public string Event = "";
   public string Status = "";
   public string Weather = "";
+  public string Info = "";
   public Item? Visual = null;
   public float Angle = 0f;
   public long Creator = 0;
@@ -33,7 +34,6 @@ public class ObjectParameters : SharedObjectParameters {
   public float Chance = 1f;
   public bool? Show;
   public bool? Collision;
-  public bool? Restrict;
   public bool? Interact;
   public bool Connect;
   public string Component = "";
@@ -124,10 +124,7 @@ public class ObjectParameters : SharedObjectParameters {
       if (name == "center" || name == "from") Center = Parse.VectorXZY(values);
       if (name == "move") Offset = Parse.VectorZXYRange(value, Vector3.zero);
       if (name == "id") Id = value;
-      if (name == "restrict") {
-        Restrict = Parse.Boolean(value);
-        if (Restrict == null) throw new InvalidOperationException("Invalid true/false value for <color=yellow>restrict</color>.");
-      }
+      if (name == "info") Info = value;
       if (name == "collision") {
         Collision = Parse.Boolean(value);
         if (Collision == null) throw new InvalidOperationException("Invalid true/false value for <color=yellow>collision</color>.");

@@ -12,8 +12,10 @@ public class WorldEditCommands : BaseUnityPlugin {
     new Harmony(GUID).PatchAll();
   }
   public static bool IsSpawnerTweaks = false;
+  public static bool IsStructureTweaks = false;
   public void Start() {
     IsSpawnerTweaks = Chainloader.PluginInfos.ContainsKey("spawner_tweaks") || Chainloader.PluginInfos.ContainsKey("logic_tweaks");
+    IsStructureTweaks = Chainloader.PluginInfos.ContainsKey("structure_tweaks") || Chainloader.PluginInfos.ContainsKey("logic_tweaks");
   }
 
   public void LateUpdate() {
@@ -33,6 +35,11 @@ public class SetCommands {
       new TweakPickableCommand();
       new TweakSpawnerCommand();
       new TweakSpawnPointCommand();
+    }
+    if (WorldEditCommands.IsStructureTweaks) {
+      new TweakRunestoneCommand();
+      new TweakPortalCommand();
+      new TweakFireplaceCommand();
     }
   }
 }

@@ -80,17 +80,39 @@ Note: Creatures reset their style when attacking.
 
 ### Structure Tweaks mod
 
+New parameters to the `object` command. All values can be reseted by providing no value to the parameter.
+
 - `effect=radius,id`: Adds forced effect area (heat, fire, player base, burning, no monsters, warm cozy area).
 - `event=radius,id`: Adds forced random event area.
-- `collision=true/false`: Sets whether the object has collision. Without a value, toggles the collision.
+- `collision=true/false`: Sets whether the object has collision.
 - `fall=off/solid/terrain`: Overrides the fall behavior.
 - `growth=big/big_bad/small/small_bad`: Overrides the plant visual wear (and prevents growth).
-- `interact=true/false`: Sets whether the object can be interacted with. Without a value, toggles the interactability.
-- `restrict=true/false`: Sets whether the portal restricts some items. Without a value, toggles the restriction.
-- `show=true/false`: Sets whether the object is visible. Without a value, toggles the visibility.
+- `interact=true/false`: Sets whether the object can be interacted with.
+- `show=true/false`: Sets whether the object is visible.
 - `status=radius,id`: Adds forced status effect area.
 - `wear=broken/damaged/healthy`: Overrides the object visual wear.
 - `weather=radius,id,instant`: Adds forced weather area. If third parameter is given, the weather changes instantly.
+
+Three new commands that share many parameters with the `object` command.
+
+All values can be reseted by providing no value to the parameter. `force` parameter automatically adds the component if missing.
+
+`tweak_fireplace`:
+- `restrict=false`: Prevents the fire going out when blocked by smoke.
+
+`tweak_portal`:
+- `restrict=false`: Allows teleporting with any items.
+
+`tweak_runestone`:
+- `discover=id,text,pintype,showmap`: Location discovery.
+- `name=text`: Display name. Use _ as the space.
+- `text=text`: Use text. Use _ as the space.
+- `topic=text`: Topic shown with the text. Use _ as the space.
+- `compendium=text`: Label added to the compendium. Use _ as the space. Start with - to remove the label.
+
+### Examples
+
+- `tweak_runestone compendium=Hello compendium=-Hi text=Stuff`: Adds Hello entry to the compendium while removing the Hi entry.
 
 ### Spawner Tweaks mod
 
@@ -156,6 +178,7 @@ All values can be reseted by providing no value to the parameter. `force` parame
 
 ### Examples
 
+- `tweak_pickable use_effect=[sfx/vfx] use_effect=[sfx/vfx]`: Makes a pickable to cause two effects when picked.
 - `tweak_spawner spawn=Boar spawn=Deer`: Makes a spawner spawn both boars and deer.
 - `tweak_spawner force spawn=lightningaoe respawn=1 spawnradius=10`: Makes any object to spawn lightning every second.
 
@@ -318,6 +341,12 @@ Static objects only synchronize their position and rotation when loaded. This me
 This shouldn't cause any issues unless objects are moved long distances (which might cause issues anyways).
 
 # Changelog
+
+- v1.12
+	- Adds a parameter to the `object info` which prints the given data value.
+	- Adds new commands `tweak_fireplace`, `tweak_portal` and `tweak_runestone` for Structure Tweaks mod.
+	- Fixes `object info` printing coordinates incorrectly.
+	- Fixes the `tweak_*` commands not data syncing correctly in some cases.
 
 - v1.11
 	- Adds a new parameter `force` to the `tweak_*` commands.

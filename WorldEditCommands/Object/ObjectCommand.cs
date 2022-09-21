@@ -89,7 +89,7 @@ public class ObjectCommand {
         if (operation == "respawn")
           output = Respawn(view);
         if (operation == "info")
-          output = GetInfo(view);
+          output = GetInfo(view, pars.Info);
         if (operation == "sleep")
           output = MakeSleep(view);
         if (operation == "visual")
@@ -114,8 +114,6 @@ public class ObjectCommand {
           output = SetPrefab(view, pars.Prefab);
         if (operation == "collision")
           output = SetCollision(view, pars.Collision);
-        if (operation == "restrict")
-          output = SetRestrict(view, pars.Restrict);
         if (operation == "interact")
           output = SetInteract(view, pars.Interact);
         if (operation == "show")
@@ -340,25 +338,19 @@ public class ObjectCommand {
     Actions.SetFall(obj, fall);
     return $"Fall of ¤ set to {fall}.";
   }
-  private static string SetRestrict(ZNetView view, bool? value) {
-    var result = Actions.SetRestrict(view, value);
-    AddData(view);
-    return $"Restrict of ¤ set to {result}.";
-  }
   private static string SetCollision(ZNetView view, bool? value) {
-    var result = Actions.SetCollision(view, value);
+    Actions.SetCollision(view, value);
     AddData(view, true);
-    return $"Collision of ¤ set to {result}.";
+    return $"Collision of ¤ set to {(value.HasValue ? value.Value : DEFAULT)}.";
   }
   private static string SetInteract(ZNetView view, bool? value) {
-    var result = Actions.SetInteract(view, value);
+    Actions.SetInteract(view, value);
     AddData(view);
-    return $"Interact of ¤ set to {result}.";
+    return $"Interact of ¤ set to {(value.HasValue ? value.Value : DEFAULT)}.";
   }
   private static string SetRender(ZNetView view, bool? value) {
-    var result = Actions.SetRender(view, value);
     AddData(view, true);
-    return $"Render of ¤ set to {result}.";
+    return $"Render of ¤ set to {(value.HasValue ? value.Value : DEFAULT)}.";
   }
   private static string SetGrowth(ZNetView view, Growth growth) {
     var obj = view.GetComponent<Plant>();
@@ -440,13 +432,17 @@ public class ObjectCommand {
   private static string GetInfo(ZNetView obj) {
     List<string> info = new();
     info.Add("Id: ¤");
-    info.Add("Pos: " + obj.transform.position.ToString("F1"));
-    info.Add("Rot: " + obj.transform.rotation.eulerAngles.ToString("F1"));
+    info.Add("Pos: " + Helper.PrintVectorXZY(obj.transform.position));
+    info.Add("Rot: " + Helper.PrintAngleYXZ(obj.transform.rotation));
     if (obj.m_syncInitialScale)
-      info.Add("Scale: " + obj.transform.localScale.ToString("F1"));
+      info.Add("Scale: " + Helper.PrintVectorXZY(obj.transform.localScale));
     var character = obj.GetComponent<Character>();
     if (character) {
-      info.Add("Health: " + character.GetHealth().ToString("F0") + " / " + character.GetMaxHealth());
+      var health = character.GetHealth();
+      if (health > 1E17)
+        info.Add("Health: Infinite");
+      else
+        info.Add("Health: " + health.ToString("F0") + " / " + character.GetMaxHealth());
       info.Add("Stars: " + (character.GetLevel() - 1));
       info.Add("Tamed: " + (character.IsTamed() ? "Yes" : "No"));
       var growUp = obj.GetComponent<Growup>();
@@ -454,6 +450,8 @@ public class ObjectCommand {
         info.Add("Baby: " + (growUp.m_baseAI.GetTimeSinceSpawned().TotalSeconds < 0 ? "Yes" : "No"));
     } else {
       var health = Actions.GetHealth(obj);
+      if (health > 1E17)
+        info.Add("Health: Infinite");
       if (health > -1f)
         info.Add("Health: " + health.ToString("F0"));
     }
@@ -478,6 +476,29 @@ public class ObjectCommand {
     if (piece) {
       info.Add("Creator ID: " + piece.GetCreator());
     }
+    return string.Join(", ", info);
+  }
+
+  private static string GetInfo(ZNetView obj, string data) {
+    if (data == "") return GetInfo(obj);
+    List<string> info = new();
+    var hash = data.GetStableHashCode();
+    var zdo = obj.GetZDO();
+    info.Add("Id: ¤");
+    info.Add($"Owner: {zdo.m_owner}");
+    info.Add($"Revision: {zdo.m_dataRevision} + {zdo.m_ownerRevision}");
+    if (zdo.m_vec3?.ContainsKey(hash) == true)
+      info.Add($"{data}: {Helper.PrintVectorXZY(zdo.m_vec3[hash])}");
+    if (zdo.m_quats?.ContainsKey(hash) == true)
+      info.Add($"{data}: {Helper.PrintAngleYXZ(zdo.m_quats[hash])}");
+    if (zdo.m_longs?.ContainsKey(hash) == true)
+      info.Add($"{data}: {zdo.m_longs[hash]}");
+    if (zdo.m_strings?.ContainsKey(hash) == true)
+      info.Add($"{data}: {zdo.m_strings[hash]}");
+    if (zdo.m_ints?.ContainsKey(hash) == true)
+      info.Add($"{data}: {zdo.m_ints[hash]}");
+    if (zdo.m_floats?.ContainsKey(hash) == true)
+      info.Add($"{data}: {zdo.m_floats[hash].ToString("F1")}");
     return string.Join(", ", info);
   }
 }

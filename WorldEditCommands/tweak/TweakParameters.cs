@@ -60,6 +60,8 @@ public class TweakParameters {
           Operations[name] = Parse.Int(value);
         else if (type == typeof(float))
           Operations[name] = Parse.Float(value);
+        else if (type == typeof(bool))
+          Operations[name] = Parse.Boolean(value);
         else if (type == typeof(string[]))
           Operations[name] = (Operations[name] as string[]).Append(value).ToArray();
         else

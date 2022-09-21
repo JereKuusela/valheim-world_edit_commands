@@ -23,32 +23,16 @@ public enum Fall {
   Solid
 }
 public static class Actions {
-  public static bool SetCollision(ZNetView obj, bool? value) {
-    var zdo = obj.GetZDO();
-    if (value == null) value = !zdo.GetBool(Hash.Collision, true);
-    if (value.Value) {
-      if (zdo.m_ints != null) {
-        zdo.m_ints.Remove(Hash.Collision);
-        zdo.IncreseDataRevision();
-      }
-    } else {
-      zdo.Set(Hash.Collision, value.Value);
-    }
-    Refresh(zdo, obj.gameObject);
-    return value.Value;
+  public static void SetCollision(ZNetView obj, bool? value) {
+    var number = value.HasValue ? value.Value ? 1 : 0 : -1;
+    obj.GetZDO().Set(Hash.Collision, number);
+    Refresh(obj);
   }
-  public static bool SetRestrict(ZNetView obj, bool? value) {
-    var zdo = obj.GetZDO();
-    if (value == null) value = !zdo.GetBool(Hash.Restrict, true);
-    if (value.Value) {
-      if (zdo.m_ints != null) {
-        zdo.m_ints.Remove(Hash.Restrict);
-        zdo.IncreseDataRevision();
-      }
-    } else {
-      zdo.Set(Hash.Restrict, value.Value);
-    }
-    return value.Value;
+  public static void SetBool(ZNetView obj, bool? value, int hash, bool refresh = false) {
+    var number = value.HasValue ? value.Value ? 1 : 0 : -1;
+    obj.GetZDO().Set(hash, number);
+    if (refresh)
+      Refresh(obj);
   }
   private static GameObject Refresh(ZDO zdo, GameObject obj) {
     var newObj = ZNetScene.instance.CreateObject(zdo);
@@ -57,32 +41,15 @@ public static class Actions {
     return newObj;
   }
   public static GameObject Refresh(ZNetView view) => Refresh(view.GetZDO(), view.gameObject);
-  public static bool SetRender(ZNetView obj, bool? value) {
-    var zdo = obj.GetZDO();
-    if (value == null) value = !zdo.GetBool(Hash.Render, true);
-    if (value.Value) {
-      if (zdo.m_ints != null) {
-        zdo.m_ints.Remove(Hash.Render);
-        zdo.IncreseDataRevision();
-      }
-    } else {
-      zdo.Set(Hash.Render, value.Value);
-    }
-    Refresh(zdo, obj.gameObject);
-    return value.Value;
+  public static void SetRender(ZNetView obj, bool? value) {
+    var number = value.HasValue ? value.Value ? 1 : 0 : -1;
+    obj.GetZDO().Set(Hash.Render, number);
+    Refresh(obj);
   }
-  public static bool SetInteract(ZNetView obj, bool? value) {
-    var zdo = obj.GetZDO();
-    if (value == null) value = !zdo.GetBool(Hash.Interact, true);
-    if (value.Value) {
-      if (zdo.m_ints != null) {
-        zdo.m_ints.Remove(Hash.Interact);
-        zdo.IncreseDataRevision();
-      }
-    } else {
-      zdo.Set(Hash.Interact, value.Value);
-    }
-    return value.Value;
+  public static void SetInteract(ZNetView obj, bool? value) {
+    var number = value.HasValue ? value.Value ? 1 : 0 : -1;
+    obj.GetZDO().Set(Hash.Interact, number);
+    Refresh(obj);
   }
   public static void SetWear(GameObject obj, Wear wear) {
     SetWear(obj.GetComponent<WearNTear>(), wear);
@@ -95,44 +62,22 @@ public static class Actions {
   }
   public static void SetWear(WearNTear obj, Wear wear) {
     if (!obj) return;
-    var zdo = obj.m_nview.GetZDO();
     var number = WearNumber(wear);
-    if (number < 0) {
-      if (zdo.m_ints != null) {
-        zdo.m_ints.Remove(Hash.Wear);
-        zdo.IncreseDataRevision();
-      }
-    } else {
-      zdo.Set(Hash.Wear, number);
-    }
+    obj.m_nview.GetZDO().Set(Hash.Wear, number);
+    Refresh(obj.m_nview);
   }
 
   public static void SetComponent(ZNetView obj, string name, bool refresh = true) => SetString(obj, name, Hash.Component, refresh);
   public static void SetFloat(ZNetView obj, float? value, int hash, bool refresh = false) {
     if (!obj) return;
-    var zdo = obj.GetZDO();
-    if (value.HasValue)
-      zdo.Set(hash, value.Value);
-    else {
-      if (zdo.m_floats != null) {
-        zdo.m_floats.Remove(hash);
-        zdo.IncreseDataRevision();
-      }
-    }
+    obj.GetZDO().Set(hash, value ?? -1f);
     if (refresh)
       Refresh(obj);
   }
   public static void SetInt(ZNetView obj, int? value, int hash, bool refresh = false) {
     if (!obj) return;
     var zdo = obj.GetZDO();
-    if (value.HasValue)
-      zdo.Set(hash, value.Value);
-    else {
-      if (zdo.m_ints != null) {
-        zdo.m_ints.Remove(hash);
-        zdo.IncreseDataRevision();
-      }
-    }
+    obj.GetZDO().Set(hash, value ?? -1);
     if (refresh)
       Refresh(obj);
   }
@@ -144,29 +89,13 @@ public static class Actions {
   }
   public static void SetPrefab(ZNetView obj, string? value, int hash, bool refresh = false) {
     if (!obj) return;
-    var zdo = obj.GetZDO();
-    if (value != null)
-      zdo.Set(hash, GetId(value));
-    else {
-      if (zdo.m_ints != null) {
-        zdo.m_ints.Remove(hash);
-        zdo.IncreseDataRevision();
-      }
-    }
+    obj.GetZDO().Set(hash, value == null ? 0 : GetId(value));
     if (refresh)
       Refresh(obj);
   }
   public static void SetString(ZNetView obj, string? value, int hash, bool refresh = false) {
     if (!obj) return;
-    var zdo = obj.GetZDO();
-    if (value != null)
-      zdo.Set(hash, value);
-    else {
-      if (zdo.m_strings != null) {
-        zdo.m_strings.Remove(hash);
-        zdo.IncreseDataRevision();
-      }
-    }
+    obj.GetZDO().Set(hash, value ?? "");
     if (refresh)
       Refresh(obj);
   }
@@ -186,17 +115,9 @@ public static class Actions {
   }
   public static void SetFall(StaticPhysics obj, Fall fall) {
     if (!obj) return;
-    var zdo = obj.m_nview.GetZDO();
     var number = FallNumber(fall);
-    if (number < 0) {
-      if (zdo.m_ints != null) {
-        zdo.m_ints.Remove(Hash.Fall);
-        zdo.IncreseDataRevision();
-      }
-    } else {
-      zdo.Set(Hash.Fall, number);
-    }
-    var newObj = Refresh(zdo, obj.gameObject);
+    obj.m_nview.GetZDO().Set(Hash.Fall, number);
+    var newObj = Refresh(obj.m_nview);
     if (newObj.GetComponent<StaticPhysics>() is { } sp) {
       sp.m_createTime = Time.time - 30f;
       sp.SUpdate();
@@ -214,16 +135,10 @@ public static class Actions {
   }
   public static void SetGrowth(Plant obj, Growth growth) {
     if (!obj) return;
-    var zdo = obj.m_nview.GetZDO();
     var number = GrowthNumber(growth);
-    if (number < 0) {
-      if (zdo.m_ints != null)
-        zdo.m_ints.Remove(Hash.Growth);
-      zdo.Set(Hash.PlantTime, ZNet.instance.GetTime().Ticks);
-    } else {
-      zdo.Set(Hash.Growth, number);
-      zdo.Set(Hash.PlantTime, DateTime.MaxValue.Ticks / 2L);
-    }
+    obj.m_nview.GetZDO().Set(Hash.Growth, number);
+    var time = number < 0 ? ZNet.instance.GetTime().Ticks : DateTime.MaxValue.Ticks / 2L;
+    obj.m_nview.GetZDO().Set(Hash.PlantTime, time);
     obj.m_updateTime = 0f;
   }
   public static void SetTame(GameObject obj, bool tame) {

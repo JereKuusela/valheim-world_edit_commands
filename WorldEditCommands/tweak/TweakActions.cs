@@ -11,6 +11,10 @@ public static class TweakActions {
 
   private static string Print<T>(T? value) => value == null ? DEFAULT : value.ToString();
 
+  public static string Restrict(ZNetView view, bool? value) {
+    Actions.SetBool(view, value, Hash.Restrict);
+    return $"¤ restrict set to {Print(value)}.";
+  }
   public static string Spawn(ZNetView view, string? value) {
     Actions.SetPrefab(view, value, Hash.Spawn);
     return $"¤ spawn prefab set to {Print(value)}.";
@@ -37,6 +41,20 @@ public static class TweakActions {
     value = value == null ? value : value.Replace("_", " ");
     Actions.SetString(view, value, Hash.OverrideText);
     return $"¤ text set to {Print(value)}.";
+  }
+  public static string Compendium(ZNetView view, string[] value) {
+    var str = value.Length == 0 ? null : string.Join("|", value).Replace("_", " ");
+    Actions.SetString(view, str, Hash.Compendium);
+    return $"¤ compendium set to {Print(value)}.";
+  }
+  public static string Topic(ZNetView view, string? value) {
+    value = value == null ? value : value.Replace("_", " ");
+    Actions.SetString(view, value, Hash.Topic);
+    return $"¤ topic set to {Print(value)}.";
+  }
+  public static string Discover(ZNetView view, string? value) {
+    Actions.SetString(view, value, Hash.Discover);
+    return $"¤ discover set to {Print(value)}.";
   }
   public static string Spawns(ZNetView view, string[] value) {
     var str = value.Length == 0 ? null : string.Join("|", value.Select(HashFirst));

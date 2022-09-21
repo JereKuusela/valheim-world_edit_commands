@@ -21,6 +21,9 @@ public static class Hash {
   public static int LevelChance = "override_level_chance".GetStableHashCode();
   public static int TriggerDistance = "override_trigger_distance".GetStableHashCode();
   public static int OverrideText = "override_text".GetStableHashCode();
+  public static int Compendium = "override_compendium".GetStableHashCode();
+  public static int Topic = "override_topic".GetStableHashCode();
+  public static int Discover = "override_discover".GetStableHashCode();
   public static int Delay = "override_delay".GetStableHashCode();
   public static int ItemOffset = "override_item_offset".GetStableHashCode();
   public static int SpawnMaxY = "override_spawn_max_y".GetStableHashCode();

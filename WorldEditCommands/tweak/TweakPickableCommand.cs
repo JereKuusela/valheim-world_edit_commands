@@ -30,6 +30,10 @@ public class TweakPickableCommand : TweakCommand {
     throw new System.NotImplementedException();
   }
 
+  protected override string DoOperation(ZNetView view, string operation, bool? value) {
+    throw new System.NotImplementedException();
+  }
+
   public TweakPickableCommand() {
     Component = typeof(Pickable);
     ComponentName = "pickable";

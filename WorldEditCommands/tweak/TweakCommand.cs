@@ -19,6 +19,7 @@ public abstract class TweakCommand {
   protected abstract string DoOperation(ZNetView view, string operation, float? value);
   protected abstract string DoOperation(ZNetView view, string operation, string[] value);
   protected abstract string DoOperation(ZNetView view, string operation, int? value);
+  protected abstract string DoOperation(ZNetView view, string operation, bool? value);
   private void Execute(Terminal context, float chance, bool force, Dictionary<string, object?> operations, ZNetView[] views) {
     var scene = ZNetScene.instance;
     Dictionary<ZDOID, long> oldOwner = new();
@@ -61,6 +62,8 @@ public abstract class TweakCommand {
           output = DoOperation(view, operation.Key, (float?)operation.Value);
         else if (type == typeof(string[]))
           output = DoOperation(view, operation.Key, (string[])operation.Value!);
+        else if (type == typeof(bool))
+          output = DoOperation(view, operation.Key, (bool?)operation.Value!);
         else
           output = DoOperation(view, operation.Key, (string?)operation.Value);
         // No operation.

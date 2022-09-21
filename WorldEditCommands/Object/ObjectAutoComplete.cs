@@ -94,9 +94,6 @@ public class ObjectAutoComplete : SharedObjectAutoComplete {
         "component", (int index) => Components
       },
       {
-        "restrict", (int index) => ParameterInfo.Create("restrict=<color=yellow>true/false</color> or no value to toggle.", "Sets portal item restriction.")
-      },
-      {
         "collision", (int index) => ParameterInfo.Create("collision=<color=yellow>true/false</color> or no value to toggle.", "Sets object collision.")
       },
       {
@@ -154,7 +151,7 @@ public class ObjectAutoComplete : SharedObjectAutoComplete {
         "sleep", (int index) => ParameterInfo.Flag("Sleep")
       },
       {
-        "info", (int index) => ParameterInfo.Flag("Info")
+        "info", (int index) => index == 0 ? ParameterInfo.Create("info or info=<color=yellow>data</color>", "Prints information. If data is given, prints that data entry.") : ParameterInfo.None
       },
       {
         "id", (int index) => index == 0 ? ParameterInfo.Ids : ParameterInfo.None
