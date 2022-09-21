@@ -40,6 +40,8 @@ public class SetCommands {
       new TweakRunestoneCommand();
       new TweakPortalCommand();
       new TweakFireplaceCommand();
+      new TweakChestCommand();
+      new TweakDoorCommand();
     }
   }
 }

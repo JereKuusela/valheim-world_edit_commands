@@ -15,6 +15,17 @@ public static class TweakActions {
     Actions.SetBool(view, value, Hash.Restrict);
     return $"¤ restrict set to {Print(value)}.";
   }
+  public static string Unlock(ZNetView view, bool? value) {
+    value = Actions.ToggleBool(view, value, Hash.Unlock);
+    return $"¤ unlock set to {Print(value)}.";
+  }
+  public static string Smoke(ZNetView view, string? value) {
+    bool? val = null;
+    if (value == "off") val = false;
+    if (value == "ignore") val = true;
+    Actions.SetBool(view, val, Hash.Smoke);
+    return $"¤ restrict set to {Print(value)}.";
+  }
   public static string Spawn(ZNetView view, string? value) {
     Actions.SetPrefab(view, value, Hash.Spawn);
     return $"¤ spawn prefab set to {Print(value)}.";

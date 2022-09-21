@@ -24,15 +24,21 @@ public enum Fall {
 }
 public static class Actions {
   public static void SetCollision(ZNetView obj, bool? value) {
-    var number = value.HasValue ? value.Value ? 1 : 0 : -1;
-    obj.GetZDO().Set(Hash.Collision, number);
-    Refresh(obj);
+    ToggleBool(obj, value, Hash.Collision, true);
   }
   public static void SetBool(ZNetView obj, bool? value, int hash, bool refresh = false) {
     var number = value.HasValue ? value.Value ? 1 : 0 : -1;
     obj.GetZDO().Set(hash, number);
     if (refresh)
       Refresh(obj);
+  }
+  public static bool? ToggleBool(ZNetView obj, bool? value, int hash, bool refresh = false) {
+    var previous = obj.GetZDO().GetBool(hash, true);
+    var toggled = value.HasValue ? value.Value : !previous;
+    obj.GetZDO().Set(hash, toggled);
+    if (refresh)
+      Refresh(obj);
+    return toggled;
   }
   private static GameObject Refresh(ZDO zdo, GameObject obj) {
     var newObj = ZNetScene.instance.CreateObject(zdo);
@@ -42,14 +48,10 @@ public static class Actions {
   }
   public static GameObject Refresh(ZNetView view) => Refresh(view.GetZDO(), view.gameObject);
   public static void SetRender(ZNetView obj, bool? value) {
-    var number = value.HasValue ? value.Value ? 1 : 0 : -1;
-    obj.GetZDO().Set(Hash.Render, number);
-    Refresh(obj);
+    ToggleBool(obj, value, Hash.Render, true);
   }
   public static void SetInteract(ZNetView obj, bool? value) {
-    var number = value.HasValue ? value.Value ? 1 : 0 : -1;
-    obj.GetZDO().Set(Hash.Interact, number);
-    Refresh(obj);
+    ToggleBool(obj, value, Hash.Interact, true);
   }
   public static void SetWear(GameObject obj, Wear wear) {
     SetWear(obj.GetComponent<WearNTear>(), wear);

@@ -30,7 +30,8 @@ public class ObjectAutoComplete : SharedObjectAutoComplete {
       "pickable",
       "spawner",
       "spawnpoint",
-      "runestone"
+      "runestone",
+      "chest"
   };
   public ObjectAutoComplete() {
     NamedParameters = WithSharedParameters(new() {

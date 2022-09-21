@@ -1,13 +1,10 @@
 using System;
-using System.Collections.Generic;
 using ServerDevcommands;
 
 namespace WorldEditCommands;
 
-public class TweakFireplaceCommand : TweakCommand {
+public class TweakDoorCommand : TweakCommand {
   protected override string DoOperation(ZNetView view, string operation, string? value) {
-    if (operation == "smoke")
-      return TweakActions.Smoke(view, value);
     throw new System.NotImplementedException();
   }
   protected override string DoOperation(ZNetView view, string operation, float? value) {
@@ -23,21 +20,17 @@ public class TweakFireplaceCommand : TweakCommand {
   }
 
   protected override string DoOperation(ZNetView view, string operation, bool? value) {
-
+    if (operation == "unlock")
+      return TweakActions.Unlock(view, value);
     throw new NotImplementedException();
   }
 
-  public static List<string> SmokeTypes = new() {
-      "off",
-      "on",
-      "ignore"
-  };
-  public TweakFireplaceCommand() {
-    Component = typeof(Fireplace);
-    ComponentName = "fireplace";
-    SupportedOperations.Add("smoke", typeof(string));
+  public TweakDoorCommand() {
+    Component = typeof(Door);
+    ComponentName = "door";
+    SupportedOperations.Add("unlock", typeof(bool));
 
-    AutoComplete.Add("smoke", (int index) => index == 0 ? SmokeTypes : ParameterInfo.None);
-    Init("tweak_fireplace", "Modify fireplaces");
+    AutoComplete.Add("unlock", (int index) => index == 0 ? ParameterInfo.Create("unlock=<color=yellow>true/false</color>", "Ignores wards. No value to toggle.") : ParameterInfo.None);
+    Init("tweak_door", "Modify doors");
   }
 }

@@ -80,25 +80,31 @@ Note: Creatures reset their style when attacking.
 
 ### Structure Tweaks mod
 
-New parameters to the `object` command. All values can be reseted by providing no value to the parameter.
+New parameters to the `object` command.
 
 - `effect=radius,id`: Adds forced effect area (heat, fire, player base, burning, no monsters, warm cozy area).
 - `event=radius,id`: Adds forced random event area.
-- `collision=true/false`: Sets whether the object has collision.
+- `collision=true/false`: Sets whether the object has collision. No value to toggle.
 - `fall=off/solid/terrain`: Overrides the fall behavior.
 - `growth=big/big_bad/small/small_bad`: Overrides the plant visual wear (and prevents growth).
-- `interact=true/false`: Sets whether the object can be interacted with.
-- `show=true/false`: Sets whether the object is visible.
+- `interact=true/false`: Sets whether the object can be interacted with. No value to toggle.
+- `show=true/false`: Sets whether the object is visible. No value to toggle.
 - `status=radius,id`: Adds forced status effect area.
 - `wear=broken/damaged/healthy`: Overrides the object visual wear.
 - `weather=radius,id,instant`: Adds forced weather area. If third parameter is given, the weather changes instantly.
 
-Three new commands that share many parameters with the `object` command.
+Five new commands that share many parameters with the `object` command.
 
 All values can be reseted by providing no value to the parameter. `force` parameter automatically adds the component if missing.
 
+`tweak_chest`:
+- `unlock=true/false`: Allows ignoring wards. No value to toggle.
+
+`tweak_door`:
+- `unlock=true/false`: Allows ignoring wards. No value to toggle.
+
 `tweak_fireplace`:
-- `restrict=false`: Prevents the fire going out when blocked by smoke.
+- `smoke=off/on/ignore`: Smoke behavior.
 
 `tweak_portal`:
 - `restrict=false`: Allows teleporting with any items.
@@ -344,7 +350,7 @@ This shouldn't cause any issues unless objects are moved long distances (which m
 
 - v1.12
 	- Adds a parameter to the `object info` which prints the given data value.
-	- Adds new commands `tweak_fireplace`, `tweak_portal` and `tweak_runestone` for Structure Tweaks mod.
+	- Adds new commands `tweak_chest`, `tweak_door`, `tweak_fireplace`, `tweak_portal` and `tweak_runestone` for Structure Tweaks mod.
 	- Fixes `object info` printing coordinates incorrectly.
 	- Fixes the `tweak_*` commands not data syncing correctly in some cases.
 
