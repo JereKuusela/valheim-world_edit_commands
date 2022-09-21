@@ -98,6 +98,7 @@ Five new commands that share many parameters with the `object` command.
 All values can be reseted by providing no value to the parameter. `force` parameter automatically adds the component if missing.
 
 `tweak_chest`:
+- `name=text`: Display name. Use _ as the space.
 - `unlock=true/false`: Allows ignoring wards. No value to toggle.
 
 `tweak_door`:
