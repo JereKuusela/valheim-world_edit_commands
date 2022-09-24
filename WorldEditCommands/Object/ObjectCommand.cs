@@ -499,6 +499,8 @@ public class ObjectCommand {
       info.Add($"{data}: {zdo.m_ints[hash]}");
     if (zdo.m_floats?.ContainsKey(hash) == true)
       info.Add($"{data}: {zdo.m_floats[hash].ToString("F1")}");
+    if (info.Count < 4)
+      info.Add($"{data}: No data!");
     return string.Join(", ", info);
   }
 }

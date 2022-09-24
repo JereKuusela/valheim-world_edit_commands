@@ -372,16 +372,4 @@ This shouldn't cause any issues unless objects are moved long distances (which m
 	- Adds new parameters `fall` and `restrict` to the `object` command (for Structure Tweaks mod).
 	- Adds a new parameter `connect` to the `object` command.
 
-- v1.7
-	- Adds a new parameter `chance` to the `object` command.
-	- Adds new parameter `collision`, `growth`,`interact`, `show` and `wear` to the `object` command (for Structure Tweaks mod).
-	- Adds a new paramater `type` to the `object` command to filter by object type.
-
-- v1.6
-	- Adds rectangle support to the `object` command.
-	- Adds height support to the `object` command.
-	- Adds a new parameter `creator` to the `object` command.
-	- Adds new paints to the `terrain` command.
-	- Adds support for custom paint color the `terrain` command.
-
 Thanks for Azumatt for creating the mod icon!
