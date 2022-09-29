@@ -174,7 +174,7 @@ public class ObjectCommand {
       }
       ZNetView[] views;
       if (pars.Connect) {
-        var view = Helper.GetHovered(args);
+        var view = Selector.GetHovered(50f, null);
         if (view == null) return;
         views = Selector.GetConnected(view);
       } else if (pars.Radius.HasValue) {
@@ -182,7 +182,7 @@ public class ObjectCommand {
       } else if (pars.Width.HasValue && pars.Depth.HasValue) {
         views = Selector.GetNearby(pars.Id, pars.ObjectType, position => Selector.Within(position, pars.Center ?? pars.From, pars.Angle, pars.Width.Value, pars.Depth.Value, pars.Height));
       } else {
-        var view = Helper.GetHovered(args);
+        var view = Selector.GetHovered(50f, null);
         if (view == null) return;
         if (!Selector.GetPrefabs(pars.Id).Contains(view.GetZDO().GetPrefab())) {
           Helper.AddMessage(args.Context, $"Skipped: {view.name} has invalid id.");

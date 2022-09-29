@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using ServerDevcommands;
 
 namespace WorldEditCommands;
@@ -19,6 +20,8 @@ public class TweakAltarCommand : TweakCommand {
       return TweakActions.ItemStandPrefix(view, value);
     if (operation == "itemoffset")
       return TweakActions.ItemOffset(view, value);
+    if (operation == "faction")
+      return TweakActions.Faction(view, value);
     throw new NotImplementedException();
   }
   protected override string DoOperation(ZNetView view, string operation, float? value) {
@@ -86,6 +89,7 @@ public class TweakAltarCommand : TweakCommand {
     SupportedOperations.Add("itemoffset", typeof(string));
     SupportedOperations.Add("itemstandprefix", typeof(string));
     SupportedOperations.Add("globalkey", typeof(string));
+    SupportedOperations.Add("faction", typeof(string));
 
     AutoComplete.Add("minlevel", (int index) => index == 0 ? ParameterInfo.Create("minlevel=<color=yellow>number</color>", "Minimum level (level 1 = no star). No value to reset.") : ParameterInfo.None);
     AutoComplete.Add("maxlevel", (int index) => index == 0 ? ParameterInfo.Create("maxlevel=<color=yellow>number</color>", "Maximum level (level 1 = no star). No value to reset.") : ParameterInfo.None);
@@ -98,6 +102,7 @@ public class TweakAltarCommand : TweakCommand {
     AutoComplete.Add("itemstandrange", (int index) => index == 0 ? ParameterInfo.Create("itemstandrange=<color=yellow>meters</color>", "Radius for included item stands. No value to reset.") : ParameterInfo.None);
     AutoComplete.Add("text", (int index) => index == 0 ? ParameterInfo.Create("text=<color=yellow>text</color>", "Use text. Use _ as the space. No value to reset.") : ParameterInfo.None);
     AutoComplete.Add("name", (int index) => index == 0 ? ParameterInfo.Create("name=<color=yellow>text</color>", "Display name. Use _ as the space. No value to reset.") : ParameterInfo.None);
+    AutoComplete.Add("faction", (int index) => index == 0 ? Enum.GetNames(typeof(Character.Faction)).ToList() : ParameterInfo.None);
     AutoComplete.Add("itemstandprefix", (int index) => index == 0 ? ParameterInfo.Create("itemstandprefix=<color=yellow>text</color>", "Prefix for included item stands. No value to reset.") : ParameterInfo.None);
     AutoComplete.Add("globalkey", (int index) => index == 0 ? ParameterInfo.Create("text=<color=yellow>key</color>", "Sets the global key when used. Start with - to remove the key. No value to reset.") : ParameterInfo.None);
     AutoComplete.Add("spawn", (int index) => index == 0 ? ParameterInfo.ObjectIds : ParameterInfo.None);

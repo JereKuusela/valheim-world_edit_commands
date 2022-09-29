@@ -91,6 +91,10 @@ public static class TweakActions {
     Actions.SetPrefab(view, value, Hash.SpawnItem);
     return $"¤ spawn item prefab set to {Print(value)}.";
   }
+  public static string Faction(ZNetView view, string? value) {
+    Actions.SetString(view, value, Hash.Faction);
+    return $"¤ faction set to {Print(value)}.";
+  }
   public static string MinLevel(ZNetView view, int? value) {
     Actions.SetInt(view, value, Hash.MinLevel);
     return $"¤ minimum level set to {Print(value)}.";

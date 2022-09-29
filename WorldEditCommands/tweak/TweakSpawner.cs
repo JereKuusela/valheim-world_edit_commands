@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using ServerDevcommands;
 
 namespace WorldEditCommands;
@@ -75,9 +76,11 @@ public class TweakSpawnerCommand : TweakCommand {
     AutoComplete.Add("farradius", (int index) => index == 0 ? ParameterInfo.Create("farradius=<color=yellow>meters</color>", "Radius for <color=yellow>maxtotal</color>. No value to reset.") : ParameterInfo.None);
     AutoComplete.Add("spawn", (int index) => {
       if (index == 0) return ParameterInfo.Ids;
-      if (index == 1) return ParameterInfo.Create("spawn=id,<color=yellow>weight</color>,minlevel,maxlevel", "Spawn chance relative to other spawns.");
-      if (index == 2) return ParameterInfo.Create("spawn=id,weight,<color=yellow>minlevel</color>,maxlevel", "Minimum level (level 1 = 0 star).");
-      if (index == 3) return ParameterInfo.Create("spawn=id,weight,minlevel,<color=yellow>maxlevel</color>", "Maximum level (level 1 = 0 star).");
+      if (index == 1) return ParameterInfo.Create("spawn=id,<color=yellow>weight</color>,minlevel,maxlevel,faction,health", "Spawn chance relative to other spawns.");
+      if (index == 2) return ParameterInfo.Create("spawn=id,weight,<color=yellow>minlevel</color>,maxlevel,faction,health", "Minimum level (level 1 = 0 star).");
+      if (index == 3) return ParameterInfo.Create("spawn=id,weight,minlevel,<color=yellow>maxlevel</color>,faction,health", "Maximum level (level 1 = 0 star).");
+      if (index == 4) return Enum.GetNames(typeof(Character.Faction)).ToList();
+      if (index == 5) return ParameterInfo.Create("spawn=id,weight,minlevel,maxlevel,faction,<color=yellow>health</color>", "Health.");
       return ParameterInfo.Create("For additional entries, add more <color>spawn=...</color> parameters.");
     });
     AutoComplete.Add("spawneffect", (int index) => TweakAutoComplete.Effect("spawneffect", index));

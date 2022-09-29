@@ -12,6 +12,7 @@ public static class Hash {
   public static int UseEffect = "override_use_effect".GetStableHashCode();
   public static int StartEffect = "override_start_effect".GetStableHashCode();
   public static int SpawnItem = "override_spawn_item".GetStableHashCode();
+  public static int Faction = "override_faction".GetStableHashCode();
   public static int SpawnOffset = "override_spawn_offset".GetStableHashCode();
   public static int Component = "override_component".GetStableHashCode();
   public static int MinLevel = "override_minimum_level".GetStableHashCode();

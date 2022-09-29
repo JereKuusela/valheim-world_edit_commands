@@ -130,6 +130,7 @@ All values can be reseted by providing no value to the parameter. `force` parame
 `tweak_altar`:
 - `amount=number`: Amount of needed items to interact.
 - `delay=seconds`: Duration of the spawning.
+- `faction=text`: Determines which creatures are considered hostile.
 - `itemstandprefix=text`: Prefix for included item stands.
 - `itemstandrange=meters`: Radius for included item stands.
 - `itemoffset=x,z,y`: Offset when spawning items. Also sets the `useeffect` position.
@@ -165,13 +166,14 @@ All values can be reseted by providing no value to the parameter. `force` parame
 - `maxtotal=number`: Maximum amount of spawns within the `farradius`.
 - `nearradius=meters`: Radius for `maxnear`.
 - `respawn=seconds`: Respawn time.
-- `spawn=id,weight,minlevel,maxlevel`: Spawned item or object. Weight is the relative chance compared to other spawns.
+- `spawn=id,weight,minlevel,maxlevel,faction,health`: Spawned item or object. Weight is the relative chance compared to other spawns.
 - `spawncondition=flag`: Sum up: 1 = day only, 2 = night only, 4 = ground only.
 - `spawneffect=id,flag`: Effect when the spawn happens. For random rotation, use 1 as the flag.
 - `spawnradius=meters`: Maximum spawn radius.
 - `triggerdistance=meters`: Required distance to activate the spawner.
 
 `tweak_spawnpoint`:
+- `faction=text`: Determines which creatures are considered hostile.
 - `levelchance=percent`: Level up chance (from 0 to 100).
 - `maxlevel=number`: Maximum level (level 1 = no star).
 - `minlevel=number`: Minimum level (level 1 = no star).
@@ -348,6 +350,9 @@ Static objects only synchronize their position and rotation when loaded. This me
 This shouldn't cause any issues unless objects are moved long distances (which might cause issues anyways).
 
 # Changelog
+
+- v1.13
+	- Adds faction overrides to Spawner Tweaks command.
 
 - v1.12
 	- Adds a parameter to the `object info` which prints the given data value.

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using ServerDevcommands;
 
 namespace WorldEditCommands;
@@ -7,6 +8,8 @@ public class TweakSpawnPointCommand : TweakCommand {
   protected override string DoOperation(ZNetView view, string operation, string? value) {
     if (operation == "spawn")
       return TweakActions.Spawn(view, value);
+    if (operation == "faction")
+      return TweakActions.Faction(view, value);
     throw new NotImplementedException();
   }
   protected override string DoOperation(ZNetView view, string operation, float? value) {
@@ -55,7 +58,9 @@ public class TweakSpawnPointCommand : TweakCommand {
     SupportedOperations.Add("spawnhealth", typeof(float));
     SupportedOperations.Add("spawn", typeof(string));
     SupportedOperations.Add("spawneffect", typeof(string[]));
+    SupportedOperations.Add("faction", typeof(string));
 
+    AutoComplete.Add("faction", (int index) => index == 0 ? Enum.GetNames(typeof(Character.Faction)).ToList() : ParameterInfo.None);
     AutoComplete.Add("minlevel", (int index) => index == 0 ? ParameterInfo.Create("minlevel=<color=yellow>number</color>", "Minimum level (level 1 = no star). No value to reset.") : ParameterInfo.None);
     AutoComplete.Add("maxlevel", (int index) => index == 0 ? ParameterInfo.Create("maxlevel=<color=yellow>number</color>", "Maximum level (level 1 = no star). No value to reset.") : ParameterInfo.None);
     AutoComplete.Add("triggernoise", (int index) => index == 0 ? ParameterInfo.Create("triggernoise=<color=yellow>meters</color>", "Required noise to activate the spawn point. No value to reset.") : ParameterInfo.None);
