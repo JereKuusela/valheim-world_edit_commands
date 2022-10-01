@@ -353,6 +353,8 @@ This shouldn't cause any issues unless objects are moved long distances (which m
 
 - v1.13
 	- Adds faction overrides to Spawner Tweaks command.
+	- Fixes the `radius` parameter not working for tweak commands.
+	- Fixes hidden area effects being targeted.
 
 - v1.12
 	- Adds a parameter to the `object info` which prints the given data value.
@@ -372,9 +374,5 @@ This shouldn't cause any issues unless objects are moved long distances (which m
 - v1.9
 	- Adds smelter support to the `object fuel` command.
 	- Adds new parameters `amount`, `event`, `effect`, `maxlevel`, `minlevel`, `respawntime`, `spawn`, `status` and `weather` to the `object` command (for Structure Tweaks mod).
-
-- v1.8
-	- Adds new parameters `fall` and `restrict` to the `object` command (for Structure Tweaks mod).
-	- Adds a new parameter `connect` to the `object` command.
 
 Thanks for Azumatt for creating the mod icon!

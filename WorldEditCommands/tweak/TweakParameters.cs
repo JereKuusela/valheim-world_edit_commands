@@ -78,6 +78,8 @@ public class TweakParameters {
         Width = size.x;
         Depth = size.z;
       }
+      if (name == "radius" || name == "range" || name == "circle")
+        Radius = Parse.Float(value);
       if (name == "height")
         Height = Parse.Float(value, 0f);
       if (name == "creator")
