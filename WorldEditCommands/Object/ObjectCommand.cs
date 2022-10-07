@@ -349,6 +349,7 @@ public class ObjectCommand {
     return $"Interact of ¤ set to {(value.HasValue ? value.Value : DEFAULT)}.";
   }
   private static string SetRender(ZNetView view, bool? value) {
+    Actions.SetRender(view, value);
     AddData(view, true);
     return $"Render of ¤ set to {(value.HasValue ? value.Value : DEFAULT)}.";
   }

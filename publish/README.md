@@ -351,6 +351,9 @@ This shouldn't cause any issues unless objects are moved long distances (which m
 
 # Changelog
 
+- v1.14
+	- Fixes the `object show=` not working.
+
 - v1.13
 	- Adds faction overrides to Spawner Tweaks command.
 	- Fixes the `radius` parameter not working for tweak commands.
