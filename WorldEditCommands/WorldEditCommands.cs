@@ -3,7 +3,7 @@ using BepInEx.Bootstrap;
 using HarmonyLib;
 namespace WorldEditCommands;
 [BepInPlugin(GUID, NAME, VERSION)]
-[BepInDependency("server_devcommands", "1.27")]
+[BepInDependency("server_devcommands", "1.28")]
 public class WorldEditCommands : BaseUnityPlugin {
   public const string GUID = "world_edit_commands";
   public const string NAME = "World Edit Commands";

@@ -20,8 +20,16 @@ public class SpawnObjectCommand {
           spawnPosition.z += random.y;
         }
       }
-      if (pars.Snap && ZoneSystem.instance.FindFloor(spawnPosition, out var height))
+      if (pars.Snap) {
+        ZoneSystem.instance.FindFloor(spawnPosition, out var height);
+        // Fixes spawning below terrain.
+        if (height == 0f) {
+          var higher = spawnPosition;
+          higher.y += 100f;
+          ZoneSystem.instance.FindFloor(spawnPosition, out height);
+        }
         spawnPosition.y = height;
+      }
       var obj = UnityEngine.Object.Instantiate<GameObject>(prefab, spawnPosition, Quaternion.identity);
       spawned.Add(obj);
     }
