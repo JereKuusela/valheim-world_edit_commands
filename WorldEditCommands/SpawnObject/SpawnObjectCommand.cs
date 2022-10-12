@@ -14,8 +14,11 @@ public class SpawnObjectCommand {
         spawnPosition = GetPosition(pars.From, pars.To.Value, i, count);
       else {
         spawnPosition = GetPosition(pars.From, pars.RelativePosition, pars.BaseRotation);
-        if (i > 0)
-          spawnPosition += UnityEngine.Random.insideUnitSphere * (pars.Radius ?? 0.5f);
+        if (i > 0) {
+          var random = UnityEngine.Random.insideUnitCircle * (pars.Radius ?? 0.5f);
+          spawnPosition.x += random.x;
+          spawnPosition.z += random.y;
+        }
       }
       if (pars.Snap && ZoneSystem.instance.FindFloor(spawnPosition, out var height))
         spawnPosition.y = height;
