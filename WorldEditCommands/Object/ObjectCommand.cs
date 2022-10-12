@@ -444,6 +444,7 @@ public class ObjectCommand {
         info.Add("Health: Infinite");
       else
         info.Add("Health: " + health.ToString("F0") + " / " + character.GetMaxHealth());
+      info.Add("Faction: " + character.m_faction);
       info.Add("Stars: " + (character.GetLevel() - 1));
       info.Add("Tamed: " + (character.IsTamed() ? "Yes" : "No"));
       var growUp = obj.GetComponent<Growup>();

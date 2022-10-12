@@ -352,6 +352,7 @@ This shouldn't cause any issues unless objects are moved long distances (which m
 # Changelog
 
 - v1.15
+	- Adds faction to the `object info`.
 	- Fixes the `spawn_object` not spawning all objects if a high spawn radius is used.
 
 - v1.14
