@@ -389,11 +389,4 @@ This shouldn't cause any issues unless objects are moved long distances (which m
 	- Fixes ids of `tweak_*` commands being case sensitive.
 	- Fixes the `durability` operation missing from the `object` command.
 
-- v1.10
-	- Adds new commands `tweak_altar`, `tweak_pickable`, `tweak_spawner` and `tweak_spawnpoint` for Spawner Tweaks mod.
-
-- v1.9
-	- Adds smelter support to the `object fuel` command.
-	- Adds new parameters `amount`, `event`, `effect`, `maxlevel`, `minlevel`, `respawntime`, `spawn`, `status` and `weather` to the `object` command (for Structure Tweaks mod).
-
 Thanks for Azumatt for creating the mod icon!
