@@ -35,6 +35,8 @@ public class SetCommands {
       new TweakPickableCommand();
       new TweakSpawnerCommand();
       new TweakSpawnPointCommand();
+      new TweakItemStandCommand();
+      new TweakChestCommand();
     }
     if (WorldEditCommands.IsStructureTweaks) {
       new TweakRunestoneCommand();

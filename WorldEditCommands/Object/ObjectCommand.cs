@@ -454,7 +454,7 @@ public class ObjectCommand {
       var health = Actions.GetHealth(obj);
       if (health > 1E17)
         info.Add("Health: Infinite");
-      if (health > -1f)
+      else if (health > -1f)
         info.Add("Health: " + health.ToString("F0"));
     }
     var equipment = obj.GetComponent<VisEquipment>();

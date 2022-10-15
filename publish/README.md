@@ -111,7 +111,7 @@ All values can be reseted by providing no value to the parameter. `force` parame
 - `restrict=false`: Allows teleporting with any items.
 
 `tweak_runestone`:
-- `discover=id,text,pintype,showmap`: Location discovery.
+- `discover=id,pintext,pintype,showmap`: Location discovery. If showmap=1, then opens the map automatically.
 - `name=text`: Display name. Use _ as the space.
 - `text=text`: Use text. Use _ as the space.
 - `topic=text`: Topic shown with the text. Use _ as the space.
@@ -149,6 +149,18 @@ All values can be reseted by providing no value to the parameter. `force` parame
 - `starteffect=id,flag`: Effect when the spawn is started. For random rotation, use 1 as the flag.
 - `text=text`: Use text. Use _ as the space.
 - `useeffect=id,flag`: Effect when used. For random rotation, use 1 as the flag.
+
+`tweak_chest`:
+- `name=text`: Display name. Use _ as the space.
+- `item=id,weight,minamount,maxamount`: Loot item. Weight is the relative chance compared to other items.
+- `maxamount=number`: Maximum amount of items.
+- `minamount=number`: Minimum amount of items.
+- `respawn=minutes`: Respawn time for items. Automatically sets `item`, `maxamount` and `minamount` based on chest contents if not given in the command.
+
+`tweak_itemstand`:
+- `name=text`: Display name. Use _ as the space.
+- `item=id,variant`: Attached item. Variant is a number.
+- `respawn=minutes`: Respawn time for items. Automatically sets the `item` based on the current item.
 
 `tweak_pickable`:
 - `amount=number`: Amount of dropped items.
@@ -352,6 +364,8 @@ This shouldn't cause any issues unless objects are moved long distances (which m
 # Changelog
 
 - v1.15
+	- Adds new commands `tweak_itemstand` for Spawner Tweaks mod.
+	- Adds new parameters to the `tweak_chest` command for Spawner Tweaks mod.
 	- Adds faction to the `object info`.
 	- Fixes the `spawn_object` not spawning all objects if a high spawn radius is used.
 

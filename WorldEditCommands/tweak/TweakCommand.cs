@@ -20,6 +20,8 @@ public abstract class TweakCommand {
   protected abstract string DoOperation(ZNetView view, string operation, string[] value);
   protected abstract string DoOperation(ZNetView view, string operation, int? value);
   protected abstract string DoOperation(ZNetView view, string operation, bool? value);
+  protected virtual Dictionary<string, object?> Postprocess(ZNetView view, Dictionary<string, object?> operations) => operations;
+
   private void Execute(Terminal context, float chance, bool force, Dictionary<string, object?> operations, ZNetView[] views) {
     var scene = ZNetScene.instance;
     Dictionary<ZDOID, long> oldOwner = new();
@@ -50,10 +52,10 @@ public abstract class TweakCommand {
       EditedInfo[zdo.m_uid] = new EditInfo(zdo, true);
     }
     var count = views.Count();
-    foreach (var operation in operations) {
-      var type = SupportedOperations[operation.Key];
-      foreach (var view in views) {
-        if (!view) continue;
+    foreach (var view in views) {
+      var operations2 = Postprocess(view, operations);
+      foreach (var operation in operations2) {
+        var type = SupportedOperations[operation.Key];
         var name = Utils.GetPrefabName(view.gameObject);
         var output = "";
         if (type == typeof(int))

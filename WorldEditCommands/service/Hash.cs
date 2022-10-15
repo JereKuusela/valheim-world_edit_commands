@@ -8,6 +8,8 @@ public static class Hash {
   public static int SpawnHealth = "override_health".GetStableHashCode();
   public static int TriggerNoise = "override_trigger_noise".GetStableHashCode();
   public static int Spawn = "override_spawn".GetStableHashCode();
+  public static int OverrideItem = "override_item".GetStableHashCode();
+  public static int Items = "override_items".GetStableHashCode();
   public static int SpawnEffect = "override_spawn_effect".GetStableHashCode();
   public static int UseEffect = "override_use_effect".GetStableHashCode();
   public static int StartEffect = "override_start_effect".GetStableHashCode();
@@ -15,6 +17,8 @@ public static class Hash {
   public static int Faction = "override_faction".GetStableHashCode();
   public static int SpawnOffset = "override_spawn_offset".GetStableHashCode();
   public static int Component = "override_component".GetStableHashCode();
+  public static int MinAmount = "override_minimum_amount".GetStableHashCode();
+  public static int MaxAmount = "override_maximum_amount".GetStableHashCode();
   public static int MinLevel = "override_minimum_level".GetStableHashCode();
   public static int MaxLevel = "override_maximum_level".GetStableHashCode();
   public static int MaxNear = "override_max_near".GetStableHashCode();
