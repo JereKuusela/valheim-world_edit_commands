@@ -41,7 +41,7 @@ public class TweakRunestoneCommand : TweakCommand {
     SupportedOperations.Add("text", typeof(string));
     SupportedOperations.Add("compendium", typeof(string));
     SupportedOperations.Add("topic", typeof(string));
-    SupportedOperations.Add("discover", typeof(string[]));
+    SupportedOperations.Add("discover", typeof(string));
 
     AutoComplete.Add("name", (int index) => index == 0 ? ParameterInfo.Create("name=<color=yellow>text</color>", "Display name. Use _ as the space. No value to reset.") : ParameterInfo.None);
     AutoComplete.Add("text", (int index) => ParameterInfo.Create("text=<color=yellow>text</color>", "Shown text. Use _ as the space. No value to reset."));

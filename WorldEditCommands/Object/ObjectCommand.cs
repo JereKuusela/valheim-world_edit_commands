@@ -89,7 +89,11 @@ public class ObjectCommand {
         if (operation == "respawn")
           output = Respawn(view);
         if (operation == "info")
-          output = GetInfo(view, pars.Info);
+          output = GetInfo(view);
+        if (operation == "data")
+          output = PrintData(view, pars.Data);
+        if (operation == "copy")
+          output = CopyData(view, pars.Copy);
         if (operation == "sleep")
           output = MakeSleep(view);
         if (operation == "visual")
@@ -481,28 +485,133 @@ public class ObjectCommand {
     return string.Join(", ", info);
   }
 
-  private static string GetInfo(ZNetView obj, string data) {
-    if (data == "") return GetInfo(obj);
+  private static void Serialize(ZDO zdo, ZPackage pkg, bool smart) {
+    zdo = zdo.Clone();
+    if (smart) {
+      zdo.m_vec3?.Remove("scale".GetStableHashCode());
+      zdo.m_ints?.Remove(Hash.Seed);
+      zdo.m_ints?.Remove(Hash.Location);
+      if (zdo.m_strings != null && zdo.m_strings.ContainsKey(Hash.OverrideItems)) {
+        zdo.m_ints?.Remove(Hash.AddedDefaultItems);
+        zdo.m_strings?.Remove(Hash.Items);
+      }
+    }
+    var num = 0;
+    if (zdo.m_floats != null && zdo.m_floats.Count > 0)
+      num |= 1;
+    if (zdo.m_vec3 != null && zdo.m_vec3.Count > 0)
+      num |= 2;
+    if (zdo.m_quats != null && zdo.m_quats.Count > 0)
+      num |= 4;
+    if (zdo.m_ints != null && zdo.m_ints.Count > 0)
+      num |= 8;
+    if (zdo.m_strings != null && zdo.m_strings.Count > 0)
+      num |= 16;
+    if (zdo.m_longs != null && zdo.m_longs.Count > 0)
+      num |= 64;
+    if (zdo.m_byteArrays != null && zdo.m_byteArrays.Count > 0)
+      num |= 128;
+
+    pkg.Write(num);
+    if (zdo.m_floats != null && zdo.m_floats.Count > 0) {
+      pkg.Write((byte)zdo.m_floats.Count);
+      foreach (var kvp in zdo.m_floats) {
+        pkg.Write(kvp.Key);
+        pkg.Write(kvp.Value);
+      }
+    }
+    if (zdo.m_vec3 != null && zdo.m_vec3.Count > 0) {
+      pkg.Write((byte)zdo.m_vec3.Count);
+      foreach (var kvp in zdo.m_vec3) {
+        pkg.Write(kvp.Key);
+        pkg.Write(kvp.Value);
+      }
+    }
+    if (zdo.m_quats != null && zdo.m_quats.Count > 0) {
+      pkg.Write((byte)zdo.m_quats.Count);
+      foreach (var kvp in zdo.m_quats) {
+        pkg.Write(kvp.Key);
+        pkg.Write(kvp.Value);
+      }
+    }
+    if (zdo.m_ints != null && zdo.m_ints.Count > 0) {
+      pkg.Write((byte)zdo.m_ints.Count);
+      foreach (var kvp in zdo.m_ints) {
+        pkg.Write(kvp.Key);
+        pkg.Write(kvp.Value);
+      }
+    }
+    if (zdo.m_longs != null && zdo.m_longs.Count > 0) {
+      pkg.Write((byte)zdo.m_longs.Count);
+      foreach (var kvp in zdo.m_longs) {
+        pkg.Write(kvp.Key);
+        pkg.Write(kvp.Value);
+      }
+    }
+    if (zdo.m_strings != null && zdo.m_strings.Count > 0) {
+      pkg.Write((byte)zdo.m_strings.Count);
+      foreach (var kvp in zdo.m_strings) {
+        pkg.Write(kvp.Key);
+        pkg.Write(kvp.Value);
+      }
+    }
+    if (zdo.m_byteArrays != null && zdo.m_byteArrays.Count > 0) {
+      pkg.Write((byte)zdo.m_byteArrays.Count);
+      foreach (var kvp in zdo.m_byteArrays) {
+        pkg.Write(kvp.Key);
+        pkg.Write(kvp.Value);
+      }
+    }
+  }
+  private static string CopyData(ZNetView obj, string value) {
+    var zdo = obj.GetZDO();
+    ZPackage pkg = new();
+    Serialize(zdo, pkg, value != "all");
+    var str = pkg.GetBase64();
+    if (str == "AAAAAA==") str = "";
+    GUIUtility.systemCopyBuffer = str;
+    return str;
+  }
+  private static string PrintData(ZNetView obj, string data) {
     List<string> info = new();
-    var hash = data.GetStableHashCode();
     var zdo = obj.GetZDO();
     info.Add("Id: ¤");
     info.Add($"Owner: {zdo.m_owner}");
     info.Add($"Revision: {zdo.m_dataRevision} + {zdo.m_ownerRevision}");
-    if (zdo.m_vec3?.ContainsKey(hash) == true)
-      info.Add($"{data}: {Helper.PrintVectorXZY(zdo.m_vec3[hash])}");
-    if (zdo.m_quats?.ContainsKey(hash) == true)
-      info.Add($"{data}: {Helper.PrintAngleYXZ(zdo.m_quats[hash])}");
-    if (zdo.m_longs?.ContainsKey(hash) == true)
-      info.Add($"{data}: {zdo.m_longs[hash]}");
-    if (zdo.m_strings?.ContainsKey(hash) == true)
-      info.Add($"{data}: {zdo.m_strings[hash]}");
-    if (zdo.m_ints?.ContainsKey(hash) == true)
-      info.Add($"{data}: {zdo.m_ints[hash]}");
-    if (zdo.m_floats?.ContainsKey(hash) == true)
-      info.Add($"{data}: {zdo.m_floats[hash].ToString("F1")}");
-    if (info.Count < 4)
-      info.Add($"{data}: No data!");
+    if (data != "") {
+      var split = data.Split(',');
+      var hash = split[0].GetStableHashCode();
+      if (zdo.m_vec3?.ContainsKey(hash) == true) {
+        if (split.Length > 1)
+          zdo.Set(hash, Parse.VectorXZY(split, 1));
+        info.Add($"{split[0]}: {Helper.PrintVectorXZY(zdo.m_vec3[hash])}");
+      }
+      if (zdo.m_quats?.ContainsKey(hash) == true) {
+        info.Add($"{split[0]}: {Helper.PrintAngleYXZ(zdo.m_quats[hash])}");
+      }
+      if (zdo.m_longs?.ContainsKey(hash) == true) {
+        if (split.Length > 1)
+          zdo.Set(hash, Parse.Long(split[1]));
+        info.Add($"{data}: {zdo.m_longs[hash]}");
+      }
+      if (zdo.m_strings?.ContainsKey(hash) == true) {
+        if (split.Length > 1)
+          zdo.Set(hash, split[1]);
+        info.Add($"{split[0]}: {zdo.m_strings[hash]}");
+      }
+      if (zdo.m_ints?.ContainsKey(hash) == true) {
+        if (split.Length > 1)
+          zdo.Set(hash, Parse.Int(split[1]));
+        info.Add($"{split[0]}: {zdo.m_ints[hash]}");
+      }
+      if (zdo.m_floats?.ContainsKey(hash) == true) {
+        if (split.Length > 1)
+          zdo.Set(hash, Parse.Float(split[1]));
+        info.Add($"{data}: {zdo.m_floats[hash].ToString("F1")}");
+      }
+      if (info.Count < 4)
+        info.Add($"{split[0]}: No data!");
+    }
     return string.Join(", ", info);
   }
 }

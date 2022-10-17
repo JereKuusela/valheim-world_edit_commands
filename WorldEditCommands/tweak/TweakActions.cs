@@ -74,7 +74,7 @@ public static class TweakActions {
   }
   public static string Items(ZNetView view, string[] value) {
     var str = value.Length == 0 ? null : string.Join("|", value.Select(HashFirst));
-    Actions.SetString(view, str, Hash.Items);
+    Actions.SetString(view, str, Hash.OverrideItems);
     return $"¤ items set to {Print(str)}.";
   }
   public static string SpawnEffect(ZNetView view, string[] value) {

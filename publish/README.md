@@ -24,12 +24,16 @@ Following parameters are available:
 
 - `angle=degrees`: Direction of the rectangle when used with `rect`.
 - `baby`: Prevents offspring from growing up.
+- `copy`: Copies most of the ZDO data to the clipboard. Excludes some data to work better and to reduce data size.
+- `copy=all`: Copies all of the ZDO data to the clipboard.
 - `center`: Sets `rotate` center point at player position.
 - `center=x,z,y`: Overrides the player position and sets `rotate` center point.
 - `chance=number`: Randomly filters included objects. For example 0.5 includes about half of the objects (50%).
 - `creator=player id`: Sets the piece creator. Use 0 for no creator.
 - `circle=number` or `radius=number`: Radius for included objects. If not given, the hovered object is only affected.
 - `connect`: Includes entire structures.
+- `data=[key]`: Prints ZDO data.
+- `data=[key,value]`: Sets ZDO data. The key must already exist in the data.
 - `durability=number` or `health=number`: Sets the current durability for items, the current health for structures and the maximum health for creatures. Very high values like 1E30 turn the target invulnerable (including gravity for structures).
 - `fuel=number`: Sets the fuel amount. Without number, prints the fuel amount.
 - `from=x,z,y`: Same as the `center`.
@@ -362,6 +366,11 @@ Static objects only synchronize their position and rotation when loaded. This me
 This shouldn't cause any issues unless objects are moved long distances (which might cause issues anyways).
 
 # Changelog
+
+- v1.16
+	- Adds a new parameter `copy` to the `object` command to copy zdo data.
+	- Adds a new parameter `data` to the `object` command to print and set zdo data.
+	- Fixes the `discover` parameter of `tweak_runestone` not working.
 
 - v1.15
 	- Adds new commands `tweak_itemstand` for Spawner Tweaks mod.

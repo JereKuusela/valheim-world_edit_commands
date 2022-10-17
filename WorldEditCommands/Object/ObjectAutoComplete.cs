@@ -37,7 +37,9 @@ public class ObjectAutoComplete : SharedObjectAutoComplete {
     NamedParameters = WithSharedParameters(new() {
       "baby",
       "wild",
+      "copy",
       "info",
+      "data",
       "sleep",
       "id",
       "move",
@@ -152,7 +154,20 @@ public class ObjectAutoComplete : SharedObjectAutoComplete {
         "sleep", (int index) => ParameterInfo.Flag("Sleep")
       },
       {
-        "info", (int index) => index == 0 ? ParameterInfo.Create("info or info=<color=yellow>data</color>", "Prints information. If data is given, prints that data entry.") : ParameterInfo.None
+        "info", (int index) => ParameterInfo.Flag("info")
+      },
+      {
+        "data", (int index) => {
+          if (index == 0) return ParameterInfo.Create("data=<color=yellow>key</color> or data=<color=yellow>key,value</color>", "Prints data information. If value is given, sets the data.");
+          if (index == 1) return ParameterInfo.Create("data=key,<color=yellow>value</color>", "Value to set the data.");
+          return ParameterInfo.None;
+        }
+      },
+      {
+        "copy", (int index) => {
+          if (index == 0) return ParameterInfo.Create("copy or copy=<color=yellow>all</color>", "Prints and copies object data to clipboard. By default excludes some data for better results.");
+          return ParameterInfo.None;
+        }
       },
       {
         "id", (int index) => index == 0 ? ParameterInfo.Ids : ParameterInfo.None

@@ -24,6 +24,9 @@
     <Reference Include="UnityEngine.PhysicsModule.dll">
       <HintPath>..\..\Libs\UnityEngine.PhysicsModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.IMGUIModule.dll">
+      <HintPath>..\..\Libs\UnityEngine.IMGUIModule.dll</HintPath>
+    </Reference>
     <Reference Include="0Harmony.dll">
       <HintPath>..\..\Libs\0Harmony.dll</HintPath>
     </Reference>

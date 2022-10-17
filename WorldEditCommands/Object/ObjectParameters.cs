@@ -24,7 +24,8 @@ public class ObjectParameters : SharedObjectParameters {
   public string Event = "";
   public string Status = "";
   public string Weather = "";
-  public string Info = "";
+  public string Data = "";
+  public string Copy = "";
   public Item? Visual = null;
   public float Angle = 0f;
   public long Creator = 0;
@@ -48,6 +49,7 @@ public class ObjectParameters : SharedObjectParameters {
     "level",
     "baby",
     "info",
+    "data",
     "sleep",
     "remove",
     "visual",
@@ -83,6 +85,7 @@ public class ObjectParameters : SharedObjectParameters {
     "respawntime",
     "weather",
     "effect",
+    "copy",
     "status",
     "event",
     "spawnhealth",
@@ -124,7 +127,8 @@ public class ObjectParameters : SharedObjectParameters {
       if (name == "center" || name == "from") Center = Parse.VectorXZY(values);
       if (name == "move") Offset = Parse.VectorZXYRange(value, Vector3.zero);
       if (name == "id") Id = value;
-      if (name == "info") Info = value;
+      if (name == "data") Data = value;
+      if (name == "copy") Copy = value;
       if (name == "collision") {
         Collision = Parse.Boolean(value);
         if (Collision == null) throw new InvalidOperationException("Invalid true/false value for <color=yellow>collision</color>.");

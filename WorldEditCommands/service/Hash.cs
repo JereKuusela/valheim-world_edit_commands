@@ -9,7 +9,8 @@ public static class Hash {
   public static int TriggerNoise = "override_trigger_noise".GetStableHashCode();
   public static int Spawn = "override_spawn".GetStableHashCode();
   public static int OverrideItem = "override_item".GetStableHashCode();
-  public static int Items = "override_items".GetStableHashCode();
+  public static int OverrideItems = "override_items".GetStableHashCode();
+  public static int Items = "items".GetStableHashCode();
   public static int SpawnEffect = "override_spawn_effect".GetStableHashCode();
   public static int UseEffect = "override_use_effect".GetStableHashCode();
   public static int StartEffect = "override_start_effect".GetStableHashCode();
@@ -63,6 +64,7 @@ public static class Hash {
   public static int AliveTime = "alive_time".GetStableHashCode();
   public static int CrafterID = "crafterID".GetStableHashCode();
   public static int CrafterName = "crafterName".GetStableHashCode();
+  public static int AddedDefaultItems = "addedDefaultItems".GetStableHashCode();
   public static int Fuel = "fuel".GetStableHashCode();
   public static int Durability = "durability".GetStableHashCode();
   public static int Sleeping = "sleeping".GetStableHashCode();
