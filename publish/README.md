@@ -77,10 +77,10 @@ Note: Creatures reset their style when attacking.
 - `object move=0,5 origin=world`: Moves the targeted object 5 meters towards east.
 - `object prefab=Wolf`: Changes the targeted object to a wolf.
 - `object rotate=90 center radius=10`: Rotates nearby objects around the player.
-- `alias remove object remove id=$`: Adds a command `remove [object id]` that removes the targeted object if it matches the given object id.
+- `alias remove object remove id=$$`: Adds a command `remove [object id]` that removes the targeted object if it matches the given object id.
 - `alias remove object remove id=*`: Adds a command `remove` that removes the targeted object without having to specify the id.
-- `alias remove50 object remove radius=50 id=$`: Adds a command `remove50 [object id]` that removes the given objects within 50 meters.
-- `alias essential object tame health=1E30 radius=$ id=$`: Adds a command `essential [radius] [object id]` that tames and turns objects invulnerable within a given radius and with a given id. If radius and id is not given, then affects the hovered object.
+- `alias remove50 object remove radius=50 id=$$`: Adds a command `remove50 [object id]` that removes the given objects within 50 meters.
+- `alias essential object tame health=1E30 radius=$$ id=$$`: Adds a command `essential [radius] [object id]` that tames and turns objects invulnerable within a given radius and with a given id. If radius and id is not given, then affects the hovered object.
 
 ### Structure Tweaks mod
 
@@ -248,7 +248,7 @@ Note: Creatures reset their style when attacking.
 - `spawn_object Rock_4 scale=0.5-5 rot=0-360 amount=200 radius=100`: Spawns 200 rocks with a random rotation and a random scale.
 - `spawn_object Wolf star=0-2 amount=5 radius=20`: Spawns 5 wolves with random stars from 0 to 2.
 - `spawn_object PickaxeIron refPlayer=Jay`: Spawns an iron pickaxe at the position of a player called Jay.
-- `alias spawn spawn_object $ amount=$ level=$`: Upgrades the default `spawn` command with undo/redo.
+- `alias spawn spawn_object $$ amount=$$ level=$$`: Upgrades the default `spawn` command with undo/redo.
 
 ## Spawn location
 
@@ -322,8 +322,8 @@ Following parameters are available:
 - `terrain from=-23,23 angle=e rect=5 slope=4 step=1 level`: Creates a level at the end of the slope.
 - `terrain from=-23,23 angle=e rect=5 slope=4,e step=1,1`: Creates a slope at right side of the level rising towards south (east of east).
 - `terrain from=-23,23 angle=e rect=5 slope=4 step=1,2,1 level`: Creates a level at the end of the slope. The last parameter of step is needed because the slope is not going to the original direction so it won't be raised automatically.
-- `alias level terrain level circle=$`: New command `level [value]` for easier leveling.
-- `alias level terrain level rect=$`: New command `level_sq [value]` for easier leveling.
+- `alias level terrain level circle=$$`: New command `level [value]` for easier leveling.
+- `alias level terrain level rect=$$`: New command `level_sq [value]` for easier leveling.
 
 # Mechanics
 
@@ -366,6 +366,9 @@ Static objects only synchronize their position and rotation when loaded. This me
 This shouldn't cause any issues unless objects are moved long distances (which might cause issues anyways).
 
 # Changelog
+
+- v1.17
+	- Changes the `world_edit_aliases` command to use the substitution value from Server Devcommands mod (internal change).
 
 - v1.16
 	- Adds a new parameter `copy` to the `object` command to copy zdo data.
