@@ -82,10 +82,14 @@ Note: Creatures reset their style when attacking.
 - `alias remove50 object remove radius=50 id=$$`: Adds a command `remove50 [object id]` that removes the given objects within 50 meters.
 - `alias essential object tame health=1E30 radius=$$ id=$$`: Adds a command `essential [radius] [object id]` that tames and turns objects invulnerable within a given radius and with a given id. If radius and id is not given, then affects the hovered object.
 
-### Structure Tweaks mod
+## Spawner Tweaks / Structure Tweaks mods
 
-New parameters to the `object` command.
+Some new commands are added if these mods are installed. They all start with the `tweak_` prefix.
 
+All values can be reseted by providing no value to the parameter. `force` parameter automatically adds the component if missing.
+
+`tweak_object`:
+- `component=name`: Adds behavior.
 - `effect=radius,id`: Adds forced effect area (heat, fire, player base, burning, no monsters, warm cozy area).
 - `event=radius,id`: Adds forced random event area.
 - `collision=true/false`: Sets whether the object has collision. No value to toggle.
@@ -96,14 +100,15 @@ New parameters to the `object` command.
 - `status=radius,id`: Adds forced status effect area.
 - `wear=broken/damaged/healthy`: Overrides the object visual wear.
 - `weather=radius,id,instant`: Adds forced weather area. If third parameter is given, the weather changes instantly.
-
-Five new commands that share many parameters with the `object` command.
-
-All values can be reseted by providing no value to the parameter. `force` parameter automatically adds the component if missing.
+- `water=name,x,z,y`: Adds a water surface.
 
 `tweak_chest`:
 - `name=text`: Display name. Use _ as the space.
 - `unlock=true/false`: Allows ignoring wards. No value to toggle.
+
+`tweak_creature`:
+- `affix=name`: Sets the CLLC affix (if CLLC is installed).
+- `faction=text`:  Determines which creatures are considered hostile.
 
 `tweak_door`:
 - `unlock=true/false`: Allows ignoring wards. No value to toggle.
@@ -217,7 +222,7 @@ Following parameters are available:
 - `crafter=value` or `name=value`: Name of the crafter for items or name for tamed creatures (that support naming). Character _ is replaced with a space bar.
 - `durability=number` or `health=number`: Overrides the current durability for items, the current health for structures and the maximum health for creatures. Very high values like 1E30 turn the target invulnerable (including gravity for structures).
 - `from=x,z,y`: Allows overriding the player's position for the command. Used by `redo` and can be useful for some advanced usage.
-- `hunt`: Spawned creatures are in the hunt mode.
+- `hunt=true/false`: Spawned creatures are in the hunt mode.
 - `level=integer`: Spawned creatures have this amount of level (level = stars + 1).
 - `pos=forward,right,up`: Relative position (meters) from the player. If not given, the objects are spawned 2 meters front of the player. If y coordinate is not given, the objects snaps to the ground.
 - `radius=number`: Maximum spawn distance when spawning multiple objects. Default is 0.5 meters.
@@ -226,7 +231,7 @@ Following parameters are available:
 - `rot=yaw,roll,pick`: Relative rotation (degrees) from the player's rotation.
 - `scale=x,z,y`: Scale for the spawned objects (which support it). A single value sets all of the scales.
 - `stars=integer`: Spawned creatures have this amount of stars (stars = level - 1).
-- `tame`: Spawned creatures are tamed.
+- `tame=true/false`: Spawned creatures are tamed.
 - `to=x,z,y`: Distributes the objects between the player and target position.
 - `variant=integer`: Style/variant for some spawned items.
 

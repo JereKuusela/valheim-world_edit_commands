@@ -10,7 +10,6 @@ public class TweakObjectCommand : TweakCommand {
     if (operation == "wear") return TweakActions.Wear(view, value);
     if (operation == "growth") return TweakActions.Growth(view, value);
     if (operation == "component") return TweakActions.Component(view, value);
-    if (operation == "smoke") return TweakActions.Smoke(view, value);
     if (operation == "status") return TweakActions.Status(view, value);
     if (operation == "event") return TweakActions.Event(view, value);
     if (operation == "effect") return TweakActions.Effect(view, value);
@@ -94,7 +93,6 @@ public class TweakObjectCommand : TweakCommand {
     SupportedOperations.Add("wear", typeof(string));
     SupportedOperations.Add("growth", typeof(string));
     SupportedOperations.Add("water", typeof(string));
-    SupportedOperations.Add("smoke", typeof(string));
 
     AutoComplete.Add("component", (int index) => Components);
     AutoComplete.Add("status", (int index) => index == 0 ? ParameterInfo.Create("status=<color=yellow>radius</color>,id", "Adds status area.") : index == 1 ? ParameterInfo.StatusEffects : ParameterInfo.None);
@@ -108,7 +106,6 @@ public class TweakObjectCommand : TweakCommand {
     AutoComplete.Add("wear", (int index) => index == 0 ? Wears : ParameterInfo.None);
     AutoComplete.Add("growth", (int index) => index == 0 ? Growths : ParameterInfo.None);
     AutoComplete.Add("water", (int index) => index == 0 ? Waters : ParameterInfo.XZY("water", "Scale", index - 1));
-    AutoComplete.Add("smoke", (int index) => index == 0 ? Smokes : ParameterInfo.XZY("water", "Scale", index - 1));
     Init("tweak_object", "Modify objects");
   }
 }
