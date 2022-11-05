@@ -24,7 +24,7 @@ public class SpawnObjectAutoComplete : SharedObjectAutoComplete {
     }, WithSharedFetchers(new() {
       {
         "hunt",
-        (int index) => ParameterInfo.Flag("Hunt")
+        (int index) => index == 0 ? ParameterInfo.Create("hunt=<color=yellow>true/false</color> or no value for default.", "Sets is the creature in aggressive mode.") : ParameterInfo.None
       },
       {
         "name",

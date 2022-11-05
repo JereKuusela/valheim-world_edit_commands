@@ -1,6 +1,37 @@
+using System;
 using System.Linq;
 
 namespace WorldEditCommands;
+
+public enum Growth {
+  Default,
+  HealthyGrown,
+  UnhealthyGrown,
+  Healthy,
+  Unhealthy
+}
+public enum Wear {
+  Default,
+  Broken,
+  Damaged,
+  Healthy
+}
+public enum Fall {
+  Default,
+  Off,
+  Terrain,
+  Solid
+}
+public enum BossAffix {
+  None,
+  Reflective,
+  Shielded,
+  Mending,
+  Summoner,
+  Elementalist,
+  Enraged,
+  Twin
+}
 public static class TweakActions {
   private const string DEFAULT = "default";
   private static string HashFirst(string value) {
@@ -11,6 +42,81 @@ public static class TweakActions {
 
   private static string Print<T>(T? value) => value == null ? DEFAULT : value.ToString();
 
+  public static string Render(ZNetView view, bool? value) {
+    value = Actions.ToggleBool(view, value, Hash.Render);
+    return $"¤ render set to {Print(value)}.";
+  }
+  public static string Interact(ZNetView view, bool? value) {
+    value = Actions.ToggleBool(view, value, Hash.Interact);
+    return $"¤ interact set to {Print(value)}.";
+  }
+  public static string Collision(ZNetView view, bool? value) {
+    value = Actions.ToggleBool(view, value, Hash.Collision);
+    return $"¤ collision set to {Print(value)}.";
+  }
+  public static string Wear(ZNetView view, string? value) {
+    Actions.SetInt(view, WearNumber(value), Hash.Wear);
+    return $"¤ wear set to {Print(value)}.";
+  }
+  private static int WearNumber(string? wear) {
+    if (wear == "broken") return 0;
+    if (wear == "damaged") return 1;
+    if (wear == "healthy") return 2;
+    return -1;
+  }
+
+  public static string Status(ZNetView view, string? value) {
+    Actions.SetString(view, value, Hash.Status);
+    return $"¤ status set to {Print(value)}.";
+  }
+  public static string Event(ZNetView view, string? value) {
+    Actions.SetString(view, value, Hash.Event);
+    return $"¤ event set to {Print(value)}.";
+  }
+  public static string Effect(ZNetView view, string? value) {
+    Actions.SetString(view, value, Hash.Effect);
+    return $"¤ effect set to {Print(value)}.";
+  }
+  public static string Weather(ZNetView view, string? value) {
+    Actions.SetString(view, value, Hash.Weather);
+    return $"¤ weather set to {Print(value)}.";
+  }
+  public static string Water(ZNetView view, string? value) {
+    Actions.SetString(view, value, Hash.Water);
+    return $"¤ water set to {Print(value)}.";
+  }
+
+  public static string Fall(ZNetView view, string? value) {
+    Actions.SetInt(view, FallNumber(value), Hash.Fall);
+    return $"¤ fall set to {Print(value)}.";
+  }
+  private static int FallNumber(string? fall) {
+    if (fall == null) return -1;
+    if (fall == "off") return 0;
+    if (fall == "terrain") return 1;
+    if (fall == "solid") return 2;
+    return -1;
+  }
+  public static string Growth(ZNetView view, string? value) {
+    var number = GrowthNumber(value);
+    Actions.SetInt(view, number, Hash.Growth);
+    var time = number < 0 ? ZNet.instance.GetTime().Ticks : DateTime.MaxValue.Ticks / 2L;
+    view.GetZDO().Set(Hash.PlantTime, time);
+    return $"¤ growth set to {Print(value)}.";
+  }
+  private static int GrowthNumber(string? growth) {
+    if (growth == "big") return 0;
+    if (growth == "big_bad") return 1;
+    if (growth == "small") return 2;
+    if (growth == "small_bad") return 3;
+    return -1;
+  }
+
+  public static string Component(ZNetView view, string? value) {
+    Actions.SetString(view, value, Hash.Component);
+    return $"¤ component set to {Print(value)}.";
+  }
+
   public static string Restrict(ZNetView view, bool? value) {
     Actions.SetBool(view, value, Hash.Restrict);
     return $"¤ restrict set to {Print(value)}.";
@@ -20,11 +126,17 @@ public static class TweakActions {
     return $"¤ unlock set to {Print(value)}.";
   }
   public static string Smoke(ZNetView view, string? value) {
-    bool? val = null;
-    if (value == "off") val = false;
-    if (value == "ignore") val = true;
-    Actions.SetBool(view, val, Hash.Smoke);
-    return $"¤ restrict set to {Print(value)}.";
+    int val = -1;
+    if (value == "off") val = 0;
+    if (value == "ignore") val = 1;
+    Actions.SetInt(view, val, Hash.Smoke);
+    return $"¤ smoke set to {Print(value)}.";
+  }
+  public static string CLLC(ZNetView view, string? value) {
+    var cllc = BossAffix.None;
+    Enum.TryParse<BossAffix>(value, true, out cllc);
+    Actions.SetInt(view, (int)cllc, Hash.CLLC_Affix);
+    return $"¤ affix set to {Print(value)}.";
   }
   public static string Spawn(ZNetView view, string? value) {
     Actions.SetPrefab(view, value, Hash.Spawn);

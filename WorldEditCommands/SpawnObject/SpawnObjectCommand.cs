@@ -50,12 +50,18 @@ public class SpawnObjectCommand {
   private static void Manipulate(IEnumerable<GameObject> spawned, SpawnObjectParameters pars, int total) {
     foreach (var obj in spawned) {
       var rotation = pars.BaseRotation * Quaternion.Euler(Helper.RandomValue(pars.Rotation));
-      Actions.SetLevel(obj, Helper.RandomValue(pars.Level));
-      Actions.SetHealth(obj, Helper.RandomValue(pars.Health));
-      Actions.SetVariant(obj, Helper.RandomValue(pars.Variant));
-      Actions.SetName(obj, pars.Name);
-      Actions.SetHunt(obj, pars.Hunt);
-      Actions.SetTame(obj, pars.Tamed);
+      if (pars.Level != null)
+        Actions.SetLevel(obj, Helper.RandomValue(pars.Level));
+      if (pars.Health != null)
+        Actions.SetHealth(obj, Helper.RandomValue(pars.Health));
+      if (pars.Variant != null)
+        Actions.SetVariant(obj, Helper.RandomValue(pars.Variant));
+      if (pars.Name != null)
+        Actions.SetName(obj, pars.Name);
+      if (pars.Hunt.HasValue)
+        Actions.SetHunt(obj, pars.Hunt.Value);
+      if (pars.Tamed.HasValue)
+        Actions.SetTame(obj, pars.Tamed.Value);
       total -= Actions.SetStack(obj, total);
       Actions.SetRotation(obj, rotation);
       Actions.SetScale(obj, Helper.RandomValue(pars.Scale));
@@ -66,7 +72,8 @@ public class SpawnObjectCommand {
       Actions.SetVisual(obj, VisSlot.Utility, pars.Utility);
       Actions.SetVisual(obj, VisSlot.HandLeft, pars.LeftHand);
       Actions.SetVisual(obj, VisSlot.HandRight, pars.RightHand);
-      Actions.SetModel(obj, Helper.RandomValue(pars.Model));
+      if (pars.Model != null)
+        Actions.SetModel(obj, Helper.RandomValue(pars.Model));
       if (pars.Helmet != null || pars.Chest != null || pars.Shoulders != null || pars.Legs != null || pars.Utility != null || pars.LeftHand != null || pars.RightHand != null) {
         var zdo = obj.GetComponent<ZNetView>()?.GetZDO();
         // Temporarily losing the ownership prevents default items replacing the set items.

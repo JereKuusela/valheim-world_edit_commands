@@ -55,7 +55,7 @@ public static class Selector {
       var netView = hit.collider.GetComponentInParent<ZNetView>();
       if (!IsValid(netView)) continue;
       if (blacklist != null && blacklist.Contains(Utils.GetPrefabName(netView.gameObject).ToLower())) continue;
-      if (hit.collider.GetComponent<EffectArea>() is { } area) continue;
+      if (hit.collider.TryGetComponent<EffectArea>(out var area)) continue;
       var player = netView.GetComponentInChildren<Player>();
       if (player == obj) continue;
       if (!allowOtherPlayers && player) continue;

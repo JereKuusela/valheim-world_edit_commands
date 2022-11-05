@@ -21,6 +21,7 @@ public abstract class TweakCommand {
   protected abstract string DoOperation(ZNetView view, string operation, int? value);
   protected abstract string DoOperation(ZNetView view, string operation, bool? value);
   protected virtual Dictionary<string, object?> Postprocess(ZNetView view, Dictionary<string, object?> operations) => operations;
+  protected virtual void Postprocess(GameObject obj) { }
 
   private void Execute(Terminal context, float chance, bool force, Dictionary<string, object?> operations, ZNetView[] views) {
     var scene = ZNetScene.instance;
@@ -34,9 +35,9 @@ public abstract class TweakCommand {
         context.AddString($"Skipped: {view.name} (chance).");
         return false;
       }
-      if (!view.GetComponentInChildren(Component)) {
+      if (ComponentName != "" && !view.GetComponentInChildren(Component)) {
         if (force) {
-          Actions.SetComponent(view, ComponentName, false);
+          TweakActions.Component(view, ComponentName);
           return true;
         }
         context.AddString($"Skipped: {view.name} doesn't have the component.");
@@ -80,7 +81,7 @@ public abstract class TweakCommand {
     foreach (var view in views) {
       if (!view || view.GetZDO() == null || !view.GetZDO().IsValid() || !oldOwner.ContainsKey(view.GetZDO().m_uid)) continue;
       view.GetZDO().SetOwner(oldOwner[view.GetZDO().m_uid]);
-      Actions.Refresh(view);
+      Postprocess(Actions.Refresh(view));
     }
     if (EditedInfo.Count > 0) {
       UndoEdit undo = new(EditedInfo.Select(info => info.Value.ToData()));

@@ -9,11 +9,11 @@ class SpawnObjectParameters : SharedObjectParameters {
   public Vector3 From;
   public Vector3? To = null;
   public Range<int> Amount = new(1);
-  public string Name = "";
-  public Range<int> Variant = new(0);
+  public string? Name;
+  public Range<int>? Variant;
   public bool Snap = true;
-  public bool Tamed = false;
-  public bool Hunt = false;
+  public bool? Tamed;
+  public bool? Hunt;
   public bool UseDefaultRelativePosition = true;
 
   public SpawnObjectParameters(Terminal.ConsoleEventArgs args) {
@@ -41,6 +41,10 @@ class SpawnObjectParameters : SharedObjectParameters {
         Variant = Parse.IntRange(value, 0);
       if (name == "amount")
         Amount = Parse.IntRange(value);
+      if (name == "hunt")
+        Hunt = Parse.Boolean(value);
+      if (name == "tame" || name == "tamed")
+        Tamed = Parse.Boolean(value);
       if (name == "refrot" || name == "refrotation") {
         BaseRotation = Parse.AngleYXZ(value, BaseRotation);
       }

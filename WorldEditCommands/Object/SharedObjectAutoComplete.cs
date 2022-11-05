@@ -35,7 +35,7 @@ public class SharedObjectAutoComplete {
     NamedOptionsFetchers baseFetchers = new() {
       {
         "tame",
-        (int index) => ParameterInfo.Flag("Tame")
+        (int index) => index == 0 ? ParameterInfo.Create("tame=<color=yellow>true/false</color> or no value for default.", "Sets is the creature tamed.") : ParameterInfo.None
       },
       {
         "left_hand",

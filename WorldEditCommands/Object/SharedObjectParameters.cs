@@ -12,8 +12,8 @@ public class Item {
 }
 public class SharedObjectParameters {
   public Range<Vector3> Scale = new(Vector3.one);
-  public Range<int> Level = new(1);
-  public Range<float> Health = new(0f);
+  public Range<int>? Level;
+  public Range<float>? Health;
   public Item? Helmet = null;
   public Item? LeftHand = null;
   public Item? RightHand = null;
@@ -22,7 +22,7 @@ public class SharedObjectParameters {
   public Item? Legs = null;
   public Item? Utility = null;
   public float? Radius = null;
-  public Range<int> Model = new(0);
+  public Range<int>? Model;
 
   protected virtual void ParseArgs(string[] args) {
     foreach (var arg in args) {

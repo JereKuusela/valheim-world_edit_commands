@@ -3,35 +3,9 @@ using ServerDevcommands;
 namespace WorldEditCommands;
 public class ObjectAutoComplete : SharedObjectAutoComplete {
   public List<string> NamedParameters;
-  public static List<string> Wears = new() {
-      "default",
-      "broken",
-      "damaged",
-      "healthy"
-  };
-  public static List<string> Growths = new() {
-      "big",
-      "big_bad",
-      "default",
-      "small",
-      "small_bad"
-  };
   public static List<string> ObjectTypes = new() {
       "creature",
       "structure"
-  };
-  public static List<string> FallTypes = new() {
-      "off",
-      "solid",
-      "terrain"
-  };
-  public static List<string> Components = new() {
-      "altar",
-      "pickable",
-      "spawner",
-      "spawnpoint",
-      "runestone",
-      "chest"
   };
   public ObjectAutoComplete() {
     NamedParameters = WithSharedParameters(new() {
@@ -56,15 +30,11 @@ public class ObjectAutoComplete : SharedObjectAutoComplete {
       "rect",
       "angle",
       "creator",
-      "growth",
-      "wear",
       "chance",
-      "collision",
       "show",
       "interact",
       "type",
       "fall",
-      "restrict",
       "connect",
       "minlevel",
       "maxlevel",
@@ -72,33 +42,10 @@ public class ObjectAutoComplete : SharedObjectAutoComplete {
       "spawn",
       "spawnhealth",
       "respawntime",
-      "status",
-      "effect",
-      "event",
-      "weather",
       "spawnitem",
       "component"
     });
     AutoComplete.Register(ObjectCommand.Name, (int index) => NamedParameters, WithSharedFetchers(new() {
-      {
-        "status", (int index) => index == 0 ? ParameterInfo.Create("status=<color=yellow>radius</color>,id", "Adds status area.") : index == 1 ? ParameterInfo.StatusEffects : ParameterInfo.None
-      },
-      {
-        "effect", (int index) => index == 0 ? ParameterInfo.Create("effect=<color=yellow>radius</color>,id", "Adds effect area."): index == 1 ? ParameterInfo.EffectAreas : ParameterInfo.None
-      },
-      {
-        "weather", (int index) => index == 0 ? ParameterInfo.Create("weather=<color=yellow>radius</color>,id,instant", "Adds weather area.") : index == 1 ? ParameterInfo.Environments : index == 2
-          ? ParameterInfo.Create("weather=radius,id,<color=yellow>instant</color>", "Adds weather area.") : ParameterInfo.None
-      },
-      {
-        "event", (int index) => index == 0 ? ParameterInfo.Create("event=<color=yellow>radius</color>,id", "Adds event area.") : index == 1 ? ParameterInfo.Events : ParameterInfo.None
-      },
-      {
-        "component", (int index) => Components
-      },
-      {
-        "collision", (int index) => ParameterInfo.Create("collision=<color=yellow>true/false</color> or no value to toggle.", "Sets object collision.")
-      },
       {
         "minlevel", (int index) => ParameterInfo.Create("minlevel=<color=yellow>number</color> (-1 to reset).", "Sets the minimum level of spawn points.")
       },
@@ -121,19 +68,10 @@ public class ObjectAutoComplete : SharedObjectAutoComplete {
         "spawnitem", (int index) => index == 0 ? ParameterInfo.ItemIds : ParameterInfo.None
       },
       {
-        "fall", (int index) => index == 0 ? FallTypes : ParameterInfo.None
-      },
-      {
         "type", (int index) => index == 0 ? ObjectTypes : ParameterInfo.None
       },
       {
         "connect", (int index) => ParameterInfo.Flag("Connect")
-      },
-      {
-        "show", (int index) => ParameterInfo.Create("show=<color=yellow>true/false</color> or no value to toggle.", "Sets object visibility.")
-      },
-      {
-        "interact", (int index) => ParameterInfo.Create("interact=<color=yellow>true/false</color> or no value to toggle.", "Sets object interactability.")
       },
       {
         "baby", (int index) => ParameterInfo.Flag("Baby")
@@ -233,14 +171,6 @@ public class ObjectAutoComplete : SharedObjectAutoComplete {
       {
         "chance",
         (int index) => index == 0 ? ParameterInfo.Create("chance=<color=yellow>number</color>", "Chance to affect the object (from 0.0 to 1.0).") : ParameterInfo.None
-      },
-      {
-        "wear",
-        (int index) => index == 0 ? Wears : ParameterInfo.None
-      },
-      {
-        "growth",
-        (int index) => index == 0 ? Growths : ParameterInfo.None
       },
     }));
   }

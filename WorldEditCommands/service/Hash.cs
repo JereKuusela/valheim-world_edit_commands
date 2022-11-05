@@ -2,6 +2,7 @@ public static class Hash {
   public static int PlantTime = "plantTime".GetStableHashCode();
   public static int Status = "override_status".GetStableHashCode();
   public static int Weather = "override_weather".GetStableHashCode();
+  public static int Water = "override_water".GetStableHashCode();
   public static int Event = "override_event".GetStableHashCode();
   public static int Effect = "override_effect".GetStableHashCode();
   public static int Respawn = "override_respawn".GetStableHashCode();
@@ -50,6 +51,7 @@ public static class Hash {
   public static int Collision = "override_collision".GetStableHashCode();
   public static int Restrict = "override_restrict".GetStableHashCode();
   public static int Smoke = "override_smoke".GetStableHashCode();
+  public static int CLLC_Affix = "CL&LC effect".GetStableHashCode();
   public static int Unlock = "override_unlock".GetStableHashCode();
   public static int Health = "health".GetStableHashCode();
   public static int Level = "level".GetStableHashCode();

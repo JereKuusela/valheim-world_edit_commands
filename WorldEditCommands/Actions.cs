@@ -3,29 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 namespace WorldEditCommands;
-public enum Growth {
-  Default,
-  HealthyGrown,
-  UnhealthyGrown,
-  Healthy,
-  Unhealthy
-}
-public enum Wear {
-  Default,
-  Broken,
-  Damaged,
-  Healthy
-}
-public enum Fall {
-  Default,
-  Off,
-  Terrain,
-  Solid
-}
+
 public static class Actions {
-  public static void SetCollision(ZNetView obj, bool? value) {
-    ToggleBool(obj, value, Hash.Collision, true);
-  }
+
   public static void SetBool(ZNetView obj, bool? value, int hash, bool refresh = false) {
     var number = value.HasValue ? value.Value ? 1 : 0 : -1;
     obj.GetZDO().Set(hash, number);
@@ -47,29 +27,6 @@ public static class Actions {
     return newObj;
   }
   public static GameObject Refresh(ZNetView view) => Refresh(view.GetZDO(), view.gameObject);
-  public static void SetRender(ZNetView obj, bool? value) {
-    ToggleBool(obj, value, Hash.Render, true);
-  }
-  public static void SetInteract(ZNetView obj, bool? value) {
-    ToggleBool(obj, value, Hash.Interact, true);
-  }
-  public static void SetWear(GameObject obj, Wear wear) {
-    SetWear(obj.GetComponent<WearNTear>(), wear);
-  }
-  private static int WearNumber(Wear wear) {
-    if (wear == Wear.Broken) return 0;
-    if (wear == Wear.Damaged) return 1;
-    if (wear == Wear.Healthy) return 2;
-    return -1;
-  }
-  public static void SetWear(WearNTear obj, Wear wear) {
-    if (!obj) return;
-    var number = WearNumber(wear);
-    obj.m_nview.GetZDO().Set(Hash.Wear, number);
-    Refresh(obj.m_nview);
-  }
-
-  public static void SetComponent(ZNetView obj, string name, bool refresh = true) => SetString(obj, name, Hash.Component, refresh);
   public static void SetFloat(ZNetView obj, float? value, int hash, bool refresh = false) {
     if (!obj) return;
     obj.GetZDO().Set(hash, value ?? -1f);
@@ -101,48 +58,7 @@ public static class Actions {
     if (refresh)
       Refresh(obj);
   }
-  public static void SetStatus(ZNetView obj, string value) => SetString(obj, value, Hash.Status, true);
-  public static void SetEvent(ZNetView obj, string value) => SetString(obj, value, Hash.Event, true);
-  public static void SetEffect(ZNetView obj, string value) => SetString(obj, value, Hash.Effect, true);
-  public static void SetWeather(ZNetView obj, string value) => SetString(obj, value, Hash.Weather, true);
 
-  public static void SetFall(GameObject obj, Fall fall) {
-    SetFall(obj.GetComponent<StaticPhysics>(), fall);
-  }
-  private static int FallNumber(Fall fall) {
-    if (fall == Fall.Off) return 0;
-    if (fall == Fall.Terrain) return 1;
-    if (fall == Fall.Solid) return 2;
-    return -1;
-  }
-  public static void SetFall(StaticPhysics obj, Fall fall) {
-    if (!obj) return;
-    var number = FallNumber(fall);
-    obj.m_nview.GetZDO().Set(Hash.Fall, number);
-    var newObj = Refresh(obj.m_nview);
-    if (newObj.GetComponent<StaticPhysics>() is { } sp) {
-      sp.m_createTime = Time.time - 30f;
-      sp.SUpdate();
-    }
-  }
-  public static void SetGrowth(GameObject obj, Growth growth) {
-    SetGrowth(obj.GetComponent<Plant>(), growth);
-  }
-  private static int GrowthNumber(Growth growth) {
-    if (growth == Growth.Healthy) return 0;
-    if (growth == Growth.Unhealthy) return 1;
-    if (growth == Growth.HealthyGrown) return 2;
-    if (growth == Growth.UnhealthyGrown) return 3;
-    return -1;
-  }
-  public static void SetGrowth(Plant obj, Growth growth) {
-    if (!obj) return;
-    var number = GrowthNumber(growth);
-    obj.m_nview.GetZDO().Set(Hash.Growth, number);
-    var time = number < 0 ? ZNet.instance.GetTime().Ticks : DateTime.MaxValue.Ticks / 2L;
-    obj.m_nview.GetZDO().Set(Hash.PlantTime, time);
-    obj.m_updateTime = 0f;
-  }
   public static void SetTame(GameObject obj, bool tame) {
     SetTame(obj.GetComponent<Character>(), tame);
   }
@@ -310,7 +226,7 @@ public static class Actions {
   }
 
   public static float SetCreator(GameObject obj, long creator) {
-    if (obj.GetComponent<Piece>() is { } piece) return SetCreator(piece, creator);
+    if (obj.TryGetComponent<Piece>(out var piece)) return SetCreator(piece, creator);
     return 0;
   }
   public static long SetCreator(Piece obj, long creator) {

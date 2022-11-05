@@ -76,16 +76,6 @@ public class ObjectCommand {
           output = MakeWild(view);
         if (operation == "baby")
           output = SetBaby(view);
-        if (operation == "component")
-          output = Component(view, pars.Component);
-        if (operation == "effect")
-          output = Effect(view, pars.Effect);
-        if (operation == "weather")
-          output = Weather(view, pars.Weather);
-        if (operation == "event")
-          output = Event(view, pars.Event);
-        if (operation == "status")
-          output = Status(view, pars.Status);
         if (operation == "respawn")
           output = Respawn(view);
         if (operation == "info")
@@ -116,18 +106,6 @@ public class ObjectCommand {
           output = SetUtility(view, pars.Utility);
         if (operation == "prefab")
           output = SetPrefab(view, pars.Prefab);
-        if (operation == "collision")
-          output = SetCollision(view, pars.Collision);
-        if (operation == "interact")
-          output = SetInteract(view, pars.Interact);
-        if (operation == "show")
-          output = SetRender(view, pars.Show);
-        if (operation == "wear")
-          output = SetWear(view, pars.Wear);
-        if (operation == "fall")
-          output = SetFall(view, pars.Fall);
-        if (operation == "growth")
-          output = SetGrowth(view, pars.Growth);
         if (operation == "move")
           output = Move(view, Helper.RandomValue(pars.Offset), pars.Origin);
         if (operation == "mirror" && pars.Center.HasValue)
@@ -269,31 +247,6 @@ public class ObjectCommand {
     return "¤ respawned.";
   }
   private const string DEFAULT = "default";
-  private static string Component(ZNetView view, string value) {
-    AddData(view, true);
-    Actions.SetComponent(view, value);
-    return $"¤ component set to {(value == "" ? DEFAULT : value)}.";
-  }
-  private static string Effect(ZNetView view, string value) {
-    AddData(view, true);
-    Actions.SetEffect(view, value);
-    return $"¤ effect set to {value}.";
-  }
-  private static string Weather(ZNetView view, string value) {
-    AddData(view, true);
-    Actions.SetWeather(view, value);
-    return $"¤ weather set to {value}.";
-  }
-  private static string Event(ZNetView view, string value) {
-    AddData(view, true);
-    Actions.SetEvent(view, value);
-    return $"¤ event set to {value}.";
-  }
-  private static string Status(ZNetView view, string value) {
-    AddData(view, true);
-    Actions.SetStatus(view, value);
-    return $"¤ status set to {value}.";
-  }
   private static string MakeTame(ZNetView view) {
     var obj = view.GetComponent<Character>();
     if (!obj) return "Skipped: ¤ is not a creature.";
@@ -327,42 +280,6 @@ public class ObjectCommand {
     if (Actions.SetPrefab(view, prefab))
       return $"Prefab of ¤ set to {prefab}.";
     return $"Error: Prefab of ¤ was not set to {prefab}. Probably invalid prefab name.";
-  }
-  private static string SetWear(ZNetView view, Wear wear) {
-    var obj = view.GetComponent<WearNTear>();
-    if (!obj) return "Skipped: ¤ is not a structure.";
-    AddData(view);
-    Actions.SetWear(obj, wear);
-    return $"Wear of ¤ set to {wear}.";
-  }
-  private static string SetFall(ZNetView view, Fall fall) {
-    var obj = view.GetComponent<StaticPhysics>();
-    if (!obj) return "Skipped: ¤ is not a static object.";
-    AddData(view, true);
-    Actions.SetFall(obj, fall);
-    return $"Fall of ¤ set to {fall}.";
-  }
-  private static string SetCollision(ZNetView view, bool? value) {
-    Actions.SetCollision(view, value);
-    AddData(view, true);
-    return $"Collision of ¤ set to {(value.HasValue ? value.Value : DEFAULT)}.";
-  }
-  private static string SetInteract(ZNetView view, bool? value) {
-    Actions.SetInteract(view, value);
-    AddData(view);
-    return $"Interact of ¤ set to {(value.HasValue ? value.Value : DEFAULT)}.";
-  }
-  private static string SetRender(ZNetView view, bool? value) {
-    Actions.SetRender(view, value);
-    AddData(view, true);
-    return $"Render of ¤ set to {(value.HasValue ? value.Value : DEFAULT)}.";
-  }
-  private static string SetGrowth(ZNetView view, Growth growth) {
-    var obj = view.GetComponent<Plant>();
-    if (!obj) return "Skipped: ¤ is not a plant.";
-    AddData(view);
-    Actions.SetGrowth(obj, growth);
-    return $"Growth of ¤ set to {growth}.";
   }
   private static string SetVisual(ZNetView view, Item? item) {
     if (item == null) return "Skipped: Invalid item.";
