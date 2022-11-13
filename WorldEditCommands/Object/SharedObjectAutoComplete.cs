@@ -4,14 +4,18 @@ using System.Linq;
 using ServerDevcommands;
 namespace WorldEditCommands;
 using NamedOptionsFetchers = Dictionary<string, Func<int, List<string>>>;
-public class SharedObjectAutoComplete {
-  public static List<string> VisualAutoComplete(string name, int index) {
+public class SharedObjectAutoComplete
+{
+  public static List<string> VisualAutoComplete(string name, int index)
+  {
     if (index == 0) return ParameterInfo.ItemIds;
     if (index == 1) return ParameterInfo.Create($"${name}=id,<color=yellow>integer</color> | Item variant for items that have multiple variants.");
     return ParameterInfo.None;
   }
-  public static List<string> WithSharedParameters(List<string> parameters) {
+  public static List<string> WithSharedParameters(List<string> parameters)
+  {
     List<string> namedParameters = new() {
+      "baby",
       "durability",
       "tame",
       "left_hand",
@@ -31,11 +35,15 @@ public class SharedObjectAutoComplete {
     parameters.AddRange(namedParameters);
     return parameters.Distinct().OrderBy(s => s).ToList();
   }
-  public static NamedOptionsFetchers WithSharedFetchers(NamedOptionsFetchers fetchers) {
+  public static NamedOptionsFetchers WithSharedFetchers(NamedOptionsFetchers fetchers)
+  {
     NamedOptionsFetchers baseFetchers = new() {
       {
         "tame",
         (int index) => index == 0 ? ParameterInfo.Create("tame=<color=yellow>true/false</color> or no value for default.", "Sets is the creature tamed.") : ParameterInfo.None
+      },
+      {
+        "baby", (int index) => ParameterInfo.Flag("Baby")
       },
       {
         "left_hand",

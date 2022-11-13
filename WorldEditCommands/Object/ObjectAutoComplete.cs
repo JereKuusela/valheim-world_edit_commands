@@ -1,15 +1,16 @@
 using System.Collections.Generic;
 using ServerDevcommands;
 namespace WorldEditCommands;
-public class ObjectAutoComplete : SharedObjectAutoComplete {
+public class ObjectAutoComplete : SharedObjectAutoComplete
+{
   public List<string> NamedParameters;
   public static List<string> ObjectTypes = new() {
       "creature",
       "structure"
   };
-  public ObjectAutoComplete() {
+  public ObjectAutoComplete()
+  {
     NamedParameters = WithSharedParameters(new() {
-      "baby",
       "wild",
       "copy",
       "info",
@@ -25,56 +26,20 @@ public class ObjectAutoComplete : SharedObjectAutoComplete {
       "prefab",
       "center",
       "respawn",
-      "guide",
       "from",
       "rect",
       "angle",
       "creator",
       "chance",
-      "show",
-      "interact",
       "type",
-      "fall",
       "connect",
-      "minlevel",
-      "maxlevel",
-      "amount",
-      "spawn",
-      "spawnhealth",
-      "respawntime",
-      "spawnitem",
-      "component"
     });
     AutoComplete.Register(ObjectCommand.Name, (int index) => NamedParameters, WithSharedFetchers(new() {
-      {
-        "minlevel", (int index) => ParameterInfo.Create("minlevel=<color=yellow>number</color> (-1 to reset).", "Sets the minimum level of spawn points.")
-      },
-      {
-        "maxlevel", (int index) => ParameterInfo.Create("maxlevel=<color=yellow>number</color> (-1 to reset).", "Sets the maximum level of spawn points.")
-      },
-      {
-        "spawnhealth", (int index) => ParameterInfo.Create("spawnhealth=<color=yellow>number</color> (-1 to reset).", "Sets the creature health of spawn points.")
-      },
-      {
-        "amount", (int index) => ParameterInfo.Create("amount=<color=yellow>number/false</color> (-1 to reset).", "Sets pickable amount.")
-      },
-      {
-        "respawntime", (int index) => ParameterInfo.Create("respawntime=<color=yellow>minutes/false</color> (-1 to reset).", "Sets pickable and spawn point respawn time.")
-      },
-      {
-        "spawn", (int index) => index == 0 ? ParameterInfo.ObjectIds : ParameterInfo.None
-      },
-      {
-        "spawnitem", (int index) => index == 0 ? ParameterInfo.ItemIds : ParameterInfo.None
-      },
       {
         "type", (int index) => index == 0 ? ObjectTypes : ParameterInfo.None
       },
       {
         "connect", (int index) => ParameterInfo.Flag("Connect")
-      },
-      {
-        "baby", (int index) => ParameterInfo.Flag("Baby")
       },
       {
         "mirror", (int index) => ParameterInfo.Flag("Mirror")
@@ -118,10 +83,6 @@ public class ObjectAutoComplete : SharedObjectAutoComplete {
       },
       {
         "move", (int index) => ParameterInfo.FRU("move", "Movement offset based on the player rotation (unless origin is given)", index)
-      },
-      {
-        "guide",
-        (int index) => ParameterInfo.Flag("Guide", "Visualizes the affected area.")
       },
       {
         "rotate", (int index) => {

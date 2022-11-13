@@ -4,25 +4,31 @@ using ServerDevcommands;
 
 namespace WorldEditCommands;
 
-public class TweakFireplaceCommand : TweakCommand {
-  protected override string DoOperation(ZNetView view, string operation, string? value) {
+public class TweakFireplaceCommand : TweakCommand
+{
+  protected override string DoOperation(ZNetView view, string operation, string? value)
+  {
     if (operation == "smoke")
       return TweakActions.Smoke(view, value);
     throw new System.NotImplementedException();
   }
-  protected override string DoOperation(ZNetView view, string operation, float? value) {
+  protected override string DoOperation(ZNetView view, string operation, float? value)
+  {
     throw new System.NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, int? value) {
+  protected override string DoOperation(ZNetView view, string operation, int? value)
+  {
     throw new System.NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, string[] value) {
+  protected override string DoOperation(ZNetView view, string operation, string[] value)
+  {
     throw new System.NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, bool? value) {
+  protected override string DoOperation(ZNetView view, string operation, bool? value)
+  {
 
     throw new NotImplementedException();
   }
@@ -32,7 +38,8 @@ public class TweakFireplaceCommand : TweakCommand {
       "on",
       "ignore"
   };
-  public TweakFireplaceCommand() {
+  public TweakFireplaceCommand()
+  {
     Component = typeof(Fireplace);
     ComponentName = "fireplace";
     SupportedOperations.Add("smoke", typeof(string));

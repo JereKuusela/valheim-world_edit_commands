@@ -3,30 +3,31 @@ using BepInEx.Bootstrap;
 using HarmonyLib;
 namespace WorldEditCommands;
 [BepInPlugin(GUID, NAME, VERSION)]
-[BepInDependency("server_devcommands", "1.32")]
-public class WorldEditCommands : BaseUnityPlugin {
+[BepInDependency("server_devcommands", "1.33")]
+public class WorldEditCommands : BaseUnityPlugin
+{
   public const string GUID = "world_edit_commands";
   public const string NAME = "World Edit Commands";
-  public const string VERSION = "1.17";
-  public void Awake() {
+  public const string VERSION = "1.18";
+  public void Awake()
+  {
     new Harmony(GUID).PatchAll();
   }
   public static bool IsSpawnerTweaks = false;
   public static bool IsStructureTweaks = false;
   public static bool IsCLLC = false;
-  public void Start() {
+  public void Start()
+  {
     IsSpawnerTweaks = Chainloader.PluginInfos.ContainsKey("spawner_tweaks") || Chainloader.PluginInfos.ContainsKey("logic_tweaks");
     IsStructureTweaks = Chainloader.PluginInfos.ContainsKey("structure_tweaks") || Chainloader.PluginInfos.ContainsKey("logic_tweaks");
     IsCLLC = Chainloader.PluginInfos.ContainsKey("rg.bepinex.plugins.creaturelevelcontrol");
   }
-
-  public void LateUpdate() {
-    Ruler.Update();
-  }
 }
 [HarmonyPatch(typeof(Terminal), nameof(Terminal.InitTerminal))]
-public class SetCommands {
-  public static void Postfix() {
+public class SetCommands
+{
+  public static void Postfix()
+  {
     new SpawnLocationCommand();
     new SpawnObjectCommand();
     new ObjectCommand();
@@ -34,7 +35,8 @@ public class SetCommands {
     new AliasesCommand();
     if (WorldEditCommands.IsSpawnerTweaks || WorldEditCommands.IsStructureTweaks)
       new TweakObjectCommand();
-    if (WorldEditCommands.IsSpawnerTweaks) {
+    if (WorldEditCommands.IsSpawnerTweaks)
+    {
       new TweakAltarCommand();
       new TweakPickableCommand();
       new TweakSpawnerCommand();
@@ -43,7 +45,8 @@ public class SetCommands {
       new TweakChestCommand();
       new TweakCreatureCommand();
     }
-    if (WorldEditCommands.IsStructureTweaks) {
+    if (WorldEditCommands.IsStructureTweaks)
+    {
       new TweakRunestoneCommand();
       new TweakPortalCommand();
       new TweakFireplaceCommand();

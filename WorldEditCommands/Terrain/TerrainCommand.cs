@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using ServerDevcommands;
 using UnityEngine;
 namespace WorldEditCommands;
-public class TerrainCommand {
+public class TerrainCommand
+{
   public const string Name = "terrain";
   public static Dictionary<string, Color> Paints = new() {
     {"grass", Color.black},
@@ -17,31 +18,32 @@ public class TerrainCommand {
     {"paved_dark", new(0f, 1f, 0.5f)},
   };
 
-  private TerrainComp[] GetCompilers(TerrainParameters pars) {
-    if (pars.Radius.HasValue) return Terrain.GetCompilers(pars.Position, pars.Radius.Value);
-    if (pars.Width.HasValue && pars.Depth.HasValue) return Terrain.GetCompilers(pars.Position, pars.Width.Value, pars.Depth.Value, pars.Angle);
+  private TerrainComp[] GetCompilers(TerrainParameters pars)
+  {
+    if (pars.Radius != null) return Terrain.GetCompilers(pars.Position, pars.Radius);
+    if (pars.Width != null && pars.Depth != null) return Terrain.GetCompilers(pars.Position, pars.Width, pars.Depth, pars.Angle);
     throw new InvalidOperationException("Unable to select any terrain");
   }
-  private Func<TerrainComp, Indices> GetIndexer(TerrainParameters pars) {
-    if (pars.Radius.HasValue) return Terrain.CreateIndexer(pars.Position, pars.Radius.Value);
-    if (pars.Width.HasValue && pars.Depth.HasValue) return Terrain.CreateIndexer(pars.Position, pars.Width.Value, pars.Depth.Value, pars.Angle);
+  private Func<TerrainComp, Indices> GetIndexer(TerrainParameters pars)
+  {
+    if (pars.Radius != null) return Terrain.CreateIndexer(pars.Position, pars.Radius);
+    if (pars.Width != null && pars.Depth != null) return Terrain.CreateIndexer(pars.Position, pars.Width, pars.Depth, pars.Angle);
     throw new InvalidOperationException("Unable to select any terrain");
   }
-  private List<Func<BaseIndex, bool>> GetFilterers(TerrainParameters pars) {
+  private List<Func<BaseIndex, bool>> GetFilterers(TerrainParameters pars)
+  {
     List<Func<BaseIndex, bool>> filterers = new();
     if (pars.BlockCheck != BlockCheck.Off) filterers.Add(Terrain.CreateBlockCheckFilter(pars.BlockCheck));
     if (pars.Within != null) filterers.Add(Terrain.CreateAltitudeFilter(pars.Within.Min, pars.Within.Max));
     return filterers;
   }
-  public TerrainCommand() {
+  public TerrainCommand()
+  {
     TerrainAutoComplete autoComplete = new();
     var description = CommandInfo.Create("Manipulates the terrain.", null, autoComplete.NamedParameters);
-    Helper.Command(Name, description, (args) => {
+    Helper.Command(Name, description, (args) =>
+    {
       TerrainParameters pars = new(args);
-      if (pars.Guide) {
-        Ruler.Create(pars.ToRuler());
-        return;
-      }
       var compilers = GetCompilers(pars);
       var indicer = GetIndexer(pars);
       var filterers = GetFilterers(pars);
@@ -62,12 +64,16 @@ public class TerrainCommand {
         Terrain.MinTerrain(compilerIndices, pars.Position, pars.Size, pars.Min.Value);
       if (pars.Max.HasValue)
         Terrain.MaxTerrain(compilerIndices, pars.Position, pars.Size, pars.Max.Value);
-      if (pars.Paint != "") {
+      if (pars.Paint != "")
+      {
         var split = pars.Paint.Split(',');
-        if (split.Length > 2) {
+        if (split.Length > 2)
+        {
           Color color = new(Parse.Float(split, 0), Parse.Float(split, 1), Parse.Float(split, 2), Parse.Float(split, 3, 1f));
           Terrain.PaintTerrain(compilerIndices, pars.Position, pars.Size, color);
-        } else if (Paints.TryGetValue(pars.Paint, out var color)) {
+        }
+        else if (Paints.TryGetValue(pars.Paint, out var color))
+        {
           Terrain.PaintTerrain(compilerIndices, pars.Position, pars.Size, color);
         }
       }

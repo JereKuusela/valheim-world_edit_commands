@@ -4,26 +4,36 @@ using System.Linq;
 using ServerDevcommands;
 using UnityEngine;
 namespace WorldEditCommands;
-public class SpawnObjectCommand {
+public class SpawnObjectCommand
+{
   public const string Name = "spawn_object";
-  private static List<GameObject> SpawnObject(SpawnObjectParameters pars, GameObject prefab, int count) {
+  private static List<GameObject> SpawnObject(SpawnObjectParameters pars, GameObject prefab, int count)
+  {
     List<GameObject> spawned = new();
-    for (int i = 0; i < count; i++) {
+    var defaultRadius = (count - 1) * 0.5f;
+    for (int i = 0; i < count; i++)
+    {
       Vector3 spawnPosition;
       if (pars.To.HasValue)
         spawnPosition = GetPosition(pars.From, pars.To.Value, i, count);
-      else {
+      else
+      {
         spawnPosition = GetPosition(pars.From, pars.RelativePosition, pars.BaseRotation);
-        if (i > 0) {
-          var random = UnityEngine.Random.insideUnitCircle * (pars.Radius ?? 0.5f);
-          spawnPosition.x += random.x;
-          spawnPosition.z += random.y;
+        var random = UnityEngine.Random.insideUnitCircle * (pars.Radius?.Max ?? defaultRadius);
+        if (pars.Radius != null && pars.Radius.Min != pars.Radius.Max)
+        {
+          var angle = UnityEngine.Random.Range(0f, Mathf.PI * 2f);
+          random = new Vector2(Mathf.Sin(angle), Mathf.Cos(angle)).normalized * Helper.RandomValue(pars.Radius);
         }
+        spawnPosition.x += random.x;
+        spawnPosition.z += random.y;
       }
-      if (pars.Snap) {
+      if (pars.Snap)
+      {
         ZoneSystem.instance.FindFloor(spawnPosition, out var height);
         // Fixes spawning below terrain.
-        if (height == 0f) {
+        if (height == 0f)
+        {
           var higher = spawnPosition;
           higher.y += 100f;
           ZoneSystem.instance.FindFloor(spawnPosition, out height);
@@ -36,7 +46,8 @@ public class SpawnObjectCommand {
     return spawned;
   }
 
-  private static Vector3 GetPosition(Vector3 basePosition, Range<Vector3> relativePosition, Quaternion rotation) {
+  private static Vector3 GetPosition(Vector3 basePosition, Range<Vector3> relativePosition, Quaternion rotation)
+  {
     var relative = Helper.RandomValue(relativePosition);
     var position = basePosition;
     position += rotation * Vector3.forward * relative.x;
@@ -44,12 +55,17 @@ public class SpawnObjectCommand {
     position += rotation * Vector3.up * relative.y;
     return position;
   }
-  private static Vector3 GetPosition(Vector3 from, Vector3 to, int index, int max) {
+  private static Vector3 GetPosition(Vector3 from, Vector3 to, int index, int max)
+  {
     return from + (to - from) * index / (max - 1);
   }
-  private static void Manipulate(IEnumerable<GameObject> spawned, SpawnObjectParameters pars, int total) {
-    foreach (var obj in spawned) {
+  private static void Manipulate(IEnumerable<GameObject> spawned, SpawnObjectParameters pars, int total)
+  {
+    foreach (var obj in spawned)
+    {
       var rotation = pars.BaseRotation * Quaternion.Euler(Helper.RandomValue(pars.Rotation));
+      if (pars.Baby == true)
+        Actions.SetBaby(obj);
       if (pars.Level != null)
         Actions.SetLevel(obj, Helper.RandomValue(pars.Level));
       if (pars.Health != null)
@@ -74,17 +90,20 @@ public class SpawnObjectCommand {
       Actions.SetVisual(obj, VisSlot.HandRight, pars.RightHand);
       if (pars.Model != null)
         Actions.SetModel(obj, Helper.RandomValue(pars.Model));
-      if (pars.Helmet != null || pars.Chest != null || pars.Shoulders != null || pars.Legs != null || pars.Utility != null || pars.LeftHand != null || pars.RightHand != null) {
+      if (pars.Helmet != null || pars.Chest != null || pars.Shoulders != null || pars.Legs != null || pars.Utility != null || pars.LeftHand != null || pars.RightHand != null)
+      {
         var zdo = obj.GetComponent<ZNetView>()?.GetZDO();
         // Temporarily losing the ownership prevents default items replacing the set items.
         if (zdo != null) zdo.m_owner = 0;
       }
     }
   }
-  public SpawnObjectCommand() {
+  public SpawnObjectCommand()
+  {
     SpawnObjectAutoComplete autoComplete = new();
     var description = CommandInfo.Create("Spawns an object.", new[] { "name" }, autoComplete.NamedParameters);
-    Helper.Command(Name, description, (args) => {
+    Helper.Command(Name, description, (args) =>
+    {
       Helper.ArgsCheck(args, 2, "Missing object id.");
       var prefabName = args[1];
       var prefab = Helper.GetPrefab(prefabName);

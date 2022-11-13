@@ -1,4 +1,5 @@
-public static class Hash {
+public static class Hash
+{
   public static int PlantTime = "plantTime".GetStableHashCode();
   public static int Status = "override_status".GetStableHashCode();
   public static int Weather = "override_weather".GetStableHashCode();

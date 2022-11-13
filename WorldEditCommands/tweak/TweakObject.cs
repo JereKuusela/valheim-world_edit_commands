@@ -5,8 +5,10 @@ using UnityEngine;
 
 namespace WorldEditCommands;
 
-public class TweakObjectCommand : TweakCommand {
-  protected override string DoOperation(ZNetView view, string operation, string? value) {
+public class TweakObjectCommand : TweakCommand
+{
+  protected override string DoOperation(ZNetView view, string operation, string? value)
+  {
     if (operation == "wear") return TweakActions.Wear(view, value);
     if (operation == "growth") return TweakActions.Growth(view, value);
     if (operation == "component") return TweakActions.Component(view, value);
@@ -18,19 +20,23 @@ public class TweakObjectCommand : TweakCommand {
     if (operation == "fall") return TweakActions.Fall(view, value);
     throw new System.NotImplementedException();
   }
-  protected override string DoOperation(ZNetView view, string operation, float? value) {
+  protected override string DoOperation(ZNetView view, string operation, float? value)
+  {
     throw new System.NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, int? value) {
+  protected override string DoOperation(ZNetView view, string operation, int? value)
+  {
     throw new System.NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, string[] value) {
+  protected override string DoOperation(ZNetView view, string operation, string[] value)
+  {
     throw new System.NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, bool? value) {
+  protected override string DoOperation(ZNetView view, string operation, bool? value)
+  {
     if (operation == "show") return TweakActions.Render(view, value);
     if (operation == "interact") return TweakActions.Interact(view, value);
     if (operation == "collision") return TweakActions.Collision(view, value);
@@ -39,8 +45,10 @@ public class TweakObjectCommand : TweakCommand {
     throw new NotImplementedException();
   }
 
-  protected override void Postprocess(GameObject obj) {
-    if (obj.TryGetComponent<StaticPhysics>(out var sp)) {
+  protected override void Postprocess(GameObject obj)
+  {
+    if (obj.TryGetComponent<StaticPhysics>(out var sp))
+    {
       sp.m_createTime = Time.time - 30f;
       sp.SUpdate();
     }
@@ -80,7 +88,8 @@ public class TweakObjectCommand : TweakCommand {
       "runestone",
       "chest"
   };
-  public TweakObjectCommand() {
+  public TweakObjectCommand()
+  {
     SupportedOperations.Add("component", typeof(string));
     SupportedOperations.Add("status", typeof(string));
     SupportedOperations.Add("effect", typeof(string));

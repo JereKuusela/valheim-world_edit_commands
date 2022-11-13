@@ -3,29 +3,36 @@ using ServerDevcommands;
 
 namespace WorldEditCommands;
 
-public class TweakPortalCommand : TweakCommand {
-  protected override string DoOperation(ZNetView view, string operation, string? value) {
+public class TweakPortalCommand : TweakCommand
+{
+  protected override string DoOperation(ZNetView view, string operation, string? value)
+  {
     throw new System.NotImplementedException();
   }
-  protected override string DoOperation(ZNetView view, string operation, float? value) {
-    throw new System.NotImplementedException();
-  }
-
-  protected override string DoOperation(ZNetView view, string operation, int? value) {
-    throw new System.NotImplementedException();
-  }
-
-  protected override string DoOperation(ZNetView view, string operation, string[] value) {
+  protected override string DoOperation(ZNetView view, string operation, float? value)
+  {
     throw new System.NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, bool? value) {
+  protected override string DoOperation(ZNetView view, string operation, int? value)
+  {
+    throw new System.NotImplementedException();
+  }
+
+  protected override string DoOperation(ZNetView view, string operation, string[] value)
+  {
+    throw new System.NotImplementedException();
+  }
+
+  protected override string DoOperation(ZNetView view, string operation, bool? value)
+  {
     if (operation == "restrict")
       return TweakActions.Restrict(view, value);
     throw new NotImplementedException();
   }
 
-  public TweakPortalCommand() {
+  public TweakPortalCommand()
+  {
     Component = typeof(TeleportWorld);
     ComponentName = "portal";
     SupportedOperations.Add("restrict", typeof(bool));

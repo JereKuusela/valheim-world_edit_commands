@@ -4,7 +4,8 @@ using ServerDevcommands;
 using Service;
 using UnityEngine;
 namespace WorldEditCommands;
-public class ObjectParameters : SharedObjectParameters {
+public class ObjectParameters : SharedObjectParameters
+{
   public Range<Vector3> Rotation = new(Vector3.zero);
   public Range<Vector3> Offset = new(Vector3.zero);
   public Vector3 From;
@@ -22,8 +23,8 @@ public class ObjectParameters : SharedObjectParameters {
   public Item? Visual = null;
   public float Angle = 0f;
   public long Creator = 0;
-  public float? Width;
-  public float? Depth;
+  public Range<float>? Width;
+  public Range<float>? Depth;
   public float Height = 0f;
   public float Chance = 1f;
   public bool Connect;
@@ -56,32 +57,30 @@ public class ObjectParameters : SharedObjectParameters {
     "fuel",
     "prefab",
     "respawn",
-    "guide",
     "mirror",
     "creator",
     "copy",
     "status",
   };
 
-  public ObjectParameters(Terminal.ConsoleEventArgs args) {
-    if (Player.m_localPlayer) {
+  public ObjectParameters(Terminal.ConsoleEventArgs args)
+  {
+    if (Player.m_localPlayer)
+    {
       From = Player.m_localPlayer.transform.position;
     }
     ParseArgs(args.Args);
   }
 
-  public RulerParameters ToRuler() => new() {
-    Radius = Radius,
-    Position = From,
-    FixedPosition = Center != null
-  };
-
-  protected override void ParseArgs(string[] args) {
+  protected override void ParseArgs(string[] args)
+  {
     base.ParseArgs(args);
-    foreach (var arg in args) {
+    foreach (var arg in args)
+    {
       var split = arg.Split('=');
       var name = split[0].ToLower();
-      if (SupportedOperations.Contains(name)) {
+      if (SupportedOperations.Contains(name))
+      {
         if (Operations.Contains(name))
           throw new InvalidOperationException($"Operation {name} used multiple times.");
         Operations.Add(name);
@@ -91,7 +90,8 @@ public class ObjectParameters : SharedObjectParameters {
       if (split.Length < 2) continue;
       var value = split[1];
       var values = Parse.Split(value);
-      if (name == "rotate") {
+      if (name == "rotate")
+      {
         if (value == "reset") ResetRotation = true;
         else Rotation = Parse.VectorYXZRange(value, Vector3.zero);
       }
@@ -107,10 +107,11 @@ public class ObjectParameters : SharedObjectParameters {
       if (name == "chance") Chance = Parse.Float(value, 1f);
       if (name == "type" && value == "creature") ObjectType = ObjectType.Character;
       if (name == "type" && value == "structure") ObjectType = ObjectType.Structure;
-      if (name == "rect") {
-        var size = Parse.Scale(values);
-        Width = size.x;
-        Depth = size.z;
+      if (name == "rect")
+      {
+        var size = Parse.ScaleRange(value);
+        Width = new(size.Min.x, size.Max.x);
+        Depth = new(size.Min.z, size.Max.z);
       }
       if (name == "height")
         Height = Parse.Float(value, 0f);
@@ -123,14 +124,14 @@ public class ObjectParameters : SharedObjectParameters {
       throw new InvalidOperationException("Remove can't be used with other operations.");
     if (Operations.Count == 0)
       throw new InvalidOperationException("Missing the operation.");
-    if (Operations.Contains("remove") && Id == "" && ObjectType == ObjectType.All && (Radius > 0 || Width > 0 || Depth > 0 || Connect))
+    if (Operations.Contains("remove") && Id == "" && ObjectType == ObjectType.All && (Radius != null || Width != null || Depth != null || Connect))
       throw new InvalidOperationException("Area remove can't be used without <color=yellow>id</color> or <color=yellow>type</color>.");
     if (Id == "") Id = "*";
-    if (Radius.HasValue && Depth.HasValue)
+    if (Radius != null && Depth != null)
       throw new InvalidOperationException($"<color=yellow>circle</color> and <color=yellow>rect</color> parameters can't be used together.");
-    if (Radius.HasValue && Connect)
+    if (Radius != null && Connect)
       throw new InvalidOperationException($"<color=yellow>circle</color> and <color=yellow>connect</color> parameters can't be used together.");
-    if (Depth.HasValue && Connect)
+    if (Depth != null && Connect)
       throw new InvalidOperationException($"<color=yellow>connect</color> and <color=yellow>rect</color> parameters can't be used together.");
   }
 }

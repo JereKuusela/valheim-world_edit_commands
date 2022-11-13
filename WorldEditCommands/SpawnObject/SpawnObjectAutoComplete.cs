@@ -1,9 +1,11 @@
 using System.Collections.Generic;
 using ServerDevcommands;
 namespace WorldEditCommands;
-public class SpawnObjectAutoComplete : SharedObjectAutoComplete {
+public class SpawnObjectAutoComplete : SharedObjectAutoComplete
+{
   public List<string> NamedParameters;
-  public SpawnObjectAutoComplete() {
+  public SpawnObjectAutoComplete()
+  {
     NamedParameters = WithSharedParameters(new() {
       "hunt",
       "durability",
@@ -18,13 +20,14 @@ public class SpawnObjectAutoComplete : SharedObjectAutoComplete {
       "refRot",
       "to"
     });
-    AutoComplete.Register(SpawnObjectCommand.Name, (int index) => {
+    AutoComplete.Register(SpawnObjectCommand.Name, (int index) =>
+    {
       if (index == 0) return ParameterInfo.Ids;
       return NamedParameters;
     }, WithSharedFetchers(new() {
       {
         "hunt",
-        (int index) => index == 0 ? ParameterInfo.Create("hunt=<color=yellow>true/false</color> or no value for default.", "Sets is the creature in aggressive mode.") : ParameterInfo.None
+        (int index) => index == 0 ? ParameterInfo.Create("hunt=<color=yellow>true/false</color> or no value for true.", "Sets is the creature in aggressive mode.") : ParameterInfo.None
       },
       {
         "name",

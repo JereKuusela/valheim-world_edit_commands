@@ -3,29 +3,36 @@ using ServerDevcommands;
 
 namespace WorldEditCommands;
 
-public class TweakDoorCommand : TweakCommand {
-  protected override string DoOperation(ZNetView view, string operation, string? value) {
+public class TweakDoorCommand : TweakCommand
+{
+  protected override string DoOperation(ZNetView view, string operation, string? value)
+  {
     throw new System.NotImplementedException();
   }
-  protected override string DoOperation(ZNetView view, string operation, float? value) {
-    throw new System.NotImplementedException();
-  }
-
-  protected override string DoOperation(ZNetView view, string operation, int? value) {
-    throw new System.NotImplementedException();
-  }
-
-  protected override string DoOperation(ZNetView view, string operation, string[] value) {
+  protected override string DoOperation(ZNetView view, string operation, float? value)
+  {
     throw new System.NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, bool? value) {
+  protected override string DoOperation(ZNetView view, string operation, int? value)
+  {
+    throw new System.NotImplementedException();
+  }
+
+  protected override string DoOperation(ZNetView view, string operation, string[] value)
+  {
+    throw new System.NotImplementedException();
+  }
+
+  protected override string DoOperation(ZNetView view, string operation, bool? value)
+  {
     if (operation == "unlock")
       return TweakActions.Unlock(view, value);
     throw new NotImplementedException();
   }
 
-  public TweakDoorCommand() {
+  public TweakDoorCommand()
+  {
     Component = typeof(Door);
     ComponentName = "door";
     SupportedOperations.Add("unlock", typeof(bool));

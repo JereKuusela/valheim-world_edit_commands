@@ -30,14 +30,13 @@ Following parameters are available:
 - `center=x,z,y`: Overrides the player position and sets `rotate` center point.
 - `chance=number`: Randomly filters included objects. For example 0.5 includes about half of the objects (50%).
 - `creator=player id`: Sets the piece creator. Use 0 for no creator.
-- `circle=number` or `radius=number`: Radius for included objects. If not given, the hovered object is only affected.
+- `circle=number` or `circle=min-max`: Radius for included objects. If not given, the hovered object is only affected.
 - `connect`: Includes entire structures.
 - `data=[key]`: Prints ZDO data.
 - `data=[key,value]`: Sets ZDO data. The key must already exist in the data.
 - `durability=number` or `health=number`: Sets the current durability for items, the current health for structures and the maximum health for creatures. Very high values like 1E30 turn the target invulnerable (including gravity for structures).
 - `fuel=number`: Sets the fuel amount. Without number, prints the fuel amount.
 - `from=x,z,y`: Same as the `center`.
-- `guide`: Visualizes the affected area instead of doing anything. Turn off by not giving the `radius`.
 - `height`: Maximum height from the `center` point (default is 1000 meters).
 - `id`: Filters objects by id. Supports starts with, ends with or contains by using "*". Default is `*` that allows all objects which don't start with "_". 
 - `info`: Prints information of objects.
@@ -46,7 +45,8 @@ Following parameters are available:
 - `move=forward,right,up`: Moves objects (meters). Static objects only update their position for other players when they leave the area.
 - `origin=player|object|world`: Base direction for `move` and `rotate`. Default value `player` uses the player's rotation, `object` uses the objects rotation and `world` uses the global coordinate system (x=north/south,y=up/down,z=west/east).
 - `prefab=id`: Replaces the object with the given id.
-- `rect=width,depth`: Area for included objects. If not given, the hovered object is only affected.
+- `radius=number` or `radius=min-max`: Radius for included objects. If not given, the hovered object is only affected.
+- `rect=width,depth` or `rect=min-max,min-max`: Area for included objects. If not given, the hovered object is only affected.
 - `remove`: Removes objects. Must use the `id` parameter (`id=*` is ok). Can't be used with other operations.
 - `respawn`: Resets loot chests, pickables and spawn points.
 - `rotate=yaw,roll,pitch`: Rotates objects (degrees). Static objects only update their rotation for other players when they leave the area.
@@ -219,6 +219,7 @@ The `spawn_object [object id] [...args]` spawns objects to the world. The `undo`
 Following parameters are available:
 
 - `amount=integer`: Amount of spawned objects within a random radius. Items are autostacked.
+- `baby`: Prevents offspring from growing up.
 - `crafter=value` or `name=value`: Name of the crafter for items or name for tamed creatures (that support naming). Character _ is replaced with a space bar.
 - `durability=number` or `health=number`: Overrides the current durability for items, the current health for structures and the maximum health for creatures. Very high values like 1E30 turn the target invulnerable (including gravity for structures).
 - `from=x,z,y`: Allows overriding the player's position for the command. Used by `redo` and can be useful for some advanced usage.
@@ -278,8 +279,6 @@ Following parameters are available:
 
 The `terrain [...args]` command can create different shapes on top of the usual flattening and resetting. The `undo`/`redo` system is supported by saving snapshots of the terrain.
 
-Note: If you have trouble understanding the affected area, try the `guide` parameter.
-
 Note: The granularity of the terrain system is 0.5 meters.
 
 Note: Terrain is only affected in loaded areas. You can use Render Limits mod to increase this area.
@@ -292,10 +291,9 @@ Following parameters are available:
 	- on: Excludes terrain that is under structures or other objects.
 	- off: All terrain is affected (default).
 	- inverse: Only includes terrain that is under structures or other objects.
-- `circle=number`: Determines the radius of the affected terrain.
+- `circle=number` or `circle=min-max`: Determines the radius of the affected terrain.
 - `delta=meters`: Sets the difference from the original elevation. Without the parameter, resets terrain altitude changes.
 - `from=x,z,y`: Overwrites the player's position. Allows fixing the current position for more precise editing. The y coordinate can be used to override the current ground altitude.
-- `guide`: Visualizes the affected area instead of doing anything. Turn off by not giving the `circle` or `rect` parameters.
 - `level=altitude`: Sets terrain height to the given altitude. If not given, uses the ground altitude below the player.
 - `lower=meters`: Lowers terrain by X meters. Same as `raise` when a negative value is used.
 - `max=altitude`: Lowers terrain above the given altitude to the altitude.
@@ -308,7 +306,7 @@ Following parameters are available:
 - `paint=value`: Sets the terrain material (cultivated, grass, grass_dark,dirt, patches, paved, paved_dark, paved_dirt or paved_moss).
 - `paint=dirt,cultivated,paved`: Sets custom terrain material (values from 0.0 to 1.0).
 - `raise=meters`: Raises terrain by X meters. Same as `lower` when a negative value is used.
-- `rect=width,depth`: Determines the size of the affected terrain.
+- `rect=width,depth` or `rect=min-max,min-max`: Determines the size of the affected terrain.
 - `reset`: Resets terrain height and paint changes. Ignores `smooth` parameter.
 - `slope=meters,angle`: Creates a slope centered at current position with a given height.
 - `step=forward,right,up`: Calculates offset based on the radius (and slope height if given).
