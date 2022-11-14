@@ -153,7 +153,7 @@ public static class Actions
   public static void SetBaby(Growup obj)
   {
     if (!obj) return;
-    obj.m_nview.GetZDO().Set(Hash.SpawnTime, DateTime.MaxValue.Ticks);
+    obj.GetComponent<ZNetView>()?.GetZDO().Set(Hash.SpawnTime, DateTime.MaxValue.Ticks);
   }
   public static void SetLevel(GameObject obj, int level)
   {
