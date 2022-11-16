@@ -43,12 +43,12 @@ public abstract class TweakCommand
       }
       if (ComponentName != "" && !view.GetComponentInChildren(Component))
       {
-        if (force)
+        if (force || views.Length == 1)
         {
           TweakActions.Component(view, ComponentName);
           return true;
         }
-        context.AddString($"Skipped: {view.name} doesn't have the component.");
+        context.AddString($"Skipped: {view.name} doesn't have the component. Use <color=yellow>force</color> to add it.");
         return false;
       }
       return true;

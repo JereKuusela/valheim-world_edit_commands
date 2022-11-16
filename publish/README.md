@@ -20,6 +20,9 @@ Donations: [Buy me a computer](https://www.buymeacoffee.com/jerekuusela)
 
 # Changelog
 
+- v1.19
+	- Changes the `tweak_*` command to automatically use `force` parameter when editing a single object.
+
 - v1.18
 	- Adds a parameter `baby` to the `spawn_object` command.
 	- Changes the `radius` and `rect` parameters to support ranges.

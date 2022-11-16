@@ -84,12 +84,12 @@ Note: Creatures reset their style when attacking.
 
 ## Spawner Tweaks / Structure Tweaks mods
 
-Some new commands are added if these mods are installed. They all start with the `tweak_` prefix.
+Some new commands are added if these mods are installed. They all start with the `tweak_` prefix. All values can be reseted by providing no value to the parameter.
 
-All values can be reseted by providing no value to the parameter. `force` parameter automatically adds the component if missing.
+Most commands can be used on any object. When editing a single object, the script component is automatically added if missing. When editing multiple objects, `force` parameter needs to be used to add missing components.
 
 `tweak_object`:
-- `component=name`: Adds behavior.
+- `component=name`: Adds behavior / script component.
 - `effect=radius,id`: Adds forced effect area (heat, fire, player base, burning, no monsters, warm cozy area).
 - `event=radius,id`: Adds forced random event area.
 - `collision=true/false`: Sets whether the object has collision. No value to toggle.
@@ -133,8 +133,6 @@ All values can be reseted by providing no value to the parameter. `force` parame
 ### Spawner Tweaks mod
 
 Four new commands that share many parameters with the `object` command.
-
-All values can be reseted by providing no value to the parameter. `force` parameter automatically adds the component if missing.
 
 `tweak_altar`:
 - `amount=number`: Amount of needed items to interact.
