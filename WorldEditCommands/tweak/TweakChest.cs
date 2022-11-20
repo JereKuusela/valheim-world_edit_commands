@@ -67,26 +67,36 @@ public class TweakChestCommand : TweakCommand
   {
     Component = typeof(Container);
     ComponentName = "chest";
-    SupportedOperations.Add("unlock", typeof(bool));
-    SupportedOperations.Add("respawn", typeof(float));
     SupportedOperations.Add("name", typeof(string));
-    SupportedOperations.Add("minamount", typeof(int));
-    SupportedOperations.Add("maxamount", typeof(int));
-    SupportedOperations.Add("item", typeof(string[]));
-
-    AutoComplete.Add("unlock", (int index) => index == 0 ? ParameterInfo.Create("unlock=<color=yellow>true/false</color>", "Ignores wards. No value to toggle.") : ParameterInfo.None);
-    AutoComplete.Add("name", (int index) => index == 0 ? ParameterInfo.Create("name=<color=yellow>text</color>", "Display name. Use _ as the space. No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("respawn", (int index) => index == 0 ? ParameterInfo.Create("respawn=<color=yellow>minutes</color>", "Respawn time. No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("minamount", (int index) => index == 0 ? ParameterInfo.Create("minamount=<color=yellow>number</color>", "Minimum amount of items. No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("maxamount", (int index) => index == 0 ? ParameterInfo.Create("maxamount=<color=yellow>number</color>", "Maximum amount of items. No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("item", (int index) =>
+    if (WorldEditCommands.IsStructureTweaks)
+      SupportedOperations.Add("unlock", typeof(bool));
+    if (WorldEditCommands.IsSpawnerTweaks)
     {
-      if (index == 0) return ParameterInfo.ItemIds;
-      if (index == 1) return ParameterInfo.Create("item=id,<color=yellow>weight</color>,minamount,maxamount", "Chance relative to other items.");
-      if (index == 2) return ParameterInfo.Create("item=id,weight,<color=yellow>minamount</color>,maxamount", "Minimum amount.");
-      if (index == 3) return ParameterInfo.Create("item=id,weight,minamount,<color=yellow>maxamount</color>", "Maximum amount.");
-      return ParameterInfo.Create("For additional entries, add more <color>item=...</color> parameters.");
-    });
+      SupportedOperations.Add("respawn", typeof(float));
+      SupportedOperations.Add("minamount", typeof(int));
+      SupportedOperations.Add("maxamount", typeof(int));
+      SupportedOperations.Add("item", typeof(string[]));
+    }
+    AutoComplete.Add("name", (int index) => index == 0 ? ParameterInfo.Create("name=<color=yellow>text</color>", "Display name. Use _ as the space. No value to reset.") : ParameterInfo.None);
+    if (WorldEditCommands.IsStructureTweaks)
+      AutoComplete.Add("unlock", (int index) => index == 0 ? ParameterInfo.Create("unlock=<color=yellow>true/false</color>", "Ignores wards. No value to toggle.") : ParameterInfo.None);
+
+
+
+    if (WorldEditCommands.IsSpawnerTweaks)
+    {
+      AutoComplete.Add("respawn", (int index) => index == 0 ? ParameterInfo.Create("respawn=<color=yellow>minutes</color>", "Respawn time. No value to reset.") : ParameterInfo.None);
+      AutoComplete.Add("minamount", (int index) => index == 0 ? ParameterInfo.Create("minamount=<color=yellow>number</color>", "Minimum amount of items. No value to reset.") : ParameterInfo.None);
+      AutoComplete.Add("maxamount", (int index) => index == 0 ? ParameterInfo.Create("maxamount=<color=yellow>number</color>", "Maximum amount of items. No value to reset.") : ParameterInfo.None);
+      AutoComplete.Add("item", (int index) =>
+      {
+        if (index == 0) return ParameterInfo.ItemIds;
+        if (index == 1) return ParameterInfo.Create("item=id,<color=yellow>weight</color>,minamount,maxamount", "Chance relative to other items.");
+        if (index == 2) return ParameterInfo.Create("item=id,weight,<color=yellow>minamount</color>,maxamount", "Minimum amount.");
+        if (index == 3) return ParameterInfo.Create("item=id,weight,minamount,<color=yellow>maxamount</color>", "Maximum amount.");
+        return ParameterInfo.Create("For additional entries, add more <color>item=...</color> parameters.");
+      });
+    }
     Init("tweak_chest", "Modify chests");
   }
 }

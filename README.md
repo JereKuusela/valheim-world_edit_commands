@@ -107,9 +107,7 @@ Most commands can be used on any object. When editing a single object, the scrip
 - `name=text`: Display name. Use _ as the space.
 - `unlock=true/false`: Allows ignoring wards. No value to toggle.
 
-`tweak_creature`:
-- `affix=name`: Sets the CLLC affix (if CLLC is installed).
-- `faction=text`:  Determines which creatures are considered hostile.
+Note: Spawner Tweaks adds more parameters for `tweak_chest`.
 
 `tweak_door`:
 - `unlock=true/false`: Allows ignoring wards. No value to toggle.
@@ -164,6 +162,16 @@ Four new commands that share many parameters with the `object` command.
 - `maxamount=number`: Maximum amount of items.
 - `minamount=number`: Minimum amount of items.
 - `respawn=minutes`: Respawn time for items. Automatically sets `item`, `maxamount` and `minamount` based on chest contents if not given in the command.
+
+`tweak_creature`:
+- `affix=name`: Sets the CLLC affix (if CLLC is installed).
+- `boss=true/false`: Sets the boss health bar. No value to toggle.
+- `faction=text`:  Determines which creatures are considered hostile.
+- `health=number`: The health.
+- `hunt=true/false`: Sets the extra aggressiveness mode.
+- `level=number`: Level (level 1 = no star).
+- `name=text`: Display name. Use _ as the space.
+- `resistance=type,modifier`: Sets a damage resistance.
 
 `tweak_itemstand`:
 - `name=text`: Display name. Use _ as the space.

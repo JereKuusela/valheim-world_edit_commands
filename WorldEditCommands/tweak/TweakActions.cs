@@ -143,6 +143,16 @@ public static class TweakActions
     Actions.SetBool(view, value, Hash.Restrict);
     return $"¤ restrict set to {Print(value)}.";
   }
+  public static string Boss(ZNetView view, bool? value)
+  {
+    Actions.SetBool(view, value, Hash.Boss);
+    return $"¤ boss set to {Print(value)}.";
+  }
+  public static string Hunt(ZNetView view, bool? value)
+  {
+    value = Actions.ToggleBool(view, value, Hash.HuntPlayer);
+    return $"¤ hunt set to {Print(value)}.";
+  }
   public static string Unlock(ZNetView view, bool? value)
   {
     value = Actions.ToggleBool(view, value, Hash.Unlock);
@@ -266,6 +276,20 @@ public static class TweakActions
     Actions.SetString(view, value, Hash.Faction);
     return $"¤ faction set to {Print(value)}.";
   }
+  private static string Resistance(string value)
+  {
+    var split = value.Split(',');
+    if (split.Length < 2) return "";
+    if (!Enum.TryParse<HitData.DamageType>(split[0], true, out var type)) return "";
+    if (!Enum.TryParse<HitData.DamageModifier>(split[1], true, out var modifier)) return "";
+    return (int)(type) + "," + (int)(modifier);
+  }
+  public static string Resistances(ZNetView view, string[] value)
+  {
+    var str = value.Length == 0 ? null : string.Join("|", value.Select(Resistance).Where(s => s != ""));
+    Actions.SetString(view, str, Hash.Resistances);
+    return $"¤ resistances set to {Print(string.Join("|", value))}.";
+  }
   public static string MinLevel(ZNetView view, int? value)
   {
     Actions.SetInt(view, value, Hash.MinLevel);
@@ -280,6 +304,17 @@ public static class TweakActions
   {
     Actions.SetInt(view, value, Hash.MinAmount);
     return $"¤ minimum amount set to {Print(value)}.";
+  }
+
+  public static string Level(ZNetView view, int? value)
+  {
+    Actions.SetInt(view, value, Hash.Level);
+    return $"¤ level set to {Print(value)}.";
+  }
+  public static string Health(ZNetView view, float? value)
+  {
+    Actions.SetFloat(view, value, Hash.Health);
+    return $"¤ health set to {Print(value)}.";
   }
   public static string MaxAmount(ZNetView view, int? value)
   {

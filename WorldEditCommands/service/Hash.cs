@@ -18,6 +18,7 @@ public static class Hash
   public static int StartEffect = "override_start_effect".GetStableHashCode();
   public static int SpawnItem = "override_spawn_item".GetStableHashCode();
   public static int Faction = "override_faction".GetStableHashCode();
+  public static int Resistances = "override_resistances".GetStableHashCode();
   public static int SpawnOffset = "override_spawn_offset".GetStableHashCode();
   public static int Component = "override_component".GetStableHashCode();
   public static int MinAmount = "override_minimum_amount".GetStableHashCode();
@@ -51,6 +52,7 @@ public static class Hash
   public static int Render = "override_render".GetStableHashCode();
   public static int Collision = "override_collision".GetStableHashCode();
   public static int Restrict = "override_restrict".GetStableHashCode();
+  public static int Boss = "override_boss".GetStableHashCode();
   public static int Smoke = "override_smoke".GetStableHashCode();
   public static int CLLC_Affix = "CL&LC effect".GetStableHashCode();
   public static int Unlock = "override_unlock".GetStableHashCode();
