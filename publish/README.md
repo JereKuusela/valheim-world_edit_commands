@@ -20,6 +20,11 @@ Donations: [Buy me a computer](https://www.buymeacoffee.com/jerekuusela)
 
 # Changelog
 
+- v1.20
+	- Adds a parameter `data` to the `spawn_object` command.
+	- Adds a parameter `creator` to the `tweak_object` command.
+	- Adds parameters `faction`, `maxlevel`, `minlevel` and `spawnhealth` to the `tweak_spawner` command.
+
 - v1.19
 	- Changes the `tweak_*` command to automatically use `force` parameter when editing a single object.
 

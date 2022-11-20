@@ -57,6 +57,12 @@ public class TweakChestCommand : TweakCommand
       newOperations["maxamount"] = items.Count();
     return newOperations;
   }
+
+  protected override string DoOperation(ZNetView view, string operation, long? value)
+  {
+    throw new NotImplementedException();
+  }
+
   public TweakChestCommand()
   {
     Component = typeof(Container);

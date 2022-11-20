@@ -40,6 +40,11 @@ public class TweakRunestoneCommand : TweakCommand
     throw new NotImplementedException();
   }
 
+  protected override string DoOperation(ZNetView view, string operation, long? value)
+  {
+    throw new NotImplementedException();
+  }
+
   public TweakRunestoneCommand()
   {
     Component = typeof(RuneStone);

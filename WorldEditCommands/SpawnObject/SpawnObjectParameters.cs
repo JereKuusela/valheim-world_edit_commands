@@ -1,5 +1,7 @@
 using System;
+using System.Linq;
 using ServerDevcommands;
+using Service;
 using UnityEngine;
 namespace WorldEditCommands;
 class SpawnObjectParameters : SharedObjectParameters
@@ -16,6 +18,7 @@ class SpawnObjectParameters : SharedObjectParameters
   public bool? Tamed;
   public bool? Hunt;
   public bool UseDefaultRelativePosition = true;
+  public ZDO? Data;
 
   public SpawnObjectParameters(Terminal.ConsoleEventArgs args)
   {
@@ -39,7 +42,7 @@ class SpawnObjectParameters : SharedObjectParameters
       if (name == "hunt")
         Hunt = true;
       if (split.Length < 2) continue;
-      var value = split[1];
+      var value = string.Join("=", split.Skip(1));
       if (name == "name" || name == "crafter")
         Name = value.Replace("_", " ");
       if (name == "variant")
@@ -73,6 +76,10 @@ class SpawnObjectParameters : SharedObjectParameters
       {
         UseDefaultRelativePosition = false;
         To = Parse.VectorXZY(value.Split(','), From);
+      }
+      if (name == "data")
+      {
+        Data = DataHelper.Load(value);
       }
       if (name == "refplayer")
       {

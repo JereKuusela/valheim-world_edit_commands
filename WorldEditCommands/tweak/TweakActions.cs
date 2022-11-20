@@ -148,6 +148,11 @@ public static class TweakActions
     value = Actions.ToggleBool(view, value, Hash.Unlock);
     return $"¤ unlock set to {Print(value)}.";
   }
+  public static string Creator(ZNetView view, long? value)
+  {
+    Actions.SetCreator(view, value ?? 0);
+    return $"¤ unlock set to {Print(value)}.";
+  }
   public static string Smoke(ZNetView view, string? value)
   {
     int val = -1;

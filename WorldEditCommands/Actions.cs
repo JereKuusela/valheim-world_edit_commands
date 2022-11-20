@@ -262,7 +262,7 @@ public static class Actions
     return previous;
   }
 
-  public static float SetCreator(GameObject obj, long creator)
+  public static float SetCreator(ZNetView obj, long creator)
   {
     if (obj.TryGetComponent<Piece>(out var piece)) return SetCreator(piece, creator);
     return 0;

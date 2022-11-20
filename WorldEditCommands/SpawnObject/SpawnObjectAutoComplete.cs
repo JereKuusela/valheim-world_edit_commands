@@ -18,13 +18,18 @@ public class SpawnObjectAutoComplete : SharedObjectAutoComplete
       "refPlayer",
       "from",
       "refRot",
-      "to"
+      "to",
+      "data"
     });
     AutoComplete.Register(SpawnObjectCommand.Name, (int index) =>
     {
       if (index == 0) return ParameterInfo.Ids;
       return NamedParameters;
     }, WithSharedFetchers(new() {
+      {
+        "data",
+        (int index) => index == 0 ? ParameterInfo.Create("data=<color=yellow>base64 data/false</color>", "Sets ZDO data.") : ParameterInfo.None
+      },
       {
         "hunt",
         (int index) => index == 0 ? ParameterInfo.Create("hunt=<color=yellow>true/false</color> or no value for true.", "Sets is the creature in aggressive mode.") : ParameterInfo.None

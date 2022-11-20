@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ServerDevcommands;
+using Service;
 using UnityEngine;
 namespace WorldEditCommands;
 public class SpawnObjectCommand
@@ -40,7 +41,10 @@ public class SpawnObjectCommand
         }
         spawnPosition.y = height;
       }
-      var obj = UnityEngine.Object.Instantiate<GameObject>(prefab, spawnPosition, Quaternion.identity);
+      var rotation = pars.BaseRotation * Quaternion.Euler(Helper.RandomValue(pars.Rotation));
+      var scale = Helper.RandomValue(pars.Scale);
+      DataHelper.Init(prefab, pars.Data, spawnPosition, rotation, scale);
+      var obj = UnityEngine.Object.Instantiate<GameObject>(prefab, spawnPosition, rotation);
       spawned.Add(obj);
     }
     return spawned;
@@ -63,7 +67,6 @@ public class SpawnObjectCommand
   {
     foreach (var obj in spawned)
     {
-      var rotation = pars.BaseRotation * Quaternion.Euler(Helper.RandomValue(pars.Rotation));
       if (pars.Baby == true)
         Actions.SetBaby(obj);
       if (pars.Level != null)
@@ -79,8 +82,6 @@ public class SpawnObjectCommand
       if (pars.Tamed.HasValue)
         Actions.SetTame(obj, pars.Tamed.Value);
       total -= Actions.SetStack(obj, total);
-      Actions.SetRotation(obj, rotation);
-      Actions.SetScale(obj, Helper.RandomValue(pars.Scale));
       Actions.SetVisual(obj, VisSlot.Helmet, pars.Helmet);
       Actions.SetVisual(obj, VisSlot.Chest, pars.Chest);
       Actions.SetVisual(obj, VisSlot.Shoulder, pars.Shoulders);

@@ -54,6 +54,11 @@ public class TweakSpawnerCommand : TweakCommand
     throw new NotImplementedException();
   }
 
+  protected override string DoOperation(ZNetView view, string operation, long? value)
+  {
+    throw new NotImplementedException();
+  }
+
   public TweakSpawnerCommand()
   {
     Component = typeof(SpawnArea);

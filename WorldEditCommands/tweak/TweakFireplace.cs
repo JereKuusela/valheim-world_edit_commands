@@ -33,6 +33,11 @@ public class TweakFireplaceCommand : TweakCommand
     throw new NotImplementedException();
   }
 
+  protected override string DoOperation(ZNetView view, string operation, long? value)
+  {
+    throw new NotImplementedException();
+  }
+
   public static List<string> SmokeTypes = new() {
       "off",
       "on",

@@ -22,6 +22,7 @@ public abstract class TweakCommand
   protected abstract string DoOperation(ZNetView view, string operation, string[] value);
   protected abstract string DoOperation(ZNetView view, string operation, int? value);
   protected abstract string DoOperation(ZNetView view, string operation, bool? value);
+  protected abstract string DoOperation(ZNetView view, string operation, long? value);
   protected virtual Dictionary<string, object?> Postprocess(ZNetView view, Dictionary<string, object?> operations) => operations;
   protected virtual void Postprocess(GameObject obj) { }
 
@@ -72,6 +73,8 @@ public abstract class TweakCommand
         var output = "";
         if (type == typeof(int))
           output = DoOperation(view, operation.Key, (int?)operation.Value);
+        else if (type == typeof(long))
+          output = DoOperation(view, operation.Key, (long?)operation.Value);
         else if (type == typeof(float))
           output = DoOperation(view, operation.Key, (float?)operation.Value);
         else if (type == typeof(string[]))

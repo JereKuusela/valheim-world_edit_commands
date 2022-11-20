@@ -40,6 +40,11 @@ public class TweakPickableCommand : TweakCommand
     throw new System.NotImplementedException();
   }
 
+  protected override string DoOperation(ZNetView view, string operation, long? value)
+  {
+    throw new System.NotImplementedException();
+  }
+
   public TweakPickableCommand()
   {
     Component = typeof(Pickable);

@@ -53,6 +53,13 @@ public class TweakObjectCommand : TweakCommand
       sp.SUpdate();
     }
   }
+
+  protected override string DoOperation(ZNetView view, string operation, long? value)
+  {
+    if (operation == "creator") return TweakActions.Creator(view, value);
+    throw new NotImplementedException();
+  }
+
   public static List<string> Wears = new() {
       "default",
       "broken",
@@ -102,6 +109,7 @@ public class TweakObjectCommand : TweakCommand
     SupportedOperations.Add("wear", typeof(string));
     SupportedOperations.Add("growth", typeof(string));
     SupportedOperations.Add("water", typeof(string));
+    SupportedOperations.Add("creator", typeof(long));
 
     AutoComplete.Add("component", (int index) => Components);
     AutoComplete.Add("status", (int index) => index == 0 ? ParameterInfo.Create("status=<color=yellow>radius</color>,id", "Adds status area.") : index == 1 ? ParameterInfo.StatusEffects : ParameterInfo.None);
@@ -115,6 +123,7 @@ public class TweakObjectCommand : TweakCommand
     AutoComplete.Add("wear", (int index) => index == 0 ? Wears : ParameterInfo.None);
     AutoComplete.Add("growth", (int index) => index == 0 ? Growths : ParameterInfo.None);
     AutoComplete.Add("water", (int index) => index == 0 ? Waters : ParameterInfo.XZY("water", "Scale", index - 1));
+    AutoComplete.Add("creator", (int index) => index == 0 ? ParameterInfo.Create("creator=<color=yellow>player ID</color>", "Sets creator of objects (0 for no creator).") : ParameterInfo.None);
     Init("tweak_object", "Modify objects");
   }
 }

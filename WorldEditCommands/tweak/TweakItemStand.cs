@@ -47,6 +47,12 @@ public class TweakItemStandCommand : TweakCommand
     newOperations["item"] = item;
     return newOperations;
   }
+
+  protected override string DoOperation(ZNetView view, string operation, long? value)
+  {
+    throw new NotImplementedException();
+  }
+
   public TweakItemStandCommand()
   {
     Component = typeof(ItemStand);

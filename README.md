@@ -90,6 +90,7 @@ Most commands can be used on any object. When editing a single object, the scrip
 
 `tweak_object`:
 - `component=name`: Adds behavior / script component.
+- `creator=player id`: Sets the piece creator. Use 0 for no creator.
 - `effect=radius,id`: Adds forced effect area (heat, fire, player base, burning, no monsters, warm cozy area).
 - `event=radius,id`: Adds forced random event area.
 - `collision=true/false`: Sets whether the object has collision. No value to toggle.
@@ -178,16 +179,20 @@ Four new commands that share many parameters with the `object` command.
 - `useeffect=id,flag`: Effect when used. For random rotation, use 1 as the flag.
 
 `tweak_spawner`:
+- `faction=text`: Determines which creatures are considered hostile.
 - `farradius=meters`: Radius for `maxtotal`.
 - `respawn=seconds`: Respawn time.
 - `levelchance=percent`: Level up chance (from 0 to 100).
+- `maxlevel=number`: Maximum level (level 1 = no star).
+- `minlevel=number`: Minimum level (level 1 = no star).
 - `maxnear=number`: Maximum amount of spawns within the `nearradius`.
 - `maxtotal=number`: Maximum amount of spawns within the `farradius`.
 - `nearradius=meters`: Radius for `maxnear`.
 - `respawn=seconds`: Respawn time.
-- `spawn=id,weight,minlevel,maxlevel,faction,health`: Spawned item or object. Weight is the relative chance compared to other spawns.
+- `spawn=id,weight,minlevel,maxlevel,health`: Spawned item or object. Weight is the relative chance compared to other spawns.
 - `spawncondition=flag`: Sum up: 1 = day only, 2 = night only, 4 = ground only.
 - `spawneffect=id,flag`: Effect when the spawn happens. For random rotation, use 1 as the flag.
+- `spawnhealth=number`: Overrides the creature health.
 - `spawnradius=meters`: Maximum spawn radius.
 - `triggerdistance=meters`: Required distance to activate the spawner.
 
@@ -219,6 +224,7 @@ Following parameters are available:
 - `amount=integer`: Amount of spawned objects within a random radius. Items are autostacked.
 - `baby`: Prevents offspring from growing up.
 - `crafter=value` or `name=value`: Name of the crafter for items or name for tamed creatures (that support naming). Character _ is replaced with a space bar.
+- `data=base64 encoded`: Sets the ZDO data, for example when using `object copy`.
 - `durability=number` or `health=number`: Overrides the current durability for items, the current health for structures and the maximum health for creatures. Very high values like 1E30 turn the target invulnerable (including gravity for structures).
 - `from=x,z,y`: Allows overriding the player's position for the command. Used by `redo` and can be useful for some advanced usage.
 - `hunt=true/false`: Spawned creatures are in the hunt mode.
