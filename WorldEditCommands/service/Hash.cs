@@ -10,6 +10,7 @@ public static class Hash
   public static int SpawnHealth = "override_health".GetStableHashCode();
   public static int TriggerNoise = "override_trigger_noise".GetStableHashCode();
   public static int Spawn = "override_spawn".GetStableHashCode();
+  public static int Data = "override_data".GetStableHashCode();
   public static int OverrideItem = "override_item".GetStableHashCode();
   public static int OverrideItems = "override_items".GetStableHashCode();
   public static int Items = "items".GetStableHashCode();

@@ -108,7 +108,7 @@ public class TweakSpawnerCommand : TweakCommand
       if (index == 1) return ParameterInfo.Create("spawn=id,<color=yellow>weight</color>,minlevel,maxlevel,health", "Spawn chance relative to other spawns.");
       if (index == 2) return ParameterInfo.Create("spawn=id,weight,<color=yellow>minlevel</color>,maxlevel,health", "Minimum level (level 1 = 0 star).");
       if (index == 3) return ParameterInfo.Create("spawn=id,weight,minlevel,<color=yellow>maxlevel</color>,health", "Maximum level (level 1 = 0 star).");
-      if (index == 4) return ParameterInfo.Create("spawn=id,weight,minlevel,maxlevel,<color=yellow>health</color>", "Health.");
+      if (index == 4) return ParameterInfo.Create("spawn=id,weight,minlevel,maxlevel,<color=yellow>health/data</color>", "Health or ZDO data.");
       return ParameterInfo.Create("For additional entries, add more <color>spawn=...</color> parameters.");
     });
     AutoComplete.Add("spawneffect", (int index) => TweakAutoComplete.Effect("spawneffect", index));

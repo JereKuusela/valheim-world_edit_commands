@@ -146,6 +146,7 @@ Four new commands that share many parameters with the `object` command.
 - `name=text`: Display name. Use _ as the space.
 - `respawn=minutes`: Respawn time.
 - `spawn=id`: Spawned item or object.
+- `spawndata=base64 encoded`: Sets the ZDO data, for example when using `object copy`.
 - `spawneffect=id,flag`: Effect when the spawn happens. For random rotation, use 1 as the flag.
 - `spawnhealth=number`: Overrides the creature health.
 - `spawnitem=id`: Required item.
@@ -197,7 +198,7 @@ Four new commands that share many parameters with the `object` command.
 - `maxtotal=number`: Maximum amount of spawns within the `farradius`.
 - `nearradius=meters`: Radius for `maxnear`.
 - `respawn=seconds`: Respawn time.
-- `spawn=id,weight,minlevel,maxlevel,health`: Spawned item or object. Weight is the relative chance compared to other spawns.
+- `spawn=id,weight,minlevel,maxlevel,data/health`: Spawned item or object. Weight is the relative chance compared to other spawns. Data is the ZDO data, for example when using `object copy`.
 - `spawncondition=flag`: Sum up: 1 = day only, 2 = night only, 4 = ground only.
 - `spawneffect=id,flag`: Effect when the spawn happens. For random rotation, use 1 as the flag.
 - `spawnhealth=number`: Overrides the creature health.
@@ -211,6 +212,7 @@ Four new commands that share many parameters with the `object` command.
 - `minlevel=number`: Minimum level (level 1 = no star).
 - `respawn=minutes`: Respawn time.
 - `spawn=id`: Spawned item or object.
+- `spawndata=base64 encoded`: Sets the ZDO data, for example when using `object copy`.
 - `spawncondition=flag`: 1 = day only, 2 = night only.
 - `spawneffect=id,flag`: Effect when the spawn happens. For random rotation, use 1 as the flag.
 - `spawnhealth=number`: Overrides the creature health.

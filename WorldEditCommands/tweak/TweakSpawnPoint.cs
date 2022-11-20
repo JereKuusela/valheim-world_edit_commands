@@ -8,6 +8,8 @@ public class TweakSpawnPointCommand : TweakCommand
 {
   protected override string DoOperation(ZNetView view, string operation, string? value)
   {
+    if (operation == "spawndata")
+      return TweakActions.SpawnData(view, value);
     if (operation == "spawn")
       return TweakActions.Spawn(view, value);
     if (operation == "faction")
@@ -71,6 +73,7 @@ public class TweakSpawnPointCommand : TweakCommand
     SupportedOperations.Add("spawn", typeof(string));
     SupportedOperations.Add("spawneffect", typeof(string[]));
     SupportedOperations.Add("faction", typeof(string));
+    SupportedOperations.Add("spawndata", typeof(string));
 
     AutoComplete.Add("faction", (int index) => index == 0 ? Enum.GetNames(typeof(Character.Faction)).ToList() : ParameterInfo.None);
     AutoComplete.Add("minlevel", (int index) => index == 0 ? ParameterInfo.Create("minlevel=<color=yellow>number</color>", "Minimum level (level 1 = no star). No value to reset.") : ParameterInfo.None);
@@ -83,6 +86,7 @@ public class TweakSpawnPointCommand : TweakCommand
     AutoComplete.Add("spawnhealth", (int index) => index == 0 ? ParameterInfo.Create("spawnhealth=<color=yellow>number</color>", "Overrides the creature health. No value to reset.") : ParameterInfo.None);
     AutoComplete.Add("spawn", (int index) => index == 0 ? ParameterInfo.ObjectIds : ParameterInfo.None);
     AutoComplete.Add("spawneffect", (int index) => TweakAutoComplete.Effect("spawneffect", index));
+    AutoComplete.Add("spawndata", (int index) => index == 0 ? ParameterInfo.Create("spawndata=<color=yellow>base64 encoded</color", "ZDO data.") : ParameterInfo.None);
     Init("tweak_spawnpoint", "Modify spawn points");
   }
 }

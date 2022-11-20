@@ -8,6 +8,8 @@ public class TweakAltarCommand : TweakCommand
 {
   protected override string DoOperation(ZNetView view, string operation, string? value)
   {
+    if (operation == "spawndata")
+      return TweakActions.SpawnData(view, value);
     if (operation == "spawn")
       return TweakActions.Spawn(view, value);
     if (operation == "spawnitem")
@@ -102,6 +104,7 @@ public class TweakAltarCommand : TweakCommand
     SupportedOperations.Add("itemstandprefix", typeof(string));
     SupportedOperations.Add("globalkey", typeof(string));
     SupportedOperations.Add("faction", typeof(string));
+    SupportedOperations.Add("spawndata", typeof(string));
 
     AutoComplete.Add("minlevel", (int index) => index == 0 ? ParameterInfo.Create("minlevel=<color=yellow>number</color>", "Minimum level (level 1 = no star). No value to reset.") : ParameterInfo.None);
     AutoComplete.Add("maxlevel", (int index) => index == 0 ? ParameterInfo.Create("maxlevel=<color=yellow>number</color>", "Maximum level (level 1 = no star). No value to reset.") : ParameterInfo.None);
@@ -125,6 +128,7 @@ public class TweakAltarCommand : TweakCommand
     AutoComplete.Add("starteffect", (int index) => TweakAutoComplete.Effect("starteffect", index));
     AutoComplete.Add("useeffect", (int index) => TweakAutoComplete.Effect("useeffect", index));
     AutoComplete.Add("itemoffset", (int index) => ParameterInfo.XZY("itemoffset", "Offset when spawning items. Also sets the <color=yellow>useeffect</color> position.", index));
+    AutoComplete.Add("spawndata", (int index) => index == 0 ? ParameterInfo.Create("spawndata=<color=yellow>base64 encoded</color", "ZDO data.") : ParameterInfo.None);
     Init("tweak_altar", "Modify altars");
   }
 }

@@ -181,6 +181,11 @@ public static class TweakActions
     Actions.SetInt(view, (int)cllc, Hash.CLLC_Affix);
     return $"¤ affix set to {Print(cllc)}.";
   }
+  public static string SpawnData(ZNetView view, string? value)
+  {
+    Actions.SetString(view, value, Hash.Data);
+    return $"¤ spawn data set to {Print(value)}.";
+  }
   public static string Spawn(ZNetView view, string? value)
   {
     Actions.SetPrefab(view, value, Hash.Spawn);

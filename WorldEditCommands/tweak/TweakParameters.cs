@@ -56,7 +56,7 @@ public class TweakParameters
       if (name == "connect") Connect = true;
       if (name == "force") Force = true;
       if (split.Length < 2) continue;
-      var value = split[1];
+      var value = string.Join("=", split.Skip(1));
       if (SupportedOperations.TryGetValue(name, out type))
       {
         if (type == typeof(int))
