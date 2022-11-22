@@ -26,6 +26,7 @@ public class TweakCreatureCommand : TweakCommand
 
   protected override string DoOperation(ZNetView view, string operation, string[] value)
   {
+    if (operation == "item") return TweakActions.Items(view, value);
     if (operation == "affix") return TweakActions.CLLC(view, value);
     if (operation == "resistance") return TweakActions.Resistances(view, value);
     throw new System.NotImplementedException();
@@ -54,6 +55,7 @@ public class TweakCreatureCommand : TweakCommand
     SupportedOperations.Add("hunt", typeof(bool));
     SupportedOperations.Add("resistance", typeof(string[]));
     SupportedOperations.Add("name", typeof(string));
+    SupportedOperations.Add("item", typeof(string[]));
     if (WorldEditCommands.IsCLLC)
       SupportedOperations.Add("affix", typeof(string[]));
 
@@ -70,6 +72,15 @@ public class TweakCreatureCommand : TweakCommand
       if (index == 0) return Enum.GetNames(typeof(HitData.DamageType)).ToList();
       if (index == 1) return Enum.GetNames(typeof(HitData.DamageModifier)).ToList();
       return ParameterInfo.Create("For additional entries, add more <color>resistance=...</color> parameters.");
+    });
+    AutoComplete.Add("item", (int index) =>
+    {
+      if (index == 0) return ParameterInfo.ItemIds;
+      if (index == 1) return ParameterInfo.Create("item=id,<color=yellow>chance</color>,minamount,maxamount,flag", "Drop chance.");
+      if (index == 2) return ParameterInfo.Create("item=id,chance,<color=yellow>minamount</color>,maxamount,flag", "Minimum amount.");
+      if (index == 3) return ParameterInfo.Create("item=id,chance,minamount,<color=yellow>maxamount</color>,flag", "Maximum amount.");
+      if (index == 4) return ParameterInfo.Create("item=id,chance,minamount,maxamount,<color=yellow>flag</color>", "Sum up: 1 = star multiplier, 2 = one per player.");
+      return ParameterInfo.Create("For additional entries, add more <color>item=...</color> parameters.");
     });
     Init("tweak_creature", "Modify creatures");
   }

@@ -26,7 +26,7 @@ Donations: [Buy me a computer](https://www.buymeacoffee.com/jerekuusela)
 	- Adds a parameter `spawndata` to the `tweak_altar` command.
 	- Adds a parameter `spawndata` to the `tweak_spawnpoint` command.
 	- Adds a value for data to the `tweak_spawner spawn` paramemter.
-	- Adds parameters `boss`, `health`, `hunt`, `level`, `name` and `resistance` to the `tweak_creature` command.
+	- Adds parameters `boss`, `health`, `hunt`, `item`,`level`, `name` and `resistance` to the `tweak_creature` command.
 	- Adds parameters `faction`, `maxlevel`, `minlevel` and `spawnhealth` to the `tweak_spawner` command.
 
 - v1.19

@@ -61,7 +61,7 @@ public partial class Terrain
   public static TerrainComp[] GetCompilers(Vector3 position, Range<float> radius)
   {
     List<Heightmap> heightMaps = new();
-    Heightmap.FindHeightmap(position, radius.Max, heightMaps);
+    Heightmap.FindHeightmap(position, radius.Max + 1, heightMaps);
     var pos = ZNet.instance.GetReferencePosition();
     var zs = ZoneSystem.instance;
     var ns = ZNetScene.instance;
@@ -75,7 +75,7 @@ public partial class Terrain
     // Rotating increases the square dimensions.
     var dimensionMultiplier = Mathf.Abs(Mathf.Sin(angle)) + Mathf.Abs(Mathf.Cos(angle));
     var size = maxDimension * dimensionMultiplier;
-    Heightmap.FindHeightmap(position, size, heightMaps);
+    Heightmap.FindHeightmap(position, size + 1, heightMaps);
     var pos = ZNet.instance.GetReferencePosition();
     var zs = ZoneSystem.instance;
     var ns = ZNetScene.instance;

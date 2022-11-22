@@ -170,6 +170,7 @@ Four new commands that share many parameters with the `object` command.
 - `faction=text`:  Determines which creatures are considered hostile.
 - `health=number`: The health.
 - `hunt=true/false`: Sets the extra aggressiveness mode.
+- `item=id,chance,minamount,maxamount,flags`: Item drop. Sum up: 1 = star multiplier, 2 = one per player.
 - `level=number`: Level (level 1 = no star).
 - `name=text`: Display name. Use _ as the space.
 - `resistance=type,modifier`: Sets a damage resistance.
