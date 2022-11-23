@@ -123,7 +123,7 @@ public class SpawnObjectCommand
       var position = GetPosition(pars.From, pars.RelativePosition, pars.BaseRotation);
       var spawned = SpawnObject(pars, prefab, count);
       Manipulate(spawned, pars, amount);
-      Player.m_localPlayer.Message(MessageHud.MessageType.TopLeft, "Spawning object " + prefabName, spawned.Count, null);
+      Player.m_localPlayer?.Message(MessageHud.MessageType.TopLeft, "Spawning object " + prefabName, spawned.Count, null);
       args.Context.AddString("Spawned: " + prefabName + " at " + Helper.PrintVectorXZY(position));
       var spawns = spawned.Select(obj => obj.GetComponent<ZNetView>()).Where(obj => obj != null).Select(obj => obj.GetZDO()).ToList();
       // Undo uses refPos which would disable the default relative position. So apply it to the from to keep the same position.

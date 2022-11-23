@@ -21,6 +21,7 @@ Donations: [Buy me a computer](https://www.buymeacoffee.com/jerekuusela)
 # Changelog
 
 - v1.20
+	- Improves server side support.
 	- Adds a parameter `data` to the `spawn_object` command.
 	- Adds a parameter `creator` to the `tweak_object` command.
 	- Adds a parameter `spawndata` to the `tweak_altar` command.
@@ -46,29 +47,3 @@ Donations: [Buy me a computer](https://www.buymeacoffee.com/jerekuusela)
 	- Adds a new parameter `copy` to the `object` command to copy zdo data.
 	- Adds a new parameter `data` to the `object` command to print and set zdo data.
 	- Fixes the `discover` parameter of `tweak_runestone` not working.
-
-- v1.15
-	- Adds new commands `tweak_itemstand` for Spawner Tweaks mod.
-	- Adds new parameters to the `tweak_chest` command for Spawner Tweaks mod.
-	- Adds faction to the `object info`.
-	- Fixes the `spawn_object` not spawning all objects if a high spawn radius is used.
-
-- v1.14
-	- Fixes the `object show=` not working.
-
-- v1.13
-	- Adds faction overrides to Spawner Tweaks command.
-	- Fixes the `radius` parameter not working for tweak commands.
-	- Fixes hidden area effects being targeted.
-
-- v1.12
-	- Adds a parameter to the `object info` which prints the given data value.
-	- Adds new commands `tweak_chest`, `tweak_door`, `tweak_fireplace`, `tweak_portal` and `tweak_runestone` for Structure Tweaks mod.
-	- Fixes `object info` printing coordinates incorrectly.
-	- Fixes the `tweak_*` commands not data syncing correctly in some cases.
-
-- v1.11
-	- Adds a new parameter `force` to the `tweak_*` commands.
-	- Fixes ids which have underscore not working with `tweak_*` commands.
-	- Fixes ids of `tweak_*` commands being case sensitive.
-	- Fixes the `durability` operation missing from the `object` command.

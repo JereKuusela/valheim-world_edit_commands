@@ -40,6 +40,7 @@ public static class Selector
 
   public static Hovered? GetHovered(Player obj, float maxDistance, HashSet<string>? blacklist, bool allowOtherPlayers = false)
   {
+    if (!obj) return null;
     var raycast = Math.Max(maxDistance + 5f, 50f);
     var mask = LayerMask.GetMask(new string[]
     {
