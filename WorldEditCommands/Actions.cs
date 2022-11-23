@@ -453,4 +453,12 @@ public static class Actions
     else
       ZDOMan.instance.DestroyZDO(zdo);
   }
+  private const string DEFAULT = "default";
+  private static string Print<T>(T? value) => value == null ? DEFAULT : value.ToString();
+
+  public static string Damage(ZNetView view, float? value)
+  {
+    Actions.SetFloat(view, value ?? 1f, Hash.Damage);
+    return $"¤ damage set to {Print(value)}.";
+  }
 }

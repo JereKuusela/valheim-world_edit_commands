@@ -67,10 +67,13 @@ public class SpawnObjectCommand
   {
     foreach (var obj in spawned)
     {
+      var view = obj.GetComponent<ZNetView>();
       if (pars.Baby == true)
         Actions.SetBaby(obj);
       if (pars.Level != null)
         Actions.SetLevel(obj, Helper.RandomValue(pars.Level));
+      if (pars.Damage != null)
+        Actions.SetFloat(view, Helper.RandomValue(pars.Damage), Hash.Damage);
       if (pars.Health != null)
         Actions.SetHealth(obj, Helper.RandomValue(pars.Health));
       if (pars.Variant != null)

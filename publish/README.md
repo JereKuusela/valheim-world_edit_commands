@@ -20,6 +20,9 @@ Donations: [Buy me a computer](https://www.buymeacoffee.com/jerekuusela)
 
 # Changelog
 
+- v1.21
+	- Adds a parameter `damage` to the `object` and `tweak_creature` commands.
+
 - v1.20
 	- Improves server side support.
 	- Adds a parameter `data` to the `spawn_object` command.

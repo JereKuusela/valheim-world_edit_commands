@@ -17,6 +17,7 @@ public class SharedObjectParameters
   public Range<Vector3> Scale = new(Vector3.one);
   public Range<int>? Level;
   public Range<float>? Health;
+  public Range<float>? Damage;
   public bool? Baby;
   public Item? Helmet;
   public Item? LeftHand;
@@ -39,6 +40,8 @@ public class SharedObjectParameters
       var value = split[1];
       if (name == "health" || name == "durability")
         Health = Parse.FloatRange(value, 0);
+      if (name == "damage")
+        Damage = Parse.FloatRange(value, 0);
       if (name == "stars" || name == "star")
       {
         Level = Parse.IntRange(value, 0);

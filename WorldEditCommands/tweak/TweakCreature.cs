@@ -15,6 +15,7 @@ public class TweakCreatureCommand : TweakCommand
   protected override string DoOperation(ZNetView view, string operation, float? value)
   {
     if (operation == "health") return TweakActions.Health(view, value);
+    if (operation == "float") return Actions.Damage(view, value);
     throw new System.NotImplementedException();
   }
 
@@ -48,6 +49,7 @@ public class TweakCreatureCommand : TweakCommand
   {
     Component = typeof(Character);
     ComponentName = "character";
+    SupportedOperations.Add("damage", typeof(float));
     SupportedOperations.Add("faction", typeof(string));
     SupportedOperations.Add("boss", typeof(bool));
     SupportedOperations.Add("health", typeof(float));
@@ -67,6 +69,7 @@ public class TweakCreatureCommand : TweakCommand
     AutoComplete.Add("hunt", (int index) => ParameterInfo.Create("hunt=<color=yellow>true/false</color>", "Sets the extra aggressiveness. No value to toggle."));
     AutoComplete.Add("level", (int index) => ParameterInfo.Create("level=<color=yellow>number</color>", "Sets the level (level 1 = 0 star)"));
     AutoComplete.Add("health", (int index) => ParameterInfo.Create("health=<color=yellow>number</color>", "Sets the health."));
+    AutoComplete.Add("damage", (int index) => ParameterInfo.Create("damage=<color=yellow>number</color>", "Sets the damage multiplier."));
     AutoComplete.Add("resistance", (int index) =>
     {
       if (index == 0) return Enum.GetNames(typeof(HitData.DamageType)).ToList();

@@ -30,7 +30,8 @@ public class SharedObjectAutoComplete
       "stars",
       "level",
       "scale",
-      "model"
+      "model",
+      "damage"
     };
     parameters.AddRange(namedParameters);
     return parameters.Distinct().OrderBy(s => s).ToList();
@@ -80,6 +81,10 @@ public class SharedObjectAutoComplete
       {
         "health",
         (int index) => index == 0 ? ParameterInfo.CreateWithMinMax("health", "number", "Sets current durability/health (+ maximum health for creatures).") : ParameterInfo.None
+      },
+      {
+        "damage",
+        (int index) => index == 0 ? ParameterInfo.CreateWithMinMax("damage", "number", "Sets the damage multiplier.") : ParameterInfo.None
       },
       {
         "stars",

@@ -75,6 +75,8 @@ public class ObjectCommand
         var name = Utils.GetPrefabName(view.gameObject);
         if (operation == "durability" || operation == "health")
           output = ChangeHealth(view, Helper.RandomValue(pars.Health));
+        if (operation == "damage")
+          output = Actions.Damage(view, Helper.RandomValue(pars.Health));
         if (operation == "stars" || operation == "level")
           output = SetStars(view, Helper.RandomValue(pars.Level) - 1);
         if (operation == "fuel" && pars.Fuel != null)
