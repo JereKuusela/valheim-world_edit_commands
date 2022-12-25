@@ -74,6 +74,10 @@ public class SpawnObjectCommand
         Actions.SetLevel(obj, Helper.RandomValue(pars.Level));
       if (pars.Damage != null)
         Actions.SetFloat(view, Helper.RandomValue(pars.Damage), Hash.Damage);
+      if (pars.Ammo != null)
+        Actions.SetInt(view, Helper.RandomValue(pars.Ammo), Hash.Ammo);
+      if (pars.AmmoType != null)
+        Actions.SetString(view,pars.AmmoType, Hash.AmmoType);
       if (pars.Health != null)
         Actions.SetHealth(obj, Helper.RandomValue(pars.Health));
       if (pars.Variant != null)

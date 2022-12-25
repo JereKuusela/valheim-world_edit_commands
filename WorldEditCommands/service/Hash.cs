@@ -1,6 +1,8 @@
 public static class Hash
 {
   public static int Damage = "RandomSkillFactor".GetStableHashCode();
+  public static int Ammo = "ammo".GetStableHashCode();
+  public static int AmmoType = "ammoType".GetStableHashCode();
   public static int PlantTime = "plantTime".GetStableHashCode();
   public static int Status = "override_status".GetStableHashCode();
   public static int Weather = "override_weather".GetStableHashCode();

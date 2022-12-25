@@ -22,6 +22,8 @@ The `object [...args]` alters the hovered object or objects within a given radiu
 
 Following parameters are available:
 
+- `ammo=number`: Sets the amount of ammo for turrets.
+- `ammoType=item`: Sets the ammo type for turrets. Throwables, magic weapons and enemy weapons ranged weapons seem to work. Arrows work too but instantly fall to the ground.
 - `angle=degrees`: Direction of the rectangle when used with `rect`.
 - `baby`: Prevents offspring from growing up.
 - `copy`: Copies most of the ZDO data to the clipboard. Excludes some data to work better and to reduce data size.
@@ -32,6 +34,7 @@ Following parameters are available:
 - `creator=player id`: Sets the piece creator. Use 0 for no creator.
 - `circle=number` or `circle=min-max`: Radius for included objects. If not given, the hovered object is only affected.
 - `connect`: Includes entire structures.
+- `damage=number`: Sets damage multiplier.
 - `data=[key]`: Prints ZDO data.
 - `data=[key,value]`: Sets ZDO data. The key must already exist in the data.
 - `durability=number` or `health=number`: Sets the current durability for items, the current health for structures and the maximum health for creatures. Very high values like 1E30 turn the target invulnerable (including gravity for structures).
@@ -54,6 +57,7 @@ Following parameters are available:
 - `scale=x,z,y`: Scales objects (which support it). A single value sets all of the scales.
 - `sleep`: Makes creatures fall asleep (that support it).
 - `stars=integer`: Sets stars for creatures (stars = level - 1).
+- `status=name,duration,intensity`: Adds a status effect. Note: These are not stored to the save file.
 - `type=creature/structure`: Only selects creatures or structures.
 - `wild`: Untames creatures.
 
@@ -167,6 +171,7 @@ Four new commands that share many parameters with the `object` command.
 `tweak_creature`:
 - `affix=name`: Sets the CLLC affix (if CLLC is installed).
 - `boss=true/false`: Sets the boss health bar. No value to toggle.
+- `damage=number`: Sets the damage multiplier.
 - `faction=text`:  Determines which creatures are considered hostile.
 - `health=number`: The health.
 - `hunt=true/false`: Sets the extra aggressiveness mode.
@@ -232,9 +237,12 @@ The `spawn_object [object id] [...args]` spawns objects to the world. The `undo`
 
 Following parameters are available:
 
+- `ammo=number`: Sets the amount of ammo for turrets.
+- `ammoType=item`: Sets the ammo type for turrets. Throwables, magic weapons and enemy weapons ranged weapons seem to work. Arrows work too but instantly fall to the ground.
 - `amount=integer`: Amount of spawned objects within a random radius. Items are autostacked.
 - `baby`: Prevents offspring from growing up.
 - `crafter=value` or `name=value`: Name of the crafter for items or name for tamed creatures (that support naming). Character _ is replaced with a space bar.
+- `damage=number`: Sets the damage multiplier.
 - `data=base64 encoded`: Sets the ZDO data, for example when using `object copy`.
 - `durability=number` or `health=number`: Overrides the current durability for items, the current health for structures and the maximum health for creatures. Very high values like 1E30 turn the target invulnerable (including gravity for structures).
 - `from=x,z,y`: Allows overriding the player's position for the command. Used by `redo` and can be useful for some advanced usage.

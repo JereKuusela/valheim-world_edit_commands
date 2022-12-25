@@ -31,7 +31,9 @@ public class SharedObjectAutoComplete
       "level",
       "scale",
       "model",
-      "damage"
+      "damage",
+      "ammo",
+      "ammoType"
     };
     parameters.AddRange(namedParameters);
     return parameters.Distinct().OrderBy(s => s).ToList();
@@ -85,6 +87,14 @@ public class SharedObjectAutoComplete
       {
         "damage",
         (int index) => index == 0 ? ParameterInfo.CreateWithMinMax("damage", "number", "Sets the damage multiplier.") : ParameterInfo.None
+      },
+      {
+        "ammo",
+        (int index) => index == 0 ? ParameterInfo.CreateWithMinMax("ammo", "number", "Sets the amount of ammo.") : ParameterInfo.None
+      },
+      {
+        "ammoType",
+        (int index) => index == 0 ? ParameterInfo.ItemIds : ParameterInfo.None
       },
       {
         "stars",

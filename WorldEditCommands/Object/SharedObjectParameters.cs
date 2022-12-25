@@ -18,6 +18,8 @@ public class SharedObjectParameters
   public Range<int>? Level;
   public Range<float>? Health;
   public Range<float>? Damage;
+  public Range<int>? Ammo;
+  public string? AmmoType;
   public bool? Baby;
   public Item? Helmet;
   public Item? LeftHand;
@@ -42,6 +44,10 @@ public class SharedObjectParameters
         Health = Parse.FloatRange(value, 0);
       if (name == "damage")
         Damage = Parse.FloatRange(value, 0);
+      if (name == "ammo")
+        Ammo = Parse.IntRange(value, 0);
+      if (name == "ammotype")
+        AmmoType = value;
       if (name == "stars" || name == "star")
       {
         Level = Parse.IntRange(value, 0);

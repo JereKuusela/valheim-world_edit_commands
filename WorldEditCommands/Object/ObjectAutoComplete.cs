@@ -33,8 +33,17 @@ public class ObjectAutoComplete : SharedObjectAutoComplete
       "chance",
       "type",
       "connect",
+      "status"
     });
     AutoComplete.Register(ObjectCommand.Name, (int index) => NamedParameters, WithSharedFetchers(new() {
+      {
+        "status", (int index) => {
+          if (index == 0) return ParameterInfo.StatusEffects;
+          if (index == 1) return ParameterInfo.Create("status=name,<color=yellow>duration</color>,intensity", "Duration in seconds.");
+          if (index == 2) return ParameterInfo.Create("status=name,duration,<color=yellow>intensity</color>", "Strength of the effect.");
+          return ParameterInfo.None;
+        }
+      },
       {
         "type", (int index) => index == 0 ? ObjectTypes : ParameterInfo.None
       },

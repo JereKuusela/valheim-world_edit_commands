@@ -15,7 +15,7 @@ public class TweakCreatureCommand : TweakCommand
   protected override string DoOperation(ZNetView view, string operation, float? value)
   {
     if (operation == "health") return TweakActions.Health(view, value);
-    if (operation == "float") return Actions.Damage(view, value);
+    if (operation == "damage") return Actions.Damage(view, value);
     throw new System.NotImplementedException();
   }
 

@@ -21,7 +21,9 @@ Donations: [Buy me a computer](https://www.buymeacoffee.com/jerekuusela)
 # Changelog
 
 - v1.21
-	- Adds a parameter `damage` to the `object` and `tweak_creature` commands.
+	- Adds a parameter `damage` to the `object`, `spawn_object` and `tweak_creature` commands.
+	- Adds parameters `ammo` and `ammo_type` to the `object` and `spawn_object` commands.
+	- Adds a parameter `status` to the `object` command.
 
 - v1.20
 	- Improves server side support.

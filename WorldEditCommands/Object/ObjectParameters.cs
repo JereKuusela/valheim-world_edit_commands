@@ -29,9 +29,16 @@ public class ObjectParameters : SharedObjectParameters
   public float Chance = 1f;
   public bool Connect;
   public ObjectType ObjectType = ObjectType.All;
+  public string? StatusName;
+  public Range<float>? StatusDuration;
+  public Range<float>? StatusIntensity;
 
   public static HashSet<string> SupportedOperations = new() {
+    "status",
     "health",
+    "damage",
+    "ammo",
+    "ammotype",
     "durability",
     "stars",
     "tame",
@@ -59,8 +66,7 @@ public class ObjectParameters : SharedObjectParameters
     "respawn",
     "mirror",
     "creator",
-    "copy",
-    "status",
+    "copy"
   };
 
   public ObjectParameters(Terminal.ConsoleEventArgs args)
@@ -119,6 +125,12 @@ public class ObjectParameters : SharedObjectParameters
         Creator = Parse.Long(value, 0L);
       if (name == "angle")
         Angle = Parse.Float(value, 0f) * Mathf.PI / 180f;
+      if (name == "status")
+      {
+        StatusName = values[0];
+        StatusDuration = Parse.FloatRange(values, 1, 60);
+        StatusIntensity = Parse.FloatRange(values, 2, 100);
+      }
     }
     if (Operations.Contains("remove") && Operations.Count > 1)
       throw new InvalidOperationException("Remove can't be used with other operations.");

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
 using ServerDevcommands;
 using Service;
@@ -76,7 +77,11 @@ public class ObjectCommand
         if (operation == "durability" || operation == "health")
           output = ChangeHealth(view, Helper.RandomValue(pars.Health));
         if (operation == "damage")
-          output = Actions.Damage(view, Helper.RandomValue(pars.Health));
+          output = Actions.Damage(view, Helper.RandomValue(pars.Damage));
+        if (operation == "ammo")
+          output = Actions.Ammo(view, Helper.RandomValue(pars.Ammo));
+        if (operation == "ammotype")
+          output = Actions.AmmoType(view, pars.AmmoType);
         if (operation == "stars" || operation == "level")
           output = SetStars(view, Helper.RandomValue(pars.Level) - 1);
         if (operation == "fuel" && pars.Fuel != null)
@@ -121,6 +126,8 @@ public class ObjectCommand
           output = SetUtility(view, pars.Utility);
         if (operation == "prefab")
           output = SetPrefab(view, pars.Prefab);
+        if (operation == "status" && pars.StatusName != null)
+          output = SetStatus(view, pars.StatusName, Helper.RandomValue(pars.StatusDuration), Helper.RandomValue(pars.StatusIntensity));
         if (operation == "move")
           output = Move(view, Helper.RandomValue(pars.Offset), pars.Origin);
         if (operation == "mirror" && pars.Center.HasValue)
@@ -401,6 +408,31 @@ public class ObjectCommand
     AddData(view);
     Actions.SetVisual(obj, VisSlot.Utility, item);
     return $"Utility item of ¤ set to {item.Name} with variant {item.Variant}.";
+  }
+  private static string SetStatus(ZNetView obj, string name, float duration, float intensity) {
+    if (!obj.TryGetComponent<Character>(out var creature)) return "Skipped: ¤ is not a creature.";
+    obj.ClaimOwnership();
+    creature.GetSEMan()?.AddStatusEffect(name, true);
+    var effect = creature.GetSEMan()?.GetStatusEffect(name);
+    if (effect == null) return $"Failed to set status of ¤ to {name}";
+    effect.m_ttl = duration;
+    if (effect is SE_Shield shield)
+      shield.m_absorbDamage = intensity;
+    if (effect is SE_Burning burning) {
+      if (name == "Burning") {   
+        burning.m_fireDamageLeft = 0;
+        burning.AddFireDamage(intensity);
+      }
+      else {   
+        burning.m_spiritDamageLeft = 0;
+        burning.AddSpiritDamage(intensity);
+      }
+    }
+    if (effect is SE_Poison poison) {
+      poison.m_damageLeft = intensity;
+      poison.m_damagePerHit = intensity / effect.m_ttl * poison.m_damageInterval;
+    }
+    return $"Status of ¤ set to {name}";
   }
   private static string GetInfo(ZNetView obj)
   {
