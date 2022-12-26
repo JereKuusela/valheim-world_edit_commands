@@ -24,6 +24,7 @@ Donations: [Buy me a computer](https://www.buymeacoffee.com/jerekuusela)
 	- Adds a parameter `damage` to the `object`, `spawn_object` and `tweak_creature` commands.
 	- Adds parameters `ammo` and `ammo_type` to the `object` and `spawn_object` commands.
 	- Adds a parameter `status` to the `object` command.
+	- Fixes a rare error when other mods added objects with the same name (but different casing).
 
 - v1.20
 	- Improves server side support.

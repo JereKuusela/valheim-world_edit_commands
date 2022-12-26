@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Permissions;
 using UnityEngine;
 namespace WorldEditCommands;
 
@@ -47,10 +48,13 @@ public static class Actions
       Refresh(obj);
   }
   private static Dictionary<string, int> IdToHash = new();
+  private static Dictionary<string, int> LowerIdToHash = new();
   public static int GetId(string id)
   {
-    if (IdToHash.Count == 0) IdToHash = ZNetScene.instance.m_namedPrefabs.ToDictionary(kvp => kvp.Value.name.ToLower(), kvp => kvp.Key);
-    if (IdToHash.TryGetValue(id.ToLower(), out var value)) return value;
+    if (IdToHash.Count == 0) IdToHash = ZNetScene.instance.m_namedPrefabs.ToDictionary(kvp => kvp.Value.name, kvp => kvp.Key);
+    if (LowerIdToHash.Count == 0) LowerIdToHash = ZNetScene.instance.m_namedPrefabs.ToLookup(kvp => kvp.Value.name.ToLower(), kvp => kvp.Key).ToDictionary(kvp => kvp.Key, kvp => kvp.FirstOrDefault());
+    if (IdToHash.TryGetValue(id, out var value)) return value;
+    if (LowerIdToHash.TryGetValue(id.ToLower(), out var value2)) return value2;
     return id.GetStableHashCode();
   }
   public static void SetPrefab(ZNetView obj, string? value, int hash, bool refresh = false)
