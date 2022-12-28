@@ -48,8 +48,3 @@ Donations: [Buy me a computer](https://www.buymeacoffee.com/jerekuusela)
 	- Adds a new command `tweak_object` to take Spawner / Structure Tweaks command from the `object` command.
 	- Changes the `world_edit_aliases` command to use the substitution value from Server Devcommands mod (internal change).
 	- Fixes `spawn_object` removing the hunt mode of the bosses.
-
-- v1.16
-	- Adds a new parameter `copy` to the `object` command to copy zdo data.
-	- Adds a new parameter `data` to the `object` command to print and set zdo data.
-	- Fixes the `discover` parameter of `tweak_runestone` not working.
