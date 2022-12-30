@@ -153,6 +153,11 @@ public static class TweakActions
     value = Actions.ToggleBool(view, value, Hash.HuntPlayer);
     return $"¤ hunt set to {Print(value)}.";
   }
+  public static string Tame(ZNetView view, bool? value)
+  {
+    value = Actions.ToggleBool(view, value, Hash.Tamed);
+    return $"¤ tamed set to {Print(value)}.";
+  }
   public static string Unlock(ZNetView view, bool? value)
   {
     value = Actions.ToggleBool(view, value, Hash.Unlock);
@@ -160,8 +165,8 @@ public static class TweakActions
   }
   public static string Creator(ZNetView view, long? value)
   {
-    Actions.SetCreator(view, value ?? 0);
-    return $"¤ unlock set to {Print(value)}.";
+    Actions.SetLong(view, value ?? 0L, Hash.Creator);
+    return $"¤ creator set to {Print(value)}.";
   }
   public static string Smoke(ZNetView view, string? value)
   {

@@ -37,6 +37,7 @@ public class TweakCreatureCommand : TweakCommand
   {
     if (operation == "boss") return TweakActions.Boss(view, value);
     if (operation == "hunt") return TweakActions.Hunt(view, value);
+    if (operation == "tame") return TweakActions.Tame(view, value);
     throw new NotImplementedException();
   }
 
@@ -52,6 +53,7 @@ public class TweakCreatureCommand : TweakCommand
     SupportedOperations.Add("damage", typeof(float));
     SupportedOperations.Add("faction", typeof(string));
     SupportedOperations.Add("boss", typeof(bool));
+    SupportedOperations.Add("tame", typeof(bool));
     SupportedOperations.Add("health", typeof(float));
     SupportedOperations.Add("level", typeof(int));
     SupportedOperations.Add("hunt", typeof(bool));
@@ -66,6 +68,7 @@ public class TweakCreatureCommand : TweakCommand
     AutoComplete.Add("name", (int index) => index == 0 ? ParameterInfo.Create("name=<color=yellow>text</color>", "Display name. Use _ as the space. No value to reset.") : ParameterInfo.None);
     AutoComplete.Add("faction", (int index) => index == 0 ? Enum.GetNames(typeof(Character.Faction)).ToList() : ParameterInfo.None);
     AutoComplete.Add("boss", (int index) => ParameterInfo.Create("boss=<color=yellow>true/false</color> ", "Sets the boss health bar. No value to reset."));
+    AutoComplete.Add("tame", (int index) => ParameterInfo.Create("tame=<color=yellow>true/false</color> ", "Sets the tamed status. No value to toggle."));
     AutoComplete.Add("hunt", (int index) => ParameterInfo.Create("hunt=<color=yellow>true/false</color>", "Sets the extra aggressiveness. No value to toggle."));
     AutoComplete.Add("level", (int index) => ParameterInfo.Create("level=<color=yellow>number</color>", "Sets the level (level 1 = 0 star)"));
     AutoComplete.Add("health", (int index) => ParameterInfo.Create("health=<color=yellow>number</color>", "Sets the health."));

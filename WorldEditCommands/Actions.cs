@@ -47,6 +47,14 @@ public static class Actions
     if (refresh)
       Refresh(obj);
   }
+  public static void SetLong(ZNetView obj, long? value, int hash, bool refresh = false)
+  {
+    if (!obj) return;
+    var zdo = obj.GetZDO();
+    obj.GetZDO().Set(hash, value ?? -1);
+    if (refresh)
+      Refresh(obj);
+  }
   private static Dictionary<string, int> IdToHash = new();
   private static Dictionary<string, int> LowerIdToHash = new();
   public static int GetId(string id)
@@ -298,6 +306,12 @@ public static class Actions
   {
     if (!obj) return;
     obj.m_nview.GetZDO().Set(Hash.TamedName, name);
+  }
+  public static void SetCrafterId(ItemDrop obj, long id)
+  {
+    if (!obj) return;
+    obj.m_itemData.m_crafterID = id;
+    obj.m_nview.GetZDO().Set(Hash.CrafterID, obj.m_itemData.m_crafterID);
   }
   public static void SetName(ItemDrop obj, string name)
   {

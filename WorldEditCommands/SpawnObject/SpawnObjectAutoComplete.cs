@@ -19,7 +19,8 @@ public class SpawnObjectAutoComplete : SharedObjectAutoComplete
       "from",
       "refRot",
       "to",
-      "data"
+      "data",
+      "crafterId"
     });
     AutoComplete.Register(SpawnObjectCommand.Name, (int index) =>
     {
@@ -29,6 +30,10 @@ public class SpawnObjectAutoComplete : SharedObjectAutoComplete
       {
         "data",
         (int index) => index == 0 ? ParameterInfo.Create("data=<color=yellow>base64 data/false</color>", "Sets ZDO data.") : ParameterInfo.None
+      },
+      {
+        "crafterId",
+        (int index) => index == 0 ? ParameterInfo.Create("crafterId=<color=yellow>number</color>", "Sets the crafter player ID.") : ParameterInfo.None
       },
       {
         "hunt",

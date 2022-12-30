@@ -84,6 +84,8 @@ public class SpawnObjectCommand
         Actions.SetVariant(obj, Helper.RandomValue(pars.Variant));
       if (pars.Name != null)
         Actions.SetName(obj, pars.Name);
+      if (pars.CrafterId.HasValue)
+        Actions.SetCrafterId(obj.GetComponent<ItemDrop>(), pars.CrafterId.Value);
       if (pars.Hunt.HasValue)
         Actions.SetHunt(obj, pars.Hunt.Value);
       if (pars.Tamed.HasValue)

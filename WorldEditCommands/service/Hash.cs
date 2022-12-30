@@ -66,6 +66,7 @@ public static class Hash
   public static int Pose = "pose".GetStableHashCode();
   public static int Item = "item".GetStableHashCode();
   public static int Variant = "variant".GetStableHashCode();
+  public static int Tamed = "tamed".GetStableHashCode();
   public static int HuntPlayer = "huntplayer".GetStableHashCode();
   public static int Quality = "quality".GetStableHashCode();
   public static int Creator = "creator".GetStableHashCode();

@@ -13,6 +13,7 @@ class SpawnObjectParameters : SharedObjectParameters
   public Vector3? To = null;
   public Range<int> Amount = new(1);
   public string? Name;
+  public long? CrafterId;
   public Range<int>? Variant;
   public bool Snap = true;
   public bool? Tamed;
@@ -45,6 +46,8 @@ class SpawnObjectParameters : SharedObjectParameters
       var value = string.Join("=", split.Skip(1));
       if (name == "name" || name == "crafter")
         Name = value.Replace("_", " ");
+      if (name == "crafterid")
+        CrafterId = Parse.Long(value);
       if (name == "variant")
         Variant = Parse.IntRange(value, 0);
       if (name == "amount")
