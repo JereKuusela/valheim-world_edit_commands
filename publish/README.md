@@ -20,6 +20,10 @@ Donations: [Buy me a computer](https://www.buymeacoffee.com/jerekuusela)
 
 # Changelog
 
+- v1.22
+	- Adds a parameter `crafterId` to the `spawn_object` command.
+	- Adds a new value `vegetation` to the `terrain paint=` parameter.
+
 - v1.21
 	- Adds a parameter `damage` to the `object`, `spawn_object` and `tweak_creature` commands.
 	- Adds parameters `ammo` and `ammo_type` to the `object` and `spawn_object` commands.

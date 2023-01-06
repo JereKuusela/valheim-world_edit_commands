@@ -120,8 +120,9 @@ public class TerrainAutoComplete
         "paint",
         (int index) => {
           if (index == 0) return paints;
-          if (index == 1) return ParameterInfo.Create("paint=dirt,<color=yellow>cultivated</color>,paved", "Custom color (values from 0.0 to 1.0).");
-          if (index == 2) return ParameterInfo.Create("paint=dirt,cultivated,<color=yellow>paved</color>", "Custom color (values from 0.0 to 1.0).");
+          if (index == 1) return ParameterInfo.Create("paint=dirt,<color=yellow>cultivated,vegetation</color>,paved", "Custom color (values from 0.0 to 1.0).");
+          if (index == 2) return ParameterInfo.Create("paint=dirt,cultivated,<color=yellow>paved</color>,vegetation", "Custom color (values from 0.0 to 1.0).");
+          if (index == 3) return ParameterInfo.Create("paint=dirt,cultivated,paved,<color=yellow>vegetation</color>", "Custom color (values from 0.0 to 1.0).");
           return ParameterInfo.None;
         }
       },
