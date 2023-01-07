@@ -42,6 +42,7 @@ Following parameters are available:
 - `from=x,z,y`: Same as the `center`.
 - `height`: Maximum height from the `center` point (default is 1000 meters).
 - `id`: Filters objects by id. Supports starts with, ends with or contains by using "*". Default is `*` that allows all objects which don't start with "_". 
+- `ignore=id1,id2,..`: List of ignored ids. Supports starts with, ends with or contains by using "*"
 - `info`: Prints information of objects.
 - `level=integer`: Sets levels for creatures (level = stars + 1).
 - `mirror`: Mirrors the position and rotation based on the player position. Always mirrors the x-axis.

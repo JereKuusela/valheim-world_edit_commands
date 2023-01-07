@@ -17,6 +17,7 @@ public class ObjectAutoComplete : SharedObjectAutoComplete
       "data",
       "sleep",
       "id",
+      "ignore",
       "move",
       "rotate",
       "remove",
@@ -82,7 +83,10 @@ public class ObjectAutoComplete : SharedObjectAutoComplete
         }
       },
       {
-        "id", (int index) => index == 0 ? ParameterInfo.Ids : ParameterInfo.None
+        "id", (int index) => ParameterInfo.Ids
+      },
+      {
+        "ignore", (int index) => ParameterInfo.Ids
       },
       {
         "prefab", (int index) => index == 0 ? ParameterInfo.ObjectIds : ParameterInfo.None

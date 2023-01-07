@@ -15,6 +15,7 @@ public class TweakAutoComplete
   {
     List<string> namedParameters = new() {
       "id",
+      "ignore",
       "radius",
       "center",
       "from",
@@ -41,7 +42,10 @@ public class TweakAutoComplete
         "force", (int index) => ParameterInfo.Flag("Force", "Sets the component if missing.")
       },
       {
-        "id", (int index) => index == 0 ? ParameterInfo.Ids : ParameterInfo.None
+        "id", (int index) => ParameterInfo.Ids
+      },
+      {
+        "ignore", (int index) => ParameterInfo.Ids
       },
       {
         "center",

@@ -22,6 +22,7 @@ Donations: [Buy me a computer](https://www.buymeacoffee.com/jerekuusela)
 
 - v1.22
 	- Adds a parameter `crafterId` to the `spawn_object` command.
+	- Adds a parameter `ignore` to the `object` command.
 	- Adds a new value `vegetation` to the `terrain paint=` parameter.
 
 - v1.21

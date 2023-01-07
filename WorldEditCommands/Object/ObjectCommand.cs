@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
 using System.Linq;
 using ServerDevcommands;
 using Service;
@@ -180,23 +179,24 @@ public class ObjectCommand
     {
       ObjectParameters pars = new(args);
       ZNetView[] views;
+      var ignoredIds = Parse.Split(pars.Ignore).ToList();
       if (pars.Connect)
       {
-        var view = Selector.GetHovered(50f, null);
+        var view = Selector.GetHovered(50f, ignoredIds);
         if (view == null) return;
-        views = Selector.GetConnected(view);
+        views = Selector.GetConnected(view, ignoredIds);
       }
       else if (pars.Radius != null)
       {
-        views = Selector.GetNearby(pars.Id, pars.ObjectType, position => Selector.Within(position, pars.Center ?? pars.From, pars.Radius, pars.Height));
+        views = Selector.GetNearby(pars.Id, pars.ObjectType, ignoredIds, pars.Center ?? pars.From, pars.Radius, pars.Height);
       }
       else if (pars.Width != null && pars.Depth != null)
       {
-        views = Selector.GetNearby(pars.Id, pars.ObjectType, position => Selector.Within(position, pars.Center ?? pars.From, pars.Angle, pars.Width, pars.Depth, pars.Height));
+        views = Selector.GetNearby(pars.Id, pars.ObjectType, ignoredIds, pars.Center ?? pars.From, pars.Angle, pars.Width, pars.Depth, pars.Height);
       }
       else
       {
-        var view = Selector.GetHovered(50f, null);
+        var view = Selector.GetHovered(50f, ignoredIds);
         if (view == null) return;
         if (!Selector.GetPrefabs(pars.Id).Contains(view.GetZDO().GetPrefab()))
         {
@@ -409,7 +409,8 @@ public class ObjectCommand
     Actions.SetVisual(obj, VisSlot.Utility, item);
     return $"Utility item of ¤ set to {item.Name} with variant {item.Variant}.";
   }
-  private static string SetStatus(ZNetView obj, string name, float duration, float intensity) {
+  private static string SetStatus(ZNetView obj, string name, float duration, float intensity)
+  {
     if (!obj.TryGetComponent<Character>(out var creature)) return "Skipped: ¤ is not a creature.";
     obj.ClaimOwnership();
     creature.GetSEMan()?.AddStatusEffect(name, true);
@@ -418,17 +419,21 @@ public class ObjectCommand
     effect.m_ttl = duration;
     if (effect is SE_Shield shield)
       shield.m_absorbDamage = intensity;
-    if (effect is SE_Burning burning) {
-      if (name == "Burning") {   
+    if (effect is SE_Burning burning)
+    {
+      if (name == "Burning")
+      {
         burning.m_fireDamageLeft = 0;
         burning.AddFireDamage(intensity);
       }
-      else {   
+      else
+      {
         burning.m_spiritDamageLeft = 0;
         burning.AddSpiritDamage(intensity);
       }
     }
-    if (effect is SE_Poison poison) {
+    if (effect is SE_Poison poison)
+    {
       poison.m_damageLeft = intensity;
       poison.m_damagePerHit = intensity / effect.m_ttl * poison.m_damageInterval;
     }
