@@ -48,8 +48,3 @@ Donations: [Buy me a computer](https://www.buymeacoffee.com/jerekuusela)
 	- Adds a parameter `baby` to the `spawn_object` command.
 	- Changes the `radius` and `rect` parameters to support ranges.
 	- Removes the `guide` parameter as obsolete (Infinity Hammer provides this).
-
-- v1.17
-	- Adds a new command `tweak_object` to take Spawner / Structure Tweaks command from the `object` command.
-	- Changes the `world_edit_aliases` command to use the substitution value from Server Devcommands mod (internal change).
-	- Fixes `spawn_object` removing the hunt mode of the bosses.
