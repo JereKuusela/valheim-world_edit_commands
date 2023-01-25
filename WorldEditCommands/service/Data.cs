@@ -5,9 +5,10 @@ public class DataHelper
 {
   public static void Init(GameObject obj, ZDO? zdo, Vector3 pos, Quaternion rot, Vector3 scale)
   {
-    if (zdo == null || !obj.TryGetComponent<ZNetView>(out var view)) return;
+    if (!obj.TryGetComponent<ZNetView>(out var view)) return;
     ZNetView.m_initZDO = ZDOMan.instance.CreateNewZDO(pos);
-    Copy(zdo, ZNetView.m_initZDO);
+    if (zdo != null)
+      Copy(zdo, ZNetView.m_initZDO);
     ZNetView.m_initZDO.m_rotation = rot;
     ZNetView.m_initZDO.m_type = view.m_type;
     ZNetView.m_initZDO.m_distant = view.m_distant;

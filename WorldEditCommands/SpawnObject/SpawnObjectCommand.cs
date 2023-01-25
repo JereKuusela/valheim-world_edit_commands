@@ -44,8 +44,18 @@ public class SpawnObjectCommand
       var rotation = pars.BaseRotation * Quaternion.Euler(Helper.RandomValue(pars.Rotation));
       var scale = Helper.RandomValue(pars.Scale);
       DataHelper.Init(prefab, pars.Data, spawnPosition, rotation, scale);
-      var obj = UnityEngine.Object.Instantiate<GameObject>(prefab, spawnPosition, rotation);
-      spawned.Add(obj);
+      try
+      {
+        var obj = UnityEngine.Object.Instantiate<GameObject>(prefab, spawnPosition, rotation);
+        spawned.Add(obj);
+        if (!ZNet.instance.IsServer())
+          ZDOMan.instance.ClientChanged(obj.GetComponent<ZNetView>().GetZDO().m_uid);
+      }
+      catch (Exception e)
+      {
+        Debug.LogError(e);
+      }
+      DataHelper.CleanUp();
     }
     return spawned;
   }
@@ -77,7 +87,7 @@ public class SpawnObjectCommand
       if (pars.Ammo != null)
         Actions.SetInt(view, Helper.RandomValue(pars.Ammo), Hash.Ammo);
       if (pars.AmmoType != null)
-        Actions.SetString(view,pars.AmmoType, Hash.AmmoType);
+        Actions.SetString(view, pars.AmmoType, Hash.AmmoType);
       if (pars.Health != null)
         Actions.SetHealth(obj, Helper.RandomValue(pars.Health));
       if (pars.Variant != null)

@@ -118,7 +118,7 @@ public class TweakObjectCommand : TweakCommand
     AutoComplete.Add("event", (int index) => index == 0 ? ParameterInfo.Create("event=<color=yellow>radius</color>,id", "Adds event area.") : index == 1 ? ParameterInfo.Events : ParameterInfo.None);
     AutoComplete.Add("collision", (int index) => ParameterInfo.Create("collision=<color=yellow>true/false</color> or no value to toggle.", "Sets object collision."));
     AutoComplete.Add("fall", (int index) => index == 0 ? FallTypes : ParameterInfo.None);
-    AutoComplete.Add("show", (int index) => ParameterInfo.Create("show =<color=yellow>true/false</ color > or no value to toggle.", "Sets object visibility."));
+    AutoComplete.Add("show", (int index) => ParameterInfo.Create("show=<color=yellow>true/false</color> or no value to toggle.", "Sets object visibility."));
     AutoComplete.Add("interact", (int index) => ParameterInfo.Create("interact=<color=yellow>true/false</color> or no value to toggle.", "Sets object interactability."));
     AutoComplete.Add("wear", (int index) => index == 0 ? Wears : ParameterInfo.None);
     AutoComplete.Add("growth", (int index) => index == 0 ? Growths : ParameterInfo.None);

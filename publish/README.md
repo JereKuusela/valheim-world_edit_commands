@@ -20,6 +20,10 @@ Donations: [Buy me a computer](https://www.buymeacoffee.com/jerekuusela)
 
 # Changelog
 
+- v1.23
+	- Fixes the parameter `scale` not forking on the `spawn_object` command.
+	- Fixes the autocomplete of the `tweak_object show` command.
+
 - v1.22
 	- Adds a parameter `crafterId` to the `spawn_object` command.
 	- Adds a parameter `ignore` to the `object` command.
