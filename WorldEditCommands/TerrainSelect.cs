@@ -118,63 +118,59 @@ public partial class Terrain
   private static IEnumerable<HeightIndex> GetHeightIndicesWithCircle(TerrainComp compiler, Vector3 centerPos, Range<float> radius)
   {
     List<HeightIndex> indices = new();
-    compiler.m_hmap.WorldToVertex(centerPos, out var cx, out var cy);
-    Range<float> distanceLimit = new(radius.Min / compiler.m_hmap.m_scale, radius.Max / compiler.m_hmap.m_scale);
     var max = compiler.m_width + 1;
-    Vector2 center = new((float)cx, (float)cy);
-    for (int i = 0; i < max; i++)
+    for (int x = 0; x < max; x++)
     {
-      for (int j = 0; j < max; j++)
+      for (int z = 0; z < max; z++)
       {
-        var distance = Vector2.Distance(center, new((float)j, (float)i));
-        if (!Helper.Within(distanceLimit, distance)) continue;
-        var distanceX = j - cx;
-        var distanceY = i - cy;
+        var nodePos = VertexToWorld(compiler.m_hmap, x, z);
+        var dx = nodePos.x - centerPos.x;
+        var dz = nodePos.z - centerPos.z;
+        var distance = Utils.DistanceXZ(centerPos, nodePos);
+        if (!Helper.Within(radius, distance)) continue;
         indices.Add(new()
         {
-          Index = i * max + j,
-          Position = VertexToWorld(compiler.m_hmap, j, i),
-          DistanceWidth = distanceX / distanceLimit.Max,
-          DistanceDepth = distanceY / distanceLimit.Max,
-          Distance = distance / distanceLimit.Max
+          Index = x * max + z,
+          Position = nodePos,
+          DistanceWidth = dx / radius.Max,
+          DistanceDepth = dz / radius.Max,
+          Distance = distance / radius.Max
         });
       }
     }
     return indices;
   }
-  private static Vector3 VertexToWorld(Heightmap hmap, int x, int y)
+  private static Vector3 VertexToWorld(Heightmap hmap, int x, int z)
   {
     var vector = hmap.transform.position;
-    vector.x += (x - hmap.m_width / 2 + 0.5f) * hmap.m_scale;
-    vector.z += (y - hmap.m_width / 2 + 0.5f) * hmap.m_scale;
+    vector.x += (x - hmap.m_width / 2) * hmap.m_scale;
+    vector.z += (z - hmap.m_width / 2) * hmap.m_scale;
     return vector;
   }
 
-  private static float GetX(int x, int y, float angle) => Mathf.Cos(angle) * x - Mathf.Sin(angle) * y;
-  private static float GetY(int x, int y, float angle) => Mathf.Sin(angle) * x + Mathf.Cos(angle) * y;
+  private static float GetX(float x, float z, float angle) => Mathf.Cos(angle) * x - Mathf.Sin(angle) * z;
+  private static float GetZ(float x, float z, float angle) => Mathf.Sin(angle) * x + Mathf.Cos(angle) * z;
   private static IEnumerable<HeightIndex> GetHeightIndicesWithRect(TerrainComp compiler, Vector3 centerPos, Range<float> width, Range<float> depth, float angle)
   {
     List<HeightIndex> indices = new();
-    compiler.m_hmap.WorldToVertex(centerPos, out var cx, out var cy);
-    Range<float> widthLimit = new(width.Min / compiler.m_hmap.m_scale, width.Max / compiler.m_hmap.m_scale);
-    Range<float> depthLimit = new(depth.Min / compiler.m_hmap.m_scale, depth.Max / compiler.m_hmap.m_scale);
     var max = compiler.m_width + 1;
     for (int x = 0; x < max; x++)
     {
-      for (int y = 0; y < max; y++)
+      for (int z = 0; z < max; z++)
       {
-        var dx = x - cx;
-        var dy = y - cy;
-        var distanceX = GetX(dx, dy, angle);
-        var distanceY = GetY(dx, dy, angle);
-        if (!Helper.Within(widthLimit, depthLimit, Mathf.Abs(distanceX), Mathf.Abs(distanceY)))
+        var nodePos = VertexToWorld(compiler.m_hmap, x, z);
+        var rawDx = nodePos.x - centerPos.x;
+        var rawDz = nodePos.z - centerPos.z;
+        var dx = GetX(rawDx, rawDz, angle);
+        var dz = GetZ(rawDx, rawDz, angle);
+        if (!Helper.Within(width, depth, Mathf.Abs(dx), Mathf.Abs(dz)))
           continue;
-        var distanceWidth = distanceX / widthLimit.Max;
-        var distanceDepth = distanceY / depthLimit.Max;
+        var distanceWidth = dx / width.Max;
+        var distanceDepth = dz / depth.Max;
         indices.Add(new()
         {
-          Index = y * max + x,
-          Position = VertexToWorld(compiler.m_hmap, x, y),
+          Index = z * max + x,
+          Position = nodePos,
           DistanceWidth = distanceWidth,
           DistanceDepth = distanceDepth,
           Distance = Mathf.Max(Mathf.Abs(distanceWidth), Mathf.Abs(distanceDepth))
@@ -186,26 +182,26 @@ public partial class Terrain
 
   private static IEnumerable<PaintIndex> GetPaintIndicesWithRect(TerrainComp compiler, Vector3 centerPos, Range<float> width, Range<float> depth, float angle)
   {
-    centerPos = new(centerPos.x - 0.5f, centerPos.y, centerPos.z - 0.5f);
     List<PaintIndex> indices = new();
-    compiler.m_hmap.WorldToVertex(centerPos, out var cx, out var cy);
-    Range<float> widthLimit = new(width.Min / compiler.m_hmap.m_scale, width.Max / compiler.m_hmap.m_scale);
-    Range<float> depthLimit = new(depth.Min / compiler.m_hmap.m_scale, depth.Max / compiler.m_hmap.m_scale);
     var max = compiler.m_width;
     for (int x = 0; x < max; x++)
     {
-      for (int y = 0; y < max; y++)
+      for (int z = 0; z < max; z++)
       {
-        var dx = x - cx;
-        var dy = y - cy;
-        var distanceX = GetX(dx, dy, angle);
-        var distanceY = GetY(dx, dy, angle);
-        if (!Helper.Within(widthLimit, depthLimit, Mathf.Abs(distanceX), Mathf.Abs(distanceY)))
+        var nodePos = VertexToWorld(compiler.m_hmap, x, z);
+        // Painting is applied from the corner of the node, not the center.
+        nodePos.x += 0.5f;
+        nodePos.z += 0.5f;
+        var dx = nodePos.x - centerPos.x;
+        var dz = nodePos.z - centerPos.z;
+        var distanceX = GetX(dx, dz, angle);
+        var distanceZ = GetZ(dx, dz, angle);
+        if (!Helper.Within(width, depth, Mathf.Abs(distanceX), Mathf.Abs(distanceZ)))
           continue;
         indices.Add(new()
         {
-          Index = y * max + x,
-          Position = VertexToWorld(compiler.m_hmap, x, y)
+          Index = z * max + x,
+          Position = nodePos
         });
       }
     }
@@ -214,22 +210,22 @@ public partial class Terrain
 
   private static IEnumerable<PaintIndex> GetPaintIndicesWithCircle(TerrainComp compiler, Vector3 centerPos, Range<float> radius)
   {
-    centerPos = new(centerPos.x - 0.5f, centerPos.y, centerPos.z - 0.5f);
     List<PaintIndex> indices = new();
-    compiler.m_hmap.WorldToVertex(centerPos, out var cx, out var cy);
-    Range<float> distanceLimit = new(radius.Min / compiler.m_hmap.m_scale, radius.Max / compiler.m_hmap.m_scale);
     var max = compiler.m_width;
-    Vector2 center = new(cx, cy);
-    for (int i = 0; i < max; i++)
+    for (int x = 0; x < max; x++)
     {
-      for (int j = 0; j < max; j++)
+      for (int z = 0; z < max; z++)
       {
-        var distance = Vector2.Distance(center, new(j, i));
-        if (!Helper.Within(distanceLimit, distance)) continue;
+        var nodePos = VertexToWorld(compiler.m_hmap, x, z);
+        // Painting is applied from the corner of the node, not the center.
+        nodePos.x += 0.5f;
+        nodePos.z += 0.5f;
+        var distance = Utils.DistanceXZ(centerPos, nodePos);
+        if (!Helper.Within(radius, distance)) continue;
         indices.Add(new()
         {
-          Index = i * max + j,
-          Position = VertexToWorld(compiler.m_hmap, j, i)
+          Index = z * max + x,
+          Position = nodePos
         });
       }
     }
