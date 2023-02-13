@@ -130,7 +130,7 @@ public partial class Terrain
         if (!Helper.Within(radius, distance)) continue;
         indices.Add(new()
         {
-          Index = x * max + z,
+          Index = z * max + x,
           Position = nodePos,
           DistanceWidth = dx / radius.Max,
           DistanceDepth = dz / radius.Max,
