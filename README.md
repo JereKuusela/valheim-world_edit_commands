@@ -229,8 +229,8 @@ Four new commands that share many parameters with the `object` command.
 ### Examples
 
 - `tweak_pickable use_effect=[sfx/vfx] use_effect=[sfx/vfx]`: Makes a pickable to cause two effects when picked.
-- `tweak_spawner spawn=Boar spawn=Deer`: Makes a spawner spawn both boars and deer.
-- `tweak_spawner force spawn=lightningaoe respawn=1 spawnradius=10`: Makes any object to spawn lightning every second.
+- `tweak_spawner spawn=Boar spawn=Deer`: Makes any object spawn both boars and deer.
+- `tweak_spawner spawn=lightningaoe respawn=1 spawnradius=10`: Makes any object to spawn lightning every second.
 
 ## Spawn object
 
