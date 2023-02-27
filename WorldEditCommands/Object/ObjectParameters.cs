@@ -12,7 +12,7 @@ public class ObjectParameters : SharedObjectParameters
   public Vector3? Center = null;
   public Range<float>? Fuel = null;
   public string[] IncludedIds = new string[0];
-  public string[] IgnoredIds = new string[0];
+  public string[] ExcludedIds = new string[0];
   public string Prefab = "";
   public string Origin = "player";
   public bool? Remove;
@@ -104,8 +104,8 @@ public class ObjectParameters : SharedObjectParameters
       }
       if (name == "center" || name == "from") Center = Parse.VectorXZY(values);
       if (name == "move") Offset = Parse.VectorZXYRange(value, Vector3.zero);
-      if (name == "id") IncludedIds = Parse.Split(value);
-      if (name == "ignore") IgnoredIds = Parse.Split(value);
+      if (name == "id") IncludedIds = values;
+      if (name == "ignore") ExcludedIds = values;
       if (name == "data") Data = value;
       if (name == "copy") Copy = value;
       if (name == "prefab") Prefab = value;

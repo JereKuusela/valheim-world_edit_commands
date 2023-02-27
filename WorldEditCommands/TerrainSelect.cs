@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ServerDevcommands;
+using Service;
 using UnityEngine;
 namespace WorldEditCommands;
 using CompilerIndices = Dictionary<TerrainComp, Indices>;
@@ -96,12 +97,18 @@ public partial class Terrain
       return indices;
     }));
   }
-  public static Func<BaseIndex, bool> CreateBlockCheckFilter(BlockCheck blockCheck)
+  public static Func<BaseIndex, bool> CreateBlockCheckFilter(BlockCheck blockCheck, string[] includedIds, string[] excludedIds)
   {
+    var included = Selector.GetPrefabs(includedIds);
+    var excluded = Selector.GetExcludedPrefabs(excludedIds);
+    var zs = ZoneSystem.instance;
     return (BaseIndex index) =>
     {
       if (blockCheck == BlockCheck.Off) return true;
-      var blocked = ZoneSystem.instance.IsBlocked(index.Position);
+      var pos = index.Position;
+      pos.y += 2000f;
+      var hits = Physics.RaycastAll(pos, Vector3.down, 10000f, zs.m_blockRayMask);
+      var blocked = hits.Select(Selector.GetPrefabFromHit).Any(prefab => included.Contains(prefab) && !excluded.Contains(prefab));
       if (blocked && blockCheck == BlockCheck.On) return false;
       if (!blocked && blockCheck == BlockCheck.Inverse) return false;
       return true;

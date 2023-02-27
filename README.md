@@ -318,6 +318,8 @@ Following parameters are available:
 - `circle=number` or `circle=min-max`: Determines the radius of the affected terrain.
 - `delta=meters`: Sets the difference from the original elevation. Without the parameter, resets terrain altitude changes.
 - `from=x,z,y`: Overwrites the player's position. Allows fixing the current position for more precise editing. The y coordinate can be used to override the current ground altitude.
+- `id=id1,id2,...`: List of included ids. Supports starts with, ends with or contains by using "*". Default is `*` that allows all objects which don't start with "_". 
+- `ignore=id1,id2,..`: List of ignored ids. Supports starts with, ends with or contains by using "*"
 - `level=altitude`: Sets terrain height to the given altitude. If not given, uses the ground altitude below the player.
 - `lower=meters`: Lowers terrain by X meters. Same as `raise` when a negative value is used.
 - `max=altitude`: Lowers terrain above the given altitude to the altitude.

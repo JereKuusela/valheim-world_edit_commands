@@ -33,7 +33,7 @@ public class TerrainCommand
   private List<Func<BaseIndex, bool>> GetFilterers(TerrainParameters pars)
   {
     List<Func<BaseIndex, bool>> filterers = new();
-    if (pars.BlockCheck != BlockCheck.Off) filterers.Add(Terrain.CreateBlockCheckFilter(pars.BlockCheck));
+    if (pars.BlockCheck != BlockCheck.Off) filterers.Add(Terrain.CreateBlockCheckFilter(pars.BlockCheck, pars.IncludedIds, pars.ExcludedIds));
     if (pars.Within != null) filterers.Add(Terrain.CreateAltitudeFilter(pars.Within.Min, pars.Within.Max));
     return filterers;
   }

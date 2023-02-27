@@ -126,6 +126,12 @@ public class TerrainAutoComplete
           return ParameterInfo.None;
         }
       },
+      {
+        "id", (int index) => ParameterInfo.Ids
+      },
+      {
+        "ignore", (int index) => ParameterInfo.Ids
+      },
     });
   }
 }

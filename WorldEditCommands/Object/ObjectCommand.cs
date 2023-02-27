@@ -181,21 +181,21 @@ public class ObjectCommand
       ZNetView[] views;
       if (pars.Connect)
       {
-        var view = Selector.GetHovered(50f, pars.IgnoredIds);
+        var view = Selector.GetHovered(50f, pars.ExcludedIds);
         if (view == null) return;
-        views = Selector.GetConnected(view, pars.IgnoredIds);
+        views = Selector.GetConnected(view, pars.ExcludedIds);
       }
       else if (pars.Radius != null)
       {
-        views = Selector.GetNearby(pars.IncludedIds, pars.ObjectType, pars.IgnoredIds, pars.Center ?? pars.From, pars.Radius, pars.Height);
+        views = Selector.GetNearby(pars.IncludedIds, pars.ObjectType, pars.ExcludedIds, pars.Center ?? pars.From, pars.Radius, pars.Height);
       }
       else if (pars.Width != null && pars.Depth != null)
       {
-        views = Selector.GetNearby(pars.IncludedIds, pars.ObjectType, pars.IgnoredIds, pars.Center ?? pars.From, pars.Angle, pars.Width, pars.Depth, pars.Height);
+        views = Selector.GetNearby(pars.IncludedIds, pars.ObjectType, pars.ExcludedIds, pars.Center ?? pars.From, pars.Angle, pars.Width, pars.Depth, pars.Height);
       }
       else
       {
-        var view = Selector.GetHovered(50f, pars.IgnoredIds);
+        var view = Selector.GetHovered(50f, pars.ExcludedIds);
         if (view == null) return;
         if (!Selector.GetPrefabs(pars.IncludedIds).Contains(view.GetZDO().GetPrefab()))
         {

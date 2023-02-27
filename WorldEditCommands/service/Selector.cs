@@ -35,16 +35,16 @@ public static class Selector
   public static bool IsValid(ZDO zdo) => zdo != null && zdo.IsValid();
 
   ///<summary>Returns the hovered object.</summary>
-  public static ZNetView? GetHovered(float range, string[] ignoredIds)
+  public static ZNetView? GetHovered(float range, string[] excluded)
   {
-    var hovered = GetHovered(Player.m_localPlayer, range, ignoredIds);
+    var hovered = GetHovered(Player.m_localPlayer, range, excluded);
     if (hovered == null) return null;
     return hovered.Obj;
   }
-
-  public static Hovered? GetHovered(Player obj, float maxDistance, string[] ignoredIds, bool allowOtherPlayers = false)
+  public static int GetPrefabFromHit(RaycastHit hit) => hit.collider.GetComponentInParent<ZNetView>().GetZDO().GetPrefab();
+  public static Hovered? GetHovered(Player obj, float maxDistance, string[] excluded, bool allowOtherPlayers = false)
   {
-    var ignoredPrefabs = GetIgnoredPrefabs(ignoredIds);
+    var excludedPrefabs = GetExcludedPrefabs(excluded);
     var raycast = Math.Max(maxDistance + 5f, 50f);
     var mask = LayerMask.GetMask(new string[]
     {
@@ -67,7 +67,7 @@ public static class Selector
       if (Vector3.Distance(hit.point, obj.m_eye.position) >= maxDistance) continue;
       var netView = hit.collider.GetComponentInParent<ZNetView>();
       if (!IsValid(netView)) continue;
-      if (ignoredPrefabs.Contains(netView.GetZDO().GetPrefab())) continue;
+      if (excludedPrefabs.Contains(netView.GetZDO().GetPrefab())) continue;
       if (hit.collider.GetComponent<EffectArea>()) continue;
       var player = netView.GetComponentInChildren<Player>();
       if (player == obj) continue;
@@ -104,14 +104,14 @@ public static class Selector
     if (id.EndsWith("*", StringComparison.Ordinal)) return name.StartsWith(id.Substring(0, id.Length - 2), StringComparison.Ordinal);
     return id == name;
   }
-  private static HashSet<int> GetIgnoredPrefabs(string[] ids)
+  public static HashSet<int> GetExcludedPrefabs(string[] ids)
   {
     HashSet<int> prefabs = new();
     foreach (var id in ids)
-      prefabs.UnionWith(GetIgnoredPrefabs(id));
+      prefabs.UnionWith(GetExcludedPrefabs(id));
     return prefabs;
   }
-  private static HashSet<int> GetIgnoredPrefabs(string id)
+  private static HashSet<int> GetExcludedPrefabs(string id)
   {
     if (id == "") return new();
     id = id.ToLower();
@@ -141,29 +141,29 @@ public static class Selector
       values = values.Where(prefab => prefab.name.ToLower() == id);
     return values.Select(prefab => prefab.name.GetStableHashCode()).ToHashSet();
   }
-  public static ZNetView[] GetNearby(string[] includedIds, ObjectType type, string[] ignoredIds, Vector3 center, Range<float> radius, float height)
+  public static ZNetView[] GetNearby(string[] included, ObjectType type, string[] excluded, Vector3 center, Range<float> radius, float height)
   {
-    var includedPrefabs = GetPrefabs(includedIds);
-    var ignoredPrefabs = GetIgnoredPrefabs(ignoredIds);
+    var includedPrefabs = GetPrefabs(included);
+    var excludedPrefabs = GetExcludedPrefabs(excluded);
     var checker = (Vector3 pos) => Within(pos, center, radius, height);
-    return GetNearby(includedPrefabs, type, ignoredPrefabs, checker);
+    return GetNearby(includedPrefabs, type, excludedPrefabs, checker);
   }
-  public static ZNetView[] GetNearby(string[] includedIds, ObjectType type, string[] ignoredIds, Vector3 center, float angle, Range<float> width, Range<float> depth, float height)
+  public static ZNetView[] GetNearby(string[] included, ObjectType type, string[] excluded, Vector3 center, float angle, Range<float> width, Range<float> depth, float height)
   {
-    var includedPrefabs = GetPrefabs(includedIds);
-    var ignoredPrefabs = GetIgnoredPrefabs(ignoredIds);
+    var includedPrefabs = GetPrefabs(included);
+    var excludedPrefabs = GetExcludedPrefabs(excluded);
     var checker = (Vector3 pos) => Within(pos, center, angle, width, depth, height);
-    return GetNearby(includedPrefabs, type, ignoredPrefabs, checker);
+    return GetNearby(includedPrefabs, type, excludedPrefabs, checker);
   }
-  public static ZNetView[] GetNearby(HashSet<int> prefabs, ObjectType type, HashSet<int> ignoredPrefabs, Func<Vector3, bool> checker)
+  public static ZNetView[] GetNearby(HashSet<int> included, ObjectType type, HashSet<int> excluded, Func<Vector3, bool> checker)
   {
     var scene = ZNetScene.instance;
     var objects = ZNetScene.instance.m_instances.Values;
     var views = objects.Where(IsValid);
-    if (prefabs.Count > 0)
-      views = views.Where(view => prefabs.Contains(view.GetZDO().GetPrefab()));
-    if (ignoredPrefabs.Count > 0)
-      views = views.Where(view => !ignoredPrefabs.Contains(view.GetZDO().GetPrefab()));
+    if (included.Count > 0)
+      views = views.Where(view => included.Contains(view.GetZDO().GetPrefab()));
+    if (excluded.Count > 0)
+      views = views.Where(view => !excluded.Contains(view.GetZDO().GetPrefab()));
     views = views.Where(view => checker(view.GetZDO().GetPosition()));
     if (type == ObjectType.Structure)
       views = views.Where(view => view.GetComponent<Piece>());
@@ -185,21 +185,21 @@ public static class Selector
   }
   private static KeyValuePair<int, int> RaftParent = ZDO.GetHashZDOID("MBParent");
 
-  public static ZNetView[] GetConnectedRaft(ZNetView baseView, HashSet<int> ignoredPrefabs)
+  public static ZNetView[] GetConnectedRaft(ZNetView baseView, HashSet<int> excluded)
   {
     var id = baseView.GetZDO().GetZDOID(RaftParent);
     var instances = ZNetScene.instance.m_instances.Values;
     return instances
       .Where(IsValid)
-      .Where(view => !ignoredPrefabs.Contains(view.GetZDO().m_prefab))
+      .Where(view => !excluded.Contains(view.GetZDO().m_prefab))
       .Where(view => view.GetZDO().m_uid == id || view.GetZDO().GetZDOID(RaftParent) == id)
       .ToArray();
   }
   ///<summary>Returns connected WearNTear objects.</summary>
-  public static ZNetView[] GetConnected(ZNetView baseView, string[] ignoredIds)
+  public static ZNetView[] GetConnected(ZNetView baseView, string[] excluded)
   {
-    var ignoredPrefabs = GetIgnoredPrefabs(ignoredIds);
-    if (baseView.GetZDO().GetZDOID(RaftParent) != ZDOID.None) return GetConnectedRaft(baseView, ignoredPrefabs);
+    var excludedPrefabs = GetExcludedPrefabs(excluded);
+    if (baseView.GetZDO().GetZDOID(RaftParent) != ZDOID.None) return GetConnectedRaft(baseView, excludedPrefabs);
     var baseWear = baseView.GetComponent<WearNTear>();
     if (baseWear == null) throw new InvalidOperationException("Connected doesn't work for this object.");
     HashSet<ZNetView> views = new() { baseView };
@@ -218,7 +218,7 @@ public static class Selector
           if (collider.isTrigger || collider.attachedRigidbody != null || wear.m_colliders.Contains(collider)) continue;
           var wear2 = collider.GetComponentInParent<WearNTear>();
           if (!wear2 || !IsValid(wear2.m_nview)) continue;
-          if (ignoredPrefabs.Contains(wear2.m_nview.GetZDO().GetPrefab())) continue;
+          if (excludedPrefabs.Contains(wear2.m_nview.GetZDO().GetPrefab())) continue;
           if (views.Contains(wear2.m_nview)) continue;
           views.Add(wear2.m_nview);
           todo.Enqueue(wear2);

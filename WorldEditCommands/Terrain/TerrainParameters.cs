@@ -11,6 +11,8 @@ public class TerrainParameters
   public Range<float>? Radius;
   public Range<float>? Width;
   public Range<float>? Depth;
+  public string[] IncludedIds = new string[0];
+  public string[] ExcludedIds = new string[0];
   public float Angle = 0f;
   public float? Set;
   public bool Reset = false;
@@ -106,6 +108,8 @@ public class TerrainParameters
       if (split.Length < 2) continue;
       var value = split[1].ToLower();
       var values = Parse.Split(value);
+      if (name == "id") IncludedIds = values;
+      if (name == "ignore") ExcludedIds = values;
       if (name == "circle")
         Radius = Parse.FloatRange(value, 0f);
       if (name == "rect")

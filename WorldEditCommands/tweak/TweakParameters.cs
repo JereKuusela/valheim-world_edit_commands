@@ -10,7 +10,7 @@ public class TweakParameters
   public Vector3 From;
   public Vector3? Center;
   public string[] IncludedIds = new string[0];
-  public string[] IgnoredIds = new string[0];
+  public string[] ExcludedIds = new string[0];
   public float Angle = 0f;
   public long Creator = 0;
   public Range<float>? Radius;
@@ -74,7 +74,7 @@ public class TweakParameters
       var values = Parse.Split(value);
       if (name == "center" || name == "from") Center = Parse.VectorXZY(values);
       if (name == "id") IncludedIds = values;
-      if (name == "ignore") IgnoredIds = values;
+      if (name == "ignore") ExcludedIds = values;
       if (name == "chance") Chance = Parse.Float(value, 1f);
       if (name == "type" && value == "creature") ObjectType = ObjectType.Character;
       if (name == "type" && value == "chest") ObjectType = ObjectType.Chest;
