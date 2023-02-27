@@ -11,8 +11,8 @@ public class ObjectParameters : SharedObjectParameters
   public Vector3 From;
   public Vector3? Center = null;
   public Range<float>? Fuel = null;
-  public string Id = "";
-  public string Ignore = "";
+  public string[] IncludedIds = new string[0];
+  public string[] IgnoredIds = new string[0];
   public string Prefab = "";
   public string Origin = "player";
   public bool? Remove;
@@ -104,8 +104,8 @@ public class ObjectParameters : SharedObjectParameters
       }
       if (name == "center" || name == "from") Center = Parse.VectorXZY(values);
       if (name == "move") Offset = Parse.VectorZXYRange(value, Vector3.zero);
-      if (name == "id") Id = value;
-      if (name == "ignore") Ignore = value;
+      if (name == "id") IncludedIds = Parse.Split(value);
+      if (name == "ignore") IgnoredIds = Parse.Split(value);
       if (name == "data") Data = value;
       if (name == "copy") Copy = value;
       if (name == "prefab") Prefab = value;
@@ -114,6 +114,11 @@ public class ObjectParameters : SharedObjectParameters
       if (name == "fuel") Fuel = Parse.FloatRange(value, 0f);
       if (name == "chance") Chance = Parse.Float(value, 1f);
       if (name == "type" && value == "creature") ObjectType = ObjectType.Character;
+      if (name == "type" && value == "chest") ObjectType = ObjectType.Chest;
+      if (name == "type" && value == "fireplace") ObjectType = ObjectType.Fireplace;
+      if (name == "type" && value == "item") ObjectType = ObjectType.Item;
+      if (name == "type" && value == "spawner") ObjectType = ObjectType.Spawner;
+      if (name == "type" && value == "spawnpoint") ObjectType = ObjectType.SpawnPoint;
       if (name == "type" && value == "structure") ObjectType = ObjectType.Structure;
       if (name == "rect")
       {
@@ -138,9 +143,8 @@ public class ObjectParameters : SharedObjectParameters
       throw new InvalidOperationException("Remove can't be used with other operations.");
     if (Operations.Count == 0)
       throw new InvalidOperationException("Missing the operation.");
-    if (Operations.Contains("remove") && Id == "" && ObjectType == ObjectType.All && (Radius != null || Width != null || Depth != null || Connect))
+    if (Operations.Contains("remove") && IncludedIds.Length == 0 && ObjectType == ObjectType.All && (Radius != null || Width != null || Depth != null || Connect))
       throw new InvalidOperationException("Area remove can't be used without <color=yellow>id</color> or <color=yellow>type</color>.");
-    if (Id == "") Id = "*";
     if (Radius != null && Depth != null)
       throw new InvalidOperationException($"<color=yellow>circle</color> and <color=yellow>rect</color> parameters can't be used together.");
     if (Radius != null && Connect)

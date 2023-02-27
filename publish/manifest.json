@@ -1,6 +1,6 @@
 {
   "name": "World_Edit_Commands",
-  "version_number": "1.24.0",
+  "version_number": "1.25.0",
   "website_url": "https://github.com/JereKuusela/valheim-world_edit_commands",
   "description": "Adds new client side commands for advanced world editing.",
   "dependencies": [

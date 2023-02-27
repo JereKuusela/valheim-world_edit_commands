@@ -10,7 +10,12 @@ public enum ObjectType
 {
   All,
   Character,
-  Structure
+  Structure,
+  Fireplace,
+  Item,
+  Chest,
+  Spawner,
+  SpawnPoint
 }
 public class Hovered
 {
@@ -30,14 +35,14 @@ public static class Selector
   public static bool IsValid(ZDO zdo) => zdo != null && zdo.IsValid();
 
   ///<summary>Returns the hovered object.</summary>
-  public static ZNetView? GetHovered(float range, List<string> ignoredIds)
+  public static ZNetView? GetHovered(float range, string[] ignoredIds)
   {
     var hovered = GetHovered(Player.m_localPlayer, range, ignoredIds);
     if (hovered == null) return null;
     return hovered.Obj;
   }
 
-  public static Hovered? GetHovered(Player obj, float maxDistance, List<string> ignoredIds, bool allowOtherPlayers = false)
+  public static Hovered? GetHovered(Player obj, float maxDistance, string[] ignoredIds, bool allowOtherPlayers = false)
   {
     var ignoredPrefabs = GetIgnoredPrefabs(ignoredIds);
     var raycast = Math.Max(maxDistance + 5f, 50f);
@@ -99,7 +104,7 @@ public static class Selector
     if (id.EndsWith("*", StringComparison.Ordinal)) return name.StartsWith(id.Substring(0, id.Length - 2), StringComparison.Ordinal);
     return id == name;
   }
-  private static HashSet<int> GetIgnoredPrefabs(List<string> ids)
+  private static HashSet<int> GetIgnoredPrefabs(string[] ids)
   {
     HashSet<int> prefabs = new();
     foreach (var id in ids)
@@ -115,7 +120,15 @@ public static class Selector
       .Select(prefab => prefab.name.GetStableHashCode())
       .ToHashSet();
   }
-  public static HashSet<int> GetPrefabs(string id)
+  public static HashSet<int> GetPrefabs(string[] ids)
+  {
+    if (ids.Length == 0) return GetPrefabs("*");
+    HashSet<int> prefabs = new();
+    foreach (var id in ids)
+      prefabs.UnionWith(GetPrefabs(id));
+    return prefabs;
+  }
+  private static HashSet<int> GetPrefabs(string id)
   {
     id = id.ToLower();
     IEnumerable<GameObject> values = ZNetScene.instance.m_namedPrefabs.Values;
@@ -128,31 +141,44 @@ public static class Selector
       values = values.Where(prefab => prefab.name.ToLower() == id);
     return values.Select(prefab => prefab.name.GetStableHashCode()).ToHashSet();
   }
-  public static ZNetView[] GetNearby(string id, ObjectType type, List<string> ignoredIds, Vector3 center, Range<float> radius, float height)
+  public static ZNetView[] GetNearby(string[] includedIds, ObjectType type, string[] ignoredIds, Vector3 center, Range<float> radius, float height)
   {
+    var includedPrefabs = GetPrefabs(includedIds);
     var ignoredPrefabs = GetIgnoredPrefabs(ignoredIds);
     var checker = (Vector3 pos) => Within(pos, center, radius, height);
-    return GetNearby(id, type, ignoredPrefabs, checker);
+    return GetNearby(includedPrefabs, type, ignoredPrefabs, checker);
   }
-  public static ZNetView[] GetNearby(string id, ObjectType type, List<string> ignoredIds, Vector3 center, float angle, Range<float> width, Range<float> depth, float height)
+  public static ZNetView[] GetNearby(string[] includedIds, ObjectType type, string[] ignoredIds, Vector3 center, float angle, Range<float> width, Range<float> depth, float height)
   {
+    var includedPrefabs = GetPrefabs(includedIds);
     var ignoredPrefabs = GetIgnoredPrefabs(ignoredIds);
     var checker = (Vector3 pos) => Within(pos, center, angle, width, depth, height);
-    return GetNearby(id, type, ignoredPrefabs, checker);
+    return GetNearby(includedPrefabs, type, ignoredPrefabs, checker);
   }
-  public static ZNetView[] GetNearby(string id, ObjectType type, HashSet<int> ignoredPrefabs, Func<Vector3, bool> checker)
+  public static ZNetView[] GetNearby(HashSet<int> prefabs, ObjectType type, HashSet<int> ignoredPrefabs, Func<Vector3, bool> checker)
   {
-    var codes = GetPrefabs(id);
     var scene = ZNetScene.instance;
     var objects = ZNetScene.instance.m_instances.Values;
     var views = objects.Where(IsValid);
-    views = views.Where(view => codes.Contains(view.GetZDO().GetPrefab()));
-    views = views.Where(view => !ignoredPrefabs.Contains(view.GetZDO().GetPrefab()));
+    if (prefabs.Count > 0)
+      views = views.Where(view => prefabs.Contains(view.GetZDO().GetPrefab()));
+    if (ignoredPrefabs.Count > 0)
+      views = views.Where(view => !ignoredPrefabs.Contains(view.GetZDO().GetPrefab()));
     views = views.Where(view => checker(view.GetZDO().GetPosition()));
     if (type == ObjectType.Structure)
-      views = views.Where(view => scene.GetPrefab(view.GetZDO().GetPrefab()).GetComponent<Piece>());
+      views = views.Where(view => view.GetComponent<Piece>());
     if (type == ObjectType.Character)
-      views = views.Where(view => scene.GetPrefab(view.GetZDO().GetPrefab()).GetComponent<Character>());
+      views = views.Where(view => view.GetComponent<Character>());
+    if (type == ObjectType.Fireplace)
+      views = views.Where(view => view.GetComponent<Fireplace>());
+    if (type == ObjectType.Item)
+      views = views.Where(view => view.GetComponent<ItemDrop>());
+    if (type == ObjectType.Chest)
+      views = views.Where(view => view.GetComponent<Container>());
+    if (type == ObjectType.Spawner)
+      views = views.Where(view => view.GetComponent<SpawnArea>());
+    if (type == ObjectType.SpawnPoint)
+      views = views.Where(view => view.GetComponent<CreatureSpawner>());
     var objs = views.ToArray();
     if (objs.Length == 0) throw new InvalidOperationException("Nothing is nearby.");
     return objs;
@@ -170,7 +196,7 @@ public static class Selector
       .ToArray();
   }
   ///<summary>Returns connected WearNTear objects.</summary>
-  public static ZNetView[] GetConnected(ZNetView baseView, List<string> ignoredIds)
+  public static ZNetView[] GetConnected(ZNetView baseView, string[] ignoredIds)
   {
     var ignoredPrefabs = GetIgnoredPrefabs(ignoredIds);
     if (baseView.GetZDO().GetZDOID(RaftParent) != ZDOID.None) return GetConnectedRaft(baseView, ignoredPrefabs);

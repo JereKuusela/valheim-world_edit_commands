@@ -6,7 +6,12 @@ public class ObjectAutoComplete : SharedObjectAutoComplete
   public List<string> NamedParameters;
   public static List<string> ObjectTypes = new() {
       "creature",
-      "structure"
+      "chest",
+      "fireplace",
+      "item",
+      "structure",
+      "spawner",
+      "spawnpoint",
   };
   public ObjectAutoComplete()
   {

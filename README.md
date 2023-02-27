@@ -41,7 +41,7 @@ Following parameters are available:
 - `fuel=number`: Sets the fuel amount. Without number, prints the fuel amount.
 - `from=x,z,y`: Same as the `center`.
 - `height`: Maximum height from the `center` point (default is 1000 meters).
-- `id`: Filters objects by id. Supports starts with, ends with or contains by using "*". Default is `*` that allows all objects which don't start with "_". 
+- `id=id1,id2,...`: List of included ids. Supports starts with, ends with or contains by using "*". Default is `*` that allows all objects which don't start with "_". 
 - `ignore=id1,id2,..`: List of ignored ids. Supports starts with, ends with or contains by using "*"
 - `info`: Prints information of objects.
 - `level=integer`: Sets levels for creatures (level = stars + 1).
@@ -59,7 +59,7 @@ Following parameters are available:
 - `sleep`: Makes creatures fall asleep (that support it).
 - `stars=integer`: Sets stars for creatures (stars = level - 1).
 - `status=name,duration,intensity`: Adds a status effect. Note: These are not stored to the save file.
-- `type=creature/structure`: Only selects creatures or structures.
+- `type=creature/chest/fireplace/item/spawner/spawnpoint/structure`: Only selects creatures or structures.
 - `wild`: Untames creatures.
 
 Additional style parameters:

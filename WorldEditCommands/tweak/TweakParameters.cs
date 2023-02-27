@@ -9,8 +9,8 @@ public class TweakParameters
 {
   public Vector3 From;
   public Vector3? Center;
-  public string Id = "";
-  public string Ignore = "";
+  public string[] IncludedIds = new string[0];
+  public string[] IgnoredIds = new string[0];
   public float Angle = 0f;
   public long Creator = 0;
   public Range<float>? Radius;
@@ -73,10 +73,15 @@ public class TweakParameters
       }
       var values = Parse.Split(value);
       if (name == "center" || name == "from") Center = Parse.VectorXZY(values);
-      if (name == "id") Id = value;
-      if (name == "ignore") Ignore = value;
+      if (name == "id") IncludedIds = values;
+      if (name == "ignore") IgnoredIds = values;
       if (name == "chance") Chance = Parse.Float(value, 1f);
       if (name == "type" && value == "creature") ObjectType = ObjectType.Character;
+      if (name == "type" && value == "chest") ObjectType = ObjectType.Chest;
+      if (name == "type" && value == "fireplace") ObjectType = ObjectType.Fireplace;
+      if (name == "type" && value == "item") ObjectType = ObjectType.Item;
+      if (name == "type" && value == "spawner") ObjectType = ObjectType.Spawner;
+      if (name == "type" && value == "spawnpoint") ObjectType = ObjectType.SpawnPoint;
       if (name == "type" && value == "structure") ObjectType = ObjectType.Structure;
       if (name == "rect")
       {
@@ -95,7 +100,6 @@ public class TweakParameters
     }
     if (Operations.Count == 0 && !Force)
       throw new InvalidOperationException("Missing the operation.");
-    if (Id == "") Id = "*";
     if (Radius != null && Depth != null)
       throw new InvalidOperationException($"<color=yellow>circle</color> and <color=yellow>rect</color> parameters can't be used together.");
     if (Radius != null && Connect)

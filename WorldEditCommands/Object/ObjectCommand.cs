@@ -179,26 +179,25 @@ public class ObjectCommand
     {
       ObjectParameters pars = new(args);
       ZNetView[] views;
-      var ignoredIds = Parse.Split(pars.Ignore).ToList();
       if (pars.Connect)
       {
-        var view = Selector.GetHovered(50f, ignoredIds);
+        var view = Selector.GetHovered(50f, pars.IgnoredIds);
         if (view == null) return;
-        views = Selector.GetConnected(view, ignoredIds);
+        views = Selector.GetConnected(view, pars.IgnoredIds);
       }
       else if (pars.Radius != null)
       {
-        views = Selector.GetNearby(pars.Id, pars.ObjectType, ignoredIds, pars.Center ?? pars.From, pars.Radius, pars.Height);
+        views = Selector.GetNearby(pars.IncludedIds, pars.ObjectType, pars.IgnoredIds, pars.Center ?? pars.From, pars.Radius, pars.Height);
       }
       else if (pars.Width != null && pars.Depth != null)
       {
-        views = Selector.GetNearby(pars.Id, pars.ObjectType, ignoredIds, pars.Center ?? pars.From, pars.Angle, pars.Width, pars.Depth, pars.Height);
+        views = Selector.GetNearby(pars.IncludedIds, pars.ObjectType, pars.IgnoredIds, pars.Center ?? pars.From, pars.Angle, pars.Width, pars.Depth, pars.Height);
       }
       else
       {
-        var view = Selector.GetHovered(50f, ignoredIds);
+        var view = Selector.GetHovered(50f, pars.IgnoredIds);
         if (view == null) return;
-        if (!Selector.GetPrefabs(pars.Id).Contains(view.GetZDO().GetPrefab()))
+        if (!Selector.GetPrefabs(pars.IncludedIds).Contains(view.GetZDO().GetPrefab()))
         {
           Helper.AddMessage(args.Context, $"Skipped: {view.name} has invalid id.");
           return;

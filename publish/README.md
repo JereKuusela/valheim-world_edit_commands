@@ -20,6 +20,10 @@ Donations: [Buy me a computer](https://www.buymeacoffee.com/jerekuusela)
 
 # Changelog
 
+- v1.25
+	- Adds support for multiple values to the parameter `id`.
+	- Adds more values to the parameter `type`.
+
 - v1.24
 	- Fixes rounding errors on the `terrain` command.
 
