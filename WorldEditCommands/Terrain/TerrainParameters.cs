@@ -16,6 +16,7 @@ public class TerrainParameters
   public float Angle = 0f;
   public float? Set;
   public bool Reset = false;
+  public bool Void = false;
   public float? Delta;
   public float? Level;
   public float? Min;
@@ -88,6 +89,8 @@ public class TerrainParameters
       var name = split[0].ToLower();
       if (name == "reset")
         Reset = true;
+      if (name == "void")
+        Void = true;
       if (name == "delta")
         Set = 0f;
       if (name == "level")

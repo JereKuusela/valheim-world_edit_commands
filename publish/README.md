@@ -20,6 +20,10 @@ Donations: [Buy me a computer](https://www.buymeacoffee.com/jerekuusela)
 
 # Changelog
 
+- v1.26
+	- Adds a new parameter `void` to the `terrain` command (for removing the terrain).
+	- Fixes 0 radius / rectangle in the `terrain` command causing void.
+
 - v1.25
 	- Adds support for multiple values to the parameter `id`.
 	- Adds more values to the parameter `type`.

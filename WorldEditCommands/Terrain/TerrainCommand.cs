@@ -64,6 +64,8 @@ public class TerrainCommand
         Terrain.MinTerrain(compilerIndices, pars.Position, pars.Size, pars.Min.Value);
       if (pars.Max.HasValue)
         Terrain.MaxTerrain(compilerIndices, pars.Position, pars.Size, pars.Max.Value);
+      if (pars.Void)
+        Terrain.VoidTerrain(compilerIndices, pars.Position, pars.Size);
       if (pars.Paint != "")
       {
         var split = pars.Paint.Split(',');

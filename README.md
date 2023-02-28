@@ -337,6 +337,7 @@ Following parameters are available:
 - `slope=meters,angle`: Creates a slope centered at current position with a given height.
 - `step=forward,right,up`: Calculates offset based on the radius (and slope height if given).
 - `to=x,z,y`: Moves the affected terrain between the current position and this position. Determines angle, slope and circle/rect size automatically.
+- `void`: Removes the terrain surface. Ignores `smooth` parameter.
 - `within=min-max`: Only includes terrain that is within the given altitude range.
 
 ### Examples

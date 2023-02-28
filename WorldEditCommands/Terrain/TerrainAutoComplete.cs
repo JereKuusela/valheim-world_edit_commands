@@ -41,6 +41,10 @@ public class TerrainAutoComplete
         (int index) => ParameterInfo.Flag("Reset")
       },
       {
+        "void",
+        (int index) => ParameterInfo.Flag("Void", "Removes all terrain.")
+      },
+      {
         "blockcheck",
         (int index) => index == 0 ? ParameterInfo.Create("blockcheck=<color=yellow>inverse</color>/<color=yellow>off</color>/<color=yellow>on</color>", "When <color=yellow>on</color>, excludes terrain under structures. When <color=yellow>inverse</color>, only includes terrain under structures.") : ParameterInfo.None
       },

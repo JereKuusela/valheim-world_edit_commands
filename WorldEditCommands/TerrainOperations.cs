@@ -32,6 +32,17 @@ public partial class Terrain
     };
     DoHeightOperation(compilerIndices, pos, radius, action);
   }
+  public static void VoidTerrain(CompilerIndices compilerIndices, Vector3 pos, float radius)
+  {
+    Action<TerrainComp, HeightIndex> action = (compiler, heightIndex) =>
+    {
+      var index = heightIndex.Index;
+      compiler.m_levelDelta[index] = float.NaN;
+      compiler.m_smoothDelta[index] = 0f;
+      compiler.m_modifiedHeight[index] = true;
+    };
+    DoHeightOperation(compilerIndices, pos, radius, action);
+  }
   public static void LevelTerrain(CompilerIndices compilerIndices, Vector3 pos, float radius, float smooth, float altitude)
   {
     Action<TerrainComp, HeightIndex> action = (compiler, heightIndex) =>

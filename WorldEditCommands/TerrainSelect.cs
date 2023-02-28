@@ -125,6 +125,7 @@ public partial class Terrain
   private static IEnumerable<HeightIndex> GetHeightIndicesWithCircle(TerrainComp compiler, Vector3 centerPos, Range<float> radius)
   {
     List<HeightIndex> indices = new();
+    if (radius.Max == 0f) return indices;
     var max = compiler.m_width + 1;
     for (int x = 0; x < max; x++)
     {
@@ -160,6 +161,7 @@ public partial class Terrain
   private static IEnumerable<HeightIndex> GetHeightIndicesWithRect(TerrainComp compiler, Vector3 centerPos, Range<float> width, Range<float> depth, float angle)
   {
     List<HeightIndex> indices = new();
+    if (width.Max == 0f || depth.Max == 0f) return indices;
     var max = compiler.m_width + 1;
     for (int x = 0; x < max; x++)
     {
