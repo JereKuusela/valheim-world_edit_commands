@@ -1,33 +1,44 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 namespace WorldEditCommands;
-using CompilerIndices = Dictionary<TerrainComp, Indices>;
-
 public partial class Terrain
 {
   ///<summary>Returns terrain data of given indices</summary>
-  public static Dictionary<Vector3, TerrainUndoData> GetData(CompilerIndices compilerIndices)
+  public static Dictionary<Vector3, TerrainUndoData> GetData(List<HeightNode> heightNodes, List<PaintNode> paintNodes)
   {
-    return compilerIndices.ToDictionary(kvp => kvp.Key.transform.position, kvp =>
+    Dictionary<Vector3, TerrainUndoData> data = new();
+    foreach (var node in heightNodes)
     {
-      return new TerrainUndoData
+      var compiler = node.Compiler;
+      if (compiler == null) continue;
+      var pos = compiler.transform.position;
+      if (!data.TryGetValue(pos, out var terrainUndoData))
+        data.Add(pos, new TerrainUndoData());
+
+      data[pos].Heights.Add(new HeightUndoData
       {
-        Heights = kvp.Value.HeightIndices.Select(heightIndex => new HeightUndoData
-        {
-          Index = heightIndex.Index,
-          HeightModified = kvp.Key.m_modifiedHeight[heightIndex.Index],
-          Level = kvp.Key.m_levelDelta[heightIndex.Index],
-          Smooth = kvp.Key.m_smoothDelta[heightIndex.Index]
-        }).ToArray(),
-        Paints = kvp.Value.PaintIndices.Select(paintIndex => new PaintUndoData
-        {
-          Index = paintIndex.Index,
-          PaintModified = kvp.Key.m_modifiedPaint[paintIndex.Index],
-          Paint = kvp.Key.m_paintMask[paintIndex.Index],
-        }).ToArray(),
-      };
-    });
+        Index = node.Index,
+        HeightModified = compiler.m_modifiedHeight[node.Index],
+        Level = compiler.m_levelDelta[node.Index],
+        Smooth = compiler.m_smoothDelta[node.Index]
+      });
+    }
+    foreach (var node in paintNodes)
+    {
+      var compiler = node.Compiler;
+      if (compiler == null) continue;
+      var pos = compiler.transform.position;
+      if (!data.TryGetValue(pos, out var terrainUndoData))
+        data.Add(pos, new TerrainUndoData());
+
+      data[pos].Paints.Add(new PaintUndoData
+      {
+        Index = node.Index,
+        PaintModified = compiler.m_modifiedPaint[node.Index],
+        Paint = compiler.m_paintMask[node.Index],
+      });
+    }
+    return data;
   }
 
   public static void ApplyData(Dictionary<Vector3, TerrainUndoData> data, Vector3 pos, float radius)

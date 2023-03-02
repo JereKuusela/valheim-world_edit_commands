@@ -5,27 +5,20 @@ using ServerDevcommands;
 using Service;
 using UnityEngine;
 namespace WorldEditCommands;
-using CompilerIndices = Dictionary<TerrainComp, Indices>;
-public class BaseIndex
+public abstract class TerrainNode
 {
   public int Index;
   public Vector3 Position;
-}
-public class HeightIndex : BaseIndex
-{
   public float DistanceWidth;
   public float DistanceDepth;
   public float Distance;
+
+  public TerrainComp? Compiler;
 }
 
-public class PaintIndex : BaseIndex
-{
-}
-public class Indices
-{
-  public HeightIndex[] HeightIndices = new HeightIndex[0];
-  public PaintIndex[] PaintIndices = new PaintIndex[0];
-}
+public class HeightNode : TerrainNode { }
+public class PaintNode : TerrainNode { }
+
 
 public enum BlockCheck
 {
@@ -36,28 +29,6 @@ public enum BlockCheck
 
 public partial class Terrain
 {
-  public static Func<TerrainComp, Indices> CreateIndexer(Vector3 centerPos, Range<float> radius)
-  {
-    return (TerrainComp comp) =>
-    {
-      return new()
-      {
-        HeightIndices = GetHeightIndicesWithCircle(comp, centerPos, radius).ToArray(),
-        PaintIndices = GetPaintIndicesWithCircle(comp, centerPos, radius).ToArray()
-      };
-    };
-  }
-  public static Func<TerrainComp, Indices> CreateIndexer(Vector3 centerPos, Range<float> width, Range<float> depth, float angle)
-  {
-    return (TerrainComp comp) =>
-    {
-      return new()
-      {
-        HeightIndices = GetHeightIndicesWithRect(comp, centerPos, width, depth, angle).ToArray(),
-        PaintIndices = GetPaintIndicesWithRect(comp, centerPos, width, depth, angle).ToArray()
-      };
-    };
-  }
 
   public static TerrainComp[] GetCompilers(Vector3 position, Range<float> radius)
   {
@@ -82,27 +53,13 @@ public partial class Terrain
     var ns = ZNetScene.instance;
     return heightMaps.Where(hmap => ns.InActiveArea(zs.GetZone(hmap.transform.position), pos)).Select(hmap => hmap.GetAndCreateTerrainCompiler()).ToArray();
   }
-  private static CompilerIndices FilterEmpty(CompilerIndices indices)
-  {
-    return indices.Where(kvp => kvp.Value.HeightIndices.Count() + kvp.Value.PaintIndices.Count() > 0).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-  }
-  public static CompilerIndices GetIndices(IEnumerable<TerrainComp> compilers, Func<TerrainComp, Indices> indexer, IEnumerable<Func<BaseIndex, bool>> filterers)
-  {
-    var filterer = (BaseIndex index) => filterers.All(filterer => filterer(index));
-    return FilterEmpty(compilers.ToDictionary(compiler => compiler, compiler =>
-    {
-      var indices = indexer(compiler);
-      indices.HeightIndices = indices.HeightIndices.Where(index => filterer(index)).ToArray();
-      indices.PaintIndices = indices.PaintIndices.Where(index => filterer(index)).ToArray();
-      return indices;
-    }));
-  }
-  public static Func<BaseIndex, bool> CreateBlockCheckFilter(BlockCheck blockCheck, string[] includedIds, string[] excludedIds)
+
+  public static Func<TerrainNode, bool> CreateBlockCheckFilter(BlockCheck blockCheck, string[] includedIds, string[] excludedIds)
   {
     var included = Selector.GetPrefabs(includedIds);
     var excluded = Selector.GetExcludedPrefabs(excludedIds);
     var zs = ZoneSystem.instance;
-    return (BaseIndex index) =>
+    return (TerrainNode index) =>
     {
       if (blockCheck == BlockCheck.Off) return true;
       var pos = index.Position;
@@ -114,18 +71,17 @@ public partial class Terrain
       return true;
     };
   }
-  public static Func<BaseIndex, bool> CreateAltitudeFilter(float min, float max)
+  public static Func<TerrainNode, bool> CreateAltitudeFilter(float min, float max)
   {
-    return (BaseIndex index) =>
+    return (TerrainNode index) =>
     {
       var height = ZoneSystem.instance.GetGroundHeight(index.Position);
       return height >= min && height <= max;
     };
   }
-  private static IEnumerable<HeightIndex> GetHeightIndicesWithCircle(TerrainComp compiler, Vector3 centerPos, Range<float> radius)
+  public static void GetHeightNodesWithCircle(List<HeightNode> nodes, TerrainComp compiler, Vector3 centerPos, Range<float> radius)
   {
-    List<HeightIndex> indices = new();
-    if (radius.Max == 0f) return indices;
+    if (radius.Max == 0f) return;
     var max = compiler.m_width + 1;
     for (int x = 0; x < max; x++)
     {
@@ -136,17 +92,17 @@ public partial class Terrain
         var dz = nodePos.z - centerPos.z;
         var distance = Utils.DistanceXZ(centerPos, nodePos);
         if (!Helper.Within(radius, distance)) continue;
-        indices.Add(new()
+        nodes.Add(new()
         {
           Index = z * max + x,
           Position = nodePos,
           DistanceWidth = dx / radius.Max,
           DistanceDepth = dz / radius.Max,
-          Distance = distance / radius.Max
+          Distance = distance / radius.Max,
+          Compiler = compiler
         });
       }
     }
-    return indices;
   }
   private static Vector3 VertexToWorld(Heightmap hmap, int x, int z)
   {
@@ -158,10 +114,9 @@ public partial class Terrain
 
   private static float GetX(float x, float z, float angle) => Mathf.Cos(angle) * x - Mathf.Sin(angle) * z;
   private static float GetZ(float x, float z, float angle) => Mathf.Sin(angle) * x + Mathf.Cos(angle) * z;
-  private static IEnumerable<HeightIndex> GetHeightIndicesWithRect(TerrainComp compiler, Vector3 centerPos, Range<float> width, Range<float> depth, float angle)
+  public static void GetHeightNodesWithRect(List<HeightNode> nodes, TerrainComp compiler, Vector3 centerPos, Range<float> width, Range<float> depth, float angle)
   {
-    List<HeightIndex> indices = new();
-    if (width.Max == 0f || depth.Max == 0f) return indices;
+    if (width.Max == 0f || depth.Max == 0f) return;
     var max = compiler.m_width + 1;
     for (int x = 0; x < max; x++)
     {
@@ -176,22 +131,53 @@ public partial class Terrain
           continue;
         var distanceWidth = dx / width.Max;
         var distanceDepth = dz / depth.Max;
-        indices.Add(new()
+        nodes.Add(new()
         {
           Index = z * max + x,
           Position = nodePos,
           DistanceWidth = distanceWidth,
           DistanceDepth = distanceDepth,
-          Distance = Mathf.Max(Mathf.Abs(distanceWidth), Mathf.Abs(distanceDepth))
+          Distance = Mathf.Max(Mathf.Abs(distanceWidth), Mathf.Abs(distanceDepth)),
+          Compiler = compiler
         });
       }
     }
-    return indices;
   }
 
-  private static IEnumerable<PaintIndex> GetPaintIndicesWithRect(TerrainComp compiler, Vector3 centerPos, Range<float> width, Range<float> depth, float angle)
+  public static void GetPaintNodesWithRect(List<PaintNode> nodes, TerrainComp compiler, Vector3 centerPos, Range<float> width, Range<float> depth, float angle)
   {
-    List<PaintIndex> indices = new();
+    var max = compiler.m_width;
+    for (int x = 0; x < max; x++)
+    {
+      for (int z = 0; z < max; z++)
+      {
+        var nodePos = VertexToWorld(compiler.m_hmap, x, z);
+        // Painting is applied from the corner of the node, not the center.
+        nodePos.x += 0.5f;
+        nodePos.z += 0.5f;
+        var rawDx = nodePos.x - centerPos.x;
+        var rawDz = nodePos.z - centerPos.z;
+        var dx = GetX(rawDx, rawDz, angle);
+        var dz = GetZ(rawDx, rawDz, angle);
+        if (!Helper.Within(width, depth, Mathf.Abs(dx), Mathf.Abs(dz)))
+          continue;
+        var distanceWidth = dx / width.Max;
+        var distanceDepth = dz / depth.Max;
+        nodes.Add(new()
+        {
+          Index = z * max + x,
+          Position = nodePos,
+          DistanceWidth = distanceWidth,
+          DistanceDepth = distanceDepth,
+          Distance = Mathf.Max(Mathf.Abs(distanceWidth), Mathf.Abs(distanceDepth)),
+          Compiler = compiler
+        });
+      }
+    }
+  }
+
+  public static void GetPaintNodesWithCircle(List<PaintNode> nodes, TerrainComp compiler, Vector3 centerPos, Range<float> radius)
+  {
     var max = compiler.m_width;
     for (int x = 0; x < max; x++)
     {
@@ -203,41 +189,18 @@ public partial class Terrain
         nodePos.z += 0.5f;
         var dx = nodePos.x - centerPos.x;
         var dz = nodePos.z - centerPos.z;
-        var distanceX = GetX(dx, dz, angle);
-        var distanceZ = GetZ(dx, dz, angle);
-        if (!Helper.Within(width, depth, Mathf.Abs(distanceX), Mathf.Abs(distanceZ)))
-          continue;
-        indices.Add(new()
-        {
-          Index = z * max + x,
-          Position = nodePos
-        });
-      }
-    }
-    return indices;
-  }
-
-  private static IEnumerable<PaintIndex> GetPaintIndicesWithCircle(TerrainComp compiler, Vector3 centerPos, Range<float> radius)
-  {
-    List<PaintIndex> indices = new();
-    var max = compiler.m_width;
-    for (int x = 0; x < max; x++)
-    {
-      for (int z = 0; z < max; z++)
-      {
-        var nodePos = VertexToWorld(compiler.m_hmap, x, z);
-        // Painting is applied from the corner of the node, not the center.
-        nodePos.x += 0.5f;
-        nodePos.z += 0.5f;
         var distance = Utils.DistanceXZ(centerPos, nodePos);
         if (!Helper.Within(radius, distance)) continue;
-        indices.Add(new()
+        nodes.Add(new()
         {
           Index = z * max + x,
-          Position = nodePos
+          Position = nodePos,
+          DistanceWidth = dx / radius.Max,
+          DistanceDepth = dz / radius.Max,
+          Distance = distance / radius.Max,
+          Compiler = compiler
         });
       }
     }
-    return indices;
   }
 }

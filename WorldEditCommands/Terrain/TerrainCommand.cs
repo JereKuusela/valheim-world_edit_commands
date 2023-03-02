@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ServerDevcommands;
 using UnityEngine;
 namespace WorldEditCommands;
@@ -24,15 +25,29 @@ public class TerrainCommand
     if (pars.Width != null && pars.Depth != null) return Terrain.GetCompilers(pars.Position, pars.Width, pars.Depth, pars.Angle);
     throw new InvalidOperationException("Unable to select any terrain");
   }
-  private Func<TerrainComp, Indices> GetIndexer(TerrainParameters pars)
+  private List<HeightNode> GetHeightNodes(TerrainParameters pars, IEnumerable<TerrainComp> compilers)
   {
-    if (pars.Radius != null) return Terrain.CreateIndexer(pars.Position, pars.Radius);
-    if (pars.Width != null && pars.Depth != null) return Terrain.CreateIndexer(pars.Position, pars.Width, pars.Depth, pars.Angle);
-    throw new InvalidOperationException("Unable to select any terrain");
+    List<HeightNode> nodes = new();
+    foreach (var comp in compilers)
+    {
+      if (pars.Radius != null) Terrain.GetHeightNodesWithCircle(nodes, comp, pars.Position, pars.Radius);
+      if (pars.Width != null && pars.Depth != null) Terrain.GetHeightNodesWithRect(nodes, comp, pars.Position, pars.Width, pars.Depth, pars.Angle);
+    }
+    return nodes;
   }
-  private List<Func<BaseIndex, bool>> GetFilterers(TerrainParameters pars)
+  private List<PaintNode> GetPaintNodes(TerrainParameters pars, IEnumerable<TerrainComp> compilers)
   {
-    List<Func<BaseIndex, bool>> filterers = new();
+    List<PaintNode> nodes = new();
+    foreach (var comp in compilers)
+    {
+      if (pars.Radius != null) Terrain.GetPaintNodesWithCircle(nodes, comp, pars.Position, pars.Radius);
+      if (pars.Width != null && pars.Depth != null) Terrain.GetPaintNodesWithRect(nodes, comp, pars.Position, pars.Width, pars.Depth, pars.Angle);
+    }
+    return nodes;
+  }
+  private List<Func<TerrainNode, bool>> GetFilterers(TerrainParameters pars)
+  {
+    List<Func<TerrainNode, bool>> filterers = new();
     if (pars.BlockCheck != BlockCheck.Off) filterers.Add(Terrain.CreateBlockCheckFilter(pars.BlockCheck, pars.IncludedIds, pars.ExcludedIds));
     if (pars.Within != null) filterers.Add(Terrain.CreateAltitudeFilter(pars.Within.Min, pars.Within.Max));
     return filterers;
@@ -45,42 +60,43 @@ public class TerrainCommand
     {
       TerrainParameters pars = new(args);
       var compilers = GetCompilers(pars);
-      var indicer = GetIndexer(pars);
       var filterers = GetFilterers(pars);
-      var compilerIndices = Terrain.GetIndices(compilers, indicer, filterers);
-      var before = Terrain.GetData(compilerIndices);
+      var heightNodes = GetHeightNodes(pars, compilers).Where(n => filterers.All(f => f(n))).ToList();
+      var paintNodes = GetPaintNodes(pars, compilers).Where(n => filterers.All(f => f(n))).ToList(); ;
+      var before = Terrain.GetData(heightNodes, paintNodes);
       if (pars.Reset)
-        Terrain.ResetTerrain(compilerIndices, pars.Position, pars.Size);
+        Terrain.ResetTerrain(heightNodes, paintNodes, pars.Position, pars.Size);
       if (pars.Set.HasValue)
-        Terrain.SetTerrain(compilerIndices, pars.Position, pars.Size, pars.Smooth, pars.Set.Value);
+        Terrain.SetTerrain(heightNodes, pars.Position, pars.Size, pars.Smooth, pars.Set.Value);
       // Level would override the slope which can lead to weird results when operating near the dig limit.
       if (pars.Slope.HasValue && !pars.Level.HasValue)
-        Terrain.SlopeTerrain(compilerIndices, pars.Position, pars.Size, pars.SlopeAngle, pars.Smooth, pars.Position.y, pars.Slope.Value);
+        Terrain.SlopeTerrain(heightNodes, pars.Position, pars.Size, pars.SlopeAngle, pars.Smooth, pars.Position.y, pars.Slope.Value);
       if (pars.Level.HasValue)
-        Terrain.LevelTerrain(compilerIndices, pars.Position, pars.Size, pars.Smooth, pars.Level.Value);
+        Terrain.LevelTerrain(heightNodes, pars.Position, pars.Size, pars.Smooth, pars.Level.Value);
       if (pars.Delta.HasValue)
-        Terrain.RaiseTerrain(compilerIndices, pars.Position, pars.Size, pars.Smooth, pars.Delta.Value);
+        Terrain.RaiseTerrain(heightNodes, pars.Position, pars.Size, pars.Smooth, pars.Delta.Value);
       if (pars.Min.HasValue)
-        Terrain.MinTerrain(compilerIndices, pars.Position, pars.Size, pars.Min.Value);
+        Terrain.MinTerrain(heightNodes, pars.Position, pars.Size, pars.Min.Value);
       if (pars.Max.HasValue)
-        Terrain.MaxTerrain(compilerIndices, pars.Position, pars.Size, pars.Max.Value);
+        Terrain.MaxTerrain(heightNodes, pars.Position, pars.Size, pars.Max.Value);
       if (pars.Void)
-        Terrain.VoidTerrain(compilerIndices, pars.Position, pars.Size);
+        Terrain.VoidTerrain(heightNodes, pars.Position, pars.Size);
       if (pars.Paint != "")
       {
         var split = pars.Paint.Split(',');
         if (split.Length > 2)
         {
           Color color = new(Parse.Float(split, 0), Parse.Float(split, 1), Parse.Float(split, 2), Parse.Float(split, 3, 1f));
-          Terrain.PaintTerrain(compilerIndices, pars.Position, pars.Size, color);
+          Terrain.PaintTerrain(paintNodes, pars.Position, pars.Size, pars.Smooth, color);
         }
         else if (Paints.TryGetValue(pars.Paint, out var color))
         {
-          Terrain.PaintTerrain(compilerIndices, pars.Position, pars.Size, color);
+          Terrain.PaintTerrain(paintNodes, pars.Position, pars.Size, pars.Smooth, color);
         }
       }
-
-      var after = Terrain.GetData(compilerIndices);
+      foreach (var compiler in compilers)
+        Terrain.Save(compiler);
+      var after = Terrain.GetData(heightNodes, paintNodes);
       UndoTerrain undo = new(before, after, pars.Position, pars.Size);
       UndoManager.Add(undo);
 

@@ -22,6 +22,7 @@ Donations: [Buy me a computer](https://www.buymeacoffee.com/jerekuusela)
 
 - v1.26
 	- Adds a new parameter `void` to the `terrain` command (for removing the terrain).
+	- Adds smooth support to the `terrain paint` command.
 	- Fixes 0 radius / rectangle in the `terrain` command causing void.
 
 - v1.25

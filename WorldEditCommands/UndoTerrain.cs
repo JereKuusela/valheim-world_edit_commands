@@ -18,8 +18,8 @@ public class PaintUndoData
 }
 public class TerrainUndoData
 {
-  public HeightUndoData[] Heights = new HeightUndoData[0];
-  public PaintUndoData[] Paints = new PaintUndoData[0];
+  public List<HeightUndoData> Heights = new();
+  public List<PaintUndoData> Paints = new();
 }
 
 public class UndoTerrain : UndoAction
