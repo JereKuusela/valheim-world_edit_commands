@@ -155,10 +155,15 @@ public class ObjectCommand
           context.AddString(message);
       }
     }
+    var moved = operations.Contains("move") || operations.Contains("scale") || operations.Contains("rotate") || operations.Contains("mirror");
     foreach (var view in views)
     {
       if (!view || view.GetZDO() == null || !view.GetZDO().IsValid() || !oldOwner.ContainsKey(view.GetZDO().m_uid)) continue;
-      view.GetZDO().SetOwner(oldOwner[view.GetZDO().m_uid]);
+      if (moved && view.TryGetComponent<WearNTear>(out var wearNTear))
+        wearNTear.m_colliders = null; // Forces the next support check to refresh collider positions.
+      if (oldOwner.TryGetValue(view.GetZDO().m_uid, out var owner))
+        view.GetZDO().SetOwner(owner);
+
     }
     if (removed.Count > 0)
     {

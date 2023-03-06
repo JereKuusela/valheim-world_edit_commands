@@ -20,6 +20,9 @@ Donations: [Buy me a computer](https://www.buymeacoffee.com/jerekuusela)
 
 # Changelog
 
+- v1.27
+	- Fixes the `object move` not refreshing structure colliders.
+
 - v1.26
 	- Adds a new parameter `void` to the `terrain` command (for removing the terrain).
 	- Adds smooth support to the `terrain paint` command.
