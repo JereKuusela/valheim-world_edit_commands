@@ -45,6 +45,11 @@ public static class TweakActions
     split[0] = Actions.GetId(split[0]).ToString();
     return string.Join(",", split);
   }
+  private static string HashAll(string value)
+  {
+    var split = value.Split(',');
+    return string.Join(",", split.Select(s => Actions.GetId(s).ToString()));
+  }
 
   private static string Print<T>(T? value) => value == null ? DEFAULT : value.ToString();
 
@@ -196,6 +201,11 @@ public static class TweakActions
     Actions.SetPrefab(view, value, Hash.Spawn);
     return $"¤ spawn prefab set to {Print(value)}.";
   }
+  public static string Fuel(ZNetView view, string? value)
+  {
+    Actions.SetPrefab(view, value, Hash.OverrideFuel);
+    return $"¤ fuel prefab set to {Print(value)}.";
+  }
 
   public static string ItemOffset(ZNetView view, string? value)
   {
@@ -247,6 +257,12 @@ public static class TweakActions
     Actions.SetString(view, str, Hash.Spawn);
     return $"¤ spawn prefabs set to {Print(str)}.";
   }
+  public static string Conversions(ZNetView view, string[] value)
+  {
+    var str = value.Length == 0 ? null : string.Join("|", value.Select(HashAll));
+    Actions.SetString(view, str, Hash.Conversion);
+    return $"¤ conversions set to {Print(str)}.";
+  }
   public static string Items(ZNetView view, string[] value)
   {
     var str = value.Length == 0 ? null : string.Join("|", value.Select(HashFirst));
@@ -264,6 +280,24 @@ public static class TweakActions
     var str = value.Length == 0 ? null : string.Join("|", value.Select(HashFirst));
     Actions.SetString(view, str, Hash.UseEffect);
     return $"¤ use effect set to {Print(str)}.";
+  }
+  public static string InputEffect(ZNetView view, string[] value)
+  {
+    var str = value.Length == 0 ? null : string.Join("|", value.Select(HashFirst));
+    Actions.SetString(view, str, Hash.InputEffect);
+    return $"¤ input effect set to {Print(str)}.";
+  }
+  public static string OutputEffect(ZNetView view, string[] value)
+  {
+    var str = value.Length == 0 ? null : string.Join("|", value.Select(HashFirst));
+    Actions.SetString(view, str, Hash.OutputEffect);
+    return $"¤ output effect set to {Print(str)}.";
+  }
+  public static string FuelEffect(ZNetView view, string[] value)
+  {
+    var str = value.Length == 0 ? null : string.Join("|", value.Select(HashFirst));
+    Actions.SetString(view, str, Hash.FuelEffect);
+    return $"¤ fuel effect set to {Print(str)}.";
   }
   public static string StartEffect(ZNetView view, string[] value)
   {
@@ -350,6 +384,21 @@ public static class TweakActions
   {
     Actions.SetInt(view, value, Hash.SpawnCondition);
     return $"¤ spawn condition set to {Print(value)}.";
+  }
+  public static string MaxFuel(ZNetView view, int? value)
+  {
+    Actions.SetInt(view, value, Hash.MaxFuel);
+    return $"¤ maximum fuel set to {Print(value)}.";
+  }
+  public static string FuelUsage(ZNetView view, int? value)
+  {
+    Actions.SetInt(view, value, Hash.FuelUsage);
+    return $"¤ fuel usage set to {Print(value)}.";
+  }
+  public static string Speed(ZNetView view, float? value)
+  {
+    Actions.SetFloat(view, value, Hash.Speed);
+    return $"¤ speed set to {Print(value)} seconds.";
   }
   public static string Respawn(ZNetView view, float? value)
   {

@@ -45,6 +45,7 @@ public class SetCommands
       new TweakItemStandCommand();
       new TweakChestCommand();
       new TweakCreatureCommand();
+      new TweakSmelterCommand();
     }
     if (WorldEditCommands.IsStructureTweaks)
     {

@@ -152,15 +152,15 @@ Four new commands that share many parameters with the `object` command.
 - `respawn=minutes`: Respawn time.
 - `spawn=id`: Spawned item or object.
 - `spawndata=base64 encoded`: Sets the ZDO data, for example when using `object copy`.
-- `spawneffect=id,flag`: Effect when the spawn happens. For random rotation, use 1 as the flag.
+- `spawneffect=id,flag`: Effects when the spawn happens. For random rotation, use 1 as the flag.
 - `spawnhealth=number`: Overrides the creature health.
 - `spawnitem=id`: Required item.
 - `spawnmaxy=meters`: Maximum height difference from the altar.
 - `spawnoffset=meters`: Spawn distance from the ground.
 - `spawnradius=meters`: Maximum spawn radius.
-- `starteffect=id,flag`: Effect when the spawn is started. For random rotation, use 1 as the flag.
+- `starteffect=id,flag`: Effects when the spawn is started. For random rotation, use 1 as the flag.
 - `text=text`: Use text. Use _ as the space.
-- `useeffect=id,flag`: Effect when used. For random rotation, use 1 as the flag.
+- `useeffect=id,flag`: Effects when used. For random rotation, use 1 as the flag.
 
 `tweak_chest`:
 - `name=text`: Display name. Use _ as the space.
@@ -192,7 +192,18 @@ Four new commands that share many parameters with the `object` command.
 - `respawn=minutes`: Respawn time.
 - `spawn=id`: Spawned item or object.
 - `spawnoffset=meters`: Spawn distance from the ground.
-- `useeffect=id,flag`: Effect when used. For random rotation, use 1 as the flag.
+- `useeffect=id,flag`: Effects when used. For random rotation, use 1 as the flag.
+
+`tweak_smelter`:
+- `conversion=from,to`: Conversion recipes.
+- `fuel=id`: Fuel item.
+- `fuelusage=number`: Required fuel per conversion.
+- `fueleffect=id,flag`: Effects when adding a new fuel. For random rotation, use 1 as the flag.
+- `inputeffect=id,flag`: Effects when adding a new item. For random rotation, use 1 as the flag.
+- `maxamount=number`: Maximum amount of items in the queue.
+- `maxfuel=number`: Maximum amount of fuel.
+- `outputeffect=id,flag`: Effects when producing a new item. For random rotation, use 1 as the flag.
+- `speed=number`: Conversion speed in seconds.
 
 `tweak_spawner`:
 - `faction=text`: Determines which creatures are considered hostile.
@@ -207,7 +218,7 @@ Four new commands that share many parameters with the `object` command.
 - `respawn=seconds`: Respawn time.
 - `spawn=id,weight,minlevel,maxlevel,data/health`: Spawned item or object. Weight is the relative chance compared to other spawns. Data is the ZDO data, for example when using `object copy`.
 - `spawncondition=flag`: Sum up: 1 = day only, 2 = night only, 4 = ground only.
-- `spawneffect=id,flag`: Effect when the spawn happens. For random rotation, use 1 as the flag.
+- `spawneffect=id,flag`: Effects when the spawn happens. For random rotation, use 1 as the flag.
 - `spawnhealth=number`: Overrides the creature health.
 - `spawnradius=meters`: Maximum spawn radius.
 - `triggerdistance=meters`: Required distance to activate the spawner.
@@ -221,7 +232,7 @@ Four new commands that share many parameters with the `object` command.
 - `spawn=id`: Spawned item or object.
 - `spawndata=base64 encoded`: Sets the ZDO data, for example when using `object copy`.
 - `spawncondition=flag`: 1 = day only, 2 = night only.
-- `spawneffect=id,flag`: Effect when the spawn happens. For random rotation, use 1 as the flag.
+- `spawneffect=id,flag`: Effects when the spawn happens. For random rotation, use 1 as the flag.
 - `spawnhealth=number`: Overrides the creature health.
 - `triggerdistance=meters`: Required distance to activate the spawn point.
 - `triggernoise=meters`: Required noise to activate the spawn point.

@@ -29,6 +29,14 @@ public static class Hash
   public static int MaxAmount = "override_maximum_amount".GetStableHashCode();
   public static int MinLevel = "override_minimum_level".GetStableHashCode();
   public static int MaxLevel = "override_maximum_level".GetStableHashCode();
+  public static int Conversion = "override_conversion".GetStableHashCode();
+  public static int MaxFuel = "override_maximum_fuel".GetStableHashCode();
+  public static int FuelUsage = "override_fuel_usage".GetStableHashCode();
+  public static int Speed = "override_speed".GetStableHashCode();
+  public static int InputEffect = "override_input_effect".GetStableHashCode();
+  public static int FuelEffect = "override_fuel_effect".GetStableHashCode();
+  public static int OutputEffect = "override_output_effect".GetStableHashCode();
+
   public static int MaxNear = "override_max_near".GetStableHashCode();
   public static int MaxTotal = "override_max_total".GetStableHashCode();
   public static int LevelChance = "override_level_chance".GetStableHashCode();
@@ -75,6 +83,7 @@ public static class Hash
   public static int CrafterID = "crafterID".GetStableHashCode();
   public static int CrafterName = "crafterName".GetStableHashCode();
   public static int AddedDefaultItems = "addedDefaultItems".GetStableHashCode();
+  public static int OverrideFuel = "override_fuel".GetStableHashCode();
   public static int Fuel = "fuel".GetStableHashCode();
   public static int Durability = "durability".GetStableHashCode();
   public static int Sleeping = "sleeping".GetStableHashCode();
