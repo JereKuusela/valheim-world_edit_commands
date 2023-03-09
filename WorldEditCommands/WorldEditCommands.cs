@@ -46,6 +46,7 @@ public class SetCommands
       new TweakChestCommand();
       new TweakCreatureCommand();
       new TweakSmelterCommand();
+      new TweakFermenterCommand();
     }
     if (WorldEditCommands.IsStructureTweaks)
     {

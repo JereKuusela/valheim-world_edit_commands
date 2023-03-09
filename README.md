@@ -181,6 +181,13 @@ Four new commands that share many parameters with the `object` command.
 - `name=text`: Display name. Use _ as the space.
 - `resistance=type,modifier`: Sets a damage resistance.
 
+`tweak_fermenter`:
+- `conversion=from,to,amount`: Conversion recipes.
+- `inputeffect=id,flag`: Effects when adding a new item. For random rotation, use 1 as the flag.
+- `outputeffect=id,flag`: Effects when producing a new item. For random rotation, use 1 as the flag.
+- `speed=number`: Conversion speed in seconds.
+- `useeffect=id,flag`: Effects when using the tap. For random rotation, use 1 as the flag.
+
 `tweak_itemstand`:
 - `name=text`: Display name. Use _ as the space.
 - `item=id,variant`: Attached item. Variant is a number.

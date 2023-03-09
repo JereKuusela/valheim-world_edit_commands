@@ -21,6 +21,7 @@ Donations: [Buy me a computer](https://www.buymeacoffee.com/jerekuusela)
 # Changelog
 
 - v1.27
+	- Adds a new command `tweak_fermenter`.
 	- Adds a new command `tweak_smelter`.
 	- Fixes the `object move` not refreshing structure colliders.
 

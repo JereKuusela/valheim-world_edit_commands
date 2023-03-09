@@ -89,11 +89,14 @@ public class TweakObjectCommand : TweakCommand
   };
   public static List<string> Components = new() {
       "altar",
+      "chest",
+      "fermenter",
+      "itemstand",
       "pickable",
+      "runestone",
+      "smelter",
       "spawner",
       "spawnpoint",
-      "runestone",
-      "chest"
   };
   public TweakObjectCommand()
   {

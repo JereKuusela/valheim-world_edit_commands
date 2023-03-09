@@ -45,10 +45,13 @@ public static class TweakActions
     split[0] = Actions.GetId(split[0]).ToString();
     return string.Join(",", split);
   }
-  private static string HashAll(string value)
+  private static string HashTwo(string value)
   {
     var split = value.Split(',');
-    return string.Join(",", split.Select(s => Actions.GetId(s).ToString()));
+    split[0] = Actions.GetId(split[0]).ToString();
+    if (split.Length > 1)
+      split[1] = Actions.GetId(split[1]).ToString();
+    return string.Join(",", split);
   }
 
   private static string Print<T>(T? value) => value == null ? DEFAULT : value.ToString();
@@ -259,7 +262,7 @@ public static class TweakActions
   }
   public static string Conversions(ZNetView view, string[] value)
   {
-    var str = value.Length == 0 ? null : string.Join("|", value.Select(HashAll));
+    var str = value.Length == 0 ? null : string.Join("|", value.Select(HashTwo));
     Actions.SetString(view, str, Hash.Conversion);
     return $"¤ conversions set to {Print(str)}.";
   }
