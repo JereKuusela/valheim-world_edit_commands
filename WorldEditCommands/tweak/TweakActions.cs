@@ -263,6 +263,42 @@ public static class TweakActions
     Actions.SetString(view, value, Hash.OverrideText);
     return $"¤ text set to {Print(value)}.";
   }
+  public static string TextBiome(ZNetView view, string? value)
+  {
+    value = value == null ? value : value.Replace("_", " ");
+    Actions.SetString(view, value, Hash.TextBiome);
+    return $"¤ biome text set to {Print(value)}.";
+  }
+  public static string TextSpace(ZNetView view, string? value)
+  {
+    value = value == null ? value : value.Replace("_", " ");
+    Actions.SetString(view, value, Hash.TextSpace);
+    return $"¤ space text set to {Print(value)}.";
+  }
+  public static string TextSleep(ZNetView view, string? value)
+  {
+    value = value == null ? value : value.Replace("_", " ");
+    Actions.SetString(view, value, Hash.TextSleep);
+    return $"¤ sleep text set to {Print(value)}.";
+  }
+  public static string TextHappy(ZNetView view, string? value)
+  {
+    value = value == null ? value : value.Replace("_", " ");
+    Actions.SetString(view, value, Hash.TextHappy);
+    return $"¤ happy text set to {Print(value)}.";
+  }
+  public static string TextCheck(ZNetView view, string? value)
+  {
+    value = value == null ? value : value.Replace("_", " ");
+    Actions.SetString(view, value, Hash.TextCheck);
+    return $"¤ check text set to {Print(value)}.";
+  }
+  public static string TextExtract(ZNetView view, string? value)
+  {
+    value = value == null ? value : value.Replace("_", " ");
+    Actions.SetString(view, value, Hash.TextExtract);
+    return $"¤ extract text set to {Print(value)}.";
+  }
   public static string Compendium(ZNetView view, string[] value)
   {
     var str = value.Length == 0 ? null : string.Join("|", value).Replace("_", " ");
@@ -428,6 +464,11 @@ public static class TweakActions
   {
     Actions.SetFloat(view, value, Hash.Speed);
     return $"¤ speed set to {Print(value)} seconds.";
+  }
+  public static string MaxCover(ZNetView view, float? value)
+  {
+    Actions.SetFloat(view, value, Hash.MaxCover);
+    return $"¤ max cover set to {Print(value)} seconds.";
   }
   public static string Respawn(ZNetView view, float? value)
   {

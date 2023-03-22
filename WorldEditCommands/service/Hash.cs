@@ -34,6 +34,7 @@ public static class Hash
   public static int MaxFuel = "override_maximum_fuel".GetStableHashCode();
   public static int FuelUsage = "override_fuel_usage".GetStableHashCode();
   public static int Speed = "override_speed".GetStableHashCode();
+  public static int MaxCover = "override_maximum_cover".GetStableHashCode();
   public static int InputEffect = "override_input_effect".GetStableHashCode();
   public static int FuelEffect = "override_fuel_effect".GetStableHashCode();
   public static int OutputEffect = "override_output_effect".GetStableHashCode();
@@ -57,6 +58,12 @@ public static class Hash
   public static int NearRadius = "override_near_radius".GetStableHashCode();
   public static int FarRadius = "override_far_radius".GetStableHashCode();
   public static int OverrideName = "override_name".GetStableHashCode();
+  public static int TextBiome = "override_text_biome".GetStableHashCode();
+  public static int TextSpace = "override_text_space".GetStableHashCode();
+  public static int TextSleep = "override_text_sleep".GetStableHashCode();
+  public static int TextHappy = "override_text_happy".GetStableHashCode();
+  public static int TextCheck = "override_text_check".GetStableHashCode();
+  public static int TextExtract = "override_text_extract".GetStableHashCode();
   public static int SpawnCondition = "override_spawn_condition".GetStableHashCode();
   public static int Amount = "override_amount".GetStableHashCode();
   public static int Wear = "override_wear".GetStableHashCode();

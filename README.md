@@ -166,8 +166,9 @@ Four new commands that share many parameters with the `object` command.
 - `biome=biome1,biome2,...`: List of active biomes.
 - `coveroffset=x,z,y`: Offset for the cover calculation.
 - `maxamount=number`: Maximum amount of production.
+- `maxcover=number`: Coverage limit (from 0.0 to 1.0).
 - `spawn=id`: Produced item.
-- `spawncondition=flag`: 1 = produce only during days.
+- `spawncondition=flag`: 1 = produces also during the night.
 - `spawneffect=id,flag`: Effects when taking the items. For random rotation, use 1 as the flag.
 - `spawnoffset=x,z,y`: Offset for the produced items.
 - `speed=seconds`: Interval for production.
