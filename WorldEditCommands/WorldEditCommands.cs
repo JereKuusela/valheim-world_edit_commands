@@ -39,6 +39,7 @@ public class SetCommands
     if (WorldEditCommands.IsSpawnerTweaks)
     {
       new TweakAltarCommand();
+      new TweakBeehiveCommand();
       new TweakPickableCommand();
       new TweakSpawnerCommand();
       new TweakSpawnPointCommand();

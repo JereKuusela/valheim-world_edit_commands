@@ -96,7 +96,7 @@ Most commands can be used on any object. When editing a single object, the scrip
 `tweak_object`:
 - `component=name`: Adds behavior / script component.
 - `creator=player id`: Sets the piece creator. Use 0 for no creator.
-- `effect=radius,id`: Adds forced effect area (heat, fire, player base, burning, no monsters, warm cozy area).
+- `effect=radius,id1,id2,...`: Adds forced effect area (heat, fire, player base, burning, no monsters, warm cozy area).
 - `event=radius,id`: Adds forced random event area.
 - `collision=true/false`: Sets whether the object has collision. No value to toggle.
 - `fall=off/solid/terrain`: Overrides the fall behavior.
@@ -161,6 +161,16 @@ Four new commands that share many parameters with the `object` command.
 - `starteffect=id,flag`: Effects when the spawn is started. For random rotation, use 1 as the flag.
 - `text=text`: Use text. Use _ as the space.
 - `useeffect=id,flag`: Effects when used. For random rotation, use 1 as the flag.
+
+`tweak_beehive`:
+- `biome=biome1,biome2,...`: List of active biomes.
+- `coveroffset=x,z,y`: Offset for the cover calculation.
+- `maxamount=number`: Maximum amount of production.
+- `spawn=id`: Produced item.
+- `spawncondition=flag`: 1 = produce only during days.
+- `spawneffect=id,flag`: Effects when taking the items. For random rotation, use 1 as the flag.
+- `spawnoffset=x,z,y`: Offset for the produced items.
+- `speed=seconds`: Interval for production.
 
 `tweak_chest`:
 - `name=text`: Display name. Use _ as the space.

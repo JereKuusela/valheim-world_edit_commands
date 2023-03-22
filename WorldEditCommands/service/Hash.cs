@@ -13,6 +13,7 @@ public static class Hash
   public static int SpawnHealth = "override_health".GetStableHashCode();
   public static int TriggerNoise = "override_trigger_noise".GetStableHashCode();
   public static int Spawn = "override_spawn".GetStableHashCode();
+  public static int Biome = "override_biome".GetStableHashCode();
   public static int Data = "override_data".GetStableHashCode();
   public static int OverrideItem = "override_item".GetStableHashCode();
   public static int OverrideItems = "override_items".GetStableHashCode();
@@ -47,6 +48,7 @@ public static class Hash
   public static int Discover = "override_discover".GetStableHashCode();
   public static int Delay = "override_delay".GetStableHashCode();
   public static int ItemOffset = "override_item_offset".GetStableHashCode();
+  public static int CoverOffset = "override_cover_offset".GetStableHashCode();
   public static int SpawnMaxY = "override_spawn_max_y".GetStableHashCode();
   public static int ItemStandPrefix = "override_item_stand_prefix".GetStableHashCode();
   public static int ItemStandRange = "override_item_stand_range".GetStableHashCode();

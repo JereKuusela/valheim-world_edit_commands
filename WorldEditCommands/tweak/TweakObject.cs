@@ -89,6 +89,7 @@ public class TweakObjectCommand : TweakCommand
   };
   public static List<string> Components = new() {
       "altar",
+      "beehive",
       "chest",
       "fermenter",
       "itemstand",
@@ -116,7 +117,7 @@ public class TweakObjectCommand : TweakCommand
 
     AutoComplete.Add("component", (int index) => Components);
     AutoComplete.Add("status", (int index) => index == 0 ? ParameterInfo.Create("status=<color=yellow>radius</color>,id", "Adds status area.") : index == 1 ? ParameterInfo.StatusEffects : ParameterInfo.None);
-    AutoComplete.Add("effect", (int index) => index == 0 ? ParameterInfo.Create("effect=<color=yellow>radius</color>,id", "Adds effect area.") : index == 1 ? ParameterInfo.EffectAreas : ParameterInfo.None);
+    AutoComplete.Add("effect", (int index) => index == 0 ? ParameterInfo.Create("effect=<color=yellow>radius</color>,id", "Adds effect area.") : ParameterInfo.EffectAreas);
     AutoComplete.Add("weather", (int index) => index == 0 ? ParameterInfo.Create("weather=<color=yellow>radius</color>,id,instant", "Adds weather area.") : index == 1 ? ParameterInfo.Environments : index == 2 ? ParameterInfo.Create("weather=radius,id,<color=yellow>instant</color>", "Adds weather area.") : ParameterInfo.None);
     AutoComplete.Add("event", (int index) => index == 0 ? ParameterInfo.Create("event=<color=yellow>radius</color>,id", "Adds event area.") : index == 1 ? ParameterInfo.Events : ParameterInfo.None);
     AutoComplete.Add("collision", (int index) => ParameterInfo.Create("collision=<color=yellow>true/false</color> or no value to toggle.", "Sets object collision."));

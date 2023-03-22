@@ -53,6 +53,17 @@ public static class TweakActions
       split[1] = Actions.GetId(split[1]).ToString();
     return string.Join(",", split);
   }
+  private static int BiomeToInt(string value)
+  {
+    var split = value.Split(',');
+    Heightmap.Biome biomes = Heightmap.Biome.None;
+    foreach (var s in split)
+    {
+      if (Enum.TryParse<Heightmap.Biome>(s, true, out var biome))
+        biomes |= biome;
+    }
+    return (int)biomes;
+  }
 
   private static string Print<T>(T? value) => value == null ? DEFAULT : value.ToString();
 
@@ -204,6 +215,11 @@ public static class TweakActions
     Actions.SetPrefab(view, value, Hash.Spawn);
     return $"¤ spawn prefab set to {Print(value)}.";
   }
+  public static string Biome(ZNetView view, string? value)
+  {
+    Actions.SetInt(view, BiomeToInt(value ?? ""), Hash.Biome);
+    return $"¤ biome set to {Print(value)}.";
+  }
   public static string Fuel(ZNetView view, string? value)
   {
     Actions.SetPrefab(view, value, Hash.OverrideFuel);
@@ -214,6 +230,16 @@ public static class TweakActions
   {
     Actions.SetString(view, value, Hash.ItemOffset);
     return $"¤ item offset set to {Print(value)}.";
+  }
+  public static string CoverOffset(ZNetView view, string? value)
+  {
+    Actions.SetString(view, value, Hash.CoverOffset);
+    return $"¤ cover offset set to {Print(value)}.";
+  }
+  public static string SpawnOffset(ZNetView view, string? value)
+  {
+    Actions.SetString(view, value, Hash.SpawnOffset);
+    return $"¤ spawn offset set to {Print(value)}.";
   }
   public static string ItemStandPrefix(ZNetView view, string? value)
   {
