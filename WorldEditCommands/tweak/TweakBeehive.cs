@@ -97,8 +97,6 @@ public class TweakBeehiveCommand : TweakCommand
     AutoComplete.Add("texthappy", (int index) => index == 0 ? ParameterInfo.Create("texthappy=<color=yellow>text</color>", "Text when being happy. No value to reset.") : ParameterInfo.None);
     AutoComplete.Add("textsleep", (int index) => index == 0 ? ParameterInfo.Create("textsleep=<color=yellow>text</color>", "Text when sleeping. No value to reset.") : ParameterInfo.None);
     AutoComplete.Add("textspace", (int index) => index == 0 ? ParameterInfo.Create("textspace=<color=yellow>text</color>", "Text when covered. No value to reset.") : ParameterInfo.None);
-
-
     AutoComplete.Add("spawn", (int index) => index == 0 ? ParameterInfo.ItemIds : ParameterInfo.None);
     AutoComplete.Add("biome", (int index) => Enum.GetNames(typeof(Heightmap.Biome)).ToList());
     AutoComplete.Add("speed", (int index) => index == 0 ? ParameterInfo.Create("speed=<color=yellow>number</color>", "Production speed in seconds. No value to reset.") : ParameterInfo.None);

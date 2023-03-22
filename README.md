@@ -167,11 +167,18 @@ Four new commands that share many parameters with the `object` command.
 - `coveroffset=x,z,y`: Offset for the cover calculation.
 - `maxamount=number`: Maximum amount of production.
 - `maxcover=number`: Coverage limit (from 0.0 to 1.0).
+- `name=text`: Display name. Use _ as the space.
 - `spawn=id`: Produced item.
 - `spawncondition=flag`: 1 = produces also during the night.
 - `spawneffect=id,flag`: Effects when taking the items. For random rotation, use 1 as the flag.
 - `spawnoffset=x,z,y`: Offset for the produced items.
 - `speed=seconds`: Interval for production.
+- `textbiome=text`: Text for wrong biome. Use _ as the space.
+- `textcheck=text`: Text for checking the amount. Use _ as the space.
+- `textextract=text`: Text for taking the items. Use _ as the space.
+- `texthappy=text`: Text when being happy. Use _ as the space.
+- `textsleep=text`: Text when sleeping. Use _ as the space.
+- `textspace=text`: Text when covered. Use _ as the space.
 
 `tweak_chest`:
 - `name=text`: Display name. Use _ as the space.
