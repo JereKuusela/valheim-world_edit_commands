@@ -1,0 +1,22 @@
+- v1.27
+	- Adds a new command `tweak_beehive`.
+	- Adds a new command `tweak_fermenter`.
+	- Adds a new command `tweak_smelter`.
+	- Fixes the `object move` not refreshing structure colliders.
+
+- v1.26
+	- Adds a new parameter `void` to the `terrain` command (for removing the terrain).
+	- Adds smooth support to the `terrain paint` command.
+	- Fixes 0 radius / rectangle in the `terrain` command causing void.
+
+- v1.25
+	- Adds support for multiple values to the parameter `id`.
+	- Adds more values to the parameter `type`.
+	- Adds parameters `id` and `ignore` to the `terrain` command (for block check).
+
+- v1.24
+	- Fixes rounding errors on the `terrain` command.
+
+- v1.23
+	- Fixes the parameter `scale` not forking on the `spawn_object` command.
+	- Fixes the autocomplete of the `tweak_object show` command.

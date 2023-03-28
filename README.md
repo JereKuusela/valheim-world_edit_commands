@@ -6,6 +6,11 @@ Install on the admin client (modding [guide](https://youtu.be/L9ljm2eKLrk)).
 
 Install also [Server Devcommands](https://valheim.thunderstore.io/package/JereKuusela/Server_devcommands/).
 
+# Tutorials
+
+- Basic usage + commands: https://youtu.be/Bwkb3XadSl0 (28 minutes, created by StonedProphet)
+- Structure Tweaks commands: https://youtu.be/OaGO9Vis6uE (16 minutes, created by StonedProphet)
+
 # Commands
 
 This mods add 4 new commands. Most parameters are given as named parameters that have a "key=value" format (or just "key" if no value is needed). All of them are optional and can be put in any order. All keys and some values are case insensitive too.
@@ -430,3 +435,11 @@ The command however supports going over the limit which can lead to unexpected r
 Static objects only synchronize their position and rotation when loaded. This means that `object move` and `object rotate` commands won't instantly show for other clients. Instead they have to leave the area.
 
 This shouldn't cause any issues unless objects are moved long distances (which might cause issues anyways).
+
+# Credits
+
+Thanks for Azumatt for creating the mod icon!
+
+Sources: [GitHub](https://github.com/JereKuusela/valheim-world_edit_commands)
+
+Donations: [Buy me a computer](https://www.buymeacoffee.com/jerekuusela)

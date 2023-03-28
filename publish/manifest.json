@@ -4,7 +4,7 @@
   "website_url": "https://github.com/JereKuusela/valheim-world_edit_commands",
   "description": "Adds new client side commands for advanced world editing.",
   "dependencies": [
-    "denikson-BepInExPack_Valheim-5.4.1901",
+    "denikson-BepInExPack_Valheim-5.4.2100",
     "JereKuusela-Server_devcommands-1.42.0"
   ]
 }
