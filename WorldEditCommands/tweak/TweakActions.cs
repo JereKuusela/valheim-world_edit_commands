@@ -53,6 +53,11 @@ public static class TweakActions
       split[1] = Actions.GetId(split[1]).ToString();
     return string.Join(",", split);
   }
+  private static string HashAll(string value)
+  {
+    var split = value.Split(',');
+    return string.Join(",", split.Select(Actions.GetId));
+  }
   private static int BiomeToInt(string value)
   {
     var split = value.Split(',');
@@ -398,6 +403,12 @@ public static class TweakActions
     var str = value.Length == 0 ? null : string.Join("|", value.Select(Resistance).Where(s => s != ""));
     Actions.SetString(view, str, Hash.Resistances);
     return $"¤ resistances set to {Print(string.Join("|", value))}.";
+  }
+  public static string Attacks(ZNetView view, string[] value)
+  {
+    var str = value.Length == 0 ? null : string.Join("|", value.Select(HashAll));
+    Actions.SetString(view, str, Hash.Attacks);
+    return $"¤ attacks set to {Print(string.Join("|", value))}.";
   }
   public static string MinLevel(ZNetView view, int? value)
   {

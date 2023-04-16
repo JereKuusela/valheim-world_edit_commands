@@ -14,6 +14,7 @@ See [documentation](https://github.com/JereKuusela/valheim-world_edit_commands/b
 
 - Basic usage + commands: https://youtu.be/Bwkb3XadSl0 (28 minutes, created by StonedProphet)
 - Structure Tweaks commands: https://youtu.be/OaGO9Vis6uE (16 minutes, created by StonedProphet)
+- Spawner Tweaks commands: https://youtu.be/mS59BMvR5vY (22 minutes, created by StonedProphet)
 
 # Credits
 

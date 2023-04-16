@@ -10,6 +10,7 @@ Install also [Server Devcommands](https://valheim.thunderstore.io/package/JereKu
 
 - Basic usage + commands: https://youtu.be/Bwkb3XadSl0 (28 minutes, created by StonedProphet)
 - Structure Tweaks commands: https://youtu.be/OaGO9Vis6uE (16 minutes, created by StonedProphet)
+- Spawner Tweaks commands: https://youtu.be/mS59BMvR5vY (22 minutes, created by StonedProphet)
 
 # Commands
 
@@ -31,7 +32,10 @@ Following parameters are available:
 - `ammoType=item`: Sets the ammo type for turrets. Throwables, magic weapons and enemy weapons ranged weapons seem to work. Arrows work too but instantly fall to the ground.
 - `angle=degrees`: Direction of the rectangle when used with `rect`.
 - `baby`: Prevents offspring from growing up.
-- `copy`: Copies most of the ZDO data to the clipboard. Excludes some data to work better and to reduce data size.
+- `copy`: Copies most of the ZDO data to the clipboard. Excludes data:
+	- Object scale (redundant because scale usually comes from the spawn system).
+	- Creature spawn coordinates (harmful because creatures try returning to the spawn coordinates when idle).
+	- LocationProxy data (redundant because the location spawn system sets this).
 - `copy=all`: Copies all of the ZDO data to the clipboard.
 - `center`: Sets `rotate` center point at player position.
 - `center=x,z,y`: Overrides the player position and sets `rotate` center point.
@@ -154,7 +158,7 @@ Four new commands that share many parameters with the `object` command.
 - `maxlevel=number`: Maximum level (level 1 = no star).
 - `minlevel=number`: Minimum level (level 1 = no star).
 - `name=text`: Display name. Use _ as the space.
-- `respawn=minutes`: Respawn time.
+- `respawn=minutes`: How often the altar can be used.
 - `spawn=id`: Spawned item or object.
 - `spawndata=base64 encoded`: Sets the ZDO data, for example when using `object copy`.
 - `spawneffect=id,flag`: Effects when the spawn happens. For random rotation, use 1 as the flag.
@@ -194,6 +198,7 @@ Four new commands that share many parameters with the `object` command.
 
 `tweak_creature`:
 - `affix=name`: Sets the CLLC affix (if CLLC is installed).
+- `attacks=id1,id2,...`: Sets the available attacks. If `attacks` is given multiple times, the attack set is randomly selected.
 - `boss=true/false`: Sets the boss health bar. No value to toggle.
 - `damage=number`: Sets the damage multiplier.
 - `faction=text`:  Determines which creatures are considered hostile.
@@ -219,7 +224,7 @@ Four new commands that share many parameters with the `object` command.
 `tweak_pickable`:
 - `amount=number`: Amount of dropped items.
 - `name=text`: Display name. Use _ as the space.
-- `respawn=minutes`: Respawn time.
+- `respawn=minutes`: Respawn time. Must be an integer (no decimals).
 - `spawn=id`: Spawned item or object.
 - `spawnoffset=meters`: Spawn distance from the ground.
 - `useeffect=id,flag`: Effects when used. For random rotation, use 1 as the flag.

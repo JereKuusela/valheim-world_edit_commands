@@ -30,6 +30,7 @@ public class TweakCreatureCommand : TweakCommand
     if (operation == "item") return TweakActions.Items(view, value);
     if (operation == "affix") return TweakActions.CLLC(view, value);
     if (operation == "resistance") return TweakActions.Resistances(view, value);
+    if (operation == "attacks") return TweakActions.Attacks(view, value);
     throw new System.NotImplementedException();
   }
 
@@ -60,6 +61,7 @@ public class TweakCreatureCommand : TweakCommand
     SupportedOperations.Add("resistance", typeof(string[]));
     SupportedOperations.Add("name", typeof(string));
     SupportedOperations.Add("item", typeof(string[]));
+    SupportedOperations.Add("attacks", typeof(string[]));
     if (WorldEditCommands.IsCLLC)
       SupportedOperations.Add("affix", typeof(string[]));
 
@@ -88,6 +90,7 @@ public class TweakCreatureCommand : TweakCommand
       if (index == 4) return ParameterInfo.Create("item=id,chance,minamount,maxamount,<color=yellow>flag</color>", "Sum up: 1 = star multiplier, 2 = one per player.");
       return ParameterInfo.Create("For additional entries, add more <color>item=...</color> parameters.");
     });
+    AutoComplete.Add("attacks", (int index) => ParameterInfo.ItemIds);
     Init("tweak_creature", "Modify creatures");
   }
 }

@@ -505,7 +505,8 @@ public class ObjectCommand
     zdo = zdo.Clone();
     if (smart)
     {
-      zdo.m_vec3?.Remove("scale".GetStableHashCode());
+      zdo.m_vec3?.Remove(Hash.Scale);
+      zdo.m_vec3?.Remove(Hash.SpawnPoint);
       zdo.m_ints?.Remove(Hash.Seed);
       zdo.m_ints?.Remove(Hash.Location);
       if (zdo.m_strings != null && zdo.m_strings.ContainsKey(Hash.OverrideItems))

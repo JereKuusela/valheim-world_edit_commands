@@ -1,3 +1,7 @@
+- v1.28
+	- Adds a new parameter `attacks` to the `tweak_creature` command.
+	- Fixes `object copy` also copying creature spawn coordinates.
+
 - v1.27
 	- Adds a new command `tweak_beehive`.
 	- Adds a new command `tweak_fermenter`.

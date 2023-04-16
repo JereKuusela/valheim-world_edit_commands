@@ -24,6 +24,7 @@ public static class Hash
   public static int SpawnItem = "override_spawn_item".GetStableHashCode();
   public static int Faction = "override_faction".GetStableHashCode();
   public static int Resistances = "override_resistances".GetStableHashCode();
+  public static int Attacks = "override_attacks".GetStableHashCode();
   public static int SpawnOffset = "override_spawn_offset".GetStableHashCode();
   public static int Component = "override_component".GetStableHashCode();
   public static int MinAmount = "override_minimum_amount".GetStableHashCode();
@@ -101,4 +102,6 @@ public static class Hash
   public static int Tag = "tag".GetStableHashCode();
   public static int Seed = "seed".GetStableHashCode();
   public static int Location = "location".GetStableHashCode();
+  public static int SpawnPoint = "spawnpoint".GetStableHashCode();
+  public static int Scale = "scale".GetStableHashCode();
 }
