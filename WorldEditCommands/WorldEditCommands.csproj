@@ -12,34 +12,34 @@
     <Message Text="Copied to Libs folder." Importance="High" />
   </Target>
   <ItemGroup>
-    <Reference Include="BepInEx.dll">
+    <Reference Include="BepInEx">
       <HintPath>..\..\Libs\BepinEx.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.dll">
+    <Reference Include="UnityEngine">
       <HintPath>..\..\Libs\UnityEngine.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.CoreModule.dll">
+    <Reference Include="UnityEngine.CoreModule">
       <HintPath>..\..\Libs\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.PhysicsModule.dll">
+    <Reference Include="UnityEngine.PhysicsModule">
       <HintPath>..\..\Libs\UnityEngine.PhysicsModule.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.IMGUIModule.dll">
+    <Reference Include="UnityEngine.IMGUIModule">
       <HintPath>..\..\Libs\UnityEngine.IMGUIModule.dll</HintPath>
     </Reference>
-    <Reference Include="0Harmony.dll">
+    <Reference Include="0Harmony">
       <HintPath>..\..\Libs\0Harmony.dll</HintPath>
     </Reference>
-    <Reference Include="BepInEx.Harmony.dll">
+    <Reference Include="BepInEx.Harmony">
       <HintPath>..\..\Libs\BepInEx.Harmony.dll</HintPath>
     </Reference>
-    <Reference Include="assembly_valheim_publicized.dll">
+    <Reference Include="assembly_valheim_publicized">
       <HintPath>..\..\Libs\assembly_valheim_publicized.dll</HintPath>
     </Reference>
-    <Reference Include="assembly_utils_publicized.dll">
+    <Reference Include="assembly_utils_publicized">
       <HintPath>..\..\Libs\assembly_utils_publicized.dll</HintPath>
     </Reference>
-    <Reference Include="ServerDevcommands.dll">
+    <Reference Include="ServerDevcommands">
       <HintPath>..\..\Libs\ServerDevcommands.dll</HintPath>
     </Reference>
   </ItemGroup>

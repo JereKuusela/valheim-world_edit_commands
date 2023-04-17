@@ -20,7 +20,3 @@
 
 - v1.24
 	- Fixes rounding errors on the `terrain` command.
-
-- v1.23
-	- Fixes the parameter `scale` not forking on the `spawn_object` command.
-	- Fixes the autocomplete of the `tweak_object show` command.
