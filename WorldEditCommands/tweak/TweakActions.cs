@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using ServerDevcommands;
 
 namespace WorldEditCommands;
 
@@ -161,6 +162,13 @@ public static class TweakActions
     Actions.SetString(view, value, Hash.Component);
     return $"¤ component set to {Print(value)}.";
   }
+  public static string AddComponent(ZNetView view, string value)
+  {
+    var components = Parse.Split(view.GetZDO().GetString(Hash.Component, "")).ToHashSet();
+    components.Add(value);
+    Actions.SetString(view, string.Join(",", components), Hash.Component);
+    return $"¤ component set to {Print(value)}.";
+  }
 
   public static string Restrict(ZNetView view, bool? value)
   {
@@ -215,9 +223,9 @@ public static class TweakActions
     Actions.SetString(view, value, Hash.Data);
     return $"¤ spawn data set to {Print(value)}.";
   }
-  public static string Spawn(ZNetView view, string? value)
+  public static string Spawn(ZNetView view, int hash, string? value)
   {
-    Actions.SetPrefab(view, value, Hash.Spawn);
+    Actions.SetPrefab(view, value, hash);
     return $"¤ spawn prefab set to {Print(value)}.";
   }
   public static string Biome(ZNetView view, string? value)
@@ -324,7 +332,7 @@ public static class TweakActions
   public static string Spawns(ZNetView view, string[] value)
   {
     var str = value.Length == 0 ? null : string.Join("|", value.Select(HashFirst));
-    Actions.SetString(view, str, Hash.Spawn);
+    Actions.SetString(view, str, Hash.SpawnSpawnArea);
     return $"¤ spawn prefabs set to {Print(str)}.";
   }
   public static string Conversions(ZNetView view, string[] value)
@@ -481,9 +489,9 @@ public static class TweakActions
     Actions.SetFloat(view, value, Hash.MaxCover);
     return $"¤ max cover set to {Print(value)} seconds.";
   }
-  public static string Respawn(ZNetView view, float? value)
+  public static string Respawn(ZNetView view, int hash, float? value)
   {
-    Actions.SetFloat(view, value, Hash.Respawn);
+    Actions.SetFloat(view, value, hash);
     return $"¤ respawn time set to {Print(value)} minutes.";
   }
   public static string Delay(ZNetView view, float? value)
@@ -501,11 +509,12 @@ public static class TweakActions
     Actions.SetFloat(view, value, Hash.SpawnMaxY);
     return $"¤ spawn max y set to {Print(value)} meters.";
   }
-  public static string RespawnSeconds(ZNetView view, float? value)
+  public static string RespawnSeconds(ZNetView view, int hash, float? value)
   {
-    Actions.SetFloat(view, value, Hash.Respawn);
+    Actions.SetFloat(view, value, hash);
     return $"¤ respawn time set to {Print(value)} seconds.";
   }
+
   public static string SpawnHealth(ZNetView view, float? value)
   {
     Actions.SetFloat(view, value, Hash.SpawnHealth);

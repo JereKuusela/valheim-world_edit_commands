@@ -29,7 +29,7 @@ public class TweakSpawnerCommand : TweakCommand
     if (operation == "triggerdistance")
       return TweakActions.TriggerDistance(view, value);
     if (operation == "respawn")
-      return TweakActions.RespawnSeconds(view, value);
+      return TweakActions.RespawnSeconds(view, Hash.RespawnSpawnArea, value);
     throw new NotImplementedException();
   }
 

@@ -7,7 +7,7 @@ public class TweakPickableCommand : TweakCommand
   protected override string DoOperation(ZNetView view, string operation, string? value)
   {
     if (operation == "spawn")
-      return TweakActions.Spawn(view, value);
+      return TweakActions.Spawn(view, Hash.SpawnPickable, value);
     if (operation == "name")
       return TweakActions.Name(view, value);
     throw new System.NotImplementedException();
@@ -15,7 +15,7 @@ public class TweakPickableCommand : TweakCommand
   protected override string DoOperation(ZNetView view, string operation, float? value)
   {
     if (operation == "respawn")
-      return TweakActions.Respawn(view, value);
+      return TweakActions.Respawn(view, Hash.RespawnPickable, value);
     if (operation == "spawnoffset")
       return TweakActions.SpawnOffset(view, value);
     throw new System.NotImplementedException();

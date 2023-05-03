@@ -27,6 +27,9 @@
     <Reference Include="UnityEngine.IMGUIModule">
       <HintPath>..\..\Libs\UnityEngine.IMGUIModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.AnimationModule">
+      <HintPath>..\..\Libs\UnityEngine.AnimationModule.dll</HintPath>
+    </Reference>
     <Reference Include="0Harmony">
       <HintPath>..\..\Libs\0Harmony.dll</HintPath>
     </Reference>

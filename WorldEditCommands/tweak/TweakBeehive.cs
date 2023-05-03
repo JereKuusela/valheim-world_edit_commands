@@ -9,7 +9,7 @@ public class TweakBeehiveCommand : TweakCommand
   protected override string DoOperation(ZNetView view, string operation, string? value)
   {
     if (operation == "spawn")
-      return TweakActions.Spawn(view, value);
+      return TweakActions.Spawn(view, Hash.Spawn, value);
     if (operation == "spawnoffset")
       return TweakActions.SpawnOffset(view, value);
     if (operation == "coveroffset")

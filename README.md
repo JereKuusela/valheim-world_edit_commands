@@ -244,6 +244,7 @@ Four new commands that share many parameters with the `object` command.
 - `faction=text`: Determines which creatures are considered hostile.
 - `farradius=meters`: Radius for `maxtotal`.
 - `respawn=seconds`: Respawn time.
+  - Pickable: Timer is stopped while the item is picked up.
 - `levelchance=percent`: Level up chance (from 0 to 100).
 - `maxlevel=number`: Maximum level (level 1 = no star).
 - `minlevel=number`: Minimum level (level 1 = no star).

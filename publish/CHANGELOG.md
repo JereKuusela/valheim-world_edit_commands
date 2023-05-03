@@ -1,3 +1,7 @@
+- v1.29
+	- Adds support for Pickable and Spawner combo.
+	- Fixes chained commands (multiple commands per line) sometimes causing ghost objects.
+
 - v1.28
 	- Adds a new parameter `attacks` to the `tweak_creature` command.
 	- Fixes `object copy` also copying creature spawn coordinates.

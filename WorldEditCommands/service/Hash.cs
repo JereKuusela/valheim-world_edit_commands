@@ -10,9 +10,13 @@ public static class Hash
   public static int Event = "override_event".GetStableHashCode();
   public static int Effect = "override_effect".GetStableHashCode();
   public static int Respawn = "override_respawn".GetStableHashCode();
+  public static int RespawnSpawnArea = "override_spawnarea_respawn".GetStableHashCode();
+  public static int RespawnPickable = "override_pickable_respawn".GetStableHashCode();
   public static int SpawnHealth = "override_health".GetStableHashCode();
   public static int TriggerNoise = "override_trigger_noise".GetStableHashCode();
   public static int Spawn = "override_spawn".GetStableHashCode();
+  public static int SpawnSpawnArea = "override_spawnarea_spawn".GetStableHashCode();
+  public static int SpawnPickable = "override_pickable_spawn".GetStableHashCode();
   public static int Biome = "override_biome".GetStableHashCode();
   public static int Data = "override_data".GetStableHashCode();
   public static int OverrideItem = "override_item".GetStableHashCode();

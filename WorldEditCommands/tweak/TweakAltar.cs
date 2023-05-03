@@ -11,7 +11,7 @@ public class TweakAltarCommand : TweakCommand
     if (operation == "spawndata")
       return TweakActions.SpawnData(view, value);
     if (operation == "spawn")
-      return TweakActions.Spawn(view, value);
+      return TweakActions.Spawn(view, Hash.Spawn, value);
     if (operation == "spawnitem")
       return TweakActions.SpawnItem(view, value);
     if (operation == "name")
@@ -33,7 +33,7 @@ public class TweakAltarCommand : TweakCommand
     if (operation == "levelchance")
       return TweakActions.LevelChance(view, value);
     if (operation == "respawn")
-      return TweakActions.Respawn(view, value);
+      return TweakActions.Respawn(view, Hash.Respawn, value);
     if (operation == "spawnhealth")
       return TweakActions.SpawnHealth(view, value);
     if (operation == "delay")

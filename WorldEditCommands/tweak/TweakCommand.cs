@@ -46,7 +46,7 @@ public abstract class TweakCommand
       {
         if (force || views.Length == 1)
         {
-          TweakActions.Component(view, ComponentName);
+          TweakActions.AddComponent(view, ComponentName);
           return true;
         }
         context.AddString($"Skipped: {view.name} doesn't have the component. Use <color=yellow>force</color> to add it.");

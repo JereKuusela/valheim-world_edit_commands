@@ -18,7 +18,7 @@ public class TweakItemStandCommand : TweakCommand
   protected override string DoOperation(ZNetView view, string operation, float? value)
   {
     if (operation == "respawn")
-      return TweakActions.Respawn(view, value);
+      return TweakActions.Respawn(view, Hash.Respawn, value);
     throw new System.NotImplementedException();
   }
 
