@@ -21,6 +21,3 @@
 	- Adds support for multiple values to the parameter `id`.
 	- Adds more values to the parameter `type`.
 	- Adds parameters `id` and `ignore` to the `terrain` command (for block check).
-
-- v1.24
-	- Fixes rounding errors on the `terrain` command.
