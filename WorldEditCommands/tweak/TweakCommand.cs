@@ -46,7 +46,10 @@ public abstract class TweakCommand
       {
         if (force || views.Length == 1)
         {
-          TweakActions.AddComponent(view, ComponentName);
+          // Dungeons can have vegvisirs so this allows to edit them with the runestone feature.
+          // However adding the runestone component wouldn't make any sense.
+          if (!view.GetComponent<DungeonGenerator>())
+            TweakActions.AddComponent(view, ComponentName);
           return true;
         }
         context.AddString($"Skipped: {view.name} doesn't have the component. Use <color=yellow>force</color> to add it.");

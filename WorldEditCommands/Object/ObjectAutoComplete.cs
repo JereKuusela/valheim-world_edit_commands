@@ -83,7 +83,7 @@ public class ObjectAutoComplete : SharedObjectAutoComplete
       },
       {
         "copy", (int index) => {
-          if (index == 0) return ParameterInfo.Create("copy or copy=<color=yellow>all</color>", "Prints and copies object data to clipboard. By default excludes some data for better results.");
+          if (index == 0) return ParameterInfo.Create("copy or copy=<color=yellow>all</color> or copy=<color=yellow>key1,key2,...</color>", "Prints and copies object data to clipboard. By default excludes some data for better results.");
           return ParameterInfo.None;
         }
       },

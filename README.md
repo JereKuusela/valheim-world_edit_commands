@@ -37,6 +37,7 @@ Following parameters are available:
 	- Creature spawn coordinates (harmful because creatures try returning to the spawn coordinates when idle).
 	- LocationProxy data (redundant because the location spawn system sets this).
 - `copy=all`: Copies all of the ZDO data to the clipboard.
+- `copy=key1,key2,...`: Copies give data keys to the clipboard. See bottom of the file for available keys.
 - `center`: Sets `rotate` center point at player position.
 - `center=x,z,y`: Overrides the player position and sets `rotate` center point.
 - `chance=number`: Randomly filters included objects. For example 0.5 includes about half of the objects (50%).
@@ -134,6 +135,7 @@ Note: Spawner Tweaks adds more parameters for `tweak_chest`.
 
 `tweak_runestone`:
 - `discover=id,pintext,pintype,showmap`: Location discovery. If showmap=1, then opens the map automatically.
+  - This works for vegvisirs in dungeons too.
 - `name=text`: Display name. Use _ as the space.
 - `text=text`: Use text. Use _ as the space.
 - `topic=text`: Topic shown with the text. Use _ as the space.
@@ -441,6 +443,121 @@ The command however supports going over the limit which can lead to unexpected r
 Static objects only synchronize their position and rotation when loaded. This means that `object move` and `object rotate` commands won't instantly show for other clients. Instead they have to leave the area.
 
 This shouldn't cause any issues unless objects are moved long distances (which might cause issues anyways).
+
+# ZDO data keys
+
+Most should be self-explanatory. More explanation will be added later.
+
+## Vanilla keys
+
+- `addedDefaultItems`:
+- `ammo`: object ammo
+- `alive_time`:
+- `AmmoType`:
+- `crafterID`:
+- `crafterName`:
+- `creator`:
+- `durability`:
+- `fuel`:
+- `health`:
+- `huntplayer`:
+- `item`:
+- `items`:
+- `level`:
+- `location`:
+- `PlantTime`: 
+- `pose`:
+- `quality`:
+- `RandomSkillFactor`
+- `scale`:
+- `seed`:
+- `sleeping`:
+- `spawntime`:
+- `spawnpoint`:
+- `stack`:
+- `tag`:
+- `tamed`:
+- `TamedName`:
+- `text`:
+- `variant`:
+
+## Modded keys
+
+- `CL&LC effect`:
+- `override_amount`:
+- `override_attacks`:
+- `override_biome`:
+- `override_boss`:
+- `override_collision`:
+- `override_compendium`:
+- `override_component`:
+- `override_conversion`:
+- `override_cover_offset`:
+- `override_data`:
+- `override_delay`:
+- `override_discover`:
+- `override_effect`:
+- `override_event`:
+- `override_faction`:
+- `override_fall`:
+- `override_fuel`:
+- `override_fall`:
+- `override_fuel_effect`:
+- `override_globalkey`:
+- `override_growth`:
+- `override_health`:
+- `override_input_effect`:
+- `override_interact`:
+- `override_item`:
+- `override_item_offset`:
+- `override_item_stand_prefix`:
+- `override_item_stand_range`:
+- `override_items`:
+- `override_level_chance`:
+- `override_maximum_amount`:
+- `override_maximum_cover`:
+- `override_maximum_fuel`:
+- `override_maximum_level`:
+- `override_max_near`:
+- `override_max_total`:
+- `override_minimum_amount`:
+- `override_minimum_level`:
+- `override_name`:
+- `override_near_radius`:
+- `override_output_effect`:
+- `override_pickable_spawn`:
+- `override_pickable_respawn`:
+- `override_render`:
+- `override_resistances`:
+- `override_respawn`:
+- `override_restrict`:
+- `override_smoke`:
+- `override_spawn`:
+- `override_spawn_condition`:
+- `override_spawn_effect`:
+- `override_spawn_max_y`:
+- `override_spawn_offset`:
+- `override_spawn_radius`:
+- `override_spawnarea_spawn`:
+- `override_spawnarea_respawn`:
+- `override_spawn_item`:
+- `override_start_effect`:
+- `override_text`:
+- `override_text_biome`:
+- `override_text_check`:
+- `override_text_extract`:
+- `override_text_happy`:
+- `override_text_sleep`:
+- `override_text_space`:
+- `override_topic`:
+- `override_trigger_distance`:
+- `override_trigger_distance`:
+- `override_trigger_noise`:
+- `override_unlock`:
+- `override_use_effect`:
+- `override_water`:
+- `override_wear`:
+- `override_weather`:
 
 # Credits
 

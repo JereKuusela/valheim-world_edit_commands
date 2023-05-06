@@ -511,11 +511,15 @@ public class ObjectCommand
     }
     return string.Join(", ", info);
   }
-
-  private static void Serialize(ZDO zdo, ZPackage pkg, bool smart)
+  private static Dictionary<int, T>? FilterZdo<T>(Dictionary<int, T>? dict, HashSet<int> filters)
+  {
+    if (dict == null) return dict;
+    return dict.Where(kvp => filters.Contains(kvp.Key)).ToDictionary(kvp => kvp.Key, pair => pair.Value);
+  }
+  private static void Serialize(ZDO zdo, ZPackage pkg, string filter)
   {
     zdo = zdo.Clone();
-    if (smart)
+    if (filter == "")
     {
       zdo.m_vec3?.Remove(Hash.Scale);
       zdo.m_vec3?.Remove(Hash.SpawnPoint);
@@ -526,6 +530,17 @@ public class ObjectCommand
         zdo.m_ints?.Remove(Hash.AddedDefaultItems);
         zdo.m_strings?.Remove(Hash.Items);
       }
+    }
+    else if (filter != "all")
+    {
+      var filters = Parse.Split(filter).Select(s => s.GetStableHashCode()).ToHashSet();
+      zdo.m_vec3 = FilterZdo(zdo.m_vec3, filters);
+      zdo.m_quats = FilterZdo(zdo.m_quats, filters);
+      zdo.m_floats = FilterZdo(zdo.m_floats, filters);
+      zdo.m_ints = FilterZdo(zdo.m_ints, filters);
+      zdo.m_strings = FilterZdo(zdo.m_strings, filters);
+      zdo.m_longs = FilterZdo(zdo.m_longs, filters);
+      zdo.m_byteArrays = FilterZdo(zdo.m_byteArrays, filters);
     }
     var num = 0;
     if (zdo.m_floats != null && zdo.m_floats.Count > 0)
@@ -612,7 +627,7 @@ public class ObjectCommand
   {
     var zdo = obj.GetZDO();
     ZPackage pkg = new();
-    Serialize(zdo, pkg, value != "all");
+    Serialize(zdo, pkg, value);
     var str = pkg.GetBase64();
     if (str == "AAAAAA==") str = "";
     GUIUtility.systemCopyBuffer = str;
