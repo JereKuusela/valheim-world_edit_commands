@@ -297,12 +297,6 @@ public class ObjectCommand
   private const string DEFAULT = "default";
   private static string MakeTame(ZNetView view)
   {
-    if (view.TryGetComponent<Leviathan>(out var lev))
-    {
-      AddData(view);
-      Actions.SetHunt(lev, true);
-      return "¤ made to sleep."; ;
-    }
     var obj = view.GetComponent<Character>();
     if (!obj) return "Skipped: ¤ is not a creature.";
     AddData(view);
@@ -311,12 +305,6 @@ public class ObjectCommand
   }
   private static string MakeWild(ZNetView view)
   {
-    if (view.TryGetComponent<Leviathan>(out var lev))
-    {
-      AddData(view);
-      Actions.SetHunt(lev, false);
-      return "¤ made to sleep."; ;
-    }
     var obj = view.GetComponent<Character>();
     if (!obj) return "Skipped: ¤ is not a creature.";
     AddData(view);

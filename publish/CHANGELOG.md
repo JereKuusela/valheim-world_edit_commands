@@ -1,3 +1,6 @@
+- v1.31
+  - Removes the leviathan test code that should have never been released. Oopsie!
+
 - v1.30
   - Adds support the command `object copy` to allow copying only specific data keys.
 

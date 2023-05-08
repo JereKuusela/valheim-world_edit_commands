@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Emit;
-using HarmonyLib;
 using UnityEngine;
 namespace WorldEditCommands;
 
@@ -499,69 +497,5 @@ public static class Actions
     if (!view.GetComponent<Turret>()) return "Skipped: ¤ is not a turret.";
     Actions.SetString(view, value ?? "", Hash.AmmoType);
     return $"¤ ammo type set to {Print(value)}.";
-  }
-  public static void SetHunt(Leviathan obj, bool sleep)
-  {
-    if (!obj) return;
-    if (sleep)
-    {
-      obj.Leave();
-      return;
-    }
-    for (var i = 0; i < 22; i++)
-    {
-      string name = "Health" + i.ToString();
-      var max = obj.m_mineRock.m_health;
-      float num = obj.m_nview.GetZDO().GetFloat(name, max);
-      if (num != max)
-      {
-        obj.m_nview.GetZDO().Set(name, max);
-        return;
-      }
-    }
-
-    obj.m_zanimator.m_animator.Play("shake");
-    obj.m_left = false;
-    var zdo = obj.m_nview.GetZDO();
-    zdo.Set("alive", true);
-    obj.m_floatOffset = 0f;
-  }
-}
-
-[HarmonyPatch(typeof(Leviathan), "Awake")]
-public static class Leviaw
-{
-  static void Postfix(Leviathan __instance)
-  {
-    var view = __instance.m_nview;
-    if (!view.IsValid() || !view.IsOwner()) return;
-    if (view.GetZDO().GetBool("alive", true)) return;
-    __instance.m_floatOffset = 15f;
-  }
-}
-[HarmonyPatch(typeof(Leviathan), "FixedUpdate")]
-public static class LeviTest
-{
-  static void Left(Leviathan __instance)
-  {
-    var view = __instance.m_nview;
-    if (!view.IsValid() || !view.IsOwner()) return;
-    var zdo = view.GetZDO();
-    if (view.GetZDO().GetBool("alive", true)) return;
-    var body = __instance.m_body;
-    var pos = body.position;
-    pos.y -= 15f;
-    body.MovePosition(pos);
-    zdo.Set("alive", false);
-    __instance.m_floatOffset = 15f;
-  }
-  static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
-  {
-    return new CodeMatcher(instructions)
-      .MatchForward(false, new CodeMatch(OpCodes.Callvirt, AccessTools.Method(typeof(ZNetView), nameof(ZNetView.Destroy))))
-      .Advance(-1)
-      .SetAndAdvance(OpCodes.Call, Transpilers.EmitDelegate(Left).operand)
-      .SetAndAdvance(OpCodes.Nop, null)
-      .InstructionEnumeration();
   }
 }
