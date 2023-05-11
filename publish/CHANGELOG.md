@@ -1,3 +1,6 @@
+- v1.32
+  - Adds a new command `tweak_dungeon`.
+
 - v1.31
   - Removes the leviathan test code that should have never been released. Oopsie!
 

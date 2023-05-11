@@ -15,7 +15,7 @@ public class TweakObjectCommand : TweakCommand
     if (operation == "status") return TweakActions.Status(view, value);
     if (operation == "event") return TweakActions.Event(view, value);
     if (operation == "effect") return TweakActions.Effect(view, value);
-    if (operation == "weather") return TweakActions.Weather(view, value);
+    if (operation == "weather") return TweakActions.Weather(view, Hash.Weather, value);
     if (operation == "water") return TweakActions.Water(view, value);
     if (operation == "fall") return TweakActions.Fall(view, value);
     throw new System.NotImplementedException();
@@ -118,7 +118,7 @@ public class TweakObjectCommand : TweakCommand
     AutoComplete.Add("component", (int index) => Components);
     AutoComplete.Add("status", (int index) => index == 0 ? ParameterInfo.Create("status=<color=yellow>radius</color>,id", "Adds status area.") : index == 1 ? ParameterInfo.StatusEffects : ParameterInfo.None);
     AutoComplete.Add("effect", (int index) => index == 0 ? ParameterInfo.Create("effect=<color=yellow>radius</color>,id", "Adds effect area.") : ParameterInfo.EffectAreas);
-    AutoComplete.Add("weather", (int index) => index == 0 ? ParameterInfo.Create("weather=<color=yellow>radius</color>,id,instant", "Adds weather area.") : index == 1 ? ParameterInfo.Environments : index == 2 ? ParameterInfo.Create("weather=radius,id,<color=yellow>instant</color>", "Adds weather area.") : ParameterInfo.None);
+    AutoComplete.Add("weather", (int index) => index == 0 ? ParameterInfo.Create("weather=<color=yellow>radius</color>,id,instant,dungeon", "Adds weather area.") : index == 1 ? ParameterInfo.Environments : index == 2 ? ParameterInfo.Create("weather=radius,id,<color=yellow>instant</color>,dungeon", "If given, the weather is changed instantly.") : ParameterInfo.None);
     AutoComplete.Add("event", (int index) => index == 0 ? ParameterInfo.Create("event=<color=yellow>radius</color>,id", "Adds event area.") : index == 1 ? ParameterInfo.Events : ParameterInfo.None);
     AutoComplete.Add("collision", (int index) => ParameterInfo.Create("collision=<color=yellow>true/false</color> or no value to toggle.", "Sets object collision."));
     AutoComplete.Add("fall", (int index) => index == 0 ? FallTypes : ParameterInfo.None);

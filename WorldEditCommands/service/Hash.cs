@@ -6,6 +6,11 @@ public static class Hash
   public static int PlantTime = "plantTime".GetStableHashCode();
   public static int Status = "override_status".GetStableHashCode();
   public static int Weather = "override_weather".GetStableHashCode();
+  public static int DungeonWeather = "override_dungeon_weather".GetStableHashCode();
+  public static int DungeonEnterText = "override_dungeon_enter_text".GetStableHashCode();
+  public static int DungeonEnterHover = "override_dungeon_enter_hover".GetStableHashCode();
+  public static int DungeonExitText = "override_dungeon_exit_text".GetStableHashCode();
+  public static int DungeonExitHover = "override_dungeon_exit_hover".GetStableHashCode();
   public static int Water = "override_water".GetStableHashCode();
   public static int Event = "override_event".GetStableHashCode();
   public static int Effect = "override_effect".GetStableHashCode();

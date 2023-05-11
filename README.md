@@ -115,7 +115,9 @@ Most commands can be used on any object. When editing a single object, the scrip
 - `show=true/false`: Sets whether the object is visible. No value to toggle.
 - `status=radius,id`: Adds forced status effect area.
 - `wear=broken/damaged/healthy`: Overrides the object visual wear.
-- `weather=radius,id,instant`: Adds forced weather area. If third parameter is given, the weather changes instantly.
+- `weather=radius,id,instant,dungeon`: Adds forced weather area. If third parameter is given, the weather changes instantly. Fourth parameter can be used to change dungeon weather.
+  - `weather=5,AshRain,true` adds a 5 meter radius Ashrain area that changes the weather instantly.
+  - `weather=0,,,AshRain` changes the dungeon weather to Ashrain when used on the entrance.
 - `water=name,x,z,y`: Adds a water surface.
 
 `tweak_chest`:
@@ -126,6 +128,13 @@ Note: Spawner Tweaks adds more parameters for `tweak_chest`.
 
 `tweak_door`:
 - `unlock=true/false`: Allows ignoring wards. No value to toggle.
+
+`tweak_dungeon`:
+- `enter_hover=text`: Changes the hover text of the dungeon entrance. Use _ as the space.
+- `enter_text=text`: Changes the text after entering the dungeon. Use _ as the space.
+- `exit_hover=text`: Changes the hover text of the dungeon exut. Use _ as the space.
+- `exit_text=text`: Changes the text after exiting the dungeon. Use _ as the space.
+- `weather=id`: Replaced the dungeon environment.
 
 `tweak_fireplace`:
 - `smoke=off/on/ignore`: Smoke behavior.
@@ -496,6 +505,11 @@ Most should be self-explanatory. More explanation will be added later.
 - `override_data`:
 - `override_delay`:
 - `override_discover`:
+- `override_dungeon_enter_hover`:
+- `override_dungeon_enter_text`:
+- `override_dungeon_exit_hover`:
+- `override_dungeon_exit_text`:
+- `override_dungeon_weather`:
 - `override_effect`:
 - `override_event`:
 - `override_faction`:

@@ -116,9 +116,9 @@ public static class TweakActions
     Actions.SetString(view, value, Hash.Effect);
     return $"¤ effect set to {Print(value)}.";
   }
-  public static string Weather(ZNetView view, string? value)
+  public static string Weather(ZNetView view, int hash, string? value)
   {
-    Actions.SetString(view, value, Hash.Weather);
+    Actions.SetString(view, value, hash);
     return $"¤ weather set to {Print(value)}.";
   }
   public static string Water(ZNetView view, string? value)
@@ -126,7 +126,30 @@ public static class TweakActions
     Actions.SetString(view, value, Hash.Water);
     return $"¤ water set to {Print(value)}.";
   }
-
+  public static string EnterText(ZNetView view, string? value)
+  {
+    value = value == null ? value : value.Replace("_", " ");
+    Actions.SetString(view, value, Hash.DungeonEnterText);
+    return $"¤ enter text set to {Print(value)}.";
+  }
+  public static string ExitText(ZNetView view, string? value)
+  {
+    value = value == null ? value : value.Replace("_", " ");
+    Actions.SetString(view, value, Hash.DungeonExitText);
+    return $"¤ exit text set to {Print(value)}.";
+  }
+  public static string EnterHover(ZNetView view, string? value)
+  {
+    value = value == null ? value : value.Replace("_", " ");
+    Actions.SetString(view, value, Hash.DungeonEnterHover);
+    return $"¤ enter hover set to {Print(value)}.";
+  }
+  public static string ExitHover(ZNetView view, string? value)
+  {
+    value = value == null ? value : value.Replace("_", " ");
+    Actions.SetString(view, value, Hash.DungeonExitHover);
+    return $"¤ exit hover set to {Print(value)}.";
+  }
   public static string Fall(ZNetView view, string? value)
   {
     Actions.SetInt(view, FallNumber(value), Hash.Fall);

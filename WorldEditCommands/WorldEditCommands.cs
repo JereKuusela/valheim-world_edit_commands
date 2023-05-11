@@ -8,7 +8,7 @@ public class WorldEditCommands : BaseUnityPlugin
 {
   public const string GUID = "world_edit_commands";
   public const string NAME = "World Edit Commands";
-  public const string VERSION = "1.31";
+  public const string VERSION = "1.32";
   public void Awake()
   {
     new Harmony(GUID).PatchAll();
@@ -51,6 +51,7 @@ public class SetCommands
     }
     if (WorldEditCommands.IsStructureTweaks)
     {
+      new TweakDungeonCommand();
       new TweakRunestoneCommand();
       new TweakPortalCommand();
       new TweakFireplaceCommand();

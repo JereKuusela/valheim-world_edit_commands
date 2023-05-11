@@ -25,6 +25,7 @@ public abstract class TweakCommand
   protected abstract string DoOperation(ZNetView view, string operation, long? value);
   protected virtual Dictionary<string, object?> Postprocess(ZNetView view, Dictionary<string, object?> operations) => operations;
   protected virtual void Postprocess(GameObject obj) { }
+  protected virtual ZNetView Preprocess(Terminal context, ZNetView view) => view;
 
   private void Execute(Terminal context, float chance, bool force, Dictionary<string, object?> operations, ZNetView[] views)
   {
@@ -42,6 +43,11 @@ public abstract class TweakCommand
         context.AddString($"Skipped: {view.name} (chance).");
         return false;
       }
+      return true;
+    }).Select(view => Preprocess(context, view)).Where(view =>
+    {
+      // Preprocess can return null.
+      if (!view) return false;
       if (ComponentName != "" && !view.GetComponentInChildren(Component))
       {
         if (force || views.Length == 1)
