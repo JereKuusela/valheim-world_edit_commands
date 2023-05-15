@@ -74,7 +74,7 @@ public class ObjectCommand
         var output = "";
         var name = Utils.GetPrefabName(view.gameObject);
         if (operation == "durability" || operation == "health")
-          output = ChangeHealth(view, Helper.RandomValue(pars.Health));
+          output = ChangeHealth(view, Helper.RandomValue(pars.Health), pars.isHealthPercentage);
         if (operation == "damage")
           output = Actions.Damage(view, Helper.RandomValue(pars.Damage));
         if (operation == "ammo")
@@ -214,13 +214,13 @@ public class ObjectCommand
     }, () => autoComplete.NamedParameters);
   }
 
-  private static string ChangeHealth(ZNetView obj, float amount)
+  private static string ChangeHealth(ZNetView obj, float amount, bool isPercentage)
   {
     if (!obj.GetComponent<Character>() && !obj.GetComponent<WearNTear>() && !obj.GetComponent<TreeLog>() && !obj.GetComponent<Destructible>() && !obj.GetComponent<TreeBase>())
       return "Skipped: ¤ is not a creature or a destructible.";
     AddData(obj);
-    var previous = Actions.SetHealth(obj.gameObject, amount);
-    var amountStr = amount == 0f ? "default" : amount.ToString("F0");
+    var previous = Actions.SetHealth(obj.gameObject, amount, isPercentage);
+    var amountStr = amount == 0f ? "default" : isPercentage ? $"{(100 * amount).ToString("0.##")} %" : amount.ToString("F0");
     return $"¤ health changed from {previous.ToString("F0")} to {amountStr}.";
   }
   private static string SetStars(ZNetView view, int amount)

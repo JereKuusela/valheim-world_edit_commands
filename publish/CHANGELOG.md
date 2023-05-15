@@ -1,3 +1,6 @@
+- v1.33
+  - Adds percentage support to the `health` parameter.
+
 - v1.32
   - Adds a new command `tweak_dungeon`.
 

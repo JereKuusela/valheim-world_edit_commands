@@ -17,6 +17,7 @@ public class SharedObjectParameters
   public Range<Vector3> Scale = new(Vector3.one);
   public Range<int>? Level;
   public Range<float>? Health;
+  public bool isHealthPercentage = false;
   public Range<float>? Damage;
   public Range<int>? Ammo;
   public string? AmmoType;
@@ -41,7 +42,19 @@ public class SharedObjectParameters
       if (split.Length < 2) continue;
       var value = split[1];
       if (name == "health" || name == "durability")
+      {
+        if (value.EndsWith("%"))
+        {
+          isHealthPercentage = true;
+          value = value.Substring(0, value.Length - 1);
+        }
         Health = Parse.FloatRange(value, 0);
+        if (isHealthPercentage)
+        {
+          Health.Max /= 100f;
+          Health.Min /= 100f;
+        }
+      }
       if (name == "damage")
         Damage = Parse.FloatRange(value, 0);
       if (name == "ammo")

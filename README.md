@@ -48,6 +48,8 @@ Following parameters are available:
 - `data=[key]`: Prints ZDO data.
 - `data=[key,value]`: Sets ZDO data. The key must already exist in the data.
 - `durability=number` or `health=number`: Sets the current durability for items, the current health for structures and the maximum health for creatures. Very high values like 1E30 turn the target invulnerable (including gravity for structures).
+  - Note: Invulnerable objects without structure support take continuous damage which causes network traffic.
+- `durability=number%` or `health=number%`: Sets the durabilty/health based on the max amount.
 - `fuel=number`: Sets the fuel amount. Without number, prints the fuel amount.
 - `from=x,z,y`: Same as the `center`.
 - `height`: Maximum height from the `center` point (default is 1000 meters).

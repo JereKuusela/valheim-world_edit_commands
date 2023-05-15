@@ -89,7 +89,7 @@ public class SpawnObjectCommand
       if (pars.AmmoType != null)
         Actions.SetString(view, pars.AmmoType, Hash.AmmoType);
       if (pars.Health != null)
-        Actions.SetHealth(obj, Helper.RandomValue(pars.Health));
+        Actions.SetHealth(obj, Helper.RandomValue(pars.Health), pars.isHealthPercentage);
       if (pars.Variant != null)
         Actions.SetVariant(obj, Helper.RandomValue(pars.Variant));
       if (pars.Name != null)

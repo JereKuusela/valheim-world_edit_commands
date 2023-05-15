@@ -206,25 +206,26 @@ public static class Actions
     if (treeBase) return zdo.GetFloat(Hash.Health, treeBase.m_health);
     return -1;
   }
-  public static float SetHealth(GameObject obj, float health)
+  public static float SetHealth(GameObject obj, float health, bool isPercentage)
   {
     var itemDrop = obj.GetComponent<ItemDrop>();
-    if (itemDrop) return SetHealth(itemDrop, health);
+    if (itemDrop) return SetHealth(itemDrop, health, isPercentage);
     var character = obj.GetComponent<Character>();
-    if (character) return SetHealth(character, health);
+    if (character) return SetHealth(character, health, isPercentage);
     var wearNTear = obj.GetComponent<WearNTear>();
-    if (wearNTear) return SetHealth(wearNTear, health);
+    if (wearNTear) return SetHealth(wearNTear, health, isPercentage);
     var treeLog = obj.GetComponent<TreeLog>();
-    if (treeLog) return SetHealth(treeLog, health);
+    if (treeLog) return SetHealth(treeLog, health, isPercentage);
     var treeBase = obj.GetComponent<TreeBase>();
-    if (treeBase) return SetHealth(treeBase, health);
+    if (treeBase) return SetHealth(treeBase, health, isPercentage);
     var destructible = obj.GetComponent<Destructible>();
-    if (destructible) return SetHealth(destructible, health);
+    if (destructible) return SetHealth(destructible, health, isPercentage);
     return 0;
   }
-  public static float SetHealth(Character obj, float health)
+  public static float SetHealth(Character obj, float health, bool isPercentage)
   {
     if (!obj) return 0f;
+    if (isPercentage) health *= obj.GetMaxHealth();
     var previous = obj.GetMaxHealth();
     if (health == 0)
     {
@@ -236,43 +237,48 @@ public static class Actions
     obj.SetHealth(health * 1.000001f);
     return previous;
   }
-  public static float SetHealth(WearNTear obj, float health)
+  public static float SetHealth(WearNTear obj, float health, bool isPercentage)
   {
     if (!obj) return 0f;
+    if (isPercentage) health *= obj.m_health;
     if (health == 0) health = obj.m_health;
     var previous = obj.m_nview.GetZDO().GetFloat(Hash.Health, obj.m_health);
     obj.m_nview.GetZDO().Set(Hash.Health, health);
     return previous;
   }
-  public static float SetHealth(TreeLog obj, float health)
+  public static float SetHealth(TreeLog obj, float health, bool isPercentage)
   {
     if (!obj) return 0f;
+    if (isPercentage) health *= obj.m_health;
     if (health == 0) health = obj.m_health;
     var previous = obj.m_nview.GetZDO().GetFloat(Hash.Health, obj.m_health);
     obj.m_nview.GetZDO().Set(Hash.Health, health);
     return previous;
   }
-  public static float SetHealth(Destructible obj, float health)
+  public static float SetHealth(Destructible obj, float health, bool isPercentage)
   {
     if (!obj) return 0f;
+    if (isPercentage) health *= obj.m_health;
     if (health == 0) health = obj.m_health;
     var previous = obj.m_nview.GetZDO().GetFloat(Hash.Health, obj.m_health);
     obj.m_nview.GetZDO().Set(Hash.Health, health);
     return previous;
   }
-  public static float SetHealth(TreeBase obj, float health)
+  public static float SetHealth(TreeBase obj, float health, bool isPercentage)
   {
     if (!obj) return 0f;
+    if (isPercentage) health *= obj.m_health;
     if (health == 0) health = obj.m_health;
     var previous = obj.m_nview.GetZDO().GetFloat(Hash.Health, obj.m_health);
     obj.m_nview.GetZDO().Set(Hash.Health, health);
     return previous;
   }
-  public static float SetHealth(ItemDrop obj, float health)
+  public static float SetHealth(ItemDrop obj, float health, bool isPercentage)
   {
     if (!obj) return 0f;
-    if (health == 0) health = obj.m_itemData.GetMaxDurability();
     var previous = obj.m_itemData.m_durability;
+    if (isPercentage) health *= obj.m_itemData.GetMaxDurability();
+    if (health == 0) health = obj.m_itemData.GetMaxDurability();
     obj.m_itemData.m_durability = health;
     obj.m_nview.GetZDO().Set(Hash.Durability, obj.m_itemData.m_durability);
     return previous;
