@@ -1,8 +1,7 @@
 using System.Collections.Generic;
 using ServerDevcommands;
 namespace WorldEditCommands;
-public class SpawnLocationAutoComplete
-{
+public class SpawnLocationAutoComplete {
   public List<string> NamedParameters = new() {
     "seed",
     "dungeonSeed",
@@ -11,11 +10,9 @@ public class SpawnLocationAutoComplete
     "from",
     "refRot"
   };
-  public SpawnLocationAutoComplete()
-  {
+  public SpawnLocationAutoComplete() {
     NamedParameters.Sort();
-    AutoComplete.Register(SpawnLocationCommand.Name, (int index) =>
-    {
+    AutoComplete.Register(SpawnLocationCommand.Name, (int index) => {
       if (index == 0) return ParameterInfo.LocationIds;
       return NamedParameters;
     }, new() {

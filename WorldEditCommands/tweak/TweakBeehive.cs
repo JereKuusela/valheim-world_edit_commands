@@ -4,10 +4,8 @@ using ServerDevcommands;
 
 namespace WorldEditCommands;
 
-public class TweakBeehiveCommand : TweakCommand
-{
-  protected override string DoOperation(ZNetView view, string operation, string? value)
-  {
+public class TweakBeehiveCommand : TweakCommand {
+  protected override string DoOperation(ZNetView view, string operation, string? value) {
     if (operation == "spawn")
       return TweakActions.Spawn(view, Hash.Spawn, value);
     if (operation == "spawnoffset")
@@ -32,8 +30,7 @@ public class TweakBeehiveCommand : TweakCommand
       return TweakActions.TextSpace(view, value);
     throw new NotImplementedException();
   }
-  protected override string DoOperation(ZNetView view, string operation, float? value)
-  {
+  protected override string DoOperation(ZNetView view, string operation, float? value) {
     if (operation == "speed")
       return TweakActions.Speed(view, value);
     if (operation == "maxcover")
@@ -41,8 +38,7 @@ public class TweakBeehiveCommand : TweakCommand
     throw new NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, int? value)
-  {
+  protected override string DoOperation(ZNetView view, string operation, int? value) {
     if (operation == "maxamount")
       return TweakActions.MaxAmount(view, value);
     if (operation == "spawncondition")
@@ -50,25 +46,21 @@ public class TweakBeehiveCommand : TweakCommand
     throw new NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, string[] value)
-  {
+  protected override string DoOperation(ZNetView view, string operation, string[] value) {
     if (operation == "spawneffect")
       return TweakActions.OutputEffect(view, value);
     throw new NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, bool? value)
-  {
+  protected override string DoOperation(ZNetView view, string operation, bool? value) {
     throw new NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, long? value)
-  {
+  protected override string DoOperation(ZNetView view, string operation, long? value) {
     throw new NotImplementedException();
   }
 
-  public TweakBeehiveCommand()
-  {
+  public TweakBeehiveCommand() {
     Component = typeof(Beehive);
     ComponentName = "beehive";
     SupportedOperations.Add("maxamount", typeof(int));

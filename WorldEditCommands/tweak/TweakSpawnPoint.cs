@@ -4,10 +4,8 @@ using ServerDevcommands;
 
 namespace WorldEditCommands;
 
-public class TweakSpawnPointCommand : TweakCommand
-{
-  protected override string DoOperation(ZNetView view, string operation, string? value)
-  {
+public class TweakSpawnPointCommand : TweakCommand {
+  protected override string DoOperation(ZNetView view, string operation, string? value) {
     if (operation == "spawndata")
       return TweakActions.SpawnData(view, value);
     if (operation == "spawn")
@@ -16,8 +14,7 @@ public class TweakSpawnPointCommand : TweakCommand
       return TweakActions.Faction(view, value);
     throw new NotImplementedException();
   }
-  protected override string DoOperation(ZNetView view, string operation, float? value)
-  {
+  protected override string DoOperation(ZNetView view, string operation, float? value) {
     if (operation == "levelchance")
       return TweakActions.LevelChance(view, value);
     if (operation == "respawn")
@@ -31,8 +28,7 @@ public class TweakSpawnPointCommand : TweakCommand
     throw new NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, int? value)
-  {
+  protected override string DoOperation(ZNetView view, string operation, int? value) {
     if (operation == "minlevel")
       return TweakActions.MinLevel(view, value);
     if (operation == "maxlevel")
@@ -42,25 +38,21 @@ public class TweakSpawnPointCommand : TweakCommand
     throw new NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, string[] value)
-  {
+  protected override string DoOperation(ZNetView view, string operation, string[] value) {
     if (operation == "spawneffect")
       return TweakActions.SpawnEffect(view, value);
     throw new System.NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, bool? value)
-  {
+  protected override string DoOperation(ZNetView view, string operation, bool? value) {
     throw new NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, long? value)
-  {
+  protected override string DoOperation(ZNetView view, string operation, long? value) {
     throw new NotImplementedException();
   }
 
-  public TweakSpawnPointCommand()
-  {
+  public TweakSpawnPointCommand() {
     Component = typeof(CreatureSpawner);
     ComponentName = "spawnpoint";
     SupportedOperations.Add("minlevel", typeof(int));

@@ -2,13 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ServerDevcommands;
 namespace WorldEditCommands;
-public class TerrainAutoComplete
-{
-  private static List<string> BlockCheck = new() {
-    "inverse",
-    "off",
-    "on"
-  };
+public class TerrainAutoComplete {
   public List<string> NamedParameters = new() {
     "lower",
     "level",
@@ -30,8 +24,7 @@ public class TerrainAutoComplete
     "max",
     "within"
   };
-  public TerrainAutoComplete()
-  {
+  public TerrainAutoComplete() {
     NamedParameters.Sort();
     var paints = TerrainCommand.Paints.Keys.ToList();
     paints.Sort();

@@ -111,6 +111,7 @@ Most commands can be used on any object. When editing a single object, the scrip
 - `effect=radius,id1,id2,...`: Adds forced effect area (heat, fire, player base, burning, no monsters, warm cozy area).
 - `event=radius,id`: Adds forced random event area.
 - `collision=true/false`: Sets whether the object has collision. No value to toggle.
+- `destoy=seconds`: Adds timed destroy after given seconds.
 - `fall=off/solid/terrain`: Overrides the fall behavior.
 - `growth=big/big_bad/small/small_bad`: Overrides the plant visual wear (and prevents growth).
 - `interact=true/false`: Sets whether the object can be interacted with. No value to toggle.
@@ -506,6 +507,7 @@ Most should be self-explanatory. More explanation will be added later.
 - `override_cover_offset`:
 - `override_data`:
 - `override_delay`:
+- `override_destroy`:
 - `override_discover`:
 - `override_dungeon_enter_hover`:
 - `override_dungeon_enter_text`:

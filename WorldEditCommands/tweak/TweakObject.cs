@@ -5,10 +5,8 @@ using UnityEngine;
 
 namespace WorldEditCommands;
 
-public class TweakObjectCommand : TweakCommand
-{
-  protected override string DoOperation(ZNetView view, string operation, string? value)
-  {
+public class TweakObjectCommand : TweakCommand {
+  protected override string DoOperation(ZNetView view, string operation, string? value) {
     if (operation == "wear") return TweakActions.Wear(view, value);
     if (operation == "growth") return TweakActions.Growth(view, value);
     if (operation == "component") return TweakActions.Component(view, value);
@@ -18,25 +16,22 @@ public class TweakObjectCommand : TweakCommand
     if (operation == "weather") return TweakActions.Weather(view, Hash.Weather, value);
     if (operation == "water") return TweakActions.Water(view, value);
     if (operation == "fall") return TweakActions.Fall(view, value);
-    throw new System.NotImplementedException();
+    throw new NotImplementedException();
   }
-  protected override string DoOperation(ZNetView view, string operation, float? value)
-  {
-    throw new System.NotImplementedException();
-  }
-
-  protected override string DoOperation(ZNetView view, string operation, int? value)
-  {
-    throw new System.NotImplementedException();
+  protected override string DoOperation(ZNetView view, string operation, float? value) {
+    if (operation == "destroy") return TweakActions.Destroy(view, value);
+    throw new NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, string[] value)
-  {
-    throw new System.NotImplementedException();
+  protected override string DoOperation(ZNetView view, string operation, int? value) {
+    throw new NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, bool? value)
-  {
+  protected override string DoOperation(ZNetView view, string operation, string[] value) {
+    throw new NotImplementedException();
+  }
+
+  protected override string DoOperation(ZNetView view, string operation, bool? value) {
     if (operation == "show") return TweakActions.Render(view, value);
     if (operation == "interact") return TweakActions.Interact(view, value);
     if (operation == "collision") return TweakActions.Collision(view, value);
@@ -45,17 +40,14 @@ public class TweakObjectCommand : TweakCommand
     throw new NotImplementedException();
   }
 
-  protected override void Postprocess(GameObject obj)
-  {
-    if (obj.TryGetComponent<StaticPhysics>(out var sp))
-    {
+  protected override void Postprocess(GameObject obj) {
+    if (obj.TryGetComponent<StaticPhysics>(out var sp)) {
       sp.m_createTime = Time.time - 30f;
       sp.SUpdate();
     }
   }
 
-  protected override string DoOperation(ZNetView view, string operation, long? value)
-  {
+  protected override string DoOperation(ZNetView view, string operation, long? value) {
     if (operation == "creator") return TweakActions.Creator(view, value);
     throw new NotImplementedException();
   }
@@ -99,8 +91,7 @@ public class TweakObjectCommand : TweakCommand
       "spawner",
       "spawnpoint",
   };
-  public TweakObjectCommand()
-  {
+  public TweakObjectCommand() {
     SupportedOperations.Add("component", typeof(string));
     SupportedOperations.Add("status", typeof(string));
     SupportedOperations.Add("effect", typeof(string));
@@ -114,6 +105,7 @@ public class TweakObjectCommand : TweakCommand
     SupportedOperations.Add("growth", typeof(string));
     SupportedOperations.Add("water", typeof(string));
     SupportedOperations.Add("creator", typeof(long));
+    SupportedOperations.Add("destroy", typeof(float));
 
     AutoComplete.Add("component", (int index) => Components);
     AutoComplete.Add("status", (int index) => index == 0 ? ParameterInfo.Create("status=<color=yellow>radius</color>,id", "Adds status area.") : index == 1 ? ParameterInfo.StatusEffects : ParameterInfo.None);
@@ -128,6 +120,7 @@ public class TweakObjectCommand : TweakCommand
     AutoComplete.Add("growth", (int index) => index == 0 ? Growths : ParameterInfo.None);
     AutoComplete.Add("water", (int index) => index == 0 ? Waters : ParameterInfo.XZY("water", "Scale", index - 1));
     AutoComplete.Add("creator", (int index) => index == 0 ? ParameterInfo.Create("creator=<color=yellow>player ID</color>", "Sets creator of objects (0 for no creator).") : ParameterInfo.None);
+    AutoComplete.Add("destroy", (int index) => index == 0 ? ParameterInfo.Create("destroy=<color=yellow>seconds</color>", "Timed destruction after seconds.") : ParameterInfo.None);
     Init("tweak_object", "Modify objects");
   }
 }

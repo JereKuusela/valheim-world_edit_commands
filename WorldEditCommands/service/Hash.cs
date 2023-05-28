@@ -1,5 +1,4 @@
-public static class Hash
-{
+public static class Hash {
   public static int Damage = "RandomSkillFactor".GetStableHashCode();
   public static int Ammo = "ammo".GetStableHashCode();
   public static int AmmoType = "ammoType".GetStableHashCode();
@@ -61,6 +60,7 @@ public static class Hash
   public static int ItemOffset = "override_item_offset".GetStableHashCode();
   public static int CoverOffset = "override_cover_offset".GetStableHashCode();
   public static int SpawnMaxY = "override_spawn_max_y".GetStableHashCode();
+  public static int Destroy = "override_destroy".GetStableHashCode();
   public static int ItemStandPrefix = "override_item_stand_prefix".GetStableHashCode();
   public static int ItemStandRange = "override_item_stand_range".GetStableHashCode();
   public static int GlobalKey = "override_globalkey".GetStableHashCode();

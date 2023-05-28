@@ -6,15 +6,13 @@ using Service;
 using UnityEngine;
 namespace WorldEditCommands;
 
-public abstract class TweakCommand
-{
+public abstract class TweakCommand {
   public static System.Random Random = new();
-  public static bool Roll(float value)
-  {
+  public static bool Roll(float value) {
     if (value >= 1f) return true;
     return Random.NextDouble() < value;
   }
-  private static Dictionary<ZDOID, EditInfo> EditedInfo = new();
+  private static readonly Dictionary<ZDOID, EditInfo> EditedInfo = new();
   protected Type Component = typeof(int);
   protected string ComponentName = "";
   protected abstract string DoOperation(ZNetView view, string operation, string? value);
@@ -27,31 +25,24 @@ public abstract class TweakCommand
   protected virtual void Postprocess(GameObject obj) { }
   protected virtual ZNetView Preprocess(Terminal context, ZNetView view) => view;
 
-  private void Execute(Terminal context, float chance, bool force, Dictionary<string, object?> operations, ZNetView[] views)
-  {
+  private void Execute(Terminal context, float chance, bool force, Dictionary<string, object?> operations, ZNetView[] views) {
     var scene = ZNetScene.instance;
     Dictionary<ZDOID, long> oldOwner = new();
-    views = views.Where(view =>
-    {
-      if (!view || !view.GetZDO().IsValid())
-      {
+    views = views.Where(view => {
+      if (!view || !view.GetZDO().IsValid()) {
         context.AddString($"Skipped: {view.name} is not loaded.");
         return false;
       }
-      if (!Roll(chance))
-      {
+      if (!Roll(chance)) {
         context.AddString($"Skipped: {view.name} (chance).");
         return false;
       }
       return true;
-    }).Select(view => Preprocess(context, view)).Where(view =>
-    {
+    }).Select(view => Preprocess(context, view)).Where(view => {
       // Preprocess can return null.
       if (!view) return false;
-      if (ComponentName != "" && !view.GetComponentInChildren(Component))
-      {
-        if (force || views.Length == 1)
-        {
+      if (ComponentName != "" && !view.GetComponentInChildren(Component)) {
+        if (force || views.Length == 1) {
           // Dungeons can have vegvisirs so this allows to edit them with the runestone feature.
           // However adding the runestone component wouldn't make any sense.
           if (!view.GetComponent<DungeonGenerator>())
@@ -64,19 +55,16 @@ public abstract class TweakCommand
       return true;
     }).ToArray();
     EditedInfo.Clear();
-    foreach (var view in views)
-    {
+    foreach (var view in views) {
       var zdo = view.GetZDO();
       oldOwner.Add(zdo.m_uid, zdo.m_owner);
       view.ClaimOwnership();
       EditedInfo[zdo.m_uid] = new EditInfo(zdo, true);
     }
     var count = views.Count();
-    foreach (var view in views)
-    {
+    foreach (var view in views) {
       var operations2 = Postprocess(view, operations);
-      foreach (var operation in operations2)
-      {
+      foreach (var operation in operations2) {
         var type = SupportedOperations[operation.Key];
         var name = Utils.GetPrefabName(view.gameObject);
         var output = "";
@@ -101,14 +89,12 @@ public abstract class TweakCommand
           context.AddString(message);
       }
     }
-    foreach (var view in views)
-    {
+    foreach (var view in views) {
       if (!view || view.GetZDO() == null || !view.GetZDO().IsValid() || !oldOwner.ContainsKey(view.GetZDO().m_uid)) continue;
       view.GetZDO().SetOwner(oldOwner[view.GetZDO().m_uid]);
       Postprocess(Actions.Refresh(view));
     }
-    if (EditedInfo.Count > 0)
-    {
+    if (EditedInfo.Count > 0) {
       UndoEdit undo = new(EditedInfo.Select(info => info.Value.ToData()));
       UndoManager.Add(undo);
     }
@@ -116,35 +102,25 @@ public abstract class TweakCommand
   public Dictionary<string, Type> SupportedOperations = new();
   public Dictionary<string, Func<int, List<string>>> AutoComplete = new();
 
-  protected void Init(string name, string description)
-  {
+  protected void Init(string name, string description) {
     var namedParameters = TweakAutoComplete.WithFilters(AutoComplete.Keys.ToList());
     ServerDevcommands.AutoComplete.Register(name, (int index) => namedParameters, TweakAutoComplete.WithFilters(AutoComplete));
     var fullDescription = CommandInfo.Create(description, null, namedParameters);
-    Helper.Command(name, fullDescription, (args) =>
-    {
+    Helper.Command(name, fullDescription, (args) => {
       TweakParameters pars = new(SupportedOperations, args);
       ZNetView[] views;
-      if (pars.Connect)
-      {
+      if (pars.Connect) {
         var view = Selector.GetHovered(50f, pars.ExcludedIds);
         if (view == null) return;
         views = Selector.GetConnected(view, pars.ExcludedIds);
-      }
-      else if (pars.Radius != null)
-      {
+      } else if (pars.Radius != null) {
         views = Selector.GetNearby(pars.IncludedIds, pars.ObjectType, pars.ExcludedIds, pars.Center ?? pars.From, pars.Radius, pars.Height);
-      }
-      else if (pars.Width != null && pars.Depth != null)
-      {
+      } else if (pars.Width != null && pars.Depth != null) {
         views = Selector.GetNearby(pars.IncludedIds, pars.ObjectType, pars.ExcludedIds, pars.Center ?? pars.From, pars.Angle, pars.Width, pars.Depth, pars.Height);
-      }
-      else
-      {
+      } else {
         var view = Selector.GetHovered(50f, pars.ExcludedIds);
         if (view == null) return;
-        if (!Selector.GetPrefabs(pars.IncludedIds).Contains(view.GetZDO().GetPrefab()))
-        {
+        if (!Selector.GetPrefabs(pars.IncludedIds).Contains(view.GetZDO().GetPrefab())) {
           Helper.AddMessage(args.Context, $"Skipped: {view.name} has invalid id.");
           return;
         }
@@ -154,7 +130,6 @@ public abstract class TweakCommand
 
     }, () => namedParameters);
   }
-  public TweakCommand()
-  {
+  public TweakCommand() {
   }
 }

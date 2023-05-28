@@ -1,3 +1,6 @@
+- v1.34
+  - Adds a new parameter `destroy` to the `tweak_object` command.
+
 - v1.33
   - Adds percentage support to the `health` parameter.
 

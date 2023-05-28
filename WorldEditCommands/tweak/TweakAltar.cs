@@ -4,10 +4,8 @@ using ServerDevcommands;
 
 namespace WorldEditCommands;
 
-public class TweakAltarCommand : TweakCommand
-{
-  protected override string DoOperation(ZNetView view, string operation, string? value)
-  {
+public class TweakAltarCommand : TweakCommand {
+  protected override string DoOperation(ZNetView view, string operation, string? value) {
     if (operation == "spawndata")
       return TweakActions.SpawnData(view, value);
     if (operation == "spawn")
@@ -28,8 +26,7 @@ public class TweakAltarCommand : TweakCommand
       return TweakActions.Faction(view, value);
     throw new NotImplementedException();
   }
-  protected override string DoOperation(ZNetView view, string operation, float? value)
-  {
+  protected override string DoOperation(ZNetView view, string operation, float? value) {
     if (operation == "levelchance")
       return TweakActions.LevelChance(view, value);
     if (operation == "respawn")
@@ -47,8 +44,7 @@ public class TweakAltarCommand : TweakCommand
     throw new NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, int? value)
-  {
+  protected override string DoOperation(ZNetView view, string operation, int? value) {
     if (operation == "minlevel")
       return TweakActions.MinLevel(view, value);
     if (operation == "maxlevel")
@@ -58,8 +54,7 @@ public class TweakAltarCommand : TweakCommand
     throw new NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, string[] value)
-  {
+  protected override string DoOperation(ZNetView view, string operation, string[] value) {
     if (operation == "starteffect")
       return TweakActions.StartEffect(view, value);
     if (operation == "spawneffect")
@@ -69,18 +64,15 @@ public class TweakAltarCommand : TweakCommand
     throw new NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, bool? value)
-  {
+  protected override string DoOperation(ZNetView view, string operation, bool? value) {
     throw new NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, long? value)
-  {
+  protected override string DoOperation(ZNetView view, string operation, long? value) {
     throw new NotImplementedException();
   }
 
-  public TweakAltarCommand()
-  {
+  public TweakAltarCommand() {
     Component = typeof(OfferingBowl);
     ComponentName = "altar";
     SupportedOperations.Add("minlevel", typeof(int));

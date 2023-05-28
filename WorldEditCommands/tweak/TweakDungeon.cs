@@ -4,10 +4,8 @@ using ServerDevcommands;
 
 namespace WorldEditCommands;
 
-public class TweakDungeonCommand : TweakCommand
-{
-  protected override string DoOperation(ZNetView view, string operation, string? value)
-  {
+public class TweakDungeonCommand : TweakCommand {
+  protected override string DoOperation(ZNetView view, string operation, string? value) {
     if (operation == "enter_text") return TweakActions.EnterText(view, value);
     if (operation == "enter_hover") return TweakActions.EnterHover(view, value);
     if (operation == "exit_text") return TweakActions.ExitText(view, value);
@@ -15,37 +13,30 @@ public class TweakDungeonCommand : TweakCommand
     if (operation == "weather") return TweakActions.Weather(view, Hash.DungeonWeather, value);
     throw new System.NotImplementedException();
   }
-  protected override string DoOperation(ZNetView view, string operation, float? value)
-  {
+  protected override string DoOperation(ZNetView view, string operation, float? value) {
     throw new System.NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, int? value)
-  {
+  protected override string DoOperation(ZNetView view, string operation, int? value) {
     throw new System.NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, string[] value)
-  {
+  protected override string DoOperation(ZNetView view, string operation, string[] value) {
     throw new System.NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, bool? value)
-  {
+  protected override string DoOperation(ZNetView view, string operation, bool? value) {
     throw new NotImplementedException();
   }
 
 
-  protected override string DoOperation(ZNetView view, string operation, long? value)
-  {
+  protected override string DoOperation(ZNetView view, string operation, long? value) {
     throw new NotImplementedException();
   }
 
-  protected override ZNetView Preprocess(Terminal context, ZNetView view)
-  {
+  protected override ZNetView Preprocess(Terminal context, ZNetView view) {
     if (view.GetComponent<LocationProxy>()) return view;
-    if (view.GetComponent<DungeonGenerator>())
-    {
+    if (view.GetComponent<DungeonGenerator>()) {
       var zone = ZoneSystem.instance.GetZone(view.transform.position);
       var location = Location.m_allLocations.FirstOrDefault(l => ZoneSystem.instance.GetZone(l.transform.position) == zone);
       if (location)
@@ -57,8 +48,7 @@ public class TweakDungeonCommand : TweakCommand
 #nullable enable
   }
 
-  public TweakDungeonCommand()
-  {
+  public TweakDungeonCommand() {
     SupportedOperations.Add("enter_text", typeof(string));
     SupportedOperations.Add("enter_hover", typeof(string));
     SupportedOperations.Add("exit_text", typeof(string));

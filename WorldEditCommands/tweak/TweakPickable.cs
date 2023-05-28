@@ -2,18 +2,15 @@ using ServerDevcommands;
 
 namespace WorldEditCommands;
 
-public class TweakPickableCommand : TweakCommand
-{
-  protected override string DoOperation(ZNetView view, string operation, string? value)
-  {
+public class TweakPickableCommand : TweakCommand {
+  protected override string DoOperation(ZNetView view, string operation, string? value) {
     if (operation == "spawn")
       return TweakActions.Spawn(view, Hash.SpawnPickable, value);
     if (operation == "name")
       return TweakActions.Name(view, value);
     throw new System.NotImplementedException();
   }
-  protected override string DoOperation(ZNetView view, string operation, float? value)
-  {
+  protected override string DoOperation(ZNetView view, string operation, float? value) {
     if (operation == "respawn")
       return TweakActions.Respawn(view, Hash.RespawnPickable, value);
     if (operation == "spawnoffset")
@@ -21,32 +18,27 @@ public class TweakPickableCommand : TweakCommand
     throw new System.NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, int? value)
-  {
+  protected override string DoOperation(ZNetView view, string operation, int? value) {
     if (operation == "amount")
       return TweakActions.Amount(view, value);
     throw new System.NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, string[] value)
-  {
+  protected override string DoOperation(ZNetView view, string operation, string[] value) {
     if (operation == "useeffect")
       return TweakActions.UseEffect(view, value);
     throw new System.NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, bool? value)
-  {
+  protected override string DoOperation(ZNetView view, string operation, bool? value) {
     throw new System.NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, long? value)
-  {
+  protected override string DoOperation(ZNetView view, string operation, long? value) {
     throw new System.NotImplementedException();
   }
 
-  public TweakPickableCommand()
-  {
+  public TweakPickableCommand() {
     Component = typeof(Pickable);
     ComponentName = "pickable";
     SupportedOperations.Add("amount", typeof(int));

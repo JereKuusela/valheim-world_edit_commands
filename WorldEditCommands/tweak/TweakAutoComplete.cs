@@ -4,15 +4,13 @@ using System.Linq;
 using ServerDevcommands;
 namespace WorldEditCommands;
 using NamedOptionsFetchers = Dictionary<string, Func<int, List<string>>>;
-public class TweakAutoComplete
-{
+public class TweakAutoComplete {
   public List<string> NamedParameters = new();
   public static List<string> ObjectTypes = new() {
       "creature",
       "structure"
   };
-  public static List<string> WithFilters(List<string> parameters)
-  {
+  public static List<string> WithFilters(List<string> parameters) {
     List<string> namedParameters = new() {
       "id",
       "ignore",
@@ -29,8 +27,7 @@ public class TweakAutoComplete
     parameters.AddRange(namedParameters);
     return parameters.Distinct().OrderBy(s => s).ToList();
   }
-  public static NamedOptionsFetchers WithFilters(NamedOptionsFetchers fetchers)
-  {
+  public static NamedOptionsFetchers WithFilters(NamedOptionsFetchers fetchers) {
     NamedOptionsFetchers baseFetchers = new() {
       {
         "type", (int index) => index == 0 ? ObjectTypes : ParameterInfo.None
@@ -84,14 +81,12 @@ public class TweakAutoComplete
     return baseFetchers;
   }
 
-  public static List<string> Effect(string name, int index)
-  {
+  public static List<string> Effect(string name, int index) {
     if (index == 0) return ParameterInfo.Ids;
     if (index == 1) return ParameterInfo.Create($"{name}=id,<color=yellow>flag</color>", "1 = random rotation");
     return ParameterInfo.Create($"For additional entries, add more <color>{name}=...</color> parameters.");
   }
-  public static List<string> EffectFull(string name, int index)
-  {
+  public static List<string> EffectFull(string name, int index) {
     if (index == 0) return ParameterInfo.Ids;
     if (index == 1) return ParameterInfo.Create($"{name}=id,<color=yellow>flag</color>,variant,childTransform", "Sum up: 1 = random rotation, 2 = inherit rotation, 4 = allow scaling, 8 = inherit scale, 16 = attach to the provided object.");
     if (index == 2) return ParameterInfo.Create($"{name}t=id,flag,<color=yellow>variant</color>,childTransform", "Variant number (very rarely needed).");

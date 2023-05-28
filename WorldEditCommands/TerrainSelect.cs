@@ -5,8 +5,7 @@ using ServerDevcommands;
 using Service;
 using UnityEngine;
 namespace WorldEditCommands;
-public abstract class TerrainNode
-{
+public abstract class TerrainNode {
   public int Index;
   public Vector3 Position;
   public float DistanceWidth;
@@ -20,18 +19,15 @@ public class HeightNode : TerrainNode { }
 public class PaintNode : TerrainNode { }
 
 
-public enum BlockCheck
-{
+public enum BlockCheck {
   Off,
   On,
   Inverse
 }
 
-public partial class Terrain
-{
+public partial class Terrain {
 
-  public static TerrainComp[] GetCompilers(Vector3 position, Range<float> radius)
-  {
+  public static TerrainComp[] GetCompilers(Vector3 position, Range<float> radius) {
     List<Heightmap> heightMaps = new();
     Heightmap.FindHeightmap(position, radius.Max + 1, heightMaps);
     var pos = ZNet.instance.GetReferencePosition();
@@ -39,8 +35,7 @@ public partial class Terrain
     var ns = ZNetScene.instance;
     return heightMaps.Where(hmap => ns.InActiveArea(zs.GetZone(hmap.transform.position), pos)).Select(hmap => hmap.GetAndCreateTerrainCompiler()).ToArray();
   }
-  public static TerrainComp[] GetCompilers(Vector3 position, Range<float> width, Range<float> depth, float angle)
-  {
+  public static TerrainComp[] GetCompilers(Vector3 position, Range<float> width, Range<float> depth, float angle) {
     List<Heightmap> heightMaps = new();
     // Turn the rectable to a square for an upper bound.
     var maxDimension = Mathf.Max(width.Max, depth.Max);
@@ -54,13 +49,11 @@ public partial class Terrain
     return heightMaps.Where(hmap => ns.InActiveArea(zs.GetZone(hmap.transform.position), pos)).Select(hmap => hmap.GetAndCreateTerrainCompiler()).ToArray();
   }
 
-  public static Func<TerrainNode, bool> CreateBlockCheckFilter(BlockCheck blockCheck, string[] includedIds, string[] excludedIds)
-  {
+  public static Func<TerrainNode, bool> CreateBlockCheckFilter(BlockCheck blockCheck, string[] includedIds, string[] excludedIds) {
     var included = Selector.GetPrefabs(includedIds);
     var excluded = Selector.GetExcludedPrefabs(excludedIds);
     var zs = ZoneSystem.instance;
-    return (TerrainNode index) =>
-    {
+    return (TerrainNode index) => {
       if (blockCheck == BlockCheck.Off) return true;
       var pos = index.Position;
       pos.y += 2000f;
@@ -71,29 +64,23 @@ public partial class Terrain
       return true;
     };
   }
-  public static Func<TerrainNode, bool> CreateAltitudeFilter(float min, float max)
-  {
-    return (TerrainNode index) =>
-    {
+  public static Func<TerrainNode, bool> CreateAltitudeFilter(float min, float max) {
+    return (TerrainNode index) => {
       var height = ZoneSystem.instance.GetGroundHeight(index.Position);
       return height >= min && height <= max;
     };
   }
-  public static void GetHeightNodesWithCircle(List<HeightNode> nodes, TerrainComp compiler, Vector3 centerPos, Range<float> radius)
-  {
+  public static void GetHeightNodesWithCircle(List<HeightNode> nodes, TerrainComp compiler, Vector3 centerPos, Range<float> radius) {
     if (radius.Max == 0f) return;
     var max = compiler.m_width + 1;
-    for (int x = 0; x < max; x++)
-    {
-      for (int z = 0; z < max; z++)
-      {
+    for (int x = 0; x < max; x++) {
+      for (int z = 0; z < max; z++) {
         var nodePos = VertexToWorld(compiler.m_hmap, x, z);
         var dx = nodePos.x - centerPos.x;
         var dz = nodePos.z - centerPos.z;
         var distance = Utils.DistanceXZ(centerPos, nodePos);
         if (!Helper.Within(radius, distance)) continue;
-        nodes.Add(new()
-        {
+        nodes.Add(new() {
           Index = z * max + x,
           Position = nodePos,
           DistanceWidth = dx / radius.Max,
@@ -104,8 +91,7 @@ public partial class Terrain
       }
     }
   }
-  private static Vector3 VertexToWorld(Heightmap hmap, int x, int z)
-  {
+  private static Vector3 VertexToWorld(Heightmap hmap, int x, int z) {
     var vector = hmap.transform.position;
     vector.x += (x - hmap.m_width / 2) * hmap.m_scale;
     vector.z += (z - hmap.m_width / 2) * hmap.m_scale;
@@ -114,14 +100,11 @@ public partial class Terrain
 
   private static float GetX(float x, float z, float angle) => Mathf.Cos(angle) * x - Mathf.Sin(angle) * z;
   private static float GetZ(float x, float z, float angle) => Mathf.Sin(angle) * x + Mathf.Cos(angle) * z;
-  public static void GetHeightNodesWithRect(List<HeightNode> nodes, TerrainComp compiler, Vector3 centerPos, Range<float> width, Range<float> depth, float angle)
-  {
+  public static void GetHeightNodesWithRect(List<HeightNode> nodes, TerrainComp compiler, Vector3 centerPos, Range<float> width, Range<float> depth, float angle) {
     if (width.Max == 0f || depth.Max == 0f) return;
     var max = compiler.m_width + 1;
-    for (int x = 0; x < max; x++)
-    {
-      for (int z = 0; z < max; z++)
-      {
+    for (int x = 0; x < max; x++) {
+      for (int z = 0; z < max; z++) {
         var nodePos = VertexToWorld(compiler.m_hmap, x, z);
         var rawDx = nodePos.x - centerPos.x;
         var rawDz = nodePos.z - centerPos.z;
@@ -131,8 +114,7 @@ public partial class Terrain
           continue;
         var distanceWidth = dx / width.Max;
         var distanceDepth = dz / depth.Max;
-        nodes.Add(new()
-        {
+        nodes.Add(new() {
           Index = z * max + x,
           Position = nodePos,
           DistanceWidth = distanceWidth,
@@ -144,13 +126,10 @@ public partial class Terrain
     }
   }
 
-  public static void GetPaintNodesWithRect(List<PaintNode> nodes, TerrainComp compiler, Vector3 centerPos, Range<float> width, Range<float> depth, float angle)
-  {
+  public static void GetPaintNodesWithRect(List<PaintNode> nodes, TerrainComp compiler, Vector3 centerPos, Range<float> width, Range<float> depth, float angle) {
     var max = compiler.m_width;
-    for (int x = 0; x < max; x++)
-    {
-      for (int z = 0; z < max; z++)
-      {
+    for (int x = 0; x < max; x++) {
+      for (int z = 0; z < max; z++) {
         var nodePos = VertexToWorld(compiler.m_hmap, x, z);
         // Painting is applied from the corner of the node, not the center.
         nodePos.x += 0.5f;
@@ -163,8 +142,7 @@ public partial class Terrain
           continue;
         var distanceWidth = dx / width.Max;
         var distanceDepth = dz / depth.Max;
-        nodes.Add(new()
-        {
+        nodes.Add(new() {
           Index = z * max + x,
           Position = nodePos,
           DistanceWidth = distanceWidth,
@@ -176,13 +154,10 @@ public partial class Terrain
     }
   }
 
-  public static void GetPaintNodesWithCircle(List<PaintNode> nodes, TerrainComp compiler, Vector3 centerPos, Range<float> radius)
-  {
+  public static void GetPaintNodesWithCircle(List<PaintNode> nodes, TerrainComp compiler, Vector3 centerPos, Range<float> radius) {
     var max = compiler.m_width;
-    for (int x = 0; x < max; x++)
-    {
-      for (int z = 0; z < max; z++)
-      {
+    for (int x = 0; x < max; x++) {
+      for (int z = 0; z < max; z++) {
         var nodePos = VertexToWorld(compiler.m_hmap, x, z);
         // Painting is applied from the corner of the node, not the center.
         nodePos.x += 0.5f;
@@ -191,8 +166,7 @@ public partial class Terrain
         var dz = nodePos.z - centerPos.z;
         var distance = Utils.DistanceXZ(centerPos, nodePos);
         if (!Helper.Within(radius, distance)) continue;
-        nodes.Add(new()
-        {
+        nodes.Add(new() {
           Index = z * max + x,
           Position = nodePos,
           DistanceWidth = dx / radius.Max,

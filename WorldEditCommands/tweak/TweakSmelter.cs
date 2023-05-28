@@ -3,23 +3,19 @@ using ServerDevcommands;
 
 namespace WorldEditCommands;
 
-public class TweakSmelterCommand : TweakCommand
-{
-  protected override string DoOperation(ZNetView view, string operation, string? value)
-  {
+public class TweakSmelterCommand : TweakCommand {
+  protected override string DoOperation(ZNetView view, string operation, string? value) {
     if (operation == "fuel")
       return TweakActions.Fuel(view, value);
     throw new NotImplementedException();
   }
-  protected override string DoOperation(ZNetView view, string operation, float? value)
-  {
+  protected override string DoOperation(ZNetView view, string operation, float? value) {
     if (operation == "speed")
       return TweakActions.Speed(view, value);
     throw new NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, int? value)
-  {
+  protected override string DoOperation(ZNetView view, string operation, int? value) {
     if (operation == "maxamount")
       return TweakActions.MaxAmount(view, value);
     if (operation == "maxfuel")
@@ -29,8 +25,7 @@ public class TweakSmelterCommand : TweakCommand
     throw new NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, string[] value)
-  {
+  protected override string DoOperation(ZNetView view, string operation, string[] value) {
     if (operation == "conversion")
       return TweakActions.Conversions(view, value);
     if (operation == "inputeffect")
@@ -42,18 +37,15 @@ public class TweakSmelterCommand : TweakCommand
     throw new NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, bool? value)
-  {
+  protected override string DoOperation(ZNetView view, string operation, bool? value) {
     throw new NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, long? value)
-  {
+  protected override string DoOperation(ZNetView view, string operation, long? value) {
     throw new NotImplementedException();
   }
 
-  public TweakSmelterCommand()
-  {
+  public TweakSmelterCommand() {
     Component = typeof(Smelter);
     ComponentName = "smelter";
     SupportedOperations.Add("maxamount", typeof(int));
@@ -71,12 +63,11 @@ public class TweakSmelterCommand : TweakCommand
     AutoComplete.Add("fuelusage", (int index) => index == 0 ? ParameterInfo.Create("fuelusage=<color=yellow>number</color>", "Required fuel per conversion. No value to reset.") : ParameterInfo.None);
     AutoComplete.Add("speed", (int index) => index == 0 ? ParameterInfo.Create("speed=<color=yellow>number</color>", "Conversion speed in seconds. No value to reset.") : ParameterInfo.None);
     AutoComplete.Add("fuel", (int index) => index == 0 ? ParameterInfo.ItemIds : ParameterInfo.None);
-    AutoComplete.Add("conversion", (int index) =>
-   {
-     if (index == 0) return ParameterInfo.ItemIds;
-     if (index == 1) return ParameterInfo.ItemIds;
-     return ParameterInfo.Create("For additional entries, add more <color>conversion=...</color> parameters.");
-   });
+    AutoComplete.Add("conversion", (int index) => {
+      if (index == 0) return ParameterInfo.ItemIds;
+      if (index == 1) return ParameterInfo.ItemIds;
+      return ParameterInfo.Create("For additional entries, add more <color>conversion=...</color> parameters.");
+    });
     AutoComplete.Add("inputeffect", (int index) => TweakAutoComplete.Effect("inputeffect", index));
     AutoComplete.Add("fueleffect", (int index) => TweakAutoComplete.Effect("fueleffect", index));
     AutoComplete.Add("outputeffect", (int index) => TweakAutoComplete.Effect("outputeffect", index));

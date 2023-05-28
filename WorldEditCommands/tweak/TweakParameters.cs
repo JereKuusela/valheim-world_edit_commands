@@ -5,8 +5,7 @@ using ServerDevcommands;
 using Service;
 using UnityEngine;
 namespace WorldEditCommands;
-public class TweakParameters
-{
+public class TweakParameters {
   public Vector3 From;
   public Vector3? Center;
   public string[] IncludedIds = new string[0];
@@ -24,11 +23,9 @@ public class TweakParameters
 
   public Dictionary<string, Type> SupportedOperations = new();
 
-  public TweakParameters(Dictionary<string, Type> supportedOperations, Terminal.ConsoleEventArgs args)
-  {
+  public TweakParameters(Dictionary<string, Type> supportedOperations, Terminal.ConsoleEventArgs args) {
     SupportedOperations = supportedOperations;
-    if (Player.m_localPlayer)
-    {
+    if (Player.m_localPlayer) {
       From = Player.m_localPlayer.transform.position;
     }
     ParseArgs(args.Args);
@@ -36,30 +33,24 @@ public class TweakParameters
 
   public Dictionary<string, object?> Operations = new();
 
-  protected virtual void ParseArgs(string[] args)
-  {
-    foreach (var arg in args)
-    {
+  protected virtual void ParseArgs(string[] args) {
+    foreach (var arg in args) {
       var split = arg.Split('=');
       var name = split[0].ToLower();
-      if (SupportedOperations.TryGetValue(name, out var type))
-      {
+      if (SupportedOperations.TryGetValue(name, out var type)) {
         if (Operations.ContainsKey(name) && type != typeof(string[]))
           throw new InvalidOperationException($"Operation {name} used multiple times.");
-        if (type == typeof(string[]))
-        {
+        if (type == typeof(string[])) {
           if (!Operations.ContainsKey(name))
             Operations.Add(name, new string[0]);
-        }
-        else
+        } else
           Operations.Add(name, null);
       }
       if (name == "connect") Connect = true;
       if (name == "force") Force = true;
       if (split.Length < 2) continue;
       var value = string.Join("=", split.Skip(1));
-      if (SupportedOperations.TryGetValue(name, out type))
-      {
+      if (SupportedOperations.TryGetValue(name, out type)) {
         if (type == typeof(int))
           Operations[name] = Parse.Int(value);
         else if (type == typeof(float))
@@ -83,8 +74,7 @@ public class TweakParameters
       if (name == "type" && value == "spawner") ObjectType = ObjectType.Spawner;
       if (name == "type" && value == "spawnpoint") ObjectType = ObjectType.SpawnPoint;
       if (name == "type" && value == "structure") ObjectType = ObjectType.Structure;
-      if (name == "rect")
-      {
+      if (name == "rect") {
         var size = Parse.ScaleRange(value);
         Width = new(size.Min.x, size.Max.x);
         Depth = new(size.Min.z, size.Max.z);
