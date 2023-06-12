@@ -33,7 +33,7 @@ public partial class Terrain {
     var pos = ZNet.instance.GetReferencePosition();
     var zs = ZoneSystem.instance;
     var ns = ZNetScene.instance;
-    return heightMaps.Where(hmap => ns.InActiveArea(zs.GetZone(hmap.transform.position), pos)).Select(hmap => hmap.GetAndCreateTerrainCompiler()).ToArray();
+    return heightMaps.Where(hmap => ZNetScene.InActiveArea(zs.GetZone(hmap.transform.position), pos)).Select(hmap => hmap.GetAndCreateTerrainCompiler()).ToArray();
   }
   public static TerrainComp[] GetCompilers(Vector3 position, Range<float> width, Range<float> depth, float angle) {
     List<Heightmap> heightMaps = new();
@@ -46,7 +46,7 @@ public partial class Terrain {
     var pos = ZNet.instance.GetReferencePosition();
     var zs = ZoneSystem.instance;
     var ns = ZNetScene.instance;
-    return heightMaps.Where(hmap => ns.InActiveArea(zs.GetZone(hmap.transform.position), pos)).Select(hmap => hmap.GetAndCreateTerrainCompiler()).ToArray();
+    return heightMaps.Where(hmap => ZNetScene.InActiveArea(zs.GetZone(hmap.transform.position), pos)).Select(hmap => hmap.GetAndCreateTerrainCompiler()).ToArray();
   }
 
   public static Func<TerrainNode, bool> CreateBlockCheckFilter(BlockCheck blockCheck, string[] includedIds, string[] excludedIds) {

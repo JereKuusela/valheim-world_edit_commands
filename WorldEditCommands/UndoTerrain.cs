@@ -19,7 +19,7 @@ public class TerrainUndoData {
   public List<PaintUndoData> Paints = new();
 }
 
-public class UndoTerrain : UndoAction {
+public class UndoTerrain : IUndoAction {
 
   private readonly Dictionary<Vector3, TerrainUndoData> Before = new();
   private readonly Dictionary<Vector3, TerrainUndoData> After = new();
@@ -31,13 +31,13 @@ public class UndoTerrain : UndoAction {
     Position = position;
     Radius = radius;
   }
-  public void Undo() {
+  public string Undo() {
     Terrain.ApplyData(Before, Position, Radius);
+    return "Undoing terrain changes";
   }
-  public string UndoMessage() => "Undoing terrain changes";
 
-  public void Redo() {
+  public string Redo() {
     Terrain.ApplyData(After, Position, Radius);
+    return "Redoing terrain changes";
   }
-  public string RedoMessage() => "Redoing terrain changes";
 }

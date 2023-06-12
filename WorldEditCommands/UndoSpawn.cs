@@ -2,50 +2,27 @@ using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
 using ServerDevcommands;
+using Service;
 namespace WorldEditCommands;
-public class UndoSpawn : UndoAction {
-  private IEnumerable<ZDO> ZDOs;
+public class UndoSpawn : IUndoAction {
+  private FakeZDO[] ZDOs;
   private readonly string Command;
   public UndoSpawn(IEnumerable<ZDO> zdos, string command) {
-    ZDOs = zdos;
+    ZDOs = zdos.Select(zdo => new FakeZDO(zdo)).ToArray();
     Command = command;
   }
-  public void Undo() {
-    foreach (var zdo in ZDOs) {
-      if (zdo == null || !zdo.IsValid()) continue;
-      zdo.SetOwner(ZDOMan.instance.GetMyID());
-      ZDOMan.instance.DestroyZDO(zdo);
-    }
-  }
-
-  public string UndoMessage() {
-    var groups = ZDOs.GroupBy(zdo => zdo.GetPrefab());
-    if (groups.Count() == 1) {
-      var group = groups.First();
-      var name = Helper.GetPrefabName(group.Key);
-      if (group.Count() == 1)
-        return $"Removing {name}.";
-      return $"Removing {ZDOs.Count()} of {name}.";
-    } else
-      return "Removing " + ZDOs.Count() + " spawned objects.";
+  public string Undo() {
+    var message = $"Removed {UndoHelper.Print(ZDOs)}";
+    UndoHelper.Remove(ZDOs);
+    return message;
   }
 
 
-  public void Redo() {
+  public string Redo() {
     AddedZDOs.StartTracking();
     Console.instance.TryRunCommand(Command);
-    ZDOs = AddedZDOs.StopTracking();
-  }
-  public string RedoMessage() {
-    var groups = ZDOs.GroupBy(zdo => zdo.GetPrefab());
-    if (groups.Count() == 1) {
-      var group = groups.First();
-      var name = Helper.GetPrefabName(group.Key);
-      if (group.Count() == 1)
-        return $"Respawning {name}.";
-      return $"Respawning {ZDOs.Count()} of {name}.";
-    } else
-      return "Respawning " + ZDOs.Count() + " spawned objects.";
+    ZDOs = AddedZDOs.StopTracking().Select(zdo => new FakeZDO(zdo)).ToArray();
+    return $"Ran command {Command}";
   }
 }
 

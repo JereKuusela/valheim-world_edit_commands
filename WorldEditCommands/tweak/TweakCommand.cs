@@ -12,7 +12,7 @@ public abstract class TweakCommand {
     if (value >= 1f) return true;
     return Random.NextDouble() < value;
   }
-  private static readonly Dictionary<ZDOID, EditInfo> EditedInfo = new();
+  private static readonly Dictionary<ZDOID, EditData> EditedInfo = new();
   protected Type Component = typeof(int);
   protected string ComponentName = "";
   protected abstract string DoOperation(ZNetView view, string operation, string? value);
@@ -57,9 +57,9 @@ public abstract class TweakCommand {
     EditedInfo.Clear();
     foreach (var view in views) {
       var zdo = view.GetZDO();
-      oldOwner.Add(zdo.m_uid, zdo.m_owner);
+      oldOwner.Add(zdo.m_uid, zdo.GetOwner());
       view.ClaimOwnership();
-      EditedInfo[zdo.m_uid] = new EditInfo(zdo, true);
+      EditedInfo[zdo.m_uid] = new EditData(zdo, true);
     }
     var count = views.Count();
     foreach (var view in views) {
@@ -95,7 +95,9 @@ public abstract class TweakCommand {
       Postprocess(Actions.Refresh(view));
     }
     if (EditedInfo.Count > 0) {
-      UndoEdit undo = new(EditedInfo.Select(info => info.Value.ToData()));
+      foreach (var info in EditedInfo)
+        info.Value.Update();
+      UndoEdit undo = new(EditedInfo.Select(info => info.Value));
       UndoManager.Add(undo);
     }
   }

@@ -1,3 +1,6 @@
+- v1.35
+  - Updated for the new game version.
+
 - v1.34
   - Adds a new parameter `destroy` to the `tweak_object` command.
 

@@ -407,7 +407,7 @@ public static class Actions {
   public static void RemoveZDO(ZDO zdo) {
     if (zdo == null || !zdo.IsValid()) return;
     if (!zdo.IsOwner())
-      zdo.SetOwner(ZDOMan.instance.GetMyID());
+      zdo.SetOwner(ZDOMan.GetSessionID());
     if (ZNetScene.instance.m_instances.TryGetValue(zdo, out var view))
       ZNetScene.instance.Destroy(view.gameObject);
     else

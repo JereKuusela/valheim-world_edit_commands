@@ -18,7 +18,7 @@ class SpawnObjectParameters : SharedObjectParameters {
   public bool? Tamed;
   public bool? Hunt;
   public bool UseDefaultRelativePosition = true;
-  public ZDO? Data;
+  public ZPackage? Data;
 
   public SpawnObjectParameters(Terminal.ConsoleEventArgs args) {
     if (Player.m_localPlayer) {
@@ -71,7 +71,7 @@ class SpawnObjectParameters : SharedObjectParameters {
         To = Parse.VectorXZY(value.Split(','), From);
       }
       if (name == "data") {
-        Data = DataHelper.Load(value);
+        Data = DataHelper.Deserialize(value);
       }
       if (name == "refplayer") {
         UseDefaultRelativePosition = false;

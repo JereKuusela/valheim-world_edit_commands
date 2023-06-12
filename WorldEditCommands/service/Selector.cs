@@ -189,9 +189,9 @@ public static class Selector {
       var wear = todo.Dequeue();
       if (wear.m_colliders == null) wear.SetupColliders();
       foreach (var boundData in wear.m_bounds) {
-        var boxes = Physics.OverlapBoxNonAlloc(boundData.m_pos, boundData.m_size, WearNTear.m_tempColliders, boundData.m_rot, WearNTear.m_rayMask);
+        var boxes = Physics.OverlapBoxNonAlloc(boundData.m_pos, boundData.m_size, WearNTear.s_tempColliders, boundData.m_rot, WearNTear.s_rayMask);
         for (int i = 0; i < boxes; i++) {
-          var collider = WearNTear.m_tempColliders[i];
+          var collider = WearNTear.s_tempColliders[i];
           if (collider.isTrigger || collider.attachedRigidbody != null || wear.m_colliders.Contains(collider)) continue;
           var wear2 = collider.GetComponentInParent<WearNTear>();
           if (!wear2 || !IsValid(wear2.m_nview)) continue;

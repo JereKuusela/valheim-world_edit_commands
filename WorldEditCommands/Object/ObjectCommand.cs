@@ -6,18 +6,6 @@ using Service;
 using UnityEngine;
 namespace WorldEditCommands;
 
-///<summary>Needed to keep track of edited zdos.</summary>
-public class EditInfo {
-  public EditInfo(ZDO zdo, bool refresh = false) {
-    From = zdo.Clone();
-    To = zdo;
-    Refresh = refresh;
-  }
-  public EditData ToData() => new(From, To, Refresh);
-  readonly ZDO From;
-  readonly ZDO To;
-  public bool Refresh;
-}
 public class ObjectCommand {
   public static System.Random Random = new();
   public static bool Roll(float value) {
@@ -25,14 +13,14 @@ public class ObjectCommand {
     return Random.NextDouble() < value;
   }
   public const string Name = "object";
-  private static readonly Dictionary<ZDOID, EditInfo> EditedInfo = new();
+  private static readonly Dictionary<ZDOID, EditData> EditedInfo = new();
   private static void AddData(ZNetView view, bool refresh = false) {
     var zdo = view.GetZDO();
     if (EditedInfo.TryGetValue(zdo.m_uid, out var info)) {
       if (refresh) info.Refresh = refresh;
       return;
     }
-    EditedInfo[zdo.m_uid] = new EditInfo(zdo, refresh);
+    EditedInfo[zdo.m_uid] = new EditData(zdo, refresh);
   }
   private static void Execute(Terminal context, ObjectParameters pars, IEnumerable<string> operations, ZNetView[] views) {
     var scene = ZNetScene.instance;
@@ -48,10 +36,10 @@ public class ObjectCommand {
       }
       return true;
     }).ToArray();
-    List<ZDO> removed = new();
+    List<FakeZDO> removed = new();
     EditedInfo.Clear();
     foreach (var view in views) {
-      oldOwner.Add(view.GetZDO().m_uid, view.GetZDO().m_owner);
+      oldOwner.Add(view.GetZDO().m_uid, view.GetZDO().GetOwner());
       view.ClaimOwnership();
     }
     var count = views.Count();
@@ -127,7 +115,7 @@ public class ObjectCommand {
         if (operation == "scale")
           output = Scale(view, Helper.RandomValue(pars.Scale));
         if (operation == "remove") {
-          removed.Add(view.GetZDO().Clone());
+          removed.Add(new(view.GetZDO()));
           Actions.RemoveZDO(view.GetZDO());
           output = "Entity ¤ destroyed.";
         }
@@ -149,12 +137,15 @@ public class ObjectCommand {
         view.GetZDO().SetOwner(owner);
 
     }
-    if (removed.Count > 0) {
+    if (removed.Count() > 0) {
       UndoRemove undo = new(removed);
       UndoManager.Add(undo);
     }
-    if (EditedInfo.Count > 0) {
-      UndoEdit undo = new(EditedInfo.Select(info => info.Value.ToData()));
+    if (EditedInfo.Count() > 0) {
+      foreach (var info in EditedInfo) {
+        info.Value.Update();
+      }
+      UndoEdit undo = new(EditedInfo.Select(info => info.Value));
       UndoManager.Add(undo);
     }
   }
@@ -362,8 +353,9 @@ public class ObjectCommand {
   private static string SetStatus(ZNetView obj, string name, float duration, float intensity) {
     if (!obj.TryGetComponent<Character>(out var creature)) return "Skipped: ¤ is not a creature.";
     obj.ClaimOwnership();
-    creature.GetSEMan()?.AddStatusEffect(name, true);
-    var effect = creature.GetSEMan()?.GetStatusEffect(name);
+    var hash = name.GetHashCode();
+    creature.GetSEMan()?.AddStatusEffect(hash, true);
+    var effect = creature.GetSEMan()?.GetStatusEffect(hash);
     if (effect == null) return $"Failed to set status of ¤ to {name}";
     effect.m_ttl = duration;
     if (effect is SE_Shield shield)
@@ -434,102 +426,12 @@ public class ObjectCommand {
     }
     return string.Join(", ", info);
   }
-  private static Dictionary<int, T>? FilterZdo<T>(Dictionary<int, T>? dict, HashSet<int> filters) {
-    if (dict == null) return dict;
-    return dict.Where(kvp => filters.Contains(kvp.Key)).ToDictionary(kvp => kvp.Key, pair => pair.Value);
-  }
-  private static void Serialize(ZDO zdo, ZPackage pkg, string filter) {
-    zdo = zdo.Clone();
-    if (filter == "") {
-      zdo.m_vec3?.Remove(Hash.Scale);
-      zdo.m_vec3?.Remove(Hash.SpawnPoint);
-      zdo.m_ints?.Remove(Hash.Seed);
-      zdo.m_ints?.Remove(Hash.Location);
-      if (zdo.m_strings != null && zdo.m_strings.ContainsKey(Hash.OverrideItems)) {
-        zdo.m_ints?.Remove(Hash.AddedDefaultItems);
-        zdo.m_strings?.Remove(Hash.Items);
-      }
-    } else if (filter != "all") {
-      var filters = Parse.Split(filter).Select(s => s.GetStableHashCode()).ToHashSet();
-      zdo.m_vec3 = FilterZdo(zdo.m_vec3, filters);
-      zdo.m_quats = FilterZdo(zdo.m_quats, filters);
-      zdo.m_floats = FilterZdo(zdo.m_floats, filters);
-      zdo.m_ints = FilterZdo(zdo.m_ints, filters);
-      zdo.m_strings = FilterZdo(zdo.m_strings, filters);
-      zdo.m_longs = FilterZdo(zdo.m_longs, filters);
-      zdo.m_byteArrays = FilterZdo(zdo.m_byteArrays, filters);
-    }
-    var num = 0;
-    if (zdo.m_floats != null && zdo.m_floats.Count > 0)
-      num |= 1;
-    if (zdo.m_vec3 != null && zdo.m_vec3.Count > 0)
-      num |= 2;
-    if (zdo.m_quats != null && zdo.m_quats.Count > 0)
-      num |= 4;
-    if (zdo.m_ints != null && zdo.m_ints.Count > 0)
-      num |= 8;
-    if (zdo.m_strings != null && zdo.m_strings.Count > 0)
-      num |= 16;
-    if (zdo.m_longs != null && zdo.m_longs.Count > 0)
-      num |= 64;
-    if (zdo.m_byteArrays != null && zdo.m_byteArrays.Count > 0)
-      num |= 128;
 
-    pkg.Write(num);
-    if (zdo.m_floats != null && zdo.m_floats.Count > 0) {
-      pkg.Write((byte)zdo.m_floats.Count);
-      foreach (var kvp in zdo.m_floats) {
-        pkg.Write(kvp.Key);
-        pkg.Write(kvp.Value);
-      }
-    }
-    if (zdo.m_vec3 != null && zdo.m_vec3.Count > 0) {
-      pkg.Write((byte)zdo.m_vec3.Count);
-      foreach (var kvp in zdo.m_vec3) {
-        pkg.Write(kvp.Key);
-        pkg.Write(kvp.Value);
-      }
-    }
-    if (zdo.m_quats != null && zdo.m_quats.Count > 0) {
-      pkg.Write((byte)zdo.m_quats.Count);
-      foreach (var kvp in zdo.m_quats) {
-        pkg.Write(kvp.Key);
-        pkg.Write(kvp.Value);
-      }
-    }
-    if (zdo.m_ints != null && zdo.m_ints.Count > 0) {
-      pkg.Write((byte)zdo.m_ints.Count);
-      foreach (var kvp in zdo.m_ints) {
-        pkg.Write(kvp.Key);
-        pkg.Write(kvp.Value);
-      }
-    }
-    if (zdo.m_longs != null && zdo.m_longs.Count > 0) {
-      pkg.Write((byte)zdo.m_longs.Count);
-      foreach (var kvp in zdo.m_longs) {
-        pkg.Write(kvp.Key);
-        pkg.Write(kvp.Value);
-      }
-    }
-    if (zdo.m_strings != null && zdo.m_strings.Count > 0) {
-      pkg.Write((byte)zdo.m_strings.Count);
-      foreach (var kvp in zdo.m_strings) {
-        pkg.Write(kvp.Key);
-        pkg.Write(kvp.Value);
-      }
-    }
-    if (zdo.m_byteArrays != null && zdo.m_byteArrays.Count > 0) {
-      pkg.Write((byte)zdo.m_byteArrays.Count);
-      foreach (var kvp in zdo.m_byteArrays) {
-        pkg.Write(kvp.Key);
-        pkg.Write(kvp.Value);
-      }
-    }
-  }
+
   private static string CopyData(ZNetView obj, string value) {
     var zdo = obj.GetZDO();
     ZPackage pkg = new();
-    Serialize(zdo, pkg, value);
+    DataHelper.Serialize(zdo, pkg, value);
     var str = pkg.GetBase64();
     if (str == "AAAAAA==") str = "";
     GUIUtility.systemCopyBuffer = str;
@@ -538,41 +440,42 @@ public class ObjectCommand {
   private static string PrintData(ZNetView obj, string data) {
     List<string> info = new();
     var zdo = obj.GetZDO();
+    var id = zdo.m_uid;
     info.Add("Id: ¤");
-    info.Add($"Owner: {zdo.m_owner}");
-    info.Add($"Revision: {zdo.m_dataRevision} + {zdo.m_ownerRevision}");
+    info.Add($"Owner: {zdo.GetOwner()}");
+    info.Add($"Revision: {zdo.DataRevision} + {zdo.OwnerRevision}");
     if (data != "") {
       var split = data.Split(',');
       var hash = split[0].GetStableHashCode();
-      if (zdo.m_vec3?.ContainsKey(hash) == true) {
+      if (ZDOExtraData.s_vec3.TryGetValue(id, out var vec) && vec.ContainsKey(hash)) {
         if (split.Length > 1)
           zdo.Set(hash, Parse.VectorXZY(split, 1));
-        info.Add($"{split[0]}: {Helper.PrintVectorXZY(zdo.m_vec3[hash])}");
+        info.Add($"{split[0]}: {Helper.PrintVectorXZY(vec[hash])}");
       }
-      if (zdo.m_quats?.ContainsKey(hash) == true) {
-        info.Add($"{split[0]}: {Helper.PrintAngleYXZ(zdo.m_quats[hash])}");
+      if (ZDOExtraData.s_quats.TryGetValue(id, out var quats) && quats.ContainsKey(hash)) {
+        info.Add($"{split[0]}: {Helper.PrintAngleYXZ(quats[hash])}");
       }
-      if (zdo.m_longs?.ContainsKey(hash) == true) {
-        if (split.Length > 1)
-          zdo.Set(hash, Parse.Long(split[1]));
-        info.Add($"{data}: {zdo.m_longs[hash]}");
-      }
-      if (zdo.m_strings?.ContainsKey(hash) == true) {
-        if (split.Length > 1)
-          zdo.Set(hash, split[1]);
-        info.Add($"{split[0]}: {zdo.m_strings[hash]}");
-      }
-      if (zdo.m_ints?.ContainsKey(hash) == true) {
-        if (split.Length > 1)
-          zdo.Set(hash, Parse.Int(split[1]));
-        info.Add($"{split[0]}: {zdo.m_ints[hash]}");
-      }
-      if (zdo.m_floats?.ContainsKey(hash) == true) {
+      if (ZDOExtraData.s_floats.TryGetValue(id, out var floats) && floats.ContainsKey(hash)) {
         if (split.Length > 1)
           zdo.Set(hash, Parse.Float(split[1]));
-        info.Add($"{data}: {zdo.m_floats[hash]:F1}");
+        info.Add($"{data}: {floats[hash]:F1}");
       }
-      if (info.Count < 4)
+      if (ZDOExtraData.s_longs.TryGetValue(id, out var longs) && longs.ContainsKey(hash)) {
+        if (split.Length > 1)
+          zdo.Set(hash, Parse.Long(split[1]));
+        info.Add($"{data}: {longs[hash]}");
+      }
+      if (ZDOExtraData.s_strings.TryGetValue(id, out var strings) && strings.ContainsKey(hash)) {
+        if (split.Length > 1)
+          zdo.Set(hash, split[1]);
+        info.Add($"{split[0]}: {strings[hash]}");
+      }
+      if (ZDOExtraData.s_ints.TryGetValue(id, out var ints) && ints.ContainsKey(hash)) {
+        if (split.Length > 1)
+          zdo.Set(hash, Parse.Int(split[1]));
+        info.Add($"{split[0]}: {ints[hash]}");
+      }
+      if (info.Count() < 4)
         info.Add($"{split[0]}: No data!");
     }
     return string.Join(", ", info);

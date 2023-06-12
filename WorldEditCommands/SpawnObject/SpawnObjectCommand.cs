@@ -36,9 +36,10 @@ public class SpawnObjectCommand {
       }
       var rotation = pars.BaseRotation * Quaternion.Euler(Helper.RandomValue(pars.Rotation));
       var scale = Helper.RandomValue(pars.Scale);
-      DataHelper.Init(prefab, pars.Data, spawnPosition, rotation, scale);
+      if (pars.Data != null)
+        DataHelper.Init(prefab, spawnPosition, rotation, scale, pars.Data);
       try {
-        var obj = UnityEngine.Object.Instantiate<GameObject>(prefab, spawnPosition, rotation);
+        var obj = UnityEngine.Object.Instantiate(prefab, spawnPosition, rotation);
         spawned.Add(obj);
         if (!ZNet.instance.IsServer())
           ZDOMan.instance.ClientChanged(obj.GetComponent<ZNetView>().GetZDO().m_uid);
@@ -99,7 +100,7 @@ public class SpawnObjectCommand {
       if (pars.Helmet != null || pars.Chest != null || pars.Shoulders != null || pars.Legs != null || pars.Utility != null || pars.LeftHand != null || pars.RightHand != null) {
         var zdo = obj.GetComponent<ZNetView>()?.GetZDO();
         // Temporarily losing the ownership prevents default items replacing the set items.
-        if (zdo != null) zdo.m_owner = 0;
+        zdo?.SetOwner(0);
       }
     }
   }
