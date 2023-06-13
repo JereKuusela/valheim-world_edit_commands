@@ -1,3 +1,6 @@
+- v1.36
+  - Fixes custom data.
+
 - v1.35
   - Updated for the new game version.
 

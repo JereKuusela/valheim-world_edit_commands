@@ -171,16 +171,17 @@ public class ZDOData {
         pkg.Write(kvp.Value);
       }
     }
-    if (Strings.Count > 0) {
-      pkg.Write((byte)Strings.Count);
-      foreach (var kvp in Strings) {
+    // Intended to come before strings (changing would break existing data).
+    if (Longs.Count > 0) {
+      pkg.Write((byte)Longs.Count);
+      foreach (var kvp in Longs) {
         pkg.Write(kvp.Key);
         pkg.Write(kvp.Value);
       }
     }
-    if (Longs.Count > 0) {
-      pkg.Write((byte)Longs.Count);
-      foreach (var kvp in Longs) {
+    if (Strings.Count > 0) {
+      pkg.Write((byte)Strings.Count);
+      foreach (var kvp in Strings) {
         pkg.Write(kvp.Key);
         pkg.Write(kvp.Value);
       }
@@ -216,15 +217,16 @@ public class ZDOData {
       for (var i = 0; i < count; ++i)
         Ints[pkg.ReadInt()] = pkg.ReadInt();
     }
-    if ((num & 16) != 0) {
-      var count = pkg.ReadByte();
-      for (var i = 0; i < count; ++i)
-        Strings[pkg.ReadInt()] = pkg.ReadString();
-    }
+    // Intended to come before strings (changing would break existing data).
     if ((num & 64) != 0) {
       var count = pkg.ReadByte();
       for (var i = 0; i < count; ++i)
         Longs[pkg.ReadInt()] = pkg.ReadLong();
+    }
+    if ((num & 16) != 0) {
+      var count = pkg.ReadByte();
+      for (var i = 0; i < count; ++i)
+        Strings[pkg.ReadInt()] = pkg.ReadString();
     }
     if ((num & 128) != 0) {
       var count = pkg.ReadByte();
