@@ -59,7 +59,7 @@ public abstract class TweakCommand {
       var zdo = view.GetZDO();
       oldOwner.Add(zdo.m_uid, zdo.GetOwner());
       view.ClaimOwnership();
-      EditedInfo[zdo.m_uid] = new EditData(zdo, true);
+      EditedInfo[zdo.m_uid] = new EditData(zdo);
     }
     var count = views.Count();
     foreach (var view in views) {

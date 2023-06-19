@@ -7,26 +7,6 @@ using UnityEngine;
 namespace WorldEditCommands;
 
 public class UndoHelper {
-  public static void Refresh(ZDO zdo) {
-    if (ZNetScene.instance.m_instances.TryGetValue(zdo, out var obj)) {
-      var newObj = ZNetScene.instance.CreateObject(zdo);
-      UnityEngine.Object.Destroy(obj.gameObject);
-      ZNetScene.instance.m_instances[zdo] = newObj.GetComponent<ZNetView>();
-    }
-  }
-  public static bool CopyData(ZDO zdo, ZDOData data) {
-    data.Copy(zdo);
-    var prefab = zdo.m_prefab;
-    var zs = ZNetScene.instance;
-    if (zs.m_instances.TryGetValue(zdo, out var view)) {
-      view.transform.position = zdo.GetPosition();
-      view.transform.rotation = zdo.GetRotation();
-      view.transform.localScale = zdo.GetVec3(ZDOVars.s_scaleHash, Vector3.one);
-    }
-    zdo.IncreaseDataRevision();
-    var refresh = prefab != zdo.m_prefab;
-    return refresh;
-  }
   public static FakeZDO Place(FakeZDO zdo) {
     var prefab = ZNetScene.instance.GetPrefab(zdo.Prefab);
     if (!prefab) throw new InvalidOperationException("Error: Prefab not found.");
@@ -70,19 +50,17 @@ public class UndoRemove : MonoBehaviour, IUndoAction {
 
 
 public class EditData {
-  public EditData(ZDO zdo, bool refresh) {
+  public EditData(ZDO zdo) {
     Zdo = zdo;
     Previous = new(zdo);
     Current = Previous;
-    Refresh = refresh;
   }
   public void Update() {
     Current = new(Zdo);
   }
   public ZDO Zdo;
-  public ZDOData Previous;
-  public ZDOData Current;
-  public bool Refresh;
+  public FakeZDO Previous;
+  public FakeZDO Current;
 }
 public class UndoEdit : MonoBehaviour, IUndoAction {
   private readonly EditData[] Data;
@@ -94,8 +72,8 @@ public class UndoEdit : MonoBehaviour, IUndoAction {
     foreach (var data in Data) {
       // Could possibly edit a deletec ZDO.
       if (!data.Zdo.IsValid()) continue;
-      var refresh = UndoHelper.CopyData(data.Zdo, data.Previous);
-      if (refresh || data.Refresh) UndoHelper.Refresh(data.Zdo);
+      data.Previous.Copy(data.Zdo);
+      Actions.Refresh(data.Zdo);
     }
     return message;
   }
@@ -105,8 +83,8 @@ public class UndoEdit : MonoBehaviour, IUndoAction {
     foreach (var data in Data) {
       // Could possibly edit a deletec ZDO.
       if (!data.Zdo.IsValid()) continue;
-      var refresh = UndoHelper.CopyData(data.Zdo, data.Current);
-      if (refresh || data.Refresh) UndoHelper.Refresh(data.Zdo);
+      data.Current.Copy(data.Zdo);
+      Actions.Refresh(data.Zdo);
     }
     return message;
   }

@@ -14,13 +14,10 @@ public class ObjectCommand {
   }
   public const string Name = "object";
   private static readonly Dictionary<ZDOID, EditData> EditedInfo = new();
-  private static void AddData(ZNetView view, bool refresh = false) {
+  private static void AddData(ZNetView view) {
     var zdo = view.GetZDO();
-    if (EditedInfo.TryGetValue(zdo.m_uid, out var info)) {
-      if (refresh) info.Refresh = refresh;
-      return;
-    }
-    EditedInfo[zdo.m_uid] = new EditData(zdo, refresh);
+    if (EditedInfo.ContainsKey(zdo.m_uid)) return;
+    EditedInfo[zdo.m_uid] = new EditData(zdo);
   }
   private static void Execute(Terminal context, ObjectParameters pars, IEnumerable<string> operations, ZNetView[] views) {
     var scene = ZNetScene.instance;
@@ -275,7 +272,7 @@ public class ObjectCommand {
     return $"Creator of ¤ set from {previous} to {creator}.";
   }
   private static string SetPrefab(ZNetView view, string prefab) {
-    AddData(view, true);
+    AddData(view);
     if (Actions.SetPrefab(view, prefab))
       return $"Prefab of ¤ set to {prefab}.";
     return $"Error: Prefab of ¤ was not set to {prefab}. Probably invalid prefab name.";

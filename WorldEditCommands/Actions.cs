@@ -20,7 +20,7 @@ public static class Actions {
       Refresh(obj);
     return toggled;
   }
-  private static GameObject Refresh(ZDO zdo) {
+  public static GameObject Refresh(ZDO zdo) {
     var obj = ZNetScene.instance.m_instances[zdo].gameObject;
     UnityEngine.Object.Destroy(obj);
     var newObj = ZNetScene.instance.CreateObject(zdo);

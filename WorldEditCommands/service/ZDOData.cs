@@ -16,13 +16,17 @@ public class FakeZDO {
   }
   public ZDO Create() {
     var zdo = ZDOMan.instance.CreateNewZDO(Position, Prefab);
+    Copy(zdo);
+    return zdo;
+  }
+  public void Copy(ZDO zdo) {
     zdo.m_prefab = Source.m_prefab;
     zdo.m_position = Source.m_position;
     zdo.m_rotation = Source.m_rotation;
     zdo.Type = Source.Type;
     zdo.Distant = Source.Distant;
+    zdo.Persistent = Source.Persistent;
     Data.Copy(zdo);
-    return zdo;
   }
   public void Destroy() {
     if (!Source.IsOwner())
@@ -51,34 +55,36 @@ public class ZDOData {
 
   public void Copy(ZDO zdo) {
     var id = zdo.m_uid;
+
     if (Floats.Count > 0) {
-      ZDOExtraData.s_floats[id] = new();
-      foreach (var kvp in Floats) ZDOExtraData.s_floats[id][kvp.Key] = kvp.Value;
+      ZDOHelper.Release(ZDOExtraData.s_floats, id);
+      foreach (var kvp in Floats) ZDOExtraData.Set(id, kvp.Key, kvp.Value);
     }
     if (Ints.Count > 0) {
-      ZDOExtraData.s_ints[id] = new();
-      foreach (var kvp in Ints) ZDOExtraData.s_ints[id][kvp.Key] = kvp.Value;
+      ZDOHelper.Release(ZDOExtraData.s_ints, id);
+      foreach (var kvp in Ints) ZDOExtraData.Set(id, kvp.Key, kvp.Value);
     }
     if (Longs.Count > 0) {
-      ZDOExtraData.s_longs[id] = new();
-      foreach (var kvp in Longs) ZDOExtraData.s_longs[id][kvp.Key] = kvp.Value;
+      ZDOHelper.Release(ZDOExtraData.s_longs, id);
+      foreach (var kvp in Longs) ZDOExtraData.Set(id, kvp.Key, kvp.Value);
     }
     if (Strings.Count > 0) {
-      ZDOExtraData.s_strings[id] = new();
-      foreach (var kvp in Strings) ZDOExtraData.s_strings[id][kvp.Key] = kvp.Value;
+      ZDOHelper.Release(ZDOExtraData.s_strings, id);
+      foreach (var kvp in Strings) ZDOExtraData.Set(id, kvp.Key, kvp.Value);
     }
     if (Vecs.Count > 0) {
-      ZDOExtraData.s_vec3[id] = new();
-      foreach (var kvp in Vecs) ZDOExtraData.s_vec3[id][kvp.Key] = kvp.Value;
+      ZDOHelper.Release(ZDOExtraData.s_vec3, id);
+      foreach (var kvp in Vecs) ZDOExtraData.Set(id, kvp.Key, kvp.Value);
     }
     if (Quats.Count > 0) {
-      ZDOExtraData.s_quats[id] = new();
-      foreach (var kvp in Quats) ZDOExtraData.s_quats[id][kvp.Key] = kvp.Value;
+      ZDOHelper.Release(ZDOExtraData.s_quats, id);
+      foreach (var kvp in Quats) ZDOExtraData.Set(id, kvp.Key, kvp.Value);
     }
     if (ByteArrays.Count > 0) {
-      ZDOExtraData.s_byteArrays[id] = new();
-      foreach (var kvp in ByteArrays) ZDOExtraData.s_byteArrays[id][kvp.Key] = kvp.Value;
+      ZDOHelper.Release(ZDOExtraData.s_byteArrays, id);
+      foreach (var kvp in ByteArrays) ZDOExtraData.Set(id, kvp.Key, kvp.Value);
     }
+    zdo.IncreaseDataRevision();
   }
 
   public Dictionary<int, string> Strings = new();
@@ -196,6 +202,7 @@ public class ZDOData {
     return pkg;
   }
   public void Load(ZPackage pkg) {
+    pkg.SetPos(0);
     var num = pkg.ReadInt();
     if ((num & 1) != 0) {
       var count = pkg.ReadByte();

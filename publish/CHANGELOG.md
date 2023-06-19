@@ -1,3 +1,6 @@
+- v1.37
+  - Fixes custom data and undo/redo not working on servers.
+
 - v1.36
   - Fixes custom data.
 
