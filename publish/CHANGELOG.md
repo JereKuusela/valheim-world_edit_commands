@@ -1,3 +1,6 @@
+- v1.38
+  - Fixes some Structure Tweaks commands not working.
+
 - v1.37
   - Fixes custom data and undo/redo not working on servers.
 

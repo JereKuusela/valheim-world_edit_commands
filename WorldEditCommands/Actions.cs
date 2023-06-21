@@ -5,19 +5,10 @@ using UnityEngine;
 namespace WorldEditCommands;
 
 public static class Actions {
-
-  public static void SetBool(ZNetView obj, bool? value, int hash, bool refresh = false) {
-    var number = value.HasValue ? value.Value ? 1 : 0 : -1;
-    obj.GetZDO().Set(hash, number);
-    if (refresh)
-      Refresh(obj);
-  }
-  public static bool? ToggleBool(ZNetView obj, bool? value, int hash, bool refresh = false) {
-    var previous = obj.GetZDO().GetBool(hash, true);
+  public static bool? ToggleBool(ZNetView obj, bool? value, int hash) {
+    var previous = obj.GetZDO().GetBool(hash);
     var toggled = value ?? !previous;
     obj.GetZDO().Set(hash, toggled);
-    if (refresh)
-      Refresh(obj);
     return toggled;
   }
   public static GameObject Refresh(ZDO zdo) {

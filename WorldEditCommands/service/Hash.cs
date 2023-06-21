@@ -79,10 +79,10 @@ public static class Hash {
   public static int Wear = "override_wear".GetStableHashCode();
   public static int Fall = "override_fall".GetStableHashCode();
   public static int Growth = "override_growth".GetStableHashCode();
-  public static int Interact = "override_interact".GetStableHashCode();
-  public static int Render = "override_render".GetStableHashCode();
-  public static int Collision = "override_collision".GetStableHashCode();
-  public static int Restrict = "override_restrict".GetStableHashCode();
+  public static int NoInteract = "override_interact".GetStableHashCode();
+  public static int NoRender = "override_render".GetStableHashCode();
+  public static int NoCollision = "override_collision".GetStableHashCode();
+  public static int NoRestrict = "override_restrict".GetStableHashCode();
   public static int Boss = "override_boss".GetStableHashCode();
   public static int Smoke = "override_smoke".GetStableHashCode();
   public static int CLLC_Affix = "CL&LC effect".GetStableHashCode();

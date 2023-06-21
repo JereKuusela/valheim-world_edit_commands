@@ -62,17 +62,17 @@ public static class TweakActions {
   }
 
   private static string Print<T>(T? value) => value == null ? DEFAULT : value.ToString();
-
+  private static bool? Reverse(bool? value) => value == null ? null : !value;
   public static string Render(ZNetView view, bool? value) {
-    value = Actions.ToggleBool(view, value, Hash.Render);
+    value = !Actions.ToggleBool(view, Reverse(value), Hash.NoRender);
     return $"¤ render set to {Print(value)}.";
   }
   public static string Interact(ZNetView view, bool? value) {
-    value = Actions.ToggleBool(view, value, Hash.Interact);
+    value = !Actions.ToggleBool(view, Reverse(value), Hash.NoInteract);
     return $"¤ interact set to {Print(value)}.";
   }
   public static string Collision(ZNetView view, bool? value) {
-    value = Actions.ToggleBool(view, value, Hash.Collision);
+    value = !Actions.ToggleBool(view, Reverse(value), Hash.NoCollision);
     return $"¤ collision set to {Print(value)}.";
   }
   public static string Wear(ZNetView view, string? value) {
@@ -80,10 +80,10 @@ public static class TweakActions {
     return $"¤ wear set to {Print(value)}.";
   }
   private static int WearNumber(string? wear) {
-    if (wear == "broken") return 0;
+    if (wear == "broken") return 3;
     if (wear == "damaged") return 1;
     if (wear == "healthy") return 2;
-    return -1;
+    return 0;
   }
 
   public static string Status(ZNetView view, string? value) {
@@ -131,11 +131,11 @@ public static class TweakActions {
     return $"¤ fall set to {Print(value)}.";
   }
   private static int FallNumber(string? fall) {
-    if (fall == null) return -1;
-    if (fall == "off") return 0;
+    if (fall == null) return 0;
+    if (fall == "off") return 3;
     if (fall == "terrain") return 1;
     if (fall == "solid") return 2;
-    return -1;
+    return 0;
   }
   public static string Growth(ZNetView view, string? value) {
     var number = GrowthNumber(value);
@@ -145,11 +145,11 @@ public static class TweakActions {
     return $"¤ growth set to {Print(value)}.";
   }
   private static int GrowthNumber(string? growth) {
-    if (growth == "big") return 0;
+    if (growth == "big") return 4;
     if (growth == "big_bad") return 1;
     if (growth == "small") return 2;
     if (growth == "small_bad") return 3;
-    return -1;
+    return 0;
   }
 
   public static string Component(ZNetView view, string? value) {
@@ -164,11 +164,11 @@ public static class TweakActions {
   }
 
   public static string Restrict(ZNetView view, bool? value) {
-    Actions.SetBool(view, value, Hash.Restrict);
+    value = !Actions.ToggleBool(view, Reverse(value), Hash.NoRestrict);
     return $"¤ restrict set to {Print(value)}.";
   }
   public static string Boss(ZNetView view, bool? value) {
-    Actions.SetBool(view, value, Hash.Boss);
+    value = Actions.ToggleBool(view, value, Hash.Boss);
     return $"¤ boss set to {Print(value)}.";
   }
   public static string Hunt(ZNetView view, bool? value) {
@@ -402,7 +402,7 @@ public static class TweakActions {
   }
   public static string MaxTotal(ZNetView view, int? value) {
     Actions.SetInt(view, value, Hash.MaxTotal);
-    return $"¤ max near set to {Print(value)}.";
+    return $"¤ max total set to {Print(value)}.";
   }
   public static string SpawnCondition(ZNetView view, int? value) {
     Actions.SetInt(view, value, Hash.SpawnCondition);
