@@ -46,6 +46,7 @@ public class TweakSmelterCommand : TweakCommand {
   }
 
   public TweakSmelterCommand() {
+    AddComponentAutomatically = false;
     Component = typeof(Smelter);
     ComponentName = "smelter";
     SupportedOperations.Add("maxamount", typeof(int));

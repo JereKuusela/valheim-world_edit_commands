@@ -5,11 +5,13 @@ using UnityEngine;
 namespace Service;
 
 public class DataHelper {
-  public static void Init(GameObject obj, Vector3 pos, Quaternion rot, Vector3 scale, ZPackage data) {
+  public static void Init(GameObject obj, Vector3 pos, Quaternion rot, Vector3 scale, ZPackage? data) {
+    if (data == null && scale == Vector3.one) return;
     if (!obj.TryGetComponent<ZNetView>(out var view)) return;
     var prefab = Utils.GetPrefabName(obj).GetStableHashCode();
     ZNetView.m_initZDO = ZDOMan.instance.CreateNewZDO(pos, prefab);
-    Load(data, ZNetView.m_initZDO);
+    if (data != null)
+      Load(data, ZNetView.m_initZDO);
     ZNetView.m_initZDO.m_rotation = rot.eulerAngles;
     ZNetView.m_initZDO.Type = view.m_type;
     ZNetView.m_initZDO.Distant = view.m_distant;

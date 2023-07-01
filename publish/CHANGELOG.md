@@ -1,3 +1,7 @@
+- v1.39
+  - Changes the fermenter and smelter components not be added automatically (because they cause errors).
+  - Fixes the parameter `scale` not working on the `spawn_object` command.
+
 - v1.38
   - Fixes some Structure Tweaks commands not working.
 

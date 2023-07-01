@@ -38,6 +38,7 @@ public class TweakFermenterCommand : TweakCommand {
   }
 
   public TweakFermenterCommand() {
+    AddComponentAutomatically = false;
     Component = typeof(Fermenter);
     ComponentName = "fermenter";
     SupportedOperations.Add("speed", typeof(float));

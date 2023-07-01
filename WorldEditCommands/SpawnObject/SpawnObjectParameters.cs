@@ -8,7 +8,7 @@ class SpawnObjectParameters : SharedObjectParameters {
   public Quaternion BaseRotation;
   public Range<Vector3> Rotation = new(Vector3.zero);
   public Range<Vector3> RelativePosition = new(Vector3.zero);
-  public Vector3 From;
+  public Vector3 From = Vector3.zero;
   public Vector3? To = null;
   public Range<int> Amount = new(1);
   public string? Name;
@@ -17,13 +17,14 @@ class SpawnObjectParameters : SharedObjectParameters {
   public bool Snap = true;
   public bool? Tamed;
   public bool? Hunt;
-  public bool UseDefaultRelativePosition = true;
+  private bool UseDefaultRelativePosition = false;
   public ZPackage? Data;
 
   public SpawnObjectParameters(Terminal.ConsoleEventArgs args) {
     if (Player.m_localPlayer) {
       From = Player.m_localPlayer.transform.position;
       BaseRotation = Player.m_localPlayer.transform.rotation;
+      UseDefaultRelativePosition = true;
     }
     ParseArgs(args.Args);
   }
@@ -85,7 +86,18 @@ class SpawnObjectParameters : SharedObjectParameters {
         }
       }
     }
+    // For usability, spawn in front of the player if nothing is specified (similar to the base game command).
+    // Must be applied to From so that the undo command works correctly.
+    if (UseDefaultRelativePosition)
+      From += BaseRotation * Vector3.forward * 2.0f;
     if (To.HasValue && Radius != null)
       throw new InvalidOperationException("<color=yellow>radius</color> can't be used with <color=yellow>to</color>.");
+  }
+
+  public Vector3 GetPosition() => From + BaseRotation * Helper.RandomValue(RelativePosition);
+  public Vector3 GetPosition(int index, int max) {
+    if (To.HasValue)
+      return From + (To.Value - From) * index / (max - 1);
+    return From;
   }
 }

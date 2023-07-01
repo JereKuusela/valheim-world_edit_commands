@@ -13,9 +13,9 @@ public class SpawnObjectCommand {
     for (int i = 0; i < count; i++) {
       Vector3 spawnPosition;
       if (pars.To.HasValue)
-        spawnPosition = GetPosition(pars.From, pars.To.Value, i, count);
+        spawnPosition = pars.GetPosition(i, count);
       else {
-        spawnPosition = GetPosition(pars.From, pars.RelativePosition, pars.BaseRotation);
+        spawnPosition = pars.GetPosition();
         var random = UnityEngine.Random.insideUnitCircle * (pars.Radius?.Max ?? defaultRadius);
         if (pars.Radius != null && pars.Radius.Min != pars.Radius.Max) {
           var angle = UnityEngine.Random.Range(0f, Mathf.PI * 2f);
@@ -36,8 +36,7 @@ public class SpawnObjectCommand {
       }
       var rotation = pars.BaseRotation * Quaternion.Euler(Helper.RandomValue(pars.Rotation));
       var scale = Helper.RandomValue(pars.Scale);
-      if (pars.Data != null)
-        DataHelper.Init(prefab, spawnPosition, rotation, scale, pars.Data);
+      DataHelper.Init(prefab, spawnPosition, rotation, scale, pars.Data);
       try {
         var obj = UnityEngine.Object.Instantiate(prefab, spawnPosition, rotation);
         spawned.Add(obj);
@@ -51,17 +50,6 @@ public class SpawnObjectCommand {
     return spawned;
   }
 
-  private static Vector3 GetPosition(Vector3 basePosition, Range<Vector3> relativePosition, Quaternion rotation) {
-    var relative = Helper.RandomValue(relativePosition);
-    var position = basePosition;
-    position += rotation * Vector3.forward * relative.x;
-    position += rotation * Vector3.right * relative.z;
-    position += rotation * Vector3.up * relative.y;
-    return position;
-  }
-  private static Vector3 GetPosition(Vector3 from, Vector3 to, int index, int max) {
-    return from + (to - from) * index / (max - 1);
-  }
   private static void Manipulate(IEnumerable<GameObject> spawned, SpawnObjectParameters pars, int total) {
     foreach (var obj in spawned) {
       var view = obj.GetComponent<ZNetView>();
@@ -120,18 +108,11 @@ public class SpawnObjectCommand {
       if (itemDrop)
         count = (int)Math.Ceiling((double)count / itemDrop.m_itemData.m_shared.m_maxStackSize);
 
-      // For usability, spawn in front of the player if nothing is specified (similar to the base game command).
-      if (pars.UseDefaultRelativePosition)
-        pars.RelativePosition = new(new(2.0f, 0, 0));
-      var position = GetPosition(pars.From, pars.RelativePosition, pars.BaseRotation);
       var spawned = SpawnObject(pars, prefab, count);
       Manipulate(spawned, pars, amount);
       Player.m_localPlayer?.Message(MessageHud.MessageType.TopLeft, "Spawning object " + prefabName, spawned.Count, null);
-      args.Context.AddString("Spawned: " + prefabName + " at " + Helper.PrintVectorXZY(position));
+      args.Context.AddString("Spawned: " + prefabName + " at " + Helper.PrintVectorXZY(pars.GetPosition()));
       var spawns = spawned.Select(obj => obj.GetComponent<ZNetView>()).Where(obj => obj != null).Select(obj => obj.GetZDO()).ToList();
-      // Undo uses refPos which would disable the default relative position. So apply it to the from to keep the same position.
-      if (pars.UseDefaultRelativePosition)
-        pars.From = position;
       // from and refRot override the player based positioning (fixes undo position).
       var undoCommand = "spawn_object " + prefabName + " refRot=" + Helper.PrintAngleYXZ(pars.BaseRotation) + " from=" + Helper.PrintVectorXZY(pars.From) + " " + string.Join(" ", args.Args.Skip(2));
       UndoSpawn undo = new(spawns, undoCommand);

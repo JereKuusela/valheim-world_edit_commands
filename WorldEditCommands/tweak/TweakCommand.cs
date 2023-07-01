@@ -25,6 +25,8 @@ public abstract class TweakCommand {
   protected virtual void Postprocess(GameObject obj) { }
   protected virtual ZNetView Preprocess(Terminal context, ZNetView view) => view;
 
+  public bool AddComponentAutomatically = true;
+
   private void Execute(Terminal context, float chance, bool force, Dictionary<string, object?> operations, ZNetView[] views) {
     var scene = ZNetScene.instance;
     Dictionary<ZDOID, long> oldOwner = new();
@@ -42,7 +44,7 @@ public abstract class TweakCommand {
       // Preprocess can return null.
       if (!view) return false;
       if (ComponentName != "" && !view.GetComponentInChildren(Component)) {
-        if (force || views.Length == 1) {
+        if (force || (views.Length == 1 && AddComponentAutomatically)) {
           // Dungeons can have vegvisirs so this allows to edit them with the runestone feature.
           // However adding the runestone component wouldn't make any sense.
           if (!view.GetComponent<DungeonGenerator>())
