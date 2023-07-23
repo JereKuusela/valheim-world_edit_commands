@@ -313,6 +313,11 @@ public static class TweakActions {
     Actions.SetString(view, str, Hash.SpawnEffect);
     return $"¤ spawn effect set to {Print(str)}.";
   }
+  public static string DestroyEffect(ZNetView view, string[] value) {
+    var str = value.Length == 0 ? null : string.Join("|", value.Select(HashFirst));
+    Actions.SetString(view, str, Hash.DestroyEffect);
+    return $"¤ destroy effect set to {Print(str)}.";
+  }
   public static string UseEffect(ZNetView view, string[] value) {
     var str = value.Length == 0 ? null : string.Join("|", value.Select(HashFirst));
     Actions.SetString(view, str, Hash.UseEffect);

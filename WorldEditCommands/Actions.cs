@@ -317,8 +317,15 @@ public static class Actions {
   }
   public static void Respawn(CreatureSpawner obj) {
     if (!obj) return;
-    obj.m_nview?.GetZDO().Set("spawn_id", ZDOID.None);
-    obj.m_nview?.GetZDO().Set(Hash.AliveTime, 0L);
+    var zdo = obj.m_nview?.GetZDO();
+    if (zdo == null) return;
+    var spawnId = zdo.GetConnectionZDOID(ZDOExtraData.ConnectionType.Spawned);
+    if (!spawnId.IsNone()) {
+      if (ZDOMan.instance.m_objectsByID.TryGetValue(spawnId, out var spawnedZdo))
+        RemoveZDO(spawnedZdo);
+      ZDOExtraData.ReleaseConnection(zdo.m_uid);
+      zdo.Set(ZDOVars.s_aliveTime, 0);
+    }
   }
   public static void SetModel(GameObject obj, int index) {
     SetModel(obj.GetComponent<Character>(), index);

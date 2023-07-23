@@ -14,20 +14,20 @@ public class TweakRunestoneCommand : TweakCommand {
       return TweakActions.Topic(view, value);
     if (operation == "discover")
       return TweakActions.Discover(view, value);
-    throw new System.NotImplementedException();
+    throw new NotImplementedException();
   }
   protected override string DoOperation(ZNetView view, string operation, float? value) {
-    throw new System.NotImplementedException();
+    throw new NotImplementedException();
   }
 
   protected override string DoOperation(ZNetView view, string operation, int? value) {
-    throw new System.NotImplementedException();
+    throw new NotImplementedException();
   }
 
   protected override string DoOperation(ZNetView view, string operation, string[] value) {
     if (operation == "compendium")
       return TweakActions.Compendium(view, value);
-    throw new System.NotImplementedException();
+    throw new NotImplementedException();
   }
 
   protected override string DoOperation(ZNetView view, string operation, bool? value) {

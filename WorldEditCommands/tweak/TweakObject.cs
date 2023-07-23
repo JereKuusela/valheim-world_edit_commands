@@ -28,6 +28,8 @@ public class TweakObjectCommand : TweakCommand {
   }
 
   protected override string DoOperation(ZNetView view, string operation, string[] value) {
+    if (operation == "destroyeffect")
+      return TweakActions.DestroyEffect(view, value);
     throw new NotImplementedException();
   }
 
@@ -106,6 +108,7 @@ public class TweakObjectCommand : TweakCommand {
     SupportedOperations.Add("water", typeof(string));
     SupportedOperations.Add("creator", typeof(long));
     SupportedOperations.Add("destroy", typeof(float));
+    SupportedOperations.Add("destroyeffect", typeof(string[]));
 
     AutoComplete.Add("component", (int index) => Components);
     AutoComplete.Add("status", (int index) => index == 0 ? ParameterInfo.Create("status=<color=yellow>radius</color>,id", "Adds status area.") : index == 1 ? ParameterInfo.StatusEffects : ParameterInfo.None);
@@ -121,6 +124,7 @@ public class TweakObjectCommand : TweakCommand {
     AutoComplete.Add("water", (int index) => index == 0 ? Waters : ParameterInfo.XZY("water", "Scale", index - 1));
     AutoComplete.Add("creator", (int index) => index == 0 ? ParameterInfo.Create("creator=<color=yellow>player ID</color>", "Sets creator of objects (0 for no creator).") : ParameterInfo.None);
     AutoComplete.Add("destroy", (int index) => index == 0 ? ParameterInfo.Create("destroy=<color=yellow>seconds</color>", "Timed destruction after seconds.") : ParameterInfo.None);
+    AutoComplete.Add("destroyeffect", (int index) => TweakAutoComplete.Effect("destroyeffect", index));
     Init("tweak_object", "Modify objects");
   }
 }

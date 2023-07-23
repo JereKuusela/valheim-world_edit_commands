@@ -27,6 +27,7 @@ public static class Hash {
   public static int OverrideItems = "override_items".GetStableHashCode();
   public static int Items = "items".GetStableHashCode();
   public static int SpawnEffect = "override_spawn_effect".GetStableHashCode();
+  public static int DestroyEffect = "override_destroy_effect".GetStableHashCode();
   public static int UseEffect = "override_use_effect".GetStableHashCode();
   public static int StartEffect = "override_start_effect".GetStableHashCode();
   public static int SpawnItem = "override_spawn_item".GetStableHashCode();
