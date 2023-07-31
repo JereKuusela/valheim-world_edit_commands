@@ -44,13 +44,7 @@ public abstract class TweakCommand {
       // Preprocess can return null.
       if (!view) return false;
       if (ComponentName != "" && !view.GetComponentInChildren(Component)) {
-        if (force || (views.Length == 1 && AddComponentAutomatically)) {
-          // Dungeons can have vegvisirs so this allows to edit them with the runestone feature.
-          // However adding the runestone component wouldn't make any sense.
-          if (!view.GetComponent<DungeonGenerator>())
-            TweakActions.AddComponent(view, ComponentName);
-          return true;
-        }
+        if (force || (views.Length == 1 && AddComponentAutomatically)) return true;
         context.AddString($"Skipped: {view.name} doesn't have the component. Use <color=yellow>force</color> to add it.");
         return false;
       }
@@ -59,12 +53,20 @@ public abstract class TweakCommand {
     EditedInfo.Clear();
     foreach (var view in views) {
       var zdo = view.GetZDO();
+      EditedInfo[zdo.m_uid] = new EditData(zdo);
       oldOwner.Add(zdo.m_uid, zdo.GetOwner());
       view.ClaimOwnership();
-      EditedInfo[zdo.m_uid] = new EditData(zdo);
     }
     var count = views.Count();
     foreach (var view in views) {
+      if (ComponentName != "" && !view.GetComponentInChildren(Component)) {
+        if (force || (views.Length == 1 && AddComponentAutomatically)) {
+          // Dungeons can have vegvisirs so this allows to edit them with the runestone feature.
+          // However adding the runestone component wouldn't make any sense.
+          if (!view.GetComponent<DungeonGenerator>())
+            TweakActions.AddComponent(view, ComponentName);
+        }
+      }
       var operations2 = Postprocess(view, operations);
       foreach (var operation in operations2) {
         var type = SupportedOperations[operation.Key];
@@ -91,17 +93,16 @@ public abstract class TweakCommand {
           context.AddString(message);
       }
     }
-    foreach (var view in views) {
-      if (!view || view.GetZDO() == null || !view.GetZDO().IsValid() || !oldOwner.ContainsKey(view.GetZDO().m_uid)) continue;
+    foreach (var view in views)
       view.GetZDO().SetOwner(oldOwner[view.GetZDO().m_uid]);
-      Postprocess(Actions.Refresh(view));
-    }
     if (EditedInfo.Count > 0) {
       foreach (var info in EditedInfo)
         info.Value.Update();
       UndoEdit undo = new(EditedInfo.Select(info => info.Value));
       UndoManager.Add(undo);
     }
+    foreach (var view in views)
+      Postprocess(Actions.Refresh(view));
   }
   public Dictionary<string, Type> SupportedOperations = new();
   public Dictionary<string, Func<int, List<string>>> AutoComplete = new();

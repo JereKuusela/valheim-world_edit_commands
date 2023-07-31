@@ -188,9 +188,9 @@ public static class TweakActions {
     return $"¤ creator set to {Print(value)}.";
   }
   public static string Smoke(ZNetView view, string? value) {
-    int val = -1;
-    if (value == "off") val = 0;
-    if (value == "ignore") val = 1;
+    int val = 0;
+    if (value == "off") val = 1;
+    if (value == "ignore") val = 2;
     Actions.SetInt(view, val, Hash.Smoke);
     return $"¤ smoke set to {Print(value)}.";
   }

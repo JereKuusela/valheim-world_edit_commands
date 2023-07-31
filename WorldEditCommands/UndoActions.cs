@@ -70,10 +70,12 @@ public class UndoEdit : MonoBehaviour, IUndoAction {
   public string Undo() {
     var message = $"Changed {UndoHelper.Print(Data.Select(data => data.Zdo))}";
     foreach (var data in Data) {
-      // Could possibly edit a deletec ZDO.
-      if (!data.Zdo.IsValid()) continue;
-      data.Previous.Copy(data.Zdo);
-      Actions.Refresh(data.Zdo);
+      // Refreshed objects get a new zdo instance.
+      var zdo = ZDOMan.instance.GetZDO(data.Zdo.m_uid);
+      // Could possibly edit a deleted ZDO.
+      if (zdo == null || !zdo.IsValid()) continue;
+      data.Previous.Copy(zdo);
+      Actions.Refresh(zdo);
     }
     return message;
   }
@@ -81,10 +83,12 @@ public class UndoEdit : MonoBehaviour, IUndoAction {
   public string Redo() {
     var message = $"Changed {UndoHelper.Print(Data.Select(data => data.Zdo))}";
     foreach (var data in Data) {
-      // Could possibly edit a deletec ZDO.
-      if (!data.Zdo.IsValid()) continue;
-      data.Current.Copy(data.Zdo);
-      Actions.Refresh(data.Zdo);
+      // Refreshed objects get a new zdo instance.
+      var zdo = ZDOMan.instance.GetZDO(data.Zdo.m_uid);
+      // Could possibly edit a deleted ZDO.
+      if (zdo == null || !zdo.IsValid()) continue;
+      data.Current.Copy(zdo);
+      Actions.Refresh(zdo);
     }
     return message;
   }
