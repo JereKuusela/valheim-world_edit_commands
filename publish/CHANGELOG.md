@@ -1,3 +1,6 @@
+- v1.41
+  - Changes some tweak commnads to use unhashed object ids.
+
 - v1.40
   - Fixes undo not working for most tweak commands.
   - Fixes the parameter `smoke` not working on the `tweak_fireplace` command.

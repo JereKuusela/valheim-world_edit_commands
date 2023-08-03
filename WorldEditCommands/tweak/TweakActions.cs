@@ -35,22 +35,6 @@ public enum BossAffix {
 }
 public static class TweakActions {
   private const string DEFAULT = "default";
-  private static string HashFirst(string value) {
-    var split = value.Split(',');
-    split[0] = Actions.GetId(split[0]).ToString();
-    return string.Join(",", split);
-  }
-  private static string HashTwo(string value) {
-    var split = value.Split(',');
-    split[0] = Actions.GetId(split[0]).ToString();
-    if (split.Length > 1)
-      split[1] = Actions.GetId(split[1]).ToString();
-    return string.Join(",", split);
-  }
-  private static string HashAll(string value) {
-    var split = value.Split(',');
-    return string.Join(",", split.Select(Actions.GetId));
-  }
   private static int BiomeToInt(string value) {
     var split = value.Split(',');
     Heightmap.Biome biomes = Heightmap.Biome.None;
@@ -294,52 +278,52 @@ public static class TweakActions {
     return $"¤ discover set to {Print(value)}.";
   }
   public static string Spawns(ZNetView view, string[] value) {
-    var str = value.Length == 0 ? null : string.Join("|", value.Select(HashFirst));
+    var str = value.Length == 0 ? null : string.Join("|", value);
     Actions.SetString(view, str, Hash.SpawnSpawnArea);
     return $"¤ spawn prefabs set to {Print(str)}.";
   }
   public static string Conversions(ZNetView view, string[] value) {
-    var str = value.Length == 0 ? null : string.Join("|", value.Select(HashTwo));
+    var str = value.Length == 0 ? null : string.Join("|", value);
     Actions.SetString(view, str, Hash.Conversion);
     return $"¤ conversions set to {Print(str)}.";
   }
   public static string Items(ZNetView view, string[] value) {
-    var str = value.Length == 0 ? null : string.Join("|", value.Select(HashFirst));
+    var str = value.Length == 0 ? null : string.Join("|", value);
     Actions.SetString(view, str, Hash.OverrideItems);
     return $"¤ items set to {Print(str)}.";
   }
   public static string SpawnEffect(ZNetView view, string[] value) {
-    var str = value.Length == 0 ? null : string.Join("|", value.Select(HashFirst));
+    var str = value.Length == 0 ? null : string.Join("|", value);
     Actions.SetString(view, str, Hash.SpawnEffect);
     return $"¤ spawn effect set to {Print(str)}.";
   }
   public static string DestroyEffect(ZNetView view, string[] value) {
-    var str = value.Length == 0 ? null : string.Join("|", value.Select(HashFirst));
+    var str = value.Length == 0 ? null : string.Join("|", value);
     Actions.SetString(view, str, Hash.DestroyEffect);
     return $"¤ destroy effect set to {Print(str)}.";
   }
   public static string UseEffect(ZNetView view, string[] value) {
-    var str = value.Length == 0 ? null : string.Join("|", value.Select(HashFirst));
+    var str = value.Length == 0 ? null : string.Join("|", value);
     Actions.SetString(view, str, Hash.UseEffect);
     return $"¤ use effect set to {Print(str)}.";
   }
   public static string InputEffect(ZNetView view, string[] value) {
-    var str = value.Length == 0 ? null : string.Join("|", value.Select(HashFirst));
+    var str = value.Length == 0 ? null : string.Join("|", value);
     Actions.SetString(view, str, Hash.InputEffect);
     return $"¤ input effect set to {Print(str)}.";
   }
   public static string OutputEffect(ZNetView view, string[] value) {
-    var str = value.Length == 0 ? null : string.Join("|", value.Select(HashFirst));
+    var str = value.Length == 0 ? null : string.Join("|", value);
     Actions.SetString(view, str, Hash.OutputEffect);
     return $"¤ output effect set to {Print(str)}.";
   }
   public static string FuelEffect(ZNetView view, string[] value) {
-    var str = value.Length == 0 ? null : string.Join("|", value.Select(HashFirst));
+    var str = value.Length == 0 ? null : string.Join("|", value);
     Actions.SetString(view, str, Hash.FuelEffect);
     return $"¤ fuel effect set to {Print(str)}.";
   }
   public static string StartEffect(ZNetView view, string[] value) {
-    var str = value.Length == 0 ? null : string.Join("|", value.Select(HashFirst));
+    var str = value.Length == 0 ? null : string.Join("|", value);
     Actions.SetString(view, str, Hash.StartEffect);
     return $"¤ start effect set to {Print(str)}.";
   }
@@ -368,7 +352,7 @@ public static class TweakActions {
     return $"¤ resistances set to {Print(string.Join("|", value))}.";
   }
   public static string Attacks(ZNetView view, string[] value) {
-    var str = value.Length == 0 ? null : string.Join("|", value.Select(HashAll));
+    var str = value.Length == 0 ? null : string.Join("|", value);
     Actions.SetString(view, str, Hash.Attacks);
     return $"¤ attacks set to {Print(string.Join("|", value))}.";
   }
