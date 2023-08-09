@@ -5,8 +5,10 @@ using UnityEngine;
 
 namespace WorldEditCommands;
 
-public class TweakObjectCommand : TweakCommand {
-  protected override string DoOperation(ZNetView view, string operation, string? value) {
+public class TweakObjectCommand : TweakCommand
+{
+  protected override string DoOperation(ZNetView view, string operation, string? value)
+  {
     if (operation == "wear") return TweakActions.Wear(view, value);
     if (operation == "growth") return TweakActions.Growth(view, value);
     if (operation == "component") return TweakActions.Component(view, value);
@@ -18,22 +20,26 @@ public class TweakObjectCommand : TweakCommand {
     if (operation == "fall") return TweakActions.Fall(view, value);
     throw new NotImplementedException();
   }
-  protected override string DoOperation(ZNetView view, string operation, float? value) {
+  protected override string DoOperation(ZNetView view, string operation, float? value)
+  {
     if (operation == "destroy") return TweakActions.Destroy(view, value);
     throw new NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, int? value) {
+  protected override string DoOperation(ZNetView view, string operation, int? value)
+  {
     throw new NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, string[] value) {
+  protected override string DoOperation(ZNetView view, string operation, string[] value)
+  {
     if (operation == "destroyeffect")
       return TweakActions.DestroyEffect(view, value);
     throw new NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, bool? value) {
+  protected override string DoOperation(ZNetView view, string operation, bool? value)
+  {
     if (operation == "show") return TweakActions.Render(view, value);
     if (operation == "interact") return TweakActions.Interact(view, value);
     if (operation == "collision") return TweakActions.Collision(view, value);
@@ -42,14 +48,17 @@ public class TweakObjectCommand : TweakCommand {
     throw new NotImplementedException();
   }
 
-  protected override void Postprocess(GameObject obj) {
-    if (obj.TryGetComponent<StaticPhysics>(out var sp)) {
+  protected override void Postprocess(GameObject obj)
+  {
+    if (obj.TryGetComponent<StaticPhysics>(out var sp))
+    {
       sp.m_createTime = Time.time - 30f;
       sp.SUpdate();
     }
   }
 
-  protected override string DoOperation(ZNetView view, string operation, long? value) {
+  protected override string DoOperation(ZNetView view, string operation, long? value)
+  {
     if (operation == "creator") return TweakActions.Creator(view, value);
     throw new NotImplementedException();
   }
@@ -93,7 +102,8 @@ public class TweakObjectCommand : TweakCommand {
       "spawner",
       "spawnpoint",
   };
-  public TweakObjectCommand() {
+  public TweakObjectCommand()
+  {
     SupportedOperations.Add("component", typeof(string));
     SupportedOperations.Add("status", typeof(string));
     SupportedOperations.Add("effect", typeof(string));
@@ -111,8 +121,8 @@ public class TweakObjectCommand : TweakCommand {
     SupportedOperations.Add("destroyeffect", typeof(string[]));
 
     AutoComplete.Add("component", (int index) => Components);
-    AutoComplete.Add("status", (int index) => index == 0 ? ParameterInfo.Create("status=<color=yellow>radius</color>,id", "Adds status area.") : index == 1 ? ParameterInfo.StatusEffects : ParameterInfo.None);
-    AutoComplete.Add("effect", (int index) => index == 0 ? ParameterInfo.Create("effect=<color=yellow>radius</color>,id", "Adds effect area.") : ParameterInfo.EffectAreas);
+    AutoComplete.Add("status", (int index) => index == 0 ? ParameterInfo.Create("status=<color=yellow>radius</color>,id,playeronly", "Adds status area.") : index == 1 ? ParameterInfo.StatusEffects : ParameterInfo.None);
+    AutoComplete.Add("effect", (int index) => index == 0 ? ParameterInfo.Create("effect=<color=yellow>radius</color>,id,playeronly", "Adds effect area.") : ParameterInfo.EffectAreas);
     AutoComplete.Add("weather", (int index) => index == 0 ? ParameterInfo.Create("weather=<color=yellow>radius</color>,id,instant,dungeon", "Adds weather area.") : index == 1 ? ParameterInfo.Environments : index == 2 ? ParameterInfo.Create("weather=radius,id,<color=yellow>instant</color>,dungeon", "If given, the weather is changed instantly.") : ParameterInfo.None);
     AutoComplete.Add("event", (int index) => index == 0 ? ParameterInfo.Create("event=<color=yellow>radius</color>,id", "Adds event area.") : index == 1 ? ParameterInfo.Events : ParameterInfo.None);
     AutoComplete.Add("collision", (int index) => ParameterInfo.Create("collision=<color=yellow>true/false</color> or no value to toggle.", "Sets object collision."));

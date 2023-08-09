@@ -6,13 +6,13 @@ Install on the admin client (modding [guide](https://youtu.be/L9ljm2eKLrk)).
 
 Install also [Server Devcommands](https://valheim.thunderstore.io/package/JereKuusela/Server_devcommands/).
 
-# Tutorials
+## Tutorials
 
-- Basic usage + commands: https://youtu.be/Bwkb3XadSl0 (28 minutes, created by StonedProphet)
-- Structure Tweaks commands: https://youtu.be/OaGO9Vis6uE (16 minutes, created by StonedProphet)
-- Spawner Tweaks commands: https://youtu.be/mS59BMvR5vY (22 minutes, created by StonedProphet)
+- Basic usage + commands: <https://youtu.be/Bwkb3XadSl0> (28 minutes, created by StonedProphet)
+- Structure Tweaks commands: <https://youtu.be/OaGO9Vis6uE> (16 minutes, created by StonedProphet)
+- Spawner Tweaks commands: <https://youtu.be/mS59BMvR5vY> (22 minutes, created by StonedProphet)
 
-# Commands
+## Commands
 
 This mods add 4 new commands. Most parameters are given as named parameters that have a "key=value" format (or just "key" if no value is needed). All of them are optional and can be put in any order. All keys and some values are case insensitive too.
 
@@ -33,9 +33,9 @@ Following parameters are available:
 - `angle=degrees`: Direction of the rectangle when used with `rect`.
 - `baby`: Prevents offspring from growing up.
 - `copy`: Copies most of the ZDO data to the clipboard. Excludes data:
-	- Object scale (redundant because scale usually comes from the spawn system).
-	- Creature spawn coordinates (harmful because creatures try returning to the spawn coordinates when idle).
-	- LocationProxy data (redundant because the location spawn system sets this).
+  - Object scale (redundant because scale usually comes from the spawn system).
+  - Creature spawn coordinates (harmful because creatures try returning to the spawn coordinates when idle).
+  - LocationProxy data (redundant because the location spawn system sets this).
 - `copy=all`: Copies all of the ZDO data to the clipboard.
 - `copy=key1,key2,...`: Copies give data keys to the clipboard. See bottom of the file for available keys.
 - `center`: Sets `rotate` center point at player position.
@@ -53,7 +53,7 @@ Following parameters are available:
 - `fuel=number`: Sets the fuel amount. Without number, prints the fuel amount.
 - `from=x,z,y`: Same as the `center`.
 - `height`: Maximum height from the `center` point (default is 1000 meters).
-- `id=id1,id2,...`: List of included ids. Supports starts with, ends with or contains by using "*". Default is `*` that allows all objects which don't start with "_". 
+- `id=id1,id2,...`: List of included ids. Supports starts with, ends with or contains by using "*". Default is `*` that allows all objects which don't start with "_".
 - `ignore=id1,id2,..`: List of ignored ids. Supports starts with, ends with or contains by using "*"
 - `info`: Prints information of objects.
 - `level=integer`: Sets levels for creatures (level = stars + 1).
@@ -87,7 +87,7 @@ Additional style parameters:
 
 Note: Creatures reset their style when attacking.
 
-### Examples
+### Examples: Object
 
 - `object radius=50 move=-5-5,-5,5`: Randomly moves all objects within 50 meters.
 - `object move=5`: Moves the targeted object 5 meters away from you.
@@ -106,9 +106,10 @@ Some new commands are added if these mods are installed. They all start with the
 Most commands can be used on any object. When editing a single object, the script component is automatically added if missing. When editing multiple objects, `force` parameter needs to be used to add missing components.
 
 `tweak_object`:
+
 - `component=name`: Adds behavior / script component.
 - `creator=player id`: Sets the piece creator. Use 0 for no creator.
-- `effect=radius,id1,id2,...`: Adds forced effect area (heat, fire, player base, burning, no monsters, warm cozy area).
+- `effect=radius,id1,id2,...,playeronly`: Adds forced effect area (heat, fire, player base, burning, no monsters, warm cozy area). Putting 1 to playeronly makes the effect only affect players.
 - `event=radius,id`: Adds forced random event area.
 - `collision=true/false`: Sets whether the object has collision. No value to toggle.
 - `destoy=seconds`: Adds timed destroy after given seconds.
@@ -116,7 +117,7 @@ Most commands can be used on any object. When editing a single object, the scrip
 - `growth=big/big_bad/small/small_bad`: Overrides the plant visual wear (and prevents growth).
 - `interact=true/false`: Sets whether the object can be interacted with. No value to toggle.
 - `show=true/false`: Sets whether the object is visible. No value to toggle.
-- `status=radius,id`: Adds forced status effect area.
+- `status=radius,id,playeronly`: Adds forced status effect area. Putting 1 to playeronly makes the effect only affect players.
 - `wear=broken/damaged/healthy`: Overrides the object visual wear.
 - `weather=radius,id,instant,dungeon`: Adds forced weather area. If third parameter is given, the weather changes instantly. Fourth parameter can be used to change dungeon weather.
   - `weather=5,AshRain,true` adds a 5 meter radius Ashrain area that changes the weather instantly.
@@ -124,15 +125,18 @@ Most commands can be used on any object. When editing a single object, the scrip
 - `water=name,x,z,y`: Adds a water surface.
 
 `tweak_chest`:
+
 - `name=text`: Display name. Use _ as the space.
 - `unlock=true/false`: Allows ignoring wards. No value to toggle.
 
 Note: Spawner Tweaks adds more parameters for `tweak_chest`.
 
 `tweak_door`:
+
 - `unlock=true/false`: Allows ignoring wards. No value to toggle.
 
 `tweak_dungeon`:
+
 - `enter_hover=text`: Changes the hover text of the dungeon entrance. Use _ as the space.
 - `enter_text=text`: Changes the text after entering the dungeon. Use _ as the space.
 - `exit_hover=text`: Changes the hover text of the dungeon exut. Use _ as the space.
@@ -140,12 +144,15 @@ Note: Spawner Tweaks adds more parameters for `tweak_chest`.
 - `weather=id`: Replaced the dungeon environment.
 
 `tweak_fireplace`:
+
 - `smoke=off/on/ignore`: Smoke behavior.
 
 `tweak_portal`:
+
 - `restrict=false`: Allows teleporting with any items.
 
 `tweak_runestone`:
+
 - `discover=id,pintext,pintype,showmap`: Location discovery. If showmap=1, then opens the map automatically.
   - This works for vegvisirs in dungeons too.
 - `name=text`: Display name. Use _ as the space.
@@ -153,7 +160,7 @@ Note: Spawner Tweaks adds more parameters for `tweak_chest`.
 - `topic=text`: Topic shown with the text. Use _ as the space.
 - `compendium=text`: Label added to the compendium. Use _ as the space. Start with - to remove the label.
 
-### Examples
+### Examples: Structure Tweaks
 
 - `tweak_runestone compendium=Hello compendium=-Hi text=Stuff`: Adds Hello entry to the compendium while removing the Hi entry.
 
@@ -162,6 +169,7 @@ Note: Spawner Tweaks adds more parameters for `tweak_chest`.
 Four new commands that share many parameters with the `object` command.
 
 `tweak_altar`:
+
 - `amount=number`: Amount of needed items to interact.
 - `delay=seconds`: Duration of the spawning.
 - `faction=text`: Determines which creatures are considered hostile.
@@ -186,6 +194,7 @@ Four new commands that share many parameters with the `object` command.
 - `useeffect=id,flag`: Effects when used. For random rotation, use 1 as the flag.
 
 `tweak_beehive`:
+
 - `biome=biome1,biome2,...`: List of active biomes.
 - `coveroffset=x,z,y`: Offset for the cover calculation.
 - `maxamount=number`: Maximum amount of production.
@@ -204,6 +213,7 @@ Four new commands that share many parameters with the `object` command.
 - `textspace=text`: Text when covered. Use _ as the space.
 
 `tweak_chest`:
+
 - `name=text`: Display name. Use _ as the space.
 - `item=id,weight,minamount,maxamount`: Loot item. Weight is the relative chance compared to other items.
 - `maxamount=number`: Maximum amount of items.
@@ -211,6 +221,7 @@ Four new commands that share many parameters with the `object` command.
 - `respawn=minutes`: Respawn time for items. Automatically sets `item`, `maxamount` and `minamount` based on chest contents if not given in the command.
 
 `tweak_creature`:
+
 - `affix=name`: Sets the CLLC affix (if CLLC is installed).
 - `attacks=id1,id2,...`: Sets the available attacks. If `attacks` is given multiple times, the attack set is randomly selected.
 - `boss=true/false`: Sets the boss health bar. No value to toggle.
@@ -224,6 +235,7 @@ Four new commands that share many parameters with the `object` command.
 - `resistance=type,modifier`: Sets a damage resistance.
 
 `tweak_fermenter`:
+
 - `conversion=from,to,amount`: Conversion recipes.
 - `inputeffect=id,flag`: Effects when adding a new item. For random rotation, use 1 as the flag.
 - `outputeffect=id,flag`: Effects when producing a new item. For random rotation, use 1 as the flag.
@@ -231,11 +243,13 @@ Four new commands that share many parameters with the `object` command.
 - `useeffect=id,flag`: Effects when using the tap. For random rotation, use 1 as the flag.
 
 `tweak_itemstand`:
+
 - `name=text`: Display name. Use _ as the space.
 - `item=id,variant`: Attached item. Variant is a number.
 - `respawn=minutes`: Respawn time for items. Automatically sets the `item` based on the current item.
 
 `tweak_pickable`:
+
 - `amount=number`: Amount of dropped items.
 - `name=text`: Display name. Use _ as the space.
 - `respawn=minutes`: Respawn time. Must be an integer (no decimals).
@@ -244,6 +258,7 @@ Four new commands that share many parameters with the `object` command.
 - `useeffect=id,flag`: Effects when used. For random rotation, use 1 as the flag.
 
 `tweak_smelter`:
+
 - `conversion=from,to`: Conversion recipes.
 - `fuel=id`: Fuel item.
 - `fuelusage=number`: Required fuel per conversion.
@@ -255,6 +270,7 @@ Four new commands that share many parameters with the `object` command.
 - `speed=number`: Conversion speed in seconds.
 
 `tweak_spawner`:
+
 - `faction=text`: Determines which creatures are considered hostile.
 - `farradius=meters`: Radius for `maxtotal`.
 - `respawn=seconds`: Respawn time.
@@ -274,6 +290,7 @@ Four new commands that share many parameters with the `object` command.
 - `triggerdistance=meters`: Required distance to activate the spawner.
 
 `tweak_spawnpoint`:
+
 - `faction=text`: Determines which creatures are considered hostile.
 - `levelchance=percent`: Level up chance (from 0 to 100).
 - `maxlevel=number`: Maximum level (level 1 = no star).
@@ -287,7 +304,7 @@ Four new commands that share many parameters with the `object` command.
 - `triggerdistance=meters`: Required distance to activate the spawn point.
 - `triggernoise=meters`: Required noise to activate the spawn point.
 
-### Examples
+### Examples: Spawner Tweaks
 
 - `tweak_pickable use_effect=[sfx/vfx] use_effect=[sfx/vfx]`: Makes a pickable to cause two effects when picked.
 - `tweak_spawner spawn=Boar spawn=Deer`: Makes any object spawn both boars and deer.
@@ -333,7 +350,7 @@ Additional style parameters:
 
 Note: Creatures reset their style when attacking.
 
-### Examples
+### Examples: Spawn Object
 
 - `spawn_object StatueCorqi rot=0-360 amount=10 radius=10`: Spawns 10 corqi status within 10 meters that have a random rotation. Undo/redo can be used to reroll the positions and rotations.
 - `spawn_object Rock_4 scale=0.5-5 rot=0-360 amount=200 radius=100`: Spawns 200 rocks with a random rotation and a random scale.
@@ -373,13 +390,13 @@ Following parameters are available:
 - `angle=degrees`: Determines the direction. Cardinal directions like n, ne, e, se, s, sw, w and nw work as a value too. Uses the player's direction if not given (45 degrees precision).
 - `blockcheck`: Excludes terrain that is under structures or other objects. This can be used to create specific shapes.
 - `blockcheck=on/off/inverse`:
-	- on: Excludes terrain that is under structures or other objects.
-	- off: All terrain is affected (default).
-	- inverse: Only includes terrain that is under structures or other objects.
+  - on: Excludes terrain that is under structures or other objects.
+  - off: All terrain is affected (default).
+  - inverse: Only includes terrain that is under structures or other objects.
 - `circle=number` or `circle=min-max`: Determines the radius of the affected terrain.
 - `delta=meters`: Sets the difference from the original elevation. Without the parameter, resets terrain altitude changes.
 - `from=x,z,y`: Overwrites the player's position. Allows fixing the current position for more precise editing. The y coordinate can be used to override the current ground altitude.
-- `id=id1,id2,...`: List of included ids. Supports starts with, ends with or contains by using "*". Default is `*` that allows all objects which don't start with "_". 
+- `id=id1,id2,...`: List of included ids. Supports starts with, ends with or contains by using "*". Default is `*` that allows all objects which don't start with "_".
 - `ignore=id1,id2,..`: List of ignored ids. Supports starts with, ends with or contains by using "*"
 - `level=altitude`: Sets terrain height to the given altitude. If not given, uses the ground altitude below the player.
 - `lower=meters`: Lowers terrain by X meters. Same as `raise` when a negative value is used.
@@ -387,9 +404,9 @@ Following parameters are available:
 - `min=altitude`: Raises terrain below the given altitude to the altitude.
 - `offset=forward,right,up`: Moves the targeted position while still using the altitude of the player's position.
 - `smooth=number`: Determines how gradually the changes are applied (from 0.0 to 1.0).
-	- 1.0: All of the terrain gets reduced changes (except the very center).
-	- 0.5: Half of the terrain gets reduced changes.
-	- 0.0: No reduction (default).
+  - 1.0: All of the terrain gets reduced changes (except the very center).
+  - 0.5: Half of the terrain gets reduced changes.
+  - 0.0: No reduction (default).
 - `paint=value`: Sets the terrain material (cultivated, grass, grass_dark,dirt, patches, paved, paved_dark, paved_dirt or paved_moss).
 - `paint=dirt,cultivated,paved,vegetation`: Sets custom terrain material (values from 0.0 to 1.0).
 - `raise=meters`: Raises terrain by X meters. Same as `lower` when a negative value is used.
@@ -401,9 +418,9 @@ Following parameters are available:
 - `void`: Removes the terrain surface. Ignores `smooth` parameter.
 - `within=min-max`: Only includes terrain that is within the given altitude range.
 
-### Examples
+### Examples: Terrain
 
-- `terrain level circle=10`: Sets terrain height within 10 meters (20 meters diameter) to the same level as below you. 
+- `terrain level circle=10`: Sets terrain height within 10 meters (20 meters diameter) to the same level as below you.
 - `terrain level terrain raise=4 rect=4 smooth=1 paint=paved`: Creates a pyramid.
 - `terrain level raise=4 rect=4;terrain lower=4 rect=4 smooth=1 paint=paved`: Creates a pyramid shaped hole.
 - `terrain slope rect=5 from=10,10 to=10,20`: Creates a slope between two positions (10 meters width).
@@ -416,10 +433,10 @@ Following parameters are available:
 - `alias level terrain level circle=$$`: New command `level [value]` for easier leveling.
 - `alias level terrain level rect=$$`: New command `level_sq [value]` for easier leveling.
 
-# Mechanics
+## Mechanics
 
 Any changes made by the mod are compatible with unmodded clients which adds some significant restrictions to some commands.
-	
+
 ### Creature style
 
 Creatures overwrite their style when they try to attack. So altering their style has mainly three uses:
@@ -456,11 +473,11 @@ Static objects only synchronize their position and rotation when loaded. This me
 
 This shouldn't cause any issues unless objects are moved long distances (which might cause issues anyways).
 
-# ZDO data keys
+## ZDO data keys
 
 Most should be self-explanatory. More explanation will be added later.
 
-## Vanilla keys
+### Vanilla keys
 
 - `addedDefaultItems`:
 - `ammo`: object ammo
@@ -477,7 +494,7 @@ Most should be self-explanatory. More explanation will be added later.
 - `items`:
 - `level`:
 - `location`:
-- `PlantTime`: 
+- `PlantTime`:
 - `pose`:
 - `quality`:
 - `RandomSkillFactor`
@@ -493,7 +510,7 @@ Most should be self-explanatory. More explanation will be added later.
 - `text`:
 - `variant`:
 
-## Modded keys
+### Modded keys
 
 - `CL&LC effect`:
 - `override_amount`:
@@ -577,7 +594,7 @@ Most should be self-explanatory. More explanation will be added later.
 - `override_wear`:
 - `override_weather`:
 
-# Credits
+## Credits
 
 Thanks for Azumatt for creating the mod icon!
 
