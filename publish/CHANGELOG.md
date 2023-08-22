@@ -1,3 +1,6 @@
+- v1.42
+  - Fixed for the new patch.
+
 - v1.41
   - Changes some tweak commnads to use unhashed object ids.
 
@@ -11,9 +14,3 @@
 
 - v1.38
   - Fixes some Structure Tweaks commands not working.
-
-- v1.37
-  - Fixes custom data and undo/redo not working on servers.
-
-- v1.36
-  - Fixes custom data.
