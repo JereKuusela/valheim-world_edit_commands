@@ -111,25 +111,21 @@ public static class TweakActions
   }
   public static string EnterText(ZNetView view, string? value)
   {
-    value = value == null ? value : value.Replace("_", " ");
     Actions.SetString(view, value, Hash.DungeonEnterText);
     return $"¤ enter text set to {Print(value)}.";
   }
   public static string ExitText(ZNetView view, string? value)
   {
-    value = value == null ? value : value.Replace("_", " ");
     Actions.SetString(view, value, Hash.DungeonExitText);
     return $"¤ exit text set to {Print(value)}.";
   }
   public static string EnterHover(ZNetView view, string? value)
   {
-    value = value == null ? value : value.Replace("_", " ");
     Actions.SetString(view, value, Hash.DungeonEnterHover);
     return $"¤ enter hover set to {Print(value)}.";
   }
   public static string ExitHover(ZNetView view, string? value)
   {
-    value = value == null ? value : value.Replace("_", " ");
     Actions.SetString(view, value, Hash.DungeonExitHover);
     return $"¤ exit hover set to {Print(value)}.";
   }
@@ -272,61 +268,52 @@ public static class TweakActions
   }
   public static string Name(ZNetView view, string? value)
   {
-    value = value == null ? value : value.Replace("_", " ");
     Actions.SetString(view, value, Hash.OverrideName);
     return $"¤ name set to {Print(value)}.";
   }
   public static string Text(ZNetView view, string? value)
   {
-    value = value == null ? value : value.Replace("_", " ");
     Actions.SetString(view, value, Hash.OverrideText);
     return $"¤ text set to {Print(value)}.";
   }
   public static string TextBiome(ZNetView view, string? value)
   {
-    value = value == null ? value : value.Replace("_", " ");
     Actions.SetString(view, value, Hash.TextBiome);
     return $"¤ biome text set to {Print(value)}.";
   }
   public static string TextSpace(ZNetView view, string? value)
   {
-    value = value == null ? value : value.Replace("_", " ");
     Actions.SetString(view, value, Hash.TextSpace);
     return $"¤ space text set to {Print(value)}.";
   }
   public static string TextSleep(ZNetView view, string? value)
   {
-    value = value == null ? value : value.Replace("_", " ");
     Actions.SetString(view, value, Hash.TextSleep);
     return $"¤ sleep text set to {Print(value)}.";
   }
   public static string TextHappy(ZNetView view, string? value)
   {
-    value = value == null ? value : value.Replace("_", " ");
     Actions.SetString(view, value, Hash.TextHappy);
     return $"¤ happy text set to {Print(value)}.";
   }
   public static string TextCheck(ZNetView view, string? value)
   {
-    value = value == null ? value : value.Replace("_", " ");
     Actions.SetString(view, value, Hash.TextCheck);
     return $"¤ check text set to {Print(value)}.";
   }
   public static string TextExtract(ZNetView view, string? value)
   {
-    value = value == null ? value : value.Replace("_", " ");
     Actions.SetString(view, value, Hash.TextExtract);
     return $"¤ extract text set to {Print(value)}.";
   }
   public static string Compendium(ZNetView view, string[] value)
   {
-    var str = value.Length == 0 ? null : string.Join("|", value).Replace("_", " ");
+    var str = value.Length == 0 ? null : string.Join("|", value);
     Actions.SetString(view, str, Hash.Compendium);
     return $"¤ compendium set to {Print(value)}.";
   }
   public static string Topic(ZNetView view, string? value)
   {
-    value = value == null ? value : value.Replace("_", " ");
     Actions.SetString(view, value, Hash.Topic);
     return $"¤ topic set to {Print(value)}.";
   }
@@ -409,6 +396,11 @@ public static class TweakActions
   {
     Actions.SetString(view, value, Hash.Faction);
     return $"¤ faction set to {Print(value)}.";
+  }
+  public static string Command(ZNetView view, string? value)
+  {
+    Actions.SetString(view, value, Hash.Command);
+    return $"¤ command set to {Print(value)}.";
   }
   private static string Resistance(string value)
   {

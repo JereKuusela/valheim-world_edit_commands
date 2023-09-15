@@ -1,3 +1,6 @@
+- v1.43
+  - Adds parameter command to the `tweak_altar` command.
+
 - v1.42
   - Fixed for the new patch.
 

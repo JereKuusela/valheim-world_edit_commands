@@ -126,7 +126,7 @@ Most commands can be used on any object. When editing a single object, the scrip
 
 `tweak_chest`:
 
-- `name=text`: Display name. Use _ as the space.
+- `name=text`: Display name. Put " around the value if you use spaces.
 - `unlock=true/false`: Allows ignoring wards. No value to toggle.
 
 Note: Spawner Tweaks adds more parameters for `tweak_chest`.
@@ -137,10 +137,10 @@ Note: Spawner Tweaks adds more parameters for `tweak_chest`.
 
 `tweak_dungeon`:
 
-- `enter_hover=text`: Changes the hover text of the dungeon entrance. Use _ as the space.
-- `enter_text=text`: Changes the text after entering the dungeon. Use _ as the space.
-- `exit_hover=text`: Changes the hover text of the dungeon exut. Use _ as the space.
-- `exit_text=text`: Changes the text after exiting the dungeon. Use _ as the space.
+- `enter_hover="text"`: Changes the hover text of the dungeon entrance. Put " around the value if you use spaces.
+- `enter_text="text"`: Changes the text after entering the dungeon. Put " around the value if you use spaces.
+- `exit_hover="text"`: Changes the hover text of the dungeon exut. Put " around the value if you use spaces.
+- `exit_text="text"`: Changes the text after exiting the dungeon. Put " around the value if you use spaces.
 - `weather=id`: Replaced the dungeon environment.
 
 `tweak_fireplace`:
@@ -155,14 +155,14 @@ Note: Spawner Tweaks adds more parameters for `tweak_chest`.
 
 - `discover=id,pintext,pintype,showmap`: Location discovery. If showmap=1, then opens the map automatically.
   - This works for vegvisirs in dungeons too.
-- `name=text`: Display name. Use _ as the space.
-- `text=text`: Use text. Use _ as the space.
-- `topic=text`: Topic shown with the text. Use _ as the space.
-- `compendium=text`: Label added to the compendium. Use _ as the space. Start with - to remove the label.
+- `name="text"`: Display name. Put " around the value if you use spaces.
+- `text="text"`: Use text. Put " around the value if you use spaces.
+- `topic="text"`: Topic shown with the text. Put " around the value if you use spaces.
+- `compendium="text"`: Label added to the compendium. Put " around the value if you use spaces. Start with - to remove the label.
 
 ### Examples: Structure Tweaks
 
-- `tweak_runestone compendium=Hello compendium=-Hi text=Stuff`: Adds Hello entry to the compendium while removing the Hi entry.
+- `tweak_runestone compendium="Hello world!" compendium=-Hi text=Stuff`: Adds Hello world! entry to the compendium while removing the Hi entry.
 
 ### Spawner Tweaks mod
 
@@ -171,6 +171,13 @@ Four new commands that share many parameters with the `object` command.
 `tweak_altar`:
 
 - `amount=number`: Amount of needed items to interact.
+- `command="text"`: Command to run when interacted. Put " around the value if you use spaces. Use following special values to get altar coordinates:
+  - $$x: x coordinate
+  - $$y: y coordinate
+  - $$z: z coordinate
+  - $$i: zone x
+  - $$j: zone y
+  - $$a: angle
 - `delay=seconds`: Duration of the spawning.
 - `faction=text`: Determines which creatures are considered hostile.
 - `itemstandprefix=text`: Prefix for included item stands.
@@ -179,7 +186,7 @@ Four new commands that share many parameters with the `object` command.
 - `levelchance=percent`: Level up chance (from 0 to 100).
 - `maxlevel=number`: Maximum level (level 1 = no star).
 - `minlevel=number`: Minimum level (level 1 = no star).
-- `name=text`: Display name. Use _ as the space.
+- `name=text`: Display name. Put " around the value if you use spaces.
 - `respawn=minutes`: How often the altar can be used.
 - `spawn=id`: Spawned item or object.
 - `spawndata=base64 encoded`: Sets the ZDO data, for example when using `object copy`.
@@ -190,7 +197,7 @@ Four new commands that share many parameters with the `object` command.
 - `spawnoffset=meters`: Spawn distance from the ground.
 - `spawnradius=meters`: Maximum spawn radius.
 - `starteffect=id,flag`: Effects when the spawn is started. For random rotation, use 1 as the flag.
-- `text=text`: Use text. Use _ as the space.
+- `text="text"`: Use text. Put " around the value if you use spaces.
 - `useeffect=id,flag`: Effects when used. For random rotation, use 1 as the flag.
 
 `tweak_beehive`:
@@ -199,22 +206,22 @@ Four new commands that share many parameters with the `object` command.
 - `coveroffset=x,z,y`: Offset for the cover calculation.
 - `maxamount=number`: Maximum amount of production.
 - `maxcover=number`: Coverage limit (from 0.0 to 1.0).
-- `name=text`: Display name. Use _ as the space.
+- `name="text"`: Display name. Put " around the value if you use spaces.
 - `spawn=id`: Produced item.
 - `spawncondition=flag`: 1 = produces also during the night.
 - `spawneffect=id,flag`: Effects when taking the items. For random rotation, use 1 as the flag.
 - `spawnoffset=x,z,y`: Offset for the produced items.
 - `speed=seconds`: Interval for production.
-- `textbiome=text`: Text for wrong biome. Use _ as the space.
-- `textcheck=text`: Text for checking the amount. Use _ as the space.
-- `textextract=text`: Text for taking the items. Use _ as the space.
-- `texthappy=text`: Text when being happy. Use _ as the space.
-- `textsleep=text`: Text when sleeping. Use _ as the space.
-- `textspace=text`: Text when covered. Use _ as the space.
+- `textbiome="text"`: Text for wrong biome. Put " around the value if you use spaces.
+- `textcheck="text"`: Text for checking the amount. Put " around the value if you use spaces.
+- `textextract="text"`: Text for taking the items. Put " around the value if you use spaces.
+- `texthappy="text"`: Text when being happy. Put " around the value if you use spaces.
+- `textsleep="text"`: Text when sleeping. Put " around the value if you use spaces.
+- `textspace="text"`: Text when covered. Put " around the value if you use spaces.
 
 `tweak_chest`:
 
-- `name=text`: Display name. Use _ as the space.
+- `name="text"`: Display name. Put " around the value if you use spaces.
 - `item=id,weight,minamount,maxamount`: Loot item. Weight is the relative chance compared to other items.
 - `maxamount=number`: Maximum amount of items.
 - `minamount=number`: Minimum amount of items.
@@ -231,7 +238,7 @@ Four new commands that share many parameters with the `object` command.
 - `hunt=true/false`: Sets the extra aggressiveness mode.
 - `item=id,chance,minamount,maxamount,flags`: Item drop. Sum up: 1 = star multiplier, 2 = one per player.
 - `level=number`: Level (level 1 = no star).
-- `name=text`: Display name. Use _ as the space.
+- `name="text"`: Display name. Put " around the value if you use spaces.
 - `resistance=type,modifier`: Sets a damage resistance.
 
 `tweak_fermenter`:
@@ -244,14 +251,14 @@ Four new commands that share many parameters with the `object` command.
 
 `tweak_itemstand`:
 
-- `name=text`: Display name. Use _ as the space.
+- `name="text"`: Display name. Put " around the value if you use spaces.
 - `item=id,variant`: Attached item. Variant is a number.
 - `respawn=minutes`: Respawn time for items. Automatically sets the `item` based on the current item.
 
 `tweak_pickable`:
 
 - `amount=number`: Amount of dropped items.
-- `name=text`: Display name. Use _ as the space.
+- `name="text"`: Display name. Put " around the value if you use spaces.
 - `respawn=minutes`: Respawn time. Must be an integer (no decimals).
 - `spawn=id`: Spawned item or object.
 - `spawnoffset=meters`: Spawn distance from the ground.

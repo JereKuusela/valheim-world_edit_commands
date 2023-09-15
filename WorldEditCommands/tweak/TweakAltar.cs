@@ -4,8 +4,10 @@ using ServerDevcommands;
 
 namespace WorldEditCommands;
 
-public class TweakAltarCommand : TweakCommand {
-  protected override string DoOperation(ZNetView view, string operation, string? value) {
+public class TweakAltarCommand : TweakCommand
+{
+  protected override string DoOperation(ZNetView view, string operation, string? value)
+  {
     if (operation == "spawndata")
       return TweakActions.SpawnData(view, value);
     if (operation == "spawn")
@@ -24,9 +26,12 @@ public class TweakAltarCommand : TweakCommand {
       return TweakActions.ItemOffset(view, value);
     if (operation == "faction")
       return TweakActions.Faction(view, value);
+    if (operation == "command")
+      return TweakActions.Command(view, value);
     throw new NotImplementedException();
   }
-  protected override string DoOperation(ZNetView view, string operation, float? value) {
+  protected override string DoOperation(ZNetView view, string operation, float? value)
+  {
     if (operation == "levelchance")
       return TweakActions.LevelChance(view, value);
     if (operation == "respawn")
@@ -44,7 +49,8 @@ public class TweakAltarCommand : TweakCommand {
     throw new NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, int? value) {
+  protected override string DoOperation(ZNetView view, string operation, int? value)
+  {
     if (operation == "minlevel")
       return TweakActions.MinLevel(view, value);
     if (operation == "maxlevel")
@@ -54,7 +60,8 @@ public class TweakAltarCommand : TweakCommand {
     throw new NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, string[] value) {
+  protected override string DoOperation(ZNetView view, string operation, string[] value)
+  {
     if (operation == "starteffect")
       return TweakActions.StartEffect(view, value);
     if (operation == "spawneffect")
@@ -64,15 +71,18 @@ public class TweakAltarCommand : TweakCommand {
     throw new NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, bool? value) {
+  protected override string DoOperation(ZNetView view, string operation, bool? value)
+  {
     throw new NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, long? value) {
+  protected override string DoOperation(ZNetView view, string operation, long? value)
+  {
     throw new NotImplementedException();
   }
 
-  public TweakAltarCommand() {
+  public TweakAltarCommand()
+  {
     Component = typeof(OfferingBowl);
     ComponentName = "altar";
     SupportedOperations.Add("minlevel", typeof(int));
@@ -97,6 +107,7 @@ public class TweakAltarCommand : TweakCommand {
     SupportedOperations.Add("globalkey", typeof(string));
     SupportedOperations.Add("faction", typeof(string));
     SupportedOperations.Add("spawndata", typeof(string));
+    SupportedOperations.Add("command", typeof(string));
 
     AutoComplete.Add("minlevel", (int index) => index == 0 ? ParameterInfo.Create("minlevel=<color=yellow>number</color>", "Minimum level (level 1 = no star). No value to reset.") : ParameterInfo.None);
     AutoComplete.Add("maxlevel", (int index) => index == 0 ? ParameterInfo.Create("maxlevel=<color=yellow>number</color>", "Maximum level (level 1 = no star). No value to reset.") : ParameterInfo.None);
@@ -116,6 +127,7 @@ public class TweakAltarCommand : TweakCommand {
     AutoComplete.Add("spawnitem", (int index) => index == 0 ? ParameterInfo.ItemIds : ParameterInfo.None);
     AutoComplete.Add("respawn", (int index) => index == 0 ? ParameterInfo.Create("respawn=<color=yellow>minutes/false</color>", "Respawn time. No value to reset.") : ParameterInfo.None);
     AutoComplete.Add("levelchance", (int index) => index == 0 ? ParameterInfo.Create("levelchance=<color=yellow>percent</color>", "Level up chance (from 0 to 100). No value to reset.") : ParameterInfo.None);
+    AutoComplete.Add("command", (int index) => index == 0 ? ParameterInfo.Create("command=<color=yellow>text</color>", "Command to run when interacted. No value to reset.") : ParameterInfo.None);
     AutoComplete.Add("spawneffect", (int index) => TweakAutoComplete.Effect("spawneffect", index));
     AutoComplete.Add("starteffect", (int index) => TweakAutoComplete.Effect("starteffect", index));
     AutoComplete.Add("useeffect", (int index) => TweakAutoComplete.Effect("useeffect", index));
