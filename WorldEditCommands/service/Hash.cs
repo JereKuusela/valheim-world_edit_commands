@@ -95,6 +95,7 @@ public static class Hash
   public static int Text = "text".GetStableHashCode();
   public static int Pose = "pose".GetStableHashCode();
   public static int Item = "item".GetStableHashCode();
+  public static int HasFields = "HasFields".GetStableHashCode();
   public static int Variant = "variant".GetStableHashCode();
   public static int Tamed = "tamed".GetStableHashCode();
   public static int HuntPlayer = "huntplayer".GetStableHashCode();

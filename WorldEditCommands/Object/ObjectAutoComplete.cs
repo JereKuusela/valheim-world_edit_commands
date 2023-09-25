@@ -1,19 +1,21 @@
 using System.Collections.Generic;
 using ServerDevcommands;
 namespace WorldEditCommands;
-public class ObjectAutoComplete : SharedObjectAutoComplete {
+public class ObjectAutoComplete : SharedObjectAutoComplete
+{
   public List<string> NamedParameters;
-  public static List<string> ObjectTypes = new() {
+  public static List<string> ObjectTypes = [
       "creature",
-      "chest",
-      "fireplace",
-      "item",
-      "structure",
-      "spawner",
-      "spawnpoint",
-  };
-  public ObjectAutoComplete() {
-    NamedParameters = WithSharedParameters(new() {
+    "chest",
+    "fireplace",
+    "item",
+    "structure",
+    "spawner",
+    "spawnpoint",
+  ];
+  public ObjectAutoComplete()
+  {
+    NamedParameters = WithSharedParameters([
       "wild",
       "copy",
       "info",
@@ -38,7 +40,7 @@ public class ObjectAutoComplete : SharedObjectAutoComplete {
       "type",
       "connect",
       "status"
-    });
+    ]);
     AutoComplete.Register(ObjectCommand.Name, (int index) => NamedParameters, WithSharedFetchers(new() {
       {
         "status", (int index) => {

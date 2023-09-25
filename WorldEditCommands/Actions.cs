@@ -401,6 +401,30 @@ public static class Actions
   {
     SetVisual(obj.GetComponent<Character>(), slot, item);
   }
+  public static void SetFields(GameObject obj, Dictionary<string, object> fields)
+  {
+    var view = obj.GetComponent<ZNetView>();
+    var zdo = view?.GetZDO();
+    if (view == null || zdo == null) return;
+    zdo.Set(Hash.HasFields, true);
+    foreach (var kvp in fields)
+    {
+      var component = kvp.Key.Split('.')[0];
+      zdo.Set("HasFields" + component, true);
+      var hash = kvp.Key.GetStableHashCode();
+      if (kvp.Value is int v)
+        zdo.Set(hash, v);
+      else if (kvp.Value is float v1)
+        zdo.Set(hash, v1);
+      else if (kvp.Value is string v2)
+        zdo.Set(hash, v2);
+      else if (kvp.Value is bool v3)
+        zdo.Set(hash, v3);
+      else if (kvp.Value is Vector3 vector)
+        zdo.Set(hash, vector);
+    }
+    view.LoadFields();
+  }
   public static void SetVisual(ItemStand obj, Item? item)
   {
     if (!obj || item == null) return;

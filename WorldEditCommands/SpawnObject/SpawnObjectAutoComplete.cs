@@ -1,10 +1,12 @@
 using System.Collections.Generic;
 using ServerDevcommands;
 namespace WorldEditCommands;
-public class SpawnObjectAutoComplete : SharedObjectAutoComplete {
+public class SpawnObjectAutoComplete : SharedObjectAutoComplete
+{
   public List<string> NamedParameters;
-  public SpawnObjectAutoComplete() {
-    NamedParameters = WithSharedParameters(new() {
+  public SpawnObjectAutoComplete()
+  {
+    NamedParameters = WithSharedParameters([
       "hunt",
       "durability",
       "name",
@@ -19,11 +21,8 @@ public class SpawnObjectAutoComplete : SharedObjectAutoComplete {
       "to",
       "data",
       "crafterId"
-    });
-    AutoComplete.Register(SpawnObjectCommand.Name, (int index) => {
-      if (index == 0) return ParameterInfo.Ids;
-      return NamedParameters;
-    }, WithSharedFetchers(new() {
+    ]);
+    AutoComplete.Register(SpawnObjectCommand.Name, (int index) => index == 0 ? ParameterInfo.Ids : NamedParameters, WithSharedFetchers(new() {
       {
         "data",
         (int index) => index == 0 ? ParameterInfo.Create("data=<color=yellow>base64 data/false</color>", "Sets ZDO data.") : ParameterInfo.None

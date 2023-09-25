@@ -4,7 +4,8 @@ using ServerDevcommands;
 using Service;
 using UnityEngine;
 namespace WorldEditCommands;
-public class ObjectParameters : SharedObjectParameters {
+public class ObjectParameters : SharedObjectParameters
+{
   public Range<Vector3> Rotation = new(Vector3.zero);
   public Range<Vector3> Offset = new(Vector3.zero);
   public Vector3 From;
@@ -15,7 +16,7 @@ public class ObjectParameters : SharedObjectParameters {
   public string Prefab = "";
   public string Origin = "player";
   public bool? Remove;
-  public HashSet<string> Operations = new();
+  public HashSet<string> Operations = [];
   public bool ResetRotation = false;
   public bool Respawn = false;
   public string Data = "";
@@ -33,7 +34,7 @@ public class ObjectParameters : SharedObjectParameters {
   public Range<float>? StatusDuration;
   public Range<float>? StatusIntensity;
 
-  public static HashSet<string> SupportedOperations = new() {
+  public static HashSet<string> SupportedOperations = [
     "status",
     "health",
     "damage",
@@ -66,23 +67,29 @@ public class ObjectParameters : SharedObjectParameters {
     "respawn",
     "mirror",
     "creator",
-    "copy"
-  };
+    "copy",
+    "field"
+  ];
 
-  public ObjectParameters(Terminal.ConsoleEventArgs args) {
-    if (Player.m_localPlayer) {
+  public ObjectParameters(Terminal.ConsoleEventArgs args)
+  {
+    if (Player.m_localPlayer)
+    {
       From = Player.m_localPlayer.transform.position;
     }
     ParseArgs(args.Args);
   }
 
-  protected override void ParseArgs(string[] args) {
+  protected override void ParseArgs(string[] args)
+  {
     base.ParseArgs(args);
-    foreach (var arg in args) {
+    foreach (var arg in args)
+    {
       var split = arg.Split('=');
       var name = split[0].ToLower();
-      if (SupportedOperations.Contains(name)) {
-        if (Operations.Contains(name))
+      if (SupportedOperations.Contains(name))
+      {
+        if (name != "field" && Operations.Contains(name))
           throw new InvalidOperationException($"Operation {name} used multiple times.");
         Operations.Add(name);
       }
@@ -91,7 +98,8 @@ public class ObjectParameters : SharedObjectParameters {
       if (split.Length < 2) continue;
       var value = split[1];
       var values = Parse.Split(value);
-      if (name == "rotate") {
+      if (name == "rotate")
+      {
         if (value == "reset") ResetRotation = true;
         else Rotation = Parse.VectorYXZRange(value, Vector3.zero);
       }
@@ -113,7 +121,8 @@ public class ObjectParameters : SharedObjectParameters {
       if (name == "type" && value == "spawner") ObjectType = ObjectType.Spawner;
       if (name == "type" && value == "spawnpoint") ObjectType = ObjectType.SpawnPoint;
       if (name == "type" && value == "structure") ObjectType = ObjectType.Structure;
-      if (name == "rect") {
+      if (name == "rect")
+      {
         var size = Parse.ScaleRange(value);
         Width = new(size.Min.x, size.Max.x);
         Depth = new(size.Min.z, size.Max.z);
@@ -124,7 +133,8 @@ public class ObjectParameters : SharedObjectParameters {
         Creator = Parse.Long(value, 0L);
       if (name == "angle")
         Angle = Parse.Float(value, 0f) * Mathf.PI / 180f;
-      if (name == "status") {
+      if (name == "status")
+      {
         StatusName = values[0];
         StatusDuration = Parse.FloatRange(values, 1, 60);
         StatusIntensity = Parse.FloatRange(values, 2, 100);

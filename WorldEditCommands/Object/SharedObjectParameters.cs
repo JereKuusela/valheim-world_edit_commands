@@ -1,16 +1,20 @@
+using System.Collections.Generic;
 using ServerDevcommands;
 using UnityEngine;
 namespace WorldEditCommands;
-public class Item {
+public class Item
+{
   public string Name;
   public int Variant;
-  public Item(string value) {
+  public Item(string value)
+  {
     var values = Parse.Split(value);
     Name = Parse.String(values, 0);
     Variant = Parse.Int(values, 1, 0);
   }
 }
-public class SharedObjectParameters {
+public class SharedObjectParameters
+{
   public Range<Vector3> Scale = new(Vector3.one);
   public Range<int>? Level;
   public Range<float>? Health;
@@ -28,21 +32,27 @@ public class SharedObjectParameters {
   public Item? Utility;
   public Range<float>? Radius;
   public Range<int>? Model;
+  public Dictionary<string, object> Fields = [];
 
-  protected virtual void ParseArgs(string[] args) {
-    foreach (var arg in args) {
+  protected virtual void ParseArgs(string[] args)
+  {
+    foreach (var arg in args)
+    {
       var split = arg.Split('=');
       var name = split[0].ToLower();
       if (name == "baby") Baby = true;
       if (split.Length < 2) continue;
       var value = split[1];
-      if (name == "health" || name == "durability") {
-        if (value.EndsWith("%")) {
+      if (name == "health" || name == "durability")
+      {
+        if (value.EndsWith("%"))
+        {
           isHealthPercentage = true;
           value = value.Substring(0, value.Length - 1);
         }
         Health = Parse.FloatRange(value, 0);
-        if (isHealthPercentage) {
+        if (isHealthPercentage)
+        {
           Health.Max /= 100f;
           Health.Min /= 100f;
         }
@@ -53,7 +63,8 @@ public class SharedObjectParameters {
         Ammo = Parse.IntRange(value, 0);
       if (name == "ammotype")
         AmmoType = value;
-      if (name == "stars" || name == "star") {
+      if (name == "stars" || name == "star")
+      {
         Level = Parse.IntRange(value, 0);
         Level.Max++;
         Level.Min++;
@@ -73,6 +84,31 @@ public class SharedObjectParameters {
       if (name == "shoulders") Shoulders = new(value);
       if (name == "legs") Legs = new(value);
       if (name == "utility") Utility = new(value);
+      if (name == "field" || name == "f")
+      {
+        var values = value.Split(',');
+        if (values.Length < 3) continue;
+        var prefab = DataAutoComplete.PrefabFromCommand(string.Join(" ", args));
+        var component = DataAutoComplete.RealComponent(prefab, values[0]);
+        var field = DataAutoComplete.RealField(component, values[1]);
+        var fieldValue = values[2];
+        var type = DataAutoComplete.GetType(component, field);
+        var key = $"{component}.{field}";
+        if (type == typeof(int))
+          Fields.Add(key, Parse.Int(fieldValue));
+        else if (type == typeof(float))
+          Fields.Add(key, Parse.Float(fieldValue));
+        else if (type == typeof(string))
+          Fields.Add(key, fieldValue);
+        else if (type == typeof(bool))
+          Fields.Add(key, bool.Parse(fieldValue));
+        else if (type == typeof(Vector3))
+          Fields.Add(key, Parse.VectorXZY(values, 2));
+        else if (type == typeof(GameObject))
+          Fields.Add(key, fieldValue);
+        else
+          throw new System.Exception($"Unhandled type for field {key}");
+      }
     }
   }
 }

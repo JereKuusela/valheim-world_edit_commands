@@ -4,14 +4,18 @@ using System.Linq;
 using ServerDevcommands;
 namespace WorldEditCommands;
 using NamedOptionsFetchers = Dictionary<string, Func<int, List<string>>>;
-public class SharedObjectAutoComplete {
-  public static List<string> VisualAutoComplete(string name, int index) {
+public class SharedObjectAutoComplete
+{
+  public static List<string> VisualAutoComplete(string name, int index)
+  {
     if (index == 0) return ParameterInfo.ItemIds;
     if (index == 1) return ParameterInfo.Create($"${name}=id,<color=yellow>integer</color> | Item variant for items that have multiple variants.");
     return ParameterInfo.None;
   }
-  public static List<string> WithSharedParameters(List<string> parameters) {
-    List<string> namedParameters = new() {
+
+  public static List<string> WithSharedParameters(List<string> parameters)
+  {
+    List<string> namedParameters = [
       "baby",
       "durability",
       "tame",
@@ -30,12 +34,15 @@ public class SharedObjectAutoComplete {
       "model",
       "damage",
       "ammo",
-      "ammoType"
-    };
+      "ammoType",
+      "field",
+      "f"
+    ];
     parameters.AddRange(namedParameters);
     return parameters.Distinct().OrderBy(s => s).ToList();
   }
-  public static NamedOptionsFetchers WithSharedFetchers(NamedOptionsFetchers fetchers) {
+  public static NamedOptionsFetchers WithSharedFetchers(NamedOptionsFetchers fetchers)
+  {
     NamedOptionsFetchers baseFetchers = new() {
       {
         "tame",
@@ -107,6 +114,14 @@ public class SharedObjectAutoComplete {
       {
         "scale",
         (int index) => ParameterInfo.Scale("scale", "Scaling for objects that support it", index)
+      },
+      {
+        "field",
+        (int index) => index == 0 ? DataAutoComplete.GetComponents() : index == 1 ? DataAutoComplete.GetFields() : DataAutoComplete.GetTypes(index - 2)
+      },
+      {
+        "f",
+        (int index) => index == 0 ? DataAutoComplete.GetComponents() : index == 1 ? DataAutoComplete.GetFields() : DataAutoComplete.GetTypes(index - 2)
       },
     };
     foreach (var kvp in fetchers) baseFetchers[kvp.Key] = kvp.Value;

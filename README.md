@@ -50,6 +50,12 @@ Following parameters are available:
 - `durability=number` or `health=number`: Sets the current durability for items, the current health for structures and the maximum health for creatures. Very high values like 1E30 turn the target invulnerable (including gravity for structures).
   - Note: Invulnerable objects without structure support take continuous damage which causes network traffic.
 - `durability=number%` or `health=number%`: Sets the durabilty/health based on the max amount.
+- `field=component,field,value`: Sets arbitrary component field. When using `id=`, the autocompletion shows only components for that object.
+  - Multiple `field=` can be used in the same command.
+  - Component name doesn't have to be fully written (best match is used).
+  - Use `f=` as a shortcut for `field=`.
+  - Create alias `alias sf spawn_object $$ f=$$ f=$$ f=$$ f=$$ f=$$` to quickly set multiple fields.
+  - Note: This is vanilla compatible.
 - `fuel=number`: Sets the fuel amount. Without number, prints the fuel amount.
 - `from=x,z,y`: Same as the `center`.
 - `height`: Maximum height from the `center` point (default is 1000 meters).
@@ -331,6 +337,12 @@ Following parameters are available:
 - `damage=number`: Sets the damage multiplier.
 - `data=base64 encoded`: Sets the ZDO data, for example when using `object copy`.
 - `durability=number` or `health=number`: Overrides the current durability for items, the current health for structures and the maximum health for creatures. Very high values like 1E30 turn the target invulnerable (including gravity for structures).
+- `field=component,field,value`: Sets arbitrary component field. The autocompletion shows only components for the spawned object.
+  - Multiple `field=` can be used in the same command.
+  - Component name doesn't have to be fully written (best match is used).
+  - Use `f=` as a shortcut for `field=`.
+  - Create alias `alias sf spawn_object $$ f=$$ f=$$ f=$$ f=$$ f=$$` to quickly set multiple fields.
+  - Note: This is vanilla compatible.
 - `from=x,z,y`: Allows overriding the player's position for the command. Used by `redo` and can be useful for some advanced usage.
 - `hunt=true/false`: Spawned creatures are in the hunt mode.
 - `level=integer`: Spawned creatures have this amount of level (level = stars + 1).
@@ -516,6 +528,14 @@ Most should be self-explanatory. More explanation will be added later.
 - `TamedName`:
 - `text`:
 - `variant`:
+
+### Field keys
+
+The field system adds `HasFields` to any object with custom fields.
+
+The field system adds `HasFieldsXXX` for each component with custom fields. The XXX is the component name.
+
+The field system adds `XXX.m_YYY` for each field where XXX is the component name and YYY is the field name.
 
 ### Modded keys
 

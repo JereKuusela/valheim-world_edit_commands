@@ -6,42 +6,52 @@ using Service;
 using UnityEngine;
 namespace WorldEditCommands;
 
-public class ObjectCommand {
+public class ObjectCommand
+{
   public static System.Random Random = new();
-  public static bool Roll(float value) {
+  public static bool Roll(float value)
+  {
     if (value >= 1f) return true;
     return Random.NextDouble() < value;
   }
   public const string Name = "object";
   private static readonly Dictionary<ZDOID, EditData> EditedInfo = new();
-  private static void AddData(ZNetView view) {
+  private static void AddData(ZNetView view)
+  {
     var zdo = view.GetZDO();
     if (EditedInfo.ContainsKey(zdo.m_uid)) return;
     EditedInfo[zdo.m_uid] = new EditData(zdo);
   }
-  private static void Execute(Terminal context, ObjectParameters pars, IEnumerable<string> operations, ZNetView[] views) {
+  private static void Execute(Terminal context, ObjectParameters pars, IEnumerable<string> operations, ZNetView[] views)
+  {
     var scene = ZNetScene.instance;
     Dictionary<ZDOID, long> oldOwner = new();
-    views = views.Where(view => {
-      if (!view || !view.GetZDO().IsValid()) {
+    views = views.Where(view =>
+    {
+      if (!view || !view.GetZDO().IsValid())
+      {
         context.AddString($"Skipped: {view.name} is not loaded.");
         return false;
       }
-      if (!Roll(pars.Chance)) {
+      if (!Roll(pars.Chance))
+      {
         context.AddString($"Skipped: {view.name} (chance).");
         return false;
       }
       return true;
     }).ToArray();
-    List<FakeZDO> removed = new();
+    List<FakeZDO> removed = [];
     EditedInfo.Clear();
-    foreach (var view in views) {
+    foreach (var view in views)
+    {
       oldOwner.Add(view.GetZDO().m_uid, view.GetZDO().GetOwner());
       view.ClaimOwnership();
     }
     var count = views.Count();
-    foreach (var operation in operations) {
-      foreach (var view in views) {
+    foreach (var operation in operations)
+    {
+      foreach (var view in views)
+      {
         if (!view) continue;
         var output = "";
         var name = Utils.GetPrefabName(view.gameObject);
@@ -83,6 +93,8 @@ public class ObjectCommand {
           output = SetModel(view, Helper.RandomValue(pars.Model));
         if (operation == "helmet")
           output = SetHelmet(view, pars.Helmet);
+        if (operation == "field")
+          SetFields(view, pars.Fields);
         if (operation == "left_hand")
           output = SetLeftHand(view, pars.LeftHand);
         if (operation == "right_hand")
@@ -103,7 +115,8 @@ public class ObjectCommand {
           output = Move(view, Helper.RandomValue(pars.Offset), pars.Origin);
         if (operation == "mirror" && pars.Center.HasValue)
           output = Mirror(view, pars.Center.Value);
-        if (operation == "rotate") {
+        if (operation == "rotate")
+        {
           if (pars.ResetRotation)
             output = ResetRotation(view);
           else
@@ -111,7 +124,8 @@ public class ObjectCommand {
         }
         if (operation == "scale")
           output = Scale(view, Helper.RandomValue(pars.Scale));
-        if (operation == "remove") {
+        if (operation == "remove")
+        {
           removed.Add(new(view.GetZDO()));
           Actions.RemoveZDO(view.GetZDO());
           output = "Entity ¤ destroyed.";
@@ -126,7 +140,8 @@ public class ObjectCommand {
       }
     }
     var moved = operations.Contains("move") || operations.Contains("scale") || operations.Contains("rotate") || operations.Contains("mirror");
-    foreach (var view in views) {
+    foreach (var view in views)
+    {
       if (!view || view.GetZDO() == null || !view.GetZDO().IsValid() || !oldOwner.ContainsKey(view.GetZDO().m_uid)) continue;
       if (moved && view.TryGetComponent<WearNTear>(out var wearNTear))
         wearNTear.m_colliders = null; // Forces the next support check to refresh collider positions.
@@ -134,36 +149,49 @@ public class ObjectCommand {
         view.GetZDO().SetOwner(owner);
 
     }
-    if (removed.Count() > 0) {
+    if (removed.Count() > 0)
+    {
       UndoRemove undo = new(removed);
       UndoManager.Add(undo);
     }
-    if (EditedInfo.Count() > 0) {
-      foreach (var info in EditedInfo) {
+    if (EditedInfo.Count() > 0)
+    {
+      foreach (var info in EditedInfo)
+      {
         info.Value.Update();
       }
       UndoEdit undo = new(EditedInfo.Select(info => info.Value));
       UndoManager.Add(undo);
     }
   }
-  public ObjectCommand() {
+  public ObjectCommand()
+  {
     ObjectAutoComplete autoComplete = new();
     var description = CommandInfo.Create("Modifies the selected object(s).", null, autoComplete.NamedParameters);
-    Helper.Command(Name, description, (args) => {
+    Helper.Command(Name, description, (args) =>
+    {
       ObjectParameters pars = new(args);
       ZNetView[] views;
-      if (pars.Connect) {
+      if (pars.Connect)
+      {
         var view = Selector.GetHovered(50f, pars.ExcludedIds);
         if (view == null) return;
         views = Selector.GetConnected(view, pars.ExcludedIds);
-      } else if (pars.Radius != null) {
+      }
+      else if (pars.Radius != null)
+      {
         views = Selector.GetNearby(pars.IncludedIds, pars.ObjectType, pars.ExcludedIds, pars.Center ?? pars.From, pars.Radius, pars.Height);
-      } else if (pars.Width != null && pars.Depth != null) {
+      }
+      else if (pars.Width != null && pars.Depth != null)
+      {
         views = Selector.GetNearby(pars.IncludedIds, pars.ObjectType, pars.ExcludedIds, pars.Center ?? pars.From, pars.Angle, pars.Width, pars.Depth, pars.Height);
-      } else {
+      }
+      else
+      {
         var view = Selector.GetHovered(50f, pars.ExcludedIds);
         if (view == null) return;
-        if (!Selector.GetPrefabs(pars.IncludedIds).Contains(view.GetZDO().GetPrefab())) {
+        if (!Selector.GetPrefabs(pars.IncludedIds).Contains(view.GetZDO().GetPrefab()))
+        {
           Helper.AddMessage(args.Context, $"Skipped: {view.name} has invalid id.");
           return;
         }
@@ -174,7 +202,8 @@ public class ObjectCommand {
     }, () => autoComplete.NamedParameters);
   }
 
-  private static string ChangeHealth(ZNetView obj, float amount, bool isPercentage) {
+  private static string ChangeHealth(ZNetView obj, float amount, bool isPercentage)
+  {
     if (!obj.GetComponent<Character>() && !obj.GetComponent<WearNTear>() && !obj.GetComponent<TreeLog>() && !obj.GetComponent<Destructible>() && !obj.GetComponent<TreeBase>())
       return "Skipped: ¤ is not a creature or a destructible.";
     AddData(obj);
@@ -182,7 +211,8 @@ public class ObjectCommand {
     var amountStr = amount == 0f ? "default" : isPercentage ? $"{100 * amount:0.##} %" : amount.ToString("F0");
     return $"¤ health changed from {previous:F0} to {amountStr}.";
   }
-  private static string SetStars(ZNetView view, int amount) {
+  private static string SetStars(ZNetView view, int amount)
+  {
     var obj = view.GetComponent<Character>();
     if (!obj) return "Skipped: ¤ is not a creature.";
     AddData(view);
@@ -190,13 +220,21 @@ public class ObjectCommand {
     Actions.SetLevel(obj, amount + 1);
     return $"¤ stars changed from {previous} to {amount}.";
   }
-  private static string PrintFuel(ZNetView view) {
+  private static string PrintFuel(ZNetView view)
+  {
     var obj = view.GetComponent<Fireplace>();
     if (!obj) return "Skipped: ¤ is not a fireplace.";
     var amount = view.GetZDO().GetFloat("fuel", 0f);
     return $"¤ has {amount} fuel.";
   }
-  private static string SetFuel(ZNetView view, float amount) {
+  private static string SetFields(ZNetView view, Dictionary<string, object> fields)
+  {
+    AddData(view);
+    Actions.SetFields(view.gameObject, fields);
+    return $"¤ {fields.Count} fields set.";
+  }
+  private static string SetFuel(ZNetView view, float amount)
+  {
     var smelter = view.GetComponent<Smelter>();
     if (!view.GetComponent<Fireplace>() && (!smelter || !smelter.m_fuelItem)) return "Skipped: ¤ is not a fireplace or smelter.";
     AddData(view);
@@ -204,80 +242,93 @@ public class ObjectCommand {
     Actions.SetFuel(view, amount);
     return $"¤ fuel changed from {previous} to {amount}.";
   }
-  private static string Move(ZNetView view, Vector3 offset, string origin) {
+  private static string Move(ZNetView view, Vector3 offset, string origin)
+  {
     AddData(view);
     Actions.Move(view, offset, origin);
     return $"¤ moved {offset:F1} from the {origin}.";
   }
-  private static string ResetRotation(ZNetView view) {
+  private static string ResetRotation(ZNetView view)
+  {
     AddData(view);
     Actions.ResetRotation(view);
     return $"¤ rotation reseted.";
   }
-  private static string Mirror(ZNetView view, Vector3 center) {
+  private static string Mirror(ZNetView view, Vector3 center)
+  {
     AddData(view);
     Actions.Mirror(view, center);
     return $"¤ mirrored.";
   }
-  private static string Rotate(ZNetView view, Vector3 rotation, string origin, Vector3? center = null) {
+  private static string Rotate(ZNetView view, Vector3 rotation, string origin, Vector3? center = null)
+  {
     AddData(view);
     Actions.Rotate(view, rotation, origin, center);
     return $"¤ rotated {rotation:F1} from the {origin}.";
   }
-  private static string Scale(ZNetView view, Vector3 scale) {
+  private static string Scale(ZNetView view, Vector3 scale)
+  {
     AddData(view);
     Actions.Scale(view, scale);
     return $"¤ scaled to {scale:F1}.";
   }
-  private static string SetBaby(ZNetView view) {
+  private static string SetBaby(ZNetView view)
+  {
     var obj = view.GetComponent<Growup>();
     if (!obj) return "Skipped: ¤ is not an offspring.";
     AddData(view);
     Actions.SetBaby(obj);
     return "¤ growth disabled.";
   }
-  private static string Respawn(ZNetView view) {
+  private static string Respawn(ZNetView view)
+  {
     if (!Actions.CanRespawn(view.gameObject))
       return "Skipped: ¤ is not a loot container, pickable or spawn point.";
     AddData(view);
     Actions.Respawn(view.gameObject);
     return "¤ respawned.";
   }
-  private static string MakeTame(ZNetView view) {
+  private static string MakeTame(ZNetView view)
+  {
     var obj = view.GetComponent<Character>();
     if (!obj) return "Skipped: ¤ is not a creature.";
     AddData(view);
     Actions.SetTame(obj, true);
     return "¤ made tame.";
   }
-  private static string MakeWild(ZNetView view) {
+  private static string MakeWild(ZNetView view)
+  {
     var obj = view.GetComponent<Character>();
     if (!obj) return "Skipped: ¤ is not a creature.";
     AddData(view);
     Actions.SetTame(obj, false);
     return "¤ made wild.";
   }
-  private static string MakeSleep(ZNetView view) {
+  private static string MakeSleep(ZNetView view)
+  {
     var obj = view.GetComponent<MonsterAI>();
     if (!obj) return "Skipped: ¤ is not a creature.";
     AddData(view);
     Actions.SetSleeping(obj, true);
     return "¤ made to sleep.";
   }
-  private static string SetCreator(ZNetView view, long creator) {
+  private static string SetCreator(ZNetView view, long creator)
+  {
     var obj = view.GetComponent<Piece>();
     if (!obj) return "Skipped: ¤ is not a piece.";
     AddData(view);
     var previous = Actions.SetCreator(obj, creator);
     return $"Creator of ¤ set from {previous} to {creator}.";
   }
-  private static string SetPrefab(ZNetView view, string prefab) {
+  private static string SetPrefab(ZNetView view, string prefab)
+  {
     AddData(view);
     if (Actions.SetPrefab(view, prefab))
       return $"Prefab of ¤ set to {prefab}.";
     return $"Error: Prefab of ¤ was not set to {prefab}. Probably invalid prefab name.";
   }
-  private static string SetVisual(ZNetView view, Item? item) {
+  private static string SetVisual(ZNetView view, Item? item)
+  {
     if (item == null) return "Skipped: Invalid item.";
     var obj = view.GetComponent<ItemStand>();
     if (!obj) return "Skipped: ¤ is not an item stand.";
@@ -285,7 +336,8 @@ public class ObjectCommand {
     Actions.SetVisual(obj, item);
     return $"Visual of ¤ set to {item.Name} with variant {item.Variant}.";
   }
-  private static string SetHelmet(ZNetView view, Item? item) {
+  private static string SetHelmet(ZNetView view, Item? item)
+  {
     if (item == null) return "Skipped: Invalid item.";
     var obj = view.GetComponent<Character>();
     if (!obj) return "Skipped: ¤ is not a creature.";
@@ -293,7 +345,8 @@ public class ObjectCommand {
     Actions.SetVisual(obj, VisSlot.Helmet, item);
     return $"Helmet of ¤ set to {item.Name} with variant {item.Variant}.";
   }
-  private static string SetLeftHand(ZNetView view, Item? item) {
+  private static string SetLeftHand(ZNetView view, Item? item)
+  {
     if (item == null) return "Skipped: Invalid item.";
     var obj = view.GetComponent<Character>();
     if (!obj) return "Skipped: ¤ is not a creature.";
@@ -301,7 +354,8 @@ public class ObjectCommand {
     Actions.SetVisual(obj, VisSlot.HandLeft, item);
     return $"Left hand of ¤ set to {item.Name} with variant {item.Variant}.";
   }
-  private static string SetRightHand(ZNetView view, Item? item) {
+  private static string SetRightHand(ZNetView view, Item? item)
+  {
     if (item == null) return "Skipped: Invalid item.";
     var obj = view.GetComponent<Character>();
     if (!obj) return "Skipped: ¤ is not a creature.";
@@ -309,7 +363,8 @@ public class ObjectCommand {
     Actions.SetVisual(obj, VisSlot.HandRight, item);
     return $"Right hand of ¤ set to {item.Name} with variant {item.Variant}.";
   }
-  private static string SetChest(ZNetView view, Item? item) {
+  private static string SetChest(ZNetView view, Item? item)
+  {
     if (item == null) return "Skipped: Invalid item.";
     var obj = view.GetComponent<Character>();
     if (!obj) return "Skipped: ¤ is not a creature.";
@@ -317,7 +372,8 @@ public class ObjectCommand {
     Actions.SetVisual(obj, VisSlot.Chest, item);
     return $"Chest of ¤ set to {item.Name} with variant {item.Variant}.";
   }
-  private static string SetShoulder(ZNetView view, Item? item) {
+  private static string SetShoulder(ZNetView view, Item? item)
+  {
     if (item == null) return "Skipped: Invalid item.";
     var obj = view.GetComponent<Character>();
     if (!obj) return "Skipped: ¤ is not a creature.";
@@ -325,7 +381,8 @@ public class ObjectCommand {
     Actions.SetVisual(obj, VisSlot.Shoulder, item);
     return $"Shoulder of ¤ set to {item.Name} with variant {item.Variant}.";
   }
-  private static string SetLegs(ZNetView view, Item? item) {
+  private static string SetLegs(ZNetView view, Item? item)
+  {
     if (item == null) return "Skipped: Invalid item.";
     var obj = view.GetComponent<Character>();
     if (!obj) return "Skipped: ¤ is not a creature.";
@@ -333,13 +390,15 @@ public class ObjectCommand {
     Actions.SetVisual(obj, VisSlot.Legs, item);
     return $"Legs of ¤ set to {item.Name} with variant {item.Variant}.";
   }
-  private static string SetModel(ZNetView view, int index) {
+  private static string SetModel(ZNetView view, int index)
+  {
     var obj = view.GetComponent<Character>();
     if (!obj) return "Skipped: ¤ is not a creature.";
     Actions.SetModel(obj, index);
     return $"Model of ¤ set to {index}.";
   }
-  private static string SetUtility(ZNetView view, Item? item) {
+  private static string SetUtility(ZNetView view, Item? item)
+  {
     if (item == null) return "Skipped: Invalid item.";
     var obj = view.GetComponent<Character>();
     if (!obj) return "Skipped: ¤ is not a creature.";
@@ -347,7 +406,8 @@ public class ObjectCommand {
     Actions.SetVisual(obj, VisSlot.Utility, item);
     return $"Utility item of ¤ set to {item.Name} with variant {item.Variant}.";
   }
-  private static string SetStatus(ZNetView obj, string name, float duration, float intensity) {
+  private static string SetStatus(ZNetView obj, string name, float duration, float intensity)
+  {
     if (!obj.TryGetComponent<Character>(out var creature)) return "Skipped: ¤ is not a creature.";
     obj.ClaimOwnership();
     var hash = name.GetHashCode();
@@ -357,22 +417,28 @@ public class ObjectCommand {
     effect.m_ttl = duration;
     if (effect is SE_Shield shield)
       shield.m_absorbDamage = intensity;
-    if (effect is SE_Burning burning) {
-      if (name == "Burning") {
+    if (effect is SE_Burning burning)
+    {
+      if (name == "Burning")
+      {
         burning.m_fireDamageLeft = 0;
         burning.AddFireDamage(intensity);
-      } else {
+      }
+      else
+      {
         burning.m_spiritDamageLeft = 0;
         burning.AddSpiritDamage(intensity);
       }
     }
-    if (effect is SE_Poison poison) {
+    if (effect is SE_Poison poison)
+    {
       poison.m_damageLeft = intensity;
       poison.m_damagePerHit = intensity / effect.m_ttl * poison.m_damageInterval;
     }
     return $"Status of ¤ set to {name}";
   }
-  private static string GetInfo(ZNetView obj) {
+  private static string GetInfo(ZNetView obj)
+  {
     List<string> info = new() {
       "Id: ¤",
       "Pos: " + Helper.PrintVectorXZY(obj.transform.position),
@@ -381,7 +447,8 @@ public class ObjectCommand {
     if (obj.m_syncInitialScale)
       info.Add("Scale: " + Helper.PrintVectorXZY(obj.transform.localScale));
     var character = obj.GetComponent<Character>();
-    if (character) {
+    if (character)
+    {
       var health = character.GetHealth();
       if (health > 1E17)
         info.Add("Health: Infinite");
@@ -393,7 +460,9 @@ public class ObjectCommand {
       var growUp = obj.GetComponent<Growup>();
       if (growUp)
         info.Add("Baby: " + (growUp.m_baseAI.GetTimeSinceSpawned().TotalSeconds < 0 ? "Yes" : "No"));
-    } else {
+    }
+    else
+    {
       var health = Actions.GetHealth(obj);
       if (health > 1E17)
         info.Add("Health: Infinite");
@@ -401,7 +470,8 @@ public class ObjectCommand {
         info.Add("Health: " + health.ToString("F0"));
     }
     var equipment = obj.GetComponent<VisEquipment>();
-    if (equipment) {
+    if (equipment)
+    {
       if (equipment.m_rightItem != "")
         info.Add("Right hand: " + equipment.m_rightItem);
       if (equipment.m_leftItem != "")
@@ -418,14 +488,16 @@ public class ObjectCommand {
         info.Add("Utility: " + equipment.m_utilityItem);
     }
     var piece = obj.GetComponent<Piece>();
-    if (piece) {
+    if (piece)
+    {
       info.Add("Creator ID: " + piece.GetCreator());
     }
     return string.Join(", ", info);
   }
 
 
-  private static string CopyData(ZNetView obj, string value) {
+  private static string CopyData(ZNetView obj, string value)
+  {
     var zdo = obj.GetZDO();
     ZPackage pkg = new();
     DataHelper.Serialize(zdo, pkg, value);
@@ -434,40 +506,48 @@ public class ObjectCommand {
     GUIUtility.systemCopyBuffer = str;
     return str;
   }
-  private static string PrintData(ZNetView obj, string data) {
+  private static string PrintData(ZNetView obj, string data)
+  {
     List<string> info = new();
     var zdo = obj.GetZDO();
     var id = zdo.m_uid;
     info.Add("Id: ¤");
     info.Add($"Owner: {zdo.GetOwner()}");
     info.Add($"Revision: {zdo.DataRevision} + {zdo.OwnerRevision}");
-    if (data != "") {
+    if (data != "")
+    {
       var split = data.Split(',');
       var hash = split[0].GetStableHashCode();
-      if (ZDOExtraData.s_vec3.TryGetValue(id, out var vec) && vec.ContainsKey(hash)) {
+      if (ZDOExtraData.s_vec3.TryGetValue(id, out var vec) && vec.ContainsKey(hash))
+      {
         if (split.Length > 1)
           zdo.Set(hash, Parse.VectorXZY(split, 1));
         info.Add($"{split[0]}: {Helper.PrintVectorXZY(vec[hash])}");
       }
-      if (ZDOExtraData.s_quats.TryGetValue(id, out var quats) && quats.ContainsKey(hash)) {
+      if (ZDOExtraData.s_quats.TryGetValue(id, out var quats) && quats.ContainsKey(hash))
+      {
         info.Add($"{split[0]}: {Helper.PrintAngleYXZ(quats[hash])}");
       }
-      if (ZDOExtraData.s_floats.TryGetValue(id, out var floats) && floats.ContainsKey(hash)) {
+      if (ZDOExtraData.s_floats.TryGetValue(id, out var floats) && floats.ContainsKey(hash))
+      {
         if (split.Length > 1)
           zdo.Set(hash, Parse.Float(split[1]));
         info.Add($"{data}: {floats[hash]:F1}");
       }
-      if (ZDOExtraData.s_longs.TryGetValue(id, out var longs) && longs.ContainsKey(hash)) {
+      if (ZDOExtraData.s_longs.TryGetValue(id, out var longs) && longs.ContainsKey(hash))
+      {
         if (split.Length > 1)
           zdo.Set(hash, Parse.Long(split[1]));
         info.Add($"{data}: {longs[hash]}");
       }
-      if (ZDOExtraData.s_strings.TryGetValue(id, out var strings) && strings.ContainsKey(hash)) {
+      if (ZDOExtraData.s_strings.TryGetValue(id, out var strings) && strings.ContainsKey(hash))
+      {
         if (split.Length > 1)
           zdo.Set(hash, split[1]);
         info.Add($"{split[0]}: {strings[hash]}");
       }
-      if (ZDOExtraData.s_ints.TryGetValue(id, out var ints) && ints.ContainsKey(hash)) {
+      if (ZDOExtraData.s_ints.TryGetValue(id, out var ints) && ints.ContainsKey(hash))
+      {
         if (split.Length > 1)
           zdo.Set(hash, Parse.Int(split[1]));
         info.Add($"{split[0]}: {ints[hash]}");

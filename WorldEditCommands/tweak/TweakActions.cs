@@ -408,7 +408,7 @@ public static class TweakActions
     if (split.Length < 2) return "";
     if (!Enum.TryParse<HitData.DamageType>(split[0], true, out var type)) return "";
     if (!Enum.TryParse<HitData.DamageModifier>(split[1], true, out var modifier)) return "";
-    return (int)(type) + "," + (int)(modifier);
+    return (int)type + "," + (int)modifier;
   }
   public static string Resistances(ZNetView view, string[] value)
   {

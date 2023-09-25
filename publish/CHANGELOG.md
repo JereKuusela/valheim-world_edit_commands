@@ -1,3 +1,6 @@
+- v1.44
+  - Adds a new parameter `field` to the `spawn_object` and `object` commands.
+
 - v1.43
   - Adds parameter command to the `tweak_altar` command.
 

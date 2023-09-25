@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net4.8</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>preview</LangVersion>
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <Target Name="CopyDLL" AfterTargets="Build">
@@ -29,6 +29,12 @@
     </Reference>
     <Reference Include="UnityEngine.AnimationModule">
       <HintPath>..\..\Libs\UnityEngine.AnimationModule.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>..\..\Libs\Unity.TextMeshPro.dll</HintPath>
+    </Reference>
+    <Reference Include="ui_lib">
+      <HintPath>..\..\Libs\ui_lib.dll</HintPath>
     </Reference>
     <Reference Include="0Harmony">
       <HintPath>..\..\Libs\0Harmony.dll</HintPath>
