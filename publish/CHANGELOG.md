@@ -1,3 +1,6 @@
+- v1.45
+  - Fixes some values not working for the `field` parameter.
+
 - v1.44
   - Adds a new parameter `field` to the `spawn_object` and `object` commands.
 

@@ -68,7 +68,8 @@ public class ObjectParameters : SharedObjectParameters
     "mirror",
     "creator",
     "copy",
-    "field"
+    "field",
+    "f"
   ];
 
   public ObjectParameters(Terminal.ConsoleEventArgs args)
@@ -89,7 +90,7 @@ public class ObjectParameters : SharedObjectParameters
       var name = split[0].ToLower();
       if (SupportedOperations.Contains(name))
       {
-        if (name != "field" && Operations.Contains(name))
+        if (name != "field" && name != "f" && Operations.Contains(name))
           throw new InvalidOperationException($"Operation {name} used multiple times.");
         Operations.Add(name);
       }

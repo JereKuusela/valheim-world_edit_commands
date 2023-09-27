@@ -93,7 +93,7 @@ public class ObjectCommand
           output = SetModel(view, Helper.RandomValue(pars.Model));
         if (operation == "helmet")
           output = SetHelmet(view, pars.Helmet);
-        if (operation == "field")
+        if (operation == "field" || operation == "f")
           SetFields(view, pars.Fields);
         if (operation == "left_hand")
           output = SetLeftHand(view, pars.LeftHand);

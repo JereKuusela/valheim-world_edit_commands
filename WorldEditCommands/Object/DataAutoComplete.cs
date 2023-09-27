@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using BepInEx.Bootstrap;
 using ServerDevcommands;
+using Service;
 using UnityEngine;
 
 namespace WorldEditCommands;
@@ -12,7 +13,8 @@ public class DataAutoComplete
 {
   private static Dictionary<string, Dictionary<string, Type>>? fields;
   public static Dictionary<string, Dictionary<string, Type>> Fields => fields ??= LoadFields();
-  private static List<string> Components = [];
+  private static List<string>? components;
+  private static List<string> Components => components ??= [.. Fields.Keys];
   private static readonly HashSet<Type> ValidTypes = [
     typeof(string),
     typeof(int),
@@ -41,7 +43,6 @@ public class DataAutoComplete
       if (fields[type.Name].Count == 0)
         fields.Remove(type.Name);
     }
-    Components = [.. fields.Keys];
     return fields;
   }
   public static List<string> GetComponents()
@@ -63,8 +64,14 @@ public class DataAutoComplete
     var prefab = "";
     if (!string.IsNullOrEmpty(arg))
       prefab = arg.Split('=')[1];
-    else if (split.Length > 1)
+    else if (split.Length > 1 && ZNetScene.instance.m_namedPrefabs.ContainsKey(split[1].GetStableHashCode()))
       prefab = split[1];
+    else
+    {
+      var selection = Player.m_localPlayer?.GetHoverObject();
+      if (selection)
+        prefab = Utils.GetPrefabName(selection);
+    }
     return prefab;
   }
   private static List<string> GetComponents(string prefab)
@@ -128,6 +135,10 @@ public class DataAutoComplete
   {
     var f = $"m_{field}";
     var fields = Fields.TryGetValue(component, out var fs) ? fs.Keys.ToList() : [];
-    return fields.FirstOrDefault(s => s.StartsWith(f, StringComparison.OrdinalIgnoreCase) || s.StartsWith(field, StringComparison.OrdinalIgnoreCase)) ?? field;
+    var primaryField = fields.FirstOrDefault(s => s.Equals(f, StringComparison.OrdinalIgnoreCase));
+    if (primaryField != null) return primaryField;
+    var secondaryField = fields.FirstOrDefault(s => s.StartsWith(f, StringComparison.OrdinalIgnoreCase) || s.StartsWith(field, StringComparison.OrdinalIgnoreCase));
+    if (secondaryField != null) return secondaryField;
+    return field;
   }
 }

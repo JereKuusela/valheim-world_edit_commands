@@ -50,7 +50,7 @@ Following parameters are available:
 - `durability=number` or `health=number`: Sets the current durability for items, the current health for structures and the maximum health for creatures. Very high values like 1E30 turn the target invulnerable (including gravity for structures).
   - Note: Invulnerable objects without structure support take continuous damage which causes network traffic.
 - `durability=number%` or `health=number%`: Sets the durabilty/health based on the max amount.
-- `field=component,field,value`: Sets arbitrary component field. When using `id=`, the autocompletion shows only components for that object.
+- `field=component,field,value`: Sets arbitrary component field. When using `id=` or hovering an object, the autocompletion shows only components for that object.
   - Multiple `field=` can be used in the same command.
   - Component name doesn't have to be fully written (best match is used).
   - Use `f=` as a shortcut for `field=`.
