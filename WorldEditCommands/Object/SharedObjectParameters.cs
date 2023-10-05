@@ -101,7 +101,7 @@ public class SharedObjectParameters
         else if (type == typeof(string))
           Fields.Add(key, fieldValue);
         else if (type == typeof(bool))
-          Fields.Add(key, bool.Parse(fieldValue));
+          Fields.Add(key, bool.Parse(fieldValue) ? 1 : -1);
         else if (type == typeof(Vector3))
           Fields.Add(key, Parse.VectorXZY(values, 2));
         else if (type == typeof(GameObject))

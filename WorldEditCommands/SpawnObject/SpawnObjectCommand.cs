@@ -31,6 +31,7 @@ public class SpawnObjectCommand
       }
       if (pars.Snap)
       {
+        // TODO: Use World Gen if no zone.
         ZoneSystem.instance.FindFloor(spawnPosition, out var height);
         // Fixes spawning below terrain.
         if (height == 0f)
