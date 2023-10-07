@@ -139,6 +139,12 @@ Note: Spawner Tweaks adds more parameters for `tweak_chest`.
 
 `tweak_door`:
 
+- `consume=true/false`: Consumes the key item on use. No value to toggle.
+- `closeeffect=id,flag`: Effects when closing. For random rotation, use 1 as the flag.
+- `key=item`: Required key item to open the door. If set, the door can't be closed.
+- `lockedeffect=id,flag`: Effects when locked. For random rotation, use 1 as the flag.
+- `noclose=true/false`: If set, the door can't be closed. No value to toggle.
+- `openeffect=id,flag`: Effects when opening. For random rotation, use 1 as the flag.
 - `unlock=true/false`: Allows ignoring wards. No value to toggle.
 
 `tweak_dungeon`:

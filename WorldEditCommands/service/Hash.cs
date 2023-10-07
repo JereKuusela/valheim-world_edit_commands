@@ -48,6 +48,9 @@ public static class Hash
   public static int Speed = "override_speed".GetStableHashCode();
   public static int MaxCover = "override_maximum_cover".GetStableHashCode();
   public static int InputEffect = "override_input_effect".GetStableHashCode();
+  public static int OpenEffect = "override_open_effect".GetStableHashCode();
+  public static int CloseEffect = "override_close_effect".GetStableHashCode();
+  public static int LockedEffect = "override_locked_effect".GetStableHashCode();
   public static int FuelEffect = "override_fuel_effect".GetStableHashCode();
   public static int OutputEffect = "override_output_effect".GetStableHashCode();
 
@@ -90,6 +93,9 @@ public static class Hash
   public static int Smoke = "override_smoke".GetStableHashCode();
   public static int CLLC_Affix = "CL&LC effect".GetStableHashCode();
   public static int Unlock = "override_unlock".GetStableHashCode();
+  public static int DoorConsume = "override_door_consume".GetStableHashCode();
+  public static int DoorNoClose = "override_door_no_close".GetStableHashCode();
+  public static int DoorKey = "override_door_key".GetStableHashCode();
   public static int Health = "health".GetStableHashCode();
   public static int Level = "level".GetStableHashCode();
   public static int Text = "text".GetStableHashCode();

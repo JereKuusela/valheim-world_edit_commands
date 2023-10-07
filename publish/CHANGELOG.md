@@ -1,3 +1,7 @@
+- v1.47
+  - Adds new parameters `consume`, `key` and `noclose` to the `tweak_door` command.
+  - Adds new parameters `closeeffect`, `lockedeffect` and `openeffect` to the `tweak_door` command.
+
 - v1.46
   - Fixed for the new patch.
 

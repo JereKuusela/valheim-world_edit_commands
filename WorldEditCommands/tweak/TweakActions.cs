@@ -197,6 +197,21 @@ public static class TweakActions
     value = Actions.ToggleBool(view, value, Hash.Unlock);
     return $"¤ unlock set to {Print(value)}.";
   }
+  public static string Consume(ZNetView view, bool? value)
+  {
+    value = Actions.ToggleBool(view, value, Hash.DoorConsume);
+    return $"¤ consume set to {Print(value)}.";
+  }
+  public static string NoClose(ZNetView view, bool? value)
+  {
+    value = Actions.ToggleBool(view, value, Hash.DoorNoClose);
+    return $"¤ no close set to {Print(value)}.";
+  }
+  public static string DoorKey(ZNetView view, string? value)
+  {
+    Actions.SetString(view, value, Hash.DoorKey);
+    return $"¤ door key set to {Print(value)}.";
+  }
   public static string Creator(ZNetView view, long? value)
   {
     Actions.SetLong(view, value ?? 0L, Hash.Creator);
@@ -363,6 +378,24 @@ public static class TweakActions
     var str = value.Length == 0 ? null : string.Join("|", value);
     Actions.SetString(view, str, Hash.InputEffect);
     return $"¤ input effect set to {Print(str)}.";
+  }
+  public static string OpenEffect(ZNetView view, string[] value)
+  {
+    var str = value.Length == 0 ? null : string.Join("|", value);
+    Actions.SetString(view, str, Hash.OpenEffect);
+    return $"¤ open effect set to {Print(str)}.";
+  }
+  public static string CloseEffect(ZNetView view, string[] value)
+  {
+    var str = value.Length == 0 ? null : string.Join("|", value);
+    Actions.SetString(view, str, Hash.CloseEffect);
+    return $"¤ close effect set to {Print(str)}.";
+  }
+  public static string LockedEffect(ZNetView view, string[] value)
+  {
+    var str = value.Length == 0 ? null : string.Join("|", value);
+    Actions.SetString(view, str, Hash.LockedEffect);
+    return $"¤ locked effect set to {Print(str)}.";
   }
   public static string OutputEffect(ZNetView view, string[] value)
   {
