@@ -36,6 +36,7 @@ Following parameters are available:
   - Object scale (redundant because scale usually comes from the spawn system).
   - Creature spawn coordinates (harmful because creatures try returning to the spawn coordinates when idle).
   - LocationProxy data (redundant because the location spawn system sets this).
+  - Connected ZDO (usually not needed).
 - `copy=all`: Copies all of the ZDO data to the clipboard.
 - `copy=key1,key2,...`: Copies give data keys to the clipboard. See bottom of the file for available keys.
 - `center`: Sets `rotate` center point at player position.
@@ -56,6 +57,7 @@ Following parameters are available:
   - Use `f=` as a shortcut for `field=`.
   - Create alias `alias sf spawn_object $$ f=$$ f=$$ f=$$ f=$$ f=$$` to quickly set multiple fields.
   - Note: This is vanilla compatible.
+  - False, zero and empty values are removed on world load, unless World Edit Commands is also installed on the server.
 - `fuel=number`: Sets the fuel amount. Without number, prints the fuel amount.
 - `from=x,z,y`: Same as the `center`.
 - `height`: Maximum height from the `center` point (default is 1000 meters).
@@ -349,6 +351,7 @@ Following parameters are available:
   - Use `f=` as a shortcut for `field=`.
   - Create alias `alias sf spawn_object $$ f=$$ f=$$ f=$$ f=$$ f=$$` to quickly set multiple fields.
   - Note: This is vanilla compatible.
+  - False, zero and empty values are removed on world load, unless World Edit Commands is also installed on the server.
 - `from=x,z,y`: Allows overriding the player's position for the command. Used by `redo` and can be useful for some advanced usage.
 - `hunt=true/false`: Spawned creatures are in the hunt mode.
 - `level=integer`: Spawned creatures have this amount of level (level = stars + 1).

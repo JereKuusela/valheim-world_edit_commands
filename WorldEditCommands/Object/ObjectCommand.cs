@@ -15,7 +15,7 @@ public class ObjectCommand
     return Random.NextDouble() < value;
   }
   public const string Name = "object";
-  private static readonly Dictionary<ZDOID, EditData> EditedInfo = new();
+  private static readonly Dictionary<ZDOID, EditData> EditedInfo = [];
   private static void AddData(ZNetView view)
   {
     var zdo = view.GetZDO();
@@ -25,7 +25,7 @@ public class ObjectCommand
   private static void Execute(Terminal context, ObjectParameters pars, IEnumerable<string> operations, ZNetView[] views)
   {
     var scene = ZNetScene.instance;
-    Dictionary<ZDOID, long> oldOwner = new();
+    Dictionary<ZDOID, long> oldOwner = [];
     views = views.Where(view =>
     {
       if (!view || !view.GetZDO().IsValid())
@@ -230,7 +230,7 @@ public class ObjectCommand
   private static string SetFields(ZNetView view, Dictionary<string, object> fields)
   {
     AddData(view);
-    Actions.SetFields(view.gameObject, fields);
+    Actions.SetFields(view, fields);
     return $"¤ {fields.Count} fields set.";
   }
   private static string SetFuel(ZNetView view, float amount)
@@ -269,8 +269,9 @@ public class ObjectCommand
   private static string Scale(ZNetView view, Vector3 scale)
   {
     AddData(view);
-    Actions.Scale(view, scale);
-    return $"¤ scaled to {scale:F1}.";
+    var tweaked = Actions.Scale(view, scale);
+    var tweakStr = tweaked ? " (scaling enabled)" : "";
+    return $"¤ scaled to {scale:F1}{tweakStr}.";
   }
   private static string SetBaby(ZNetView view)
   {
@@ -439,11 +440,11 @@ public class ObjectCommand
   }
   private static string GetInfo(ZNetView obj)
   {
-    List<string> info = new() {
+    List<string> info = [
       "Id: ¤",
       "Pos: " + Helper.PrintVectorXZY(obj.transform.position),
       "Rot: " + Helper.PrintAngleYXZ(obj.transform.rotation)
-    };
+    ];
     if (obj.m_syncInitialScale)
       info.Add("Scale: " + Helper.PrintVectorXZY(obj.transform.localScale));
     var character = obj.GetComponent<Character>();
@@ -508,7 +509,7 @@ public class ObjectCommand
   }
   private static string PrintData(ZNetView obj, string data)
   {
-    List<string> info = new();
+    List<string> info = [];
     var zdo = obj.GetZDO();
     var id = zdo.m_uid;
     info.Add("Id: ¤");

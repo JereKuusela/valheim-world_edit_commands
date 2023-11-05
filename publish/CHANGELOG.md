@@ -1,3 +1,8 @@
+- v1.48
+  - Adds support for persisting false, zero or empty `field` values when installed on the server.
+  - Adds connected ZDO info to the `object copy=all` command.
+  - Fixes false not working for the `field` parameter.
+
 - v1.47
   - Adds new parameters `consume`, `key` and `noclose` to the `tweak_door` command.
   - Adds new parameters `closeeffect`, `lockedeffect` and `openeffect` to the `tweak_door` command.

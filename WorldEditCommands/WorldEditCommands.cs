@@ -9,7 +9,7 @@ public class WorldEditCommands : BaseUnityPlugin
 {
   public const string GUID = "world_edit_commands";
   public const string NAME = "World Edit Commands";
-  public const string VERSION = "1.47";
+  public const string VERSION = "1.48";
   public void Awake()
   {
     new Harmony(GUID).PatchAll();
@@ -17,11 +17,14 @@ public class WorldEditCommands : BaseUnityPlugin
   public static bool IsSpawnerTweaks = false;
   public static bool IsStructureTweaks = false;
   public static bool IsCLLC = false;
+  public static bool IsTweaks = false;
   public void Start()
   {
     IsSpawnerTweaks = Chainloader.PluginInfos.ContainsKey("spawner_tweaks") || Chainloader.PluginInfos.ContainsKey("logic_tweaks");
     IsStructureTweaks = Chainloader.PluginInfos.ContainsKey("structure_tweaks") || Chainloader.PluginInfos.ContainsKey("logic_tweaks");
     IsCLLC = Chainloader.PluginInfos.ContainsKey("rg.bepinex.plugins.creaturelevelcontrol");
+    IsTweaks = Chainloader.PluginInfos.ContainsKey("world_edit_tweaks");
+    DataAutoComplete.Init();
   }
 }
 [HarmonyPatch(typeof(Terminal), nameof(Terminal.InitTerminal))]

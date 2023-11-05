@@ -340,13 +340,6 @@ public static class Actions
       obj.transform.rotation = rotation;
     }
   }
-  public static void SetScale(GameObject obj, Vector3 scale)
-  {
-    var view = obj.GetComponent<ZNetView>();
-    if (view == null) return;
-    if (scale != Vector3.one && view.m_syncInitialScale)
-      view.SetLocalScale(scale);
-  }
   public static void Respawn(GameObject obj)
   {
     Respawn(obj.GetComponent<Container>());
@@ -401,9 +394,9 @@ public static class Actions
   {
     SetVisual(obj.GetComponent<Character>(), slot, item);
   }
-  public static void SetFields(GameObject obj, Dictionary<string, object> fields)
+  public static void SetFields(GameObject obj, Dictionary<string, object> fields) => SetFields(obj.GetComponent<ZNetView>(), fields);
+  public static void SetFields(ZNetView view, Dictionary<string, object> fields)
   {
-    var view = obj.GetComponent<ZNetView>();
     var zdo = view?.GetZDO();
     if (view == null || zdo == null) return;
     zdo.Set(Hash.HasFields, true);
@@ -486,10 +479,19 @@ public static class Actions
     zdo.SetRotation(Quaternion.identity);
     obj.transform.rotation = Quaternion.identity;
   }
-  public static void Scale(ZNetView obj, Vector3 scale)
+  public static bool Scale(ZNetView obj, Vector3 scale)
   {
+    var tweaked = false;
+    if (!obj.m_syncInitialScale && WorldEditCommands.IsTweaks)
+    {
+      SetFields(obj, new() {
+        { "ZNetView.m_syncInitialScale", true }
+      });
+      tweaked = true;
+    }
     if (obj.m_syncInitialScale)
       obj.SetLocalScale(scale);
+    return tweaked;
   }
 
   public static void RemoveZDO(ZDO zdo)

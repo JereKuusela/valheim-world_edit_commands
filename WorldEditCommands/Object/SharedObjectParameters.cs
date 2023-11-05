@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using ServerDevcommands;
 using UnityEngine;
 namespace WorldEditCommands;
@@ -91,7 +93,7 @@ public class SharedObjectParameters
         var prefab = DataAutoComplete.PrefabFromCommand(string.Join(" ", args));
         var component = DataAutoComplete.RealComponent(prefab, values[0]);
         var field = DataAutoComplete.RealField(component, values[1]);
-        var fieldValue = values[2];
+        var fieldValue = string.Join(",", values.Skip(2));
         var type = DataAutoComplete.GetType(component, field);
         var key = $"{component}.{field}";
         if (type == typeof(int))
@@ -101,14 +103,33 @@ public class SharedObjectParameters
         else if (type == typeof(string))
           Fields.Add(key, fieldValue);
         else if (type == typeof(bool))
-          Fields.Add(key, bool.Parse(fieldValue) ? 1 : -1);
+          Fields.Add(key, bool.Parse(fieldValue) ? 1 : 0);
         else if (type == typeof(Vector3))
           Fields.Add(key, Parse.VectorXZY(values, 2));
-        else if (type == typeof(GameObject))
+        else if (type == typeof(GameObject) || type == typeof(ItemDrop) || type == typeof(EffectList))
           Fields.Add(key, fieldValue);
+        else if (type == typeof(Character.Faction))
+          Fields.Add(key, (int)ToEnum<Character.Faction>(fieldValue));
         else
-          throw new System.Exception($"Unhandled type for field {key}");
+          throw new Exception($"Unhandled type for field {key}");
       }
     }
   }
+
+  public static T ToEnum<T>(string str) where T : struct, Enum => ToEnum<T>(ToList(str));
+  public static T ToEnum<T>(List<string> list) where T : struct, Enum
+  {
+    int value = 0;
+    foreach (var item in list)
+    {
+      if (Enum.TryParse<T>(item, true, out var parsed))
+        value += (int)(object)parsed;
+      else
+        throw new Exception($"Failed to parse value {item} as {nameof(T)}.");
+    }
+    return (T)(object)value;
+  }
+  public static List<string> ToList(string str, bool removeEmpty = true) => Split(str, removeEmpty).ToList();
+
+  public static string[] Split(string arg, bool removeEmpty = true, char split = ',') => arg.Split(split).Select(s => s.Trim()).Where(s => !removeEmpty || s != "").ToArray();
 }
