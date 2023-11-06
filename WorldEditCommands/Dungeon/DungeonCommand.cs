@@ -6,17 +6,21 @@ using UnityEngine;
 
 namespace WorldEditCommands;
 
-public class DungeonCommand {
+public class DungeonCommand
+{
   public const string Name = "dungeon";
 
 
-  public DungeonCommand() {
+  public DungeonCommand()
+  {
     ObjectAutoComplete autoComplete = new();
     var description = CommandInfo.Create("Modifies the nearest dungeon.", null, autoComplete.NamedParameters);
-    Helper.Command(Name, description, (args) => {
+    Helper.Command(Name, description, (args) =>
+    {
       var player = Helper.GetPlayer();
       var dungeon = ZNetScene.instance.m_instances.Values.Where(view => view.GetComponent<DungeonGenerator>()).OrderBy(view => Vector3.Distance(player.transform.position, view.transform.position)).FirstOrDefault();
-      if (dungeon == null) {
+      if (dungeon == null)
+      {
         Helper.AddError(args.Context, "No dungeon found.");
         return;
       }
@@ -24,12 +28,14 @@ public class DungeonCommand {
 
     }, () => autoComplete.NamedParameters);
   }
-  private static DungeonDB.RoomData FindRoom(string type) {
+  private static DungeonDB.RoomData FindRoom(string type)
+  {
     var room = DungeonDB.instance.m_rooms.FirstOrDefault(r => r.m_room.name.ToLower() == type.ToLower()) ?? throw new InvalidOperationException($"Can't find room {type}.");
     return room;
   }
 
-  private static string EditRoom(ZNetView obj, int i, string type, Vector3 pos, Quaternion rot) {
+  private static string EditRoom(ZNetView obj, int i, string type, Vector3 pos, Quaternion rot)
+  {
     var id = "room" + i.ToString();
     var room = FindRoom(type);
 
@@ -39,13 +45,15 @@ public class DungeonCommand {
     zdo.Set(id, rot);
     return "";
   }
-  private static string PrintRooms(ZNetView obj) {
-    List<string> info = new();
+  private static string PrintRooms(ZNetView obj)
+  {
+    List<string> info = [];
     var zdo = obj.GetZDO();
     var dg = obj.GetComponent<DungeonGenerator>();
     info.Add($"Dungeon {obj.GetPrefabName()} {dg.m_generatedSeed} {Helper.PrintVectorXZY(obj.transform.position)} {Helper.PrintAngleYXZ(obj.transform.rotation)}");
     var rooms = zdo.GetInt("rooms", 0);
-    for (int i = 0; i < rooms; i++) {
+    for (int i = 0; i < rooms; i++)
+    {
       var id = "room" + i.ToString();
       var type = zdo.GetInt(id, 0);
       var pos = zdo.GetVec3(id + "_pos", Vector3.zero);

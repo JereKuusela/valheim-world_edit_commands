@@ -1,3 +1,6 @@
+- v1.49
+  - Improves compatibility with some mods.
+
 - v1.48
   - Adds support for persisting false, zero or empty `field` values when installed on the server.
   - Adds connected ZDO info to the `object copy=all` command.

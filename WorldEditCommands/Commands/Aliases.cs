@@ -1,10 +1,14 @@
 using ServerDevcommands;
 namespace WorldEditCommands;
-public class AliasesCommand {
-  public AliasesCommand() {
-    new Terminal.ConsoleCommand("world_edit_aliases", "[set/clear] - Sets some useful aliases.", (args) => {
+public class AliasesCommand
+{
+  public AliasesCommand()
+  {
+    new Terminal.ConsoleCommand("world_edit_aliases", "[set/clear] - Sets some useful aliases.", (args) =>
+    {
       var sub = ServerDevcommands.Settings.Substitution;
-      if (args.Length > 1 && args[1] == "clear") {
+      if (args.Length > 1 && args[1] == "clear")
+      {
         args.Context.TryRunCommand($"alias move");
         args.Context.TryRunCommand($"alias rotate");
         args.Context.TryRunCommand($"alias scal");
@@ -20,7 +24,9 @@ public class AliasesCommand {
         args.Context.TryRunCommand($"alias change_utility");
         args.Context.TryRunCommand($"alias essential");
         args.Context.TryRunCommand($"alias spawn");
-      } else {
+      }
+      else
+      {
         args.Context.TryRunCommand($"alias move object move={sub},{sub} radius={sub} id={sub}");
         args.Context.TryRunCommand($"alias rotate object rotate={sub},{sub} radius={sub} id={sub}");
         args.Context.TryRunCommand($"alias scale object scale={sub} radius={sub} id={sub}");
@@ -38,8 +44,9 @@ public class AliasesCommand {
         args.Context.TryRunCommand($"alias spawn spawn_object {sub} amount={sub} level={sub}");
       }
     });
-    AutoComplete.Register("world_edit_aliases", (int index) => {
-      if (index == 0) return new() { "set", "clear" };
+    AutoComplete.Register("world_edit_aliases", (int index) =>
+    {
+      if (index == 0) return ["set", "clear"];
       return ParameterInfo.None;
     });
   }

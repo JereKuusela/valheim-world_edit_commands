@@ -45,8 +45,8 @@ public static class Actions
     if (refresh)
       Refresh(obj);
   }
-  private static Dictionary<string, int> IdToHash = new();
-  private static Dictionary<string, int> LowerIdToHash = new();
+  private static Dictionary<string, int> IdToHash = [];
+  private static Dictionary<string, int> LowerIdToHash = [];
   public static int GetId(string id)
   {
     if (IdToHash.Count == 0) IdToHash = ZNetScene.instance.m_namedPrefabs.ToDictionary(kvp => kvp.Value.name, kvp => kvp.Key);

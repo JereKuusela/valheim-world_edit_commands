@@ -63,34 +63,34 @@ public class TweakObjectCommand : TweakCommand
     throw new NotImplementedException();
   }
 
-  public static List<string> Wears = new() {
+  public static List<string> Wears = [
       "default",
       "broken",
       "damaged",
       "healthy"
-  };
-  public static List<string> Growths = new() {
+  ];
+  public static List<string> Growths = [
       "big",
       "big_bad",
       "default",
       "small",
       "small_bad"
-  };
-  public static List<string> Smokes = new() {
+  ];
+  public static List<string> Smokes = [
       "off",
       "on",
       "ignore",
-  };
-  public static List<string> FallTypes = new() {
+  ];
+  public static List<string> FallTypes = [
       "off",
       "solid",
       "terrain"
-  };
-  public static List<string> Waters = new() {
+  ];
+  public static List<string> Waters = [
       "cave",
       "crypt",
-  };
-  public static List<string> Components = new() {
+  ];
+  public static List<string> Components = [
       "altar",
       "beehive",
       "chest",
@@ -101,7 +101,7 @@ public class TweakObjectCommand : TweakCommand
       "smelter",
       "spawner",
       "spawnpoint",
-  };
+  ];
   public TweakObjectCommand()
   {
     SupportedOperations.Add("component", typeof(string));

@@ -41,7 +41,17 @@ public class DataAutoComplete
     List<Assembly> assemblies = [Assembly.GetAssembly(typeof(ZNetView)), .. Chainloader.PluginInfos.Values.Where(p => p.Instance != null).Select(p => p.Instance.GetType().Assembly)];
     var assembly = Assembly.GetAssembly(typeof(ZNetView));
     var baseType = typeof(MonoBehaviour);
-    var types = assemblies.SelectMany(s => s.GetTypes()).Where(baseType.IsAssignableFrom);
+    var types = assemblies.SelectMany(s =>
+    {
+      try
+      {
+        return s.GetTypes();
+      }
+      catch (ReflectionTypeLoadException e)
+      {
+        return e.Types.Where(t => t != null);
+      }
+    }).Where(baseType.IsAssignableFrom).ToArray();
     var valid = WorldEditCommands.IsTweaks ? ValidTweakTypes : ValidTypes;
     foreach (var type in types)
     {

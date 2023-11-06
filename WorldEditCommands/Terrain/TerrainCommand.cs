@@ -4,7 +4,8 @@ using System.Linq;
 using ServerDevcommands;
 using UnityEngine;
 namespace WorldEditCommands;
-public class TerrainCommand {
+public class TerrainCommand
+{
   public const string Name = "terrain";
   public static Dictionary<string, Color> Paints = new() {
     {"grass", Color.black},
@@ -18,37 +19,45 @@ public class TerrainCommand {
     {"paved_dark", new(0f, 1f, 0.5f)},
   };
 
-  private TerrainComp[] GetCompilers(TerrainParameters pars) {
+  private TerrainComp[] GetCompilers(TerrainParameters pars)
+  {
     if (pars.Radius != null) return Terrain.GetCompilers(pars.Position, pars.Radius);
     if (pars.Width != null && pars.Depth != null) return Terrain.GetCompilers(pars.Position, pars.Width, pars.Depth, pars.Angle);
     throw new InvalidOperationException("Unable to select any terrain");
   }
-  private List<HeightNode> GetHeightNodes(TerrainParameters pars, IEnumerable<TerrainComp> compilers) {
-    List<HeightNode> nodes = new();
-    foreach (var comp in compilers) {
+  private List<HeightNode> GetHeightNodes(TerrainParameters pars, IEnumerable<TerrainComp> compilers)
+  {
+    List<HeightNode> nodes = [];
+    foreach (var comp in compilers)
+    {
       if (pars.Radius != null) Terrain.GetHeightNodesWithCircle(nodes, comp, pars.Position, pars.Radius);
       if (pars.Width != null && pars.Depth != null) Terrain.GetHeightNodesWithRect(nodes, comp, pars.Position, pars.Width, pars.Depth, pars.Angle);
     }
     return nodes;
   }
-  private List<PaintNode> GetPaintNodes(TerrainParameters pars, IEnumerable<TerrainComp> compilers) {
-    List<PaintNode> nodes = new();
-    foreach (var comp in compilers) {
+  private List<PaintNode> GetPaintNodes(TerrainParameters pars, IEnumerable<TerrainComp> compilers)
+  {
+    List<PaintNode> nodes = [];
+    foreach (var comp in compilers)
+    {
       if (pars.Radius != null) Terrain.GetPaintNodesWithCircle(nodes, comp, pars.Position, pars.Radius);
       if (pars.Width != null && pars.Depth != null) Terrain.GetPaintNodesWithRect(nodes, comp, pars.Position, pars.Width, pars.Depth, pars.Angle);
     }
     return nodes;
   }
-  private List<Func<TerrainNode, bool>> GetFilterers(TerrainParameters pars) {
-    List<Func<TerrainNode, bool>> filterers = new();
+  private List<Func<TerrainNode, bool>> GetFilterers(TerrainParameters pars)
+  {
+    List<Func<TerrainNode, bool>> filterers = [];
     if (pars.BlockCheck != BlockCheck.Off) filterers.Add(Terrain.CreateBlockCheckFilter(pars.BlockCheck, pars.IncludedIds, pars.ExcludedIds));
     if (pars.Within != null) filterers.Add(Terrain.CreateAltitudeFilter(pars.Within.Min, pars.Within.Max));
     return filterers;
   }
-  public TerrainCommand() {
+  public TerrainCommand()
+  {
     TerrainAutoComplete autoComplete = new();
     var description = CommandInfo.Create("Manipulates the terrain.", null, autoComplete.NamedParameters);
-    Helper.Command(Name, description, (args) => {
+    Helper.Command(Name, description, (args) =>
+    {
       TerrainParameters pars = new(args);
       var compilers = GetCompilers(pars);
       var filterers = GetFilterers(pars);
@@ -72,12 +81,16 @@ public class TerrainCommand {
         Terrain.MaxTerrain(heightNodes, pars.Position, pars.Size, pars.Max.Value);
       if (pars.Void)
         Terrain.VoidTerrain(heightNodes, pars.Position, pars.Size);
-      if (pars.Paint != "") {
+      if (pars.Paint != "")
+      {
         var split = pars.Paint.Split(',');
-        if (split.Length > 2) {
+        if (split.Length > 2)
+        {
           Color color = new(Parse.Float(split, 0), Parse.Float(split, 1), Parse.Float(split, 2), Parse.Float(split, 3, 1f));
           Terrain.PaintTerrain(paintNodes, pars.Position, pars.Size, pars.Smooth, color);
-        } else if (Paints.TryGetValue(pars.Paint, out var color)) {
+        }
+        else if (Paints.TryGetValue(pars.Paint, out var color))
+        {
           Terrain.PaintTerrain(paintNodes, pars.Position, pars.Size, pars.Smooth, color);
         }
       }
