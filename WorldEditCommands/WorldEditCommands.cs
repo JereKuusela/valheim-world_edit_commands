@@ -1,4 +1,5 @@
-﻿using BepInEx;
+﻿using System.Diagnostics;
+using BepInEx;
 using BepInEx.Bootstrap;
 using HarmonyLib;
 
@@ -9,7 +10,7 @@ public class WorldEditCommands : BaseUnityPlugin
 {
   public const string GUID = "world_edit_commands";
   public const string NAME = "World Edit Commands";
-  public const string VERSION = "1.49";
+  public const string VERSION = "1.50";
   public void Awake()
   {
     new Harmony(GUID).PatchAll();

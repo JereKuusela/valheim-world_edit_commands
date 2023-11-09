@@ -1,3 +1,6 @@
+- v1.50
+  - Fixes compatibility issue with Drop That.
+
 - v1.49
   - Improves compatibility with some mods.
 

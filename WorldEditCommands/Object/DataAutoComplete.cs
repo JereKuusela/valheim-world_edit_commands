@@ -51,7 +51,17 @@ public class DataAutoComplete
       {
         return e.Types.Where(t => t != null);
       }
-    }).Where(baseType.IsAssignableFrom).ToArray();
+    }).Where(t =>
+    {
+      try
+      {
+        return baseType.IsAssignableFrom(t);
+      }
+      catch
+      {
+        return false;
+      }
+    }).ToArray();
     var valid = WorldEditCommands.IsTweaks ? ValidTweakTypes : ValidTypes;
     foreach (var type in types)
     {
