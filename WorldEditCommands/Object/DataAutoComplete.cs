@@ -110,7 +110,7 @@ public class DataAutoComplete
   private static List<string> GetComponents(string prefab)
   {
     if (ZNetScene.instance.m_namedPrefabs.TryGetValue(prefab.GetStableHashCode(), out var gameObject))
-      return gameObject.GetComponents<MonoBehaviour>().Select(c => c.GetType().Name).ToList();
+      return gameObject.GetComponentsInChildren<MonoBehaviour>().Select(c => c.GetType().Name).ToList();
     return Components;
   }
   public static List<string> GetFields()

@@ -174,9 +174,9 @@ public class ObjectCommand
       ZNetView[] views;
       if (pars.Connect)
       {
-        var view = Selector.GetHovered(50f, pars.ExcludedIds);
+        var view = Selector.GetHovered(50f, pars.IncludedIds, pars.ExcludedIds);
         if (view == null) return;
-        views = Selector.GetConnected(view, pars.ExcludedIds);
+        views = Selector.GetConnected(view, pars.IncludedIds, pars.ExcludedIds);
       }
       else if (pars.Radius != null)
       {
@@ -188,7 +188,7 @@ public class ObjectCommand
       }
       else
       {
-        var view = Selector.GetHovered(50f, pars.ExcludedIds);
+        var view = Selector.GetHovered(50f, pars.IncludedIds, pars.ExcludedIds);
         if (view == null) return;
         if (!Selector.GetPrefabs(pars.IncludedIds).Contains(view.GetZDO().GetPrefab()))
         {
@@ -222,8 +222,10 @@ public class ObjectCommand
   }
   private static string PrintFuel(ZNetView view)
   {
-    var obj = view.GetComponent<Fireplace>();
-    if (!obj) return "Skipped: ¤ is not a fireplace.";
+    var hasFuel = view.TryGetComponent(out Smelter smelter) && smelter.m_fuelItem != null;
+    hasFuel |= view.TryGetComponent(out Fireplace fireplace) && fireplace.m_fuelItem != null;
+    hasFuel |= view.TryGetComponent(out CookingStation cs) && cs.m_fuelItem != null;
+    if (!hasFuel) return "Skipped: ¤ doesn't use fuel.";
     var amount = view.GetZDO().GetFloat("fuel", 0f);
     return $"¤ has {amount} fuel.";
   }
@@ -235,8 +237,10 @@ public class ObjectCommand
   }
   private static string SetFuel(ZNetView view, float amount)
   {
-    var smelter = view.GetComponent<Smelter>();
-    if (!view.GetComponent<Fireplace>() && (!smelter || !smelter.m_fuelItem)) return "Skipped: ¤ is not a fireplace or smelter.";
+    var hasFuel = view.TryGetComponent(out Smelter smelter) && smelter.m_fuelItem != null;
+    hasFuel |= view.TryGetComponent(out Fireplace fireplace) && fireplace.m_fuelItem != null;
+    hasFuel |= view.TryGetComponent(out CookingStation cs) && cs.m_fuelItem != null;
+    if (!hasFuel) return "Skipped: ¤ doesn't use fuel.";
     AddData(view);
     var previous = view.GetZDO().GetFloat("fuel", 0f);
     Actions.SetFuel(view, amount);

@@ -32,7 +32,7 @@ public static class Hash
   public static int UseEffect = "override_use_effect".GetStableHashCode();
   public static int StartEffect = "override_start_effect".GetStableHashCode();
   public static int SpawnItem = "override_spawn_item".GetStableHashCode();
-  public static int Faction = "override_faction".GetStableHashCode();
+  public static int Faction = "faction".GetStableHashCode();
   public static int Command = "override_command".GetStableHashCode();
   public static int Resistances = "override_resistances".GetStableHashCode();
   public static int Attacks = "override_attacks".GetStableHashCode();

@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using BepInEx;
+﻿using BepInEx;
 using BepInEx.Bootstrap;
 using HarmonyLib;
 
@@ -10,7 +9,7 @@ public class WorldEditCommands : BaseUnityPlugin
 {
   public const string GUID = "world_edit_commands";
   public const string NAME = "World Edit Commands";
-  public const string VERSION = "1.50";
+  public const string VERSION = "1.51";
   public void Awake()
   {
     new Harmony(GUID).PatchAll();
@@ -19,12 +18,14 @@ public class WorldEditCommands : BaseUnityPlugin
   public static bool IsStructureTweaks = false;
   public static bool IsCLLC = false;
   public static bool IsTweaks = false;
+  public static bool IsEWFactions = false;
   public void Start()
   {
     IsSpawnerTweaks = Chainloader.PluginInfos.ContainsKey("spawner_tweaks") || Chainloader.PluginInfos.ContainsKey("logic_tweaks");
     IsStructureTweaks = Chainloader.PluginInfos.ContainsKey("structure_tweaks") || Chainloader.PluginInfos.ContainsKey("logic_tweaks");
     IsCLLC = Chainloader.PluginInfos.ContainsKey("rg.bepinex.plugins.creaturelevelcontrol");
     IsTweaks = Chainloader.PluginInfos.ContainsKey("world_edit_tweaks");
+    IsEWFactions = Chainloader.PluginInfos.ContainsKey("expand_world_factions");
     DataAutoComplete.Init();
   }
 }
@@ -50,10 +51,11 @@ public class SetCommands
       new TweakSpawnPointCommand();
       new TweakItemStandCommand();
       new TweakChestCommand();
-      new TweakCreatureCommand();
       new TweakSmelterCommand();
       new TweakFermenterCommand();
     }
+    if (WorldEditCommands.IsSpawnerTweaks || WorldEditCommands.IsEWFactions)
+      new TweakCreatureCommand();
     if (WorldEditCommands.IsStructureTweaks)
     {
       new TweakDungeonCommand();
