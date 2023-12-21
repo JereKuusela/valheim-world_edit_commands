@@ -417,6 +417,8 @@ public static class Actions
         zdo.Set(hash, vector);
     }
     view.LoadFields();
+    if (view.TryGetComponent<WearNTear>(out var wearNTear))
+      wearNTear.UpdateVisual(false);
   }
   public static void SetVisual(ItemStand obj, Item? item)
   {

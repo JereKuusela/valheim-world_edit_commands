@@ -100,6 +100,6 @@ public class TerrainCommand
       UndoTerrain undo = new(before, after, pars.Position, pars.Size);
       UndoManager.Add(undo);
 
-    }, () => autoComplete.NamedParameters);
+    });
   }
 }

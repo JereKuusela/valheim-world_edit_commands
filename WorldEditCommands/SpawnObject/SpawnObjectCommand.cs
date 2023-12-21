@@ -135,6 +135,6 @@ public class SpawnObjectCommand
       var undoCommand = "spawn_object " + prefabName + " refRot=" + Helper.PrintAngleYXZ(pars.BaseRotation) + " from=" + Helper.PrintVectorXZY(pars.From) + " " + string.Join(" ", args.Args.Skip(2));
       UndoSpawn undo = new(spawns, undoCommand);
       UndoManager.Add(undo);
-    }, () => ParameterInfo.ObjectIds);
+    });
   }
 }

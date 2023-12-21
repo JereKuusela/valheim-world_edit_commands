@@ -26,7 +26,7 @@ public class DungeonCommand
       }
       if (args.Length < 2) PrintRooms(dungeon);
 
-    }, () => autoComplete.NamedParameters);
+    });
   }
   private static DungeonDB.RoomData FindRoom(string type)
   {

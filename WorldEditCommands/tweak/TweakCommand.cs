@@ -157,7 +157,7 @@ public abstract class TweakCommand
       }
       Execute(args.Context, pars.Chance, pars.Force, pars.Operations, views);
 
-    }, () => namedParameters);
+    });
   }
   public TweakCommand()
   {

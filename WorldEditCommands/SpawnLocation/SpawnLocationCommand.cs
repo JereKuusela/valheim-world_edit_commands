@@ -76,6 +76,6 @@ public class SpawnLocationCommand
       var undoCommand = "spawn_location " + name + " refRot=" + baseAngle + " from=" + Helper.PrintVectorXZY(basePosition) + " seed=" + seed + " rot=" + relativePosition + " " + string.Join(" ", args.Args.Skip(2));
       UndoSpawn undo = new(spawns, undoCommand);
       UndoManager.Add(undo);
-    }, () => ParameterInfo.LocationIds);
+    });
   }
 }

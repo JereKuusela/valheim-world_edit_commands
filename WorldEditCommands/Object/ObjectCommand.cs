@@ -199,7 +199,7 @@ public class ObjectCommand
       }
       Execute(args.Context, pars, pars.Operations, views);
 
-    }, () => autoComplete.NamedParameters);
+    });
   }
 
   private static string ChangeHealth(ZNetView obj, float amount, bool isPercentage)
