@@ -1,3 +1,6 @@
+- v1.52
+  - Adds a parameter `chance` to the command `terrain`.
+
 - v1.51
   - Adds `id` support when selecting objects with `connect`.
   - Fixes `field` autocomplete not including child components.

@@ -33,6 +33,7 @@ public class TerrainCommand
       if (pars.Radius != null) Terrain.GetHeightNodesWithCircle(nodes, comp, pars.Position, pars.Radius);
       if (pars.Width != null && pars.Depth != null) Terrain.GetHeightNodesWithRect(nodes, comp, pars.Position, pars.Width, pars.Depth, pars.Angle);
     }
+    if (pars.Chance < 1f) nodes = nodes.Where(n => UnityEngine.Random.value < pars.Chance).ToList();
     return nodes;
   }
   private List<PaintNode> GetPaintNodes(TerrainParameters pars, IEnumerable<TerrainComp> compilers)
@@ -43,6 +44,7 @@ public class TerrainCommand
       if (pars.Radius != null) Terrain.GetPaintNodesWithCircle(nodes, comp, pars.Position, pars.Radius);
       if (pars.Width != null && pars.Depth != null) Terrain.GetPaintNodesWithRect(nodes, comp, pars.Position, pars.Width, pars.Depth, pars.Angle);
     }
+    if (pars.Chance < 1f) nodes = nodes.Where(n => UnityEngine.Random.value < pars.Chance).ToList();
     return nodes;
   }
   private List<Func<TerrainNode, bool>> GetFilterers(TerrainParameters pars)

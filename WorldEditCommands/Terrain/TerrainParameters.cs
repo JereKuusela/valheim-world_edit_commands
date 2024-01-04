@@ -2,7 +2,8 @@ using System;
 using ServerDevcommands;
 using UnityEngine;
 namespace WorldEditCommands;
-public class TerrainParameters {
+public class TerrainParameters
+{
   public Vector3 Position = Vector3.zero;
   public Vector3 Offset = Vector3.zero;
   public Vector3 Step = Vector3.zero;
@@ -10,8 +11,8 @@ public class TerrainParameters {
   public Range<float>? Radius;
   public Range<float>? Width;
   public Range<float>? Depth;
-  public string[] IncludedIds = new string[0];
-  public string[] ExcludedIds = new string[0];
+  public string[] IncludedIds = [];
+  public string[] ExcludedIds = [];
   public float Angle = 0f;
   public float? Set;
   public bool Reset = false;
@@ -28,9 +29,12 @@ public class TerrainParameters {
   public bool FixedAngle = false;
   public BlockCheck BlockCheck = BlockCheck.Off;
   public Range<float>? Within;
+  public float Chance = 1f;
 
-  public TerrainParameters(Terminal.ConsoleEventArgs args) {
-    if (Player.m_localPlayer) {
+  public TerrainParameters(Terminal.ConsoleEventArgs args)
+  {
+    if (Player.m_localPlayer)
+    {
       var precision = Mathf.PI / 4f;
       Position = Player.m_localPlayer.transform.position;
       Angle = precision * Mathf.Round(Player.m_localPlayer.transform.rotation.eulerAngles.y / 45f);
@@ -38,7 +42,8 @@ public class TerrainParameters {
     ParseArgs(args.Args);
   }
 
-  private float ParseAngle(string value) {
+  private float ParseAngle(string value)
+  {
     float angle;
     if (value == "n") angle = 0f;
     else if (value == "ne") angle = 45f;
@@ -53,27 +58,33 @@ public class TerrainParameters {
     return angle;
   }
 
-  protected void ParseArgs(string[] args) {
+  protected void ParseArgs(string[] args)
+  {
     var useGroundHeight = true;
-    foreach (var arg in args) {
+    foreach (var arg in args)
+    {
       var split = arg.Split('=');
       var name = split[0].ToLower();
       if (split.Length < 2) continue;
       var value = split[1].ToLower();
-      if (name == "from") {
+      if (name == "from")
+      {
         FixedPosition = true;
         useGroundHeight = Parse.Split(value).Length < 3;
         Position = Parse.VectorXZY(Parse.Split(value));
       }
     }
-    if (useGroundHeight) {
+    if (useGroundHeight)
+    {
       if (ZoneSystem.instance.IsZoneLoaded(Position))
         Position.y = ZoneSystem.instance.GetGroundHeight(Position);
-      else {
+      else
+      {
         throw new InvalidOperationException("Unable to find the ground height. Use <color=yellow>from</color> with the y coordinate.");
       }
     }
-    foreach (var arg in args) {
+    foreach (var arg in args)
+    {
       var split = arg.Split('=');
       var name = split[0].ToLower();
       if (name == "reset")
@@ -88,28 +99,33 @@ public class TerrainParameters {
         BlockCheck = BlockCheck.On;
       if (name == "circle")
         Radius = new(0f);
-      if (name == "rect") {
+      if (name == "rect")
+      {
         Width = new(0f);
         Depth = new(0f);
       }
-      if (name == "slope") {
+      if (name == "slope")
+      {
         Slope = 0f;
       }
       if (split.Length < 2) continue;
       var value = split[1].ToLower();
       var values = Parse.Split(value);
+      if (name == "chance") Chance = Parse.Float(value, 1f);
       if (name == "id") IncludedIds = values;
       if (name == "ignore") ExcludedIds = values;
       if (name == "circle")
         Radius = Parse.FloatRange(value, 0f);
-      if (name == "rect") {
+      if (name == "rect")
+      {
         var size = Parse.ScaleRange(value);
         Width = new(size.Min.x, size.Max.x);
         Depth = new(size.Min.z, size.Max.z);
       }
       if (name == "paint")
         Paint = value;
-      if (name == "angle") {
+      if (name == "angle")
+      {
         FixedAngle = true;
         Angle = ParseAngle(value);
       }
@@ -125,7 +141,8 @@ public class TerrainParameters {
         Delta = -Parse.Float(value, 0f);
       if (name == "smooth")
         Smooth = Parse.Float(value, 0f);
-      if (name == "slope") {
+      if (name == "slope")
+      {
         Slope = Parse.Float(values, 0, 0f);
         if (values.Length > 1) SlopeAngle = ParseAngle(values[1]);
       }
@@ -137,7 +154,8 @@ public class TerrainParameters {
         Level = Parse.Float(value, Position.y);
       if (name == "step")
         Step = Parse.VectorZXY(values);
-      if (name == "blockcheck") {
+      if (name == "blockcheck")
+      {
         if (value == "on") BlockCheck = BlockCheck.On;
         else if (value == "inverse") BlockCheck = BlockCheck.Inverse;
         else if (value == "off") BlockCheck = BlockCheck.Off;
@@ -152,20 +170,23 @@ public class TerrainParameters {
       throw new InvalidOperationException($"<color=yellow>circle</color> or <color=yellow>rect</color> parameter must be used.");
     if (Radius != null) Size = Radius.Max;
     if (Depth != null && Width != null) Size = Mathf.Max(Depth.Max, Width.Max);
-    if (Step != Vector3.zero) {
+    if (Step != Vector3.zero)
+    {
       var width = Size;
       var depth = Size;
       if (Width != null) width = Width.Max;
       if (Depth != null) depth = Depth.Max;
       Offset.x += Step.x * width * 2;
       Offset.z += Step.z * depth * 2;
-      if (Slope.HasValue) {
+      if (Slope.HasValue)
+      {
         Offset.y = Slope.Value * (Step.z + Step.y);
         // Remove half to level at start of the slope (more intuitive for the users).
         if (Level.HasValue) Level += Offset.y - 0.5f * Slope.Value;
       }
     }
-    if (Offset != Vector3.zero) {
+    if (Offset != Vector3.zero)
+    {
       var original = Offset;
       Offset.x = Mathf.Cos(Angle) * original.x + Mathf.Sin(Angle) * original.z;
       Offset.z = Mathf.Cos(Angle) * original.z - Mathf.Sin(Angle) * original.x;
@@ -175,16 +196,20 @@ public class TerrainParameters {
     if (Radius != null) SlopeAngle += Angle;
   }
 
-  private void HandleTo(string[] args) {
-    foreach (var arg in args) {
+  private void HandleTo(string[] args)
+  {
+    foreach (var arg in args)
+    {
       var split = arg.Split('=');
       var name = split[0].ToLower();
       if (split.Length < 2) continue;
       var value = split[1].ToLower();
-      if (name == "to") {
+      if (name == "to")
+      {
         var to = Parse.VectorXZY(Parse.Split(value));
 
-        if (Slope == 0 && Parse.Split(value).Length < 3) {
+        if (Slope == 0 && Parse.Split(value).Length < 3)
+        {
           if (ZoneSystem.instance.IsZoneLoaded(to))
             to.y = ZoneSystem.instance.GetGroundHeight(to);
           else
@@ -198,7 +223,8 @@ public class TerrainParameters {
         Angle = Vector3.SignedAngle(Vector3.forward, Utils.DirectionXZ(to - Position), Vector3.up) * Mathf.PI / 180f;
         Position.x = (Position.x + to.x) / 2f;
         Position.z = (Position.z + to.z) / 2f;
-        if (Slope.HasValue) {
+        if (Slope.HasValue)
+        {
           if (Slope == 0)
             Slope = to.y - Position.y;
           Position.y += Slope.Value / 2f;

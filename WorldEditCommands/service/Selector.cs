@@ -47,8 +47,8 @@ public static class Selector
     var includedPrefabs = GetPrefabs(included);
     var excludedPrefabs = GetExcludedPrefabs(excluded);
     var raycast = Math.Max(maxDistance + 5f, 50f);
-    var mask = LayerMask.GetMask(new string[]
-    {
+    var mask = LayerMask.GetMask(
+    [
       "item",
       "piece",
       "piece_nonsolid",
@@ -60,7 +60,7 @@ public static class Selector
       "terrain",
       "vehicle",
       "character_trigger" // Added to remove spawners with ESP mod.
-    });
+    ]);
     var hits = Physics.RaycastAll(GameCamera.instance.transform.position, GameCamera.instance.transform.forward, raycast, mask);
     Array.Sort(hits, (RaycastHit x, RaycastHit y) => x.distance.CompareTo(y.distance));
     foreach (var hit in hits)

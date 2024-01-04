@@ -11,8 +11,8 @@ public class ObjectParameters : SharedObjectParameters
   public Vector3 From;
   public Vector3? Center = null;
   public Range<float>? Fuel = null;
-  public string[] IncludedIds = new string[0];
-  public string[] ExcludedIds = new string[0];
+  public string[] IncludedIds = [];
+  public string[] ExcludedIds = [];
   public string Prefab = "";
   public string Origin = "player";
   public bool? Remove;

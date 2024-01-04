@@ -153,7 +153,7 @@ public abstract class TweakCommand
           Helper.AddMessage(args.Context, $"Skipped: {view.name} has invalid id.");
           return;
         }
-        views = new[] { view };
+        views = [view];
       }
       Execute(args.Context, pars.Chance, pars.Force, pars.Operations, views);
 

@@ -9,8 +9,8 @@ public class TweakParameters
 {
   public Vector3 From;
   public Vector3? Center;
-  public string[] IncludedIds = new string[0];
-  public string[] ExcludedIds = new string[0];
+  public string[] IncludedIds = [];
+  public string[] ExcludedIds = [];
   public float Angle = 0f;
   public long Creator = 0;
   public Range<float>? Radius;

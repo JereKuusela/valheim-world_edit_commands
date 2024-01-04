@@ -421,6 +421,7 @@ Following parameters are available:
   - on: Excludes terrain that is under structures or other objects.
   - off: All terrain is affected (default).
   - inverse: Only includes terrain that is under structures or other objects.
+- `chance=number`: Randomly filters included terrain nodes. For example 0.5 includes about half of the nodes (50%).
 - `circle=number` or `circle=min-max`: Determines the radius of the affected terrain.
 - `delta=meters`: Sets the difference from the original elevation. Without the parameter, resets terrain altitude changes.
 - `from=x,z,y`: Overwrites the player's position. Allows fixing the current position for more precise editing. The y coordinate can be used to override the current ground altitude.

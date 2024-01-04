@@ -23,7 +23,8 @@ public class TerrainAutoComplete
     "to",
     "min",
     "max",
-    "within"
+    "within",
+    "chance"
   ];
   public TerrainAutoComplete()
   {
@@ -31,6 +32,7 @@ public class TerrainAutoComplete
     var paints = TerrainCommand.Paints.Keys.ToList();
     paints.Sort();
     AutoComplete.Register(TerrainCommand.Name, (int index) => NamedParameters, new() {
+      { "chance", (int index) => ParameterInfo.Create("chance=<color=yellow>number</color> (from 0.0 to 1.0)", "Chance of the operation being applied to a node.")},
       {
         "reset",
         (int index) => ParameterInfo.Flag("Reset")
