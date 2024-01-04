@@ -111,7 +111,11 @@ public class TerrainParameters
       if (split.Length < 2) continue;
       var value = split[1].ToLower();
       var values = Parse.Split(value);
-      if (name == "chance") Chance = Parse.Float(value, 1f);
+      if (name == "chance")
+      {
+        var range = Parse.FloatRange(value, 1f);
+        Chance = Helper.RandomValue(range);
+      }
       if (name == "id") IncludedIds = values;
       if (name == "ignore") ExcludedIds = values;
       if (name == "circle")
