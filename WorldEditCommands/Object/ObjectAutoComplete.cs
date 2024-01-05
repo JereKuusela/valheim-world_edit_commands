@@ -4,15 +4,6 @@ namespace WorldEditCommands;
 public class ObjectAutoComplete : SharedObjectAutoComplete
 {
   public List<string> NamedParameters;
-  public static List<string> ObjectTypes = [
-      "creature",
-    "chest",
-    "fireplace",
-    "item",
-    "structure",
-    "spawner",
-    "spawnpoint",
-  ];
   public ObjectAutoComplete()
   {
     NamedParameters = WithSharedParameters([
@@ -39,7 +30,8 @@ public class ObjectAutoComplete : SharedObjectAutoComplete
       "chance",
       "type",
       "connect",
-      "status"
+      "status",
+      "components"
     ]);
     AutoComplete.Register(ObjectCommand.Name, (int index) => NamedParameters, WithSharedFetchers(new() {
       {
@@ -51,13 +43,16 @@ public class ObjectAutoComplete : SharedObjectAutoComplete
         }
       },
       {
-        "type", (int index) => index == 0 ? ObjectTypes : ParameterInfo.None
+        "type", (int index) => ParameterInfo.Components
       },
       {
         "connect", (int index) => ParameterInfo.Flag("Connect")
       },
       {
         "mirror", (int index) => ParameterInfo.Flag("Mirror")
+      },
+      {
+        "components", (int index) => ParameterInfo.Flag("Components")
       },
       {
         "respawn", (int index) => ParameterInfo.Flag("Respawn")

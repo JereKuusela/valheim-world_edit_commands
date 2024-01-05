@@ -1,22 +1,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design.Serialization;
 using System.Linq;
 using ServerDevcommands;
 using UnityEngine;
 
 namespace Service;
-public enum ObjectType
-{
-  All,
-  Character,
-  Structure,
-  Fireplace,
-  Item,
-  Chest,
-  Spawner,
-  SpawnPoint
-}
+
 public class Hovered
 {
   public ZNetView Obj;
@@ -143,21 +134,21 @@ public static class Selector
       values = values.Where(prefab => prefab.name.ToLower() == id);
     return values.Select(prefab => prefab.name.GetStableHashCode()).ToHashSet();
   }
-  public static ZNetView[] GetNearby(string[] included, ObjectType type, string[] excluded, Vector3 center, Range<float> radius, float height)
+  public static ZNetView[] GetNearby(string[] included, HashSet<string> types, string[] excluded, Vector3 center, Range<float> radius, float height)
   {
     var includedPrefabs = GetPrefabs(included);
     var excludedPrefabs = GetExcludedPrefabs(excluded);
     bool checker(Vector3 pos) => Within(pos, center, radius, height);
-    return GetNearby(includedPrefabs, type, excludedPrefabs, checker);
+    return GetNearby(includedPrefabs, types, excludedPrefabs, checker);
   }
-  public static ZNetView[] GetNearby(string[] included, ObjectType type, string[] excluded, Vector3 center, float angle, Range<float> width, Range<float> depth, float height)
+  public static ZNetView[] GetNearby(string[] included, HashSet<string> types, string[] excluded, Vector3 center, float angle, Range<float> width, Range<float> depth, float height)
   {
     var includedPrefabs = GetPrefabs(included);
     var excludedPrefabs = GetExcludedPrefabs(excluded);
     bool checker(Vector3 pos) => Within(pos, center, angle, width, depth, height);
-    return GetNearby(includedPrefabs, type, excludedPrefabs, checker);
+    return GetNearby(includedPrefabs, types, excludedPrefabs, checker);
   }
-  public static ZNetView[] GetNearby(HashSet<int> included, ObjectType type, HashSet<int> excluded, Func<Vector3, bool> checker)
+  public static ZNetView[] GetNearby(HashSet<int> included, HashSet<string> types, HashSet<int> excluded, Func<Vector3, bool> checker)
   {
     var scene = ZNetScene.instance;
     var objects = ZNetScene.instance.m_instances.Values;
@@ -167,20 +158,8 @@ public static class Selector
     if (excluded.Count > 0)
       views = views.Where(view => !excluded.Contains(view.GetZDO().GetPrefab()));
     views = views.Where(view => checker(view.GetZDO().GetPosition()));
-    if (type == ObjectType.Structure)
-      views = views.Where(view => view.GetComponent<Piece>());
-    if (type == ObjectType.Character)
-      views = views.Where(view => view.GetComponent<Character>());
-    if (type == ObjectType.Fireplace)
-      views = views.Where(view => view.GetComponent<Fireplace>());
-    if (type == ObjectType.Item)
-      views = views.Where(view => view.GetComponent<ItemDrop>());
-    if (type == ObjectType.Chest)
-      views = views.Where(view => view.GetComponent<Container>());
-    if (type == ObjectType.Spawner)
-      views = views.Where(view => view.GetComponent<SpawnArea>());
-    if (type == ObjectType.SpawnPoint)
-      views = views.Where(view => view.GetComponent<CreatureSpawner>());
+    if (types.Count > 0)
+      views = ComponentInfo.HaveComponent(views, types);
     var objs = views.ToArray();
     if (objs.Length == 0) throw new InvalidOperationException("Nothing is nearby.");
     return objs;

@@ -29,7 +29,7 @@ public class ObjectParameters : SharedObjectParameters
   public float Height = 0f;
   public float Chance = 1f;
   public bool Connect;
-  public ObjectType ObjectType = ObjectType.All;
+  public HashSet<string> Components = [];
   public string? StatusName;
   public Range<float>? StatusDuration;
   public Range<float>? StatusIntensity;
@@ -69,7 +69,8 @@ public class ObjectParameters : SharedObjectParameters
     "creator",
     "copy",
     "field",
-    "f"
+    "f",
+    "components"
   ];
 
   public ObjectParameters(Terminal.ConsoleEventArgs args)
@@ -115,13 +116,7 @@ public class ObjectParameters : SharedObjectParameters
       if (name == "visual") Visual = new(value);
       if (name == "fuel") Fuel = Parse.FloatRange(value, 0f);
       if (name == "chance") Chance = Parse.Float(value, 1f);
-      if (name == "type" && value == "creature") ObjectType = ObjectType.Character;
-      if (name == "type" && value == "chest") ObjectType = ObjectType.Chest;
-      if (name == "type" && value == "fireplace") ObjectType = ObjectType.Fireplace;
-      if (name == "type" && value == "item") ObjectType = ObjectType.Item;
-      if (name == "type" && value == "spawner") ObjectType = ObjectType.Spawner;
-      if (name == "type" && value == "spawnpoint") ObjectType = ObjectType.SpawnPoint;
-      if (name == "type" && value == "structure") ObjectType = ObjectType.Structure;
+      if (name == "type") AddComponents(values);
       if (name == "rect")
       {
         var size = Parse.ScaleRange(value);
@@ -145,7 +140,7 @@ public class ObjectParameters : SharedObjectParameters
       throw new InvalidOperationException("Remove can't be used with other operations.");
     if (Operations.Count == 0)
       throw new InvalidOperationException("Missing the operation.");
-    if (Operations.Contains("remove") && IncludedIds.Length == 0 && ObjectType == ObjectType.All && (Radius != null || Width != null || Depth != null || Connect))
+    if (Operations.Contains("remove") && IncludedIds.Length == 0 && Components.Count == 0 && (Radius != null || Width != null || Depth != null || Connect))
       throw new InvalidOperationException("Area remove can't be used without <color=yellow>id</color> or <color=yellow>type</color>.");
     if (Radius != null && Depth != null)
       throw new InvalidOperationException($"<color=yellow>circle</color> and <color=yellow>rect</color> parameters can't be used together.");
@@ -153,5 +148,10 @@ public class ObjectParameters : SharedObjectParameters
       throw new InvalidOperationException($"<color=yellow>circle</color> and <color=yellow>connect</color> parameters can't be used together.");
     if (Depth != null && Connect)
       throw new InvalidOperationException($"<color=yellow>connect</color> and <color=yellow>rect</color> parameters can't be used together.");
+  }
+
+  private void AddComponents(string[] values)
+  {
+    foreach (var value in values) Components.Add(value);
   }
 }

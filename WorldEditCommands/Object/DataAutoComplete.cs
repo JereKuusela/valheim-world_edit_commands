@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using BepInEx.Bootstrap;
 using HarmonyLib;
 using ServerDevcommands;
 using UnityEngine;
@@ -38,30 +37,7 @@ public class DataAutoComplete
   private static Dictionary<string, Dictionary<string, Type>> LoadFields()
   {
     Dictionary<string, Dictionary<string, Type>> fields = [];
-    List<Assembly> assemblies = [Assembly.GetAssembly(typeof(ZNetView)), .. Chainloader.PluginInfos.Values.Where(p => p.Instance != null).Select(p => p.Instance.GetType().Assembly)];
-    var assembly = Assembly.GetAssembly(typeof(ZNetView));
-    var baseType = typeof(MonoBehaviour);
-    var types = assemblies.SelectMany(s =>
-    {
-      try
-      {
-        return s.GetTypes();
-      }
-      catch (ReflectionTypeLoadException e)
-      {
-        return e.Types.Where(t => t != null);
-      }
-    }).Where(t =>
-    {
-      try
-      {
-        return baseType.IsAssignableFrom(t);
-      }
-      catch
-      {
-        return false;
-      }
-    }).ToArray();
+    var types = ComponentInfo.Types;
     var valid = WorldEditCommands.IsTweaks ? ValidTweakTypes : ValidTypes;
     foreach (var type in types)
     {

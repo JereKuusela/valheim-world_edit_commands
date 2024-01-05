@@ -138,11 +138,11 @@ public abstract class TweakCommand
       }
       else if (pars.Radius != null)
       {
-        views = Selector.GetNearby(pars.IncludedIds, pars.ObjectType, pars.ExcludedIds, pars.Center ?? pars.From, pars.Radius, pars.Height);
+        views = Selector.GetNearby(pars.IncludedIds, pars.Components, pars.ExcludedIds, pars.Center ?? pars.From, pars.Radius, pars.Height);
       }
       else if (pars.Width != null && pars.Depth != null)
       {
-        views = Selector.GetNearby(pars.IncludedIds, pars.ObjectType, pars.ExcludedIds, pars.Center ?? pars.From, pars.Angle, pars.Width, pars.Depth, pars.Height);
+        views = Selector.GetNearby(pars.IncludedIds, pars.Components, pars.ExcludedIds, pars.Center ?? pars.From, pars.Angle, pars.Width, pars.Depth, pars.Height);
       }
       else
       {

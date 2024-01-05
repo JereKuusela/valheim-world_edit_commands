@@ -81,6 +81,8 @@ public class ObjectCommand
           output = Respawn(view);
         if (operation == "info")
           output = GetInfo(view);
+        if (operation == "components")
+          output = GetComponents(view);
         if (operation == "data")
           output = PrintData(view, pars.Data);
         if (operation == "copy")
@@ -180,11 +182,11 @@ public class ObjectCommand
       }
       else if (pars.Radius != null)
       {
-        views = Selector.GetNearby(pars.IncludedIds, pars.ObjectType, pars.ExcludedIds, pars.Center ?? pars.From, pars.Radius, pars.Height);
+        views = Selector.GetNearby(pars.IncludedIds, pars.Components, pars.ExcludedIds, pars.Center ?? pars.From, pars.Radius, pars.Height);
       }
       else if (pars.Width != null && pars.Depth != null)
       {
-        views = Selector.GetNearby(pars.IncludedIds, pars.ObjectType, pars.ExcludedIds, pars.Center ?? pars.From, pars.Angle, pars.Width, pars.Depth, pars.Height);
+        views = Selector.GetNearby(pars.IncludedIds, pars.Components, pars.ExcludedIds, pars.Center ?? pars.From, pars.Angle, pars.Width, pars.Depth, pars.Height);
       }
       else
       {
@@ -232,8 +234,10 @@ public class ObjectCommand
   private static string SetFields(ZNetView view, Dictionary<string, object> fields)
   {
     AddData(view);
-    Actions.SetFields(view, fields);
-    return $"¤ {fields.Count} fields set.";
+    var added = Actions.SetFields(view, fields);
+    if (added == 0) return "Skipped: ¤ doesn't have valid components.";
+    if (added == fields.Count) return $"¤ {fields.Count} fields set.";
+    return $"¤ {added} of {fields.Count} fields set.";
   }
   private static string SetFuel(ZNetView view, float amount)
   {
@@ -499,6 +503,7 @@ public class ObjectCommand
     }
     return string.Join(", ", info);
   }
+  private static string GetComponents(ZNetView obj) => string.Join(", ", ComponentInfo.Get(obj));
 
 
   private static string CopyData(ZNetView obj, string value)

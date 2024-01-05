@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ServerDevcommands;
 using UnityEngine;
 namespace WorldEditCommands;
 
@@ -394,15 +395,18 @@ public static class Actions
   {
     SetVisual(obj.GetComponent<Character>(), slot, item);
   }
-  public static void SetFields(GameObject obj, Dictionary<string, object> fields) => SetFields(obj.GetComponent<ZNetView>(), fields);
-  public static void SetFields(ZNetView view, Dictionary<string, object> fields)
+  public static int SetFields(GameObject obj, Dictionary<string, object> fields) => SetFields(obj.GetComponent<ZNetView>(), fields);
+  public static int SetFields(ZNetView view, Dictionary<string, object> fields)
   {
     var zdo = view?.GetZDO();
-    if (view == null || zdo == null) return;
+    if (view == null || zdo == null) return 0;
     zdo.Set(Hash.HasFields, true);
+    var components = ComponentInfo.Get(view).ToHashSet();
+    var count = 0;
     foreach (var kvp in fields)
     {
       var component = kvp.Key.Split('.')[0];
+      if (!components.Contains(component)) continue;
       zdo.Set("HasFields" + component, true);
       var hash = kvp.Key.GetStableHashCode();
       if (kvp.Value is int v)
@@ -415,10 +419,12 @@ public static class Actions
         zdo.Set(hash, v3);
       else if (kvp.Value is Vector3 vector)
         zdo.Set(hash, vector);
+      count += 1;
     }
     view.LoadFields();
     if (view.TryGetComponent<WearNTear>(out var wearNTear))
       wearNTear.UpdateVisual(false);
+    return count;
   }
   public static void SetVisual(ItemStand obj, Item? item)
   {

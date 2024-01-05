@@ -7,10 +7,6 @@ using NamedOptionsFetchers = Dictionary<string, Func<int, List<string>>>;
 public class TweakAutoComplete
 {
   public List<string> NamedParameters = [];
-  public static List<string> ObjectTypes = [
-      "creature",
-      "structure"
-  ];
   public static List<string> WithFilters(List<string> parameters)
   {
     List<string> namedParameters = [
@@ -33,7 +29,7 @@ public class TweakAutoComplete
   {
     NamedOptionsFetchers baseFetchers = new() {
       {
-        "type", (int index) => index == 0 ? ObjectTypes : ParameterInfo.None
+        "type", (int index) => ParameterInfo.Components
       },
       {
         "connect", (int index) => ParameterInfo.Flag("Connect")

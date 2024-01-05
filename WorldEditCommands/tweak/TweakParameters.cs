@@ -20,7 +20,7 @@ public class TweakParameters
   public float Chance = 1f;
   public bool Force;
   public bool Connect;
-  public ObjectType ObjectType = ObjectType.All;
+  public HashSet<string> Components = [];
 
   public Dictionary<string, Type> SupportedOperations = [];
 
@@ -76,13 +76,7 @@ public class TweakParameters
       if (name == "id") IncludedIds = values;
       if (name == "ignore") ExcludedIds = values;
       if (name == "chance") Chance = Parse.Float(value, 1f);
-      if (name == "type" && value == "creature") ObjectType = ObjectType.Character;
-      if (name == "type" && value == "chest") ObjectType = ObjectType.Chest;
-      if (name == "type" && value == "fireplace") ObjectType = ObjectType.Fireplace;
-      if (name == "type" && value == "item") ObjectType = ObjectType.Item;
-      if (name == "type" && value == "spawner") ObjectType = ObjectType.Spawner;
-      if (name == "type" && value == "spawnpoint") ObjectType = ObjectType.SpawnPoint;
-      if (name == "type" && value == "structure") ObjectType = ObjectType.Structure;
+      if (name == "type") AddComponents(values);
       if (name == "rect")
       {
         var size = Parse.ScaleRange(value);
@@ -106,5 +100,9 @@ public class TweakParameters
       throw new InvalidOperationException($"<color=yellow>circle</color> and <color=yellow>connect</color> parameters can't be used together.");
     if (Depth != null && Connect)
       throw new InvalidOperationException($"<color=yellow>connect</color> and <color=yellow>rect</color> parameters can't be used together.");
+  }
+  private void AddComponents(string[] values)
+  {
+    foreach (var value in values) Components.Add(value);
   }
 }
