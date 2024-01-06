@@ -459,7 +459,7 @@ public class ObjectCommand
     if (character)
     {
       var health = character.GetHealth();
-      if (health > 1E17)
+      if (health < 0f || health > 1E17f)
         info.Add("Health: Infinite");
       else
         info.Add("Health: " + health.ToString("F0") + " / " + character.GetMaxHealth());
@@ -473,9 +473,9 @@ public class ObjectCommand
     else
     {
       var health = Actions.GetHealth(obj);
-      if (health > 1E17)
+      if (health < 0f || health > 1E17f)
         info.Add("Health: Infinite");
-      else if (health > -1f)
+      else
         info.Add("Health: " + health.ToString("F0"));
     }
     var equipment = obj.GetComponent<VisEquipment>();

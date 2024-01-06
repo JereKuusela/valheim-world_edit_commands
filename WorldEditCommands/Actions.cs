@@ -423,7 +423,10 @@ public static class Actions
     }
     view.LoadFields();
     if (view.TryGetComponent<WearNTear>(out var wearNTear))
+    {
+      wearNTear.m_healthPercentage = zdo.GetFloat(ZDOVars.s_health, wearNTear.m_health);
       wearNTear.UpdateVisual(false);
+    }
     return count;
   }
   public static void SetVisual(ItemStand obj, Item? item)
