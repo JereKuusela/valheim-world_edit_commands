@@ -1,3 +1,6 @@
+- v1.53
+  - Fixes data not always being synced on servers.
+
 - v1.52
   - Adds a parameter `chance` to the command `terrain`.
   - Adds a parameter `components` to the command `object`.

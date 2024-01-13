@@ -16,6 +16,9 @@ public class FakeZDO(ZDO zdo)
   {
     var zdo = ZDOMan.instance.CreateNewZDO(Position, Prefab);
     Copy(zdo);
+    zdo.DataRevision = 0;
+    // This is needed to trigger the ZDO sync.
+    zdo.IncreaseDataRevision();
     return zdo;
   }
   public void Copy(ZDO zdo)
