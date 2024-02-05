@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Data;
 using ServerDevcommands;
 
 namespace WorldEditCommands;
@@ -132,7 +133,7 @@ public class TweakAltarCommand : TweakCommand
     AutoComplete.Add("starteffect", (int index) => TweakAutoComplete.Effect("starteffect", index));
     AutoComplete.Add("useeffect", (int index) => TweakAutoComplete.Effect("useeffect", index));
     AutoComplete.Add("itemoffset", (int index) => ParameterInfo.XZY("itemoffset", "Offset when spawning items. Also sets the <color=yellow>useeffect</color> position.", index));
-    AutoComplete.Add("spawndata", (int index) => index == 0 ? ParameterInfo.Create("spawndata=<color=yellow>base64 encoded</color", "ZDO data.") : ParameterInfo.None);
+    AutoComplete.Add("spawndata", (int index) => index == 0 ? DataLoading.DataKeys : ParameterInfo.None);
     Init("tweak_altar", "Modify altars");
   }
 }

@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace WorldEditCommands;
 
-public class DataAutoComplete
+public class FieldAutoComplete
 {
   public static Dictionary<string, Dictionary<string, Type>> Fields = [];
   private static List<string> Components = [];
@@ -31,7 +31,6 @@ public class DataAutoComplete
   private static readonly HashSet<Type> ValidTweakTypes = [
     ..ValidTypes,
     typeof(ItemDrop),
-    typeof(Character.Faction),
     typeof(EffectList)
   ];
   private static Dictionary<string, Dictionary<string, Type>> LoadFields()
@@ -46,6 +45,26 @@ public class DataAutoComplete
       foreach (var fieldInfo in type.GetFields(BindingFlags.Instance | BindingFlags.Public))
       {
         if (!valid.Contains(fieldInfo.FieldType)) continue;
+        fields[type.Name][fieldInfo.Name] = fieldInfo.FieldType;
+        PreventStripping.AddKey(type, fieldInfo);
+      }
+      if (fields[type.Name].Count == 0)
+        fields.Remove(type.Name);
+    }
+    return fields;
+  }
+  private static Dictionary<string, Dictionary<string, Type>> LoadTweakFields()
+  {
+    Dictionary<string, Dictionary<string, Type>> fields = [];
+    var types = ComponentInfo.Types;
+    var valid = ValidTweakTypes;
+    foreach (var type in types)
+    {
+      if (!fields.ContainsKey(type.Name))
+        fields[type.Name] = [];
+      foreach (var fieldInfo in type.GetFields(BindingFlags.Instance | BindingFlags.Public))
+      {
+        if (!fieldInfo.FieldType.IsEnum && !valid.Contains(fieldInfo.FieldType)) continue;
         fields[type.Name][fieldInfo.Name] = fieldInfo.FieldType;
         PreventStripping.AddKey(type, fieldInfo);
       }
@@ -124,7 +143,7 @@ public class DataAutoComplete
     if (type == typeof(Vector3)) return ServerDevcommands.ParameterInfo.XZY("Field", index);
     if (type == typeof(GameObject)) return tweaks ? GetIdsOrTransforms(prefab, component, field) : ServerDevcommands.ParameterInfo.Ids;
     if (tweaks && type == typeof(ItemDrop)) return ServerDevcommands.ParameterInfo.ItemIds;
-    if (tweaks && type == typeof(Character.Faction)) return [.. Enum.GetNames(typeof(Character.Faction))];
+    if (tweaks && type.IsEnum) return [.. Enum.GetNames(type)];
     if (tweaks && type == typeof(EffectList)) return ServerDevcommands.ParameterInfo.Ids;
     return [];
   }

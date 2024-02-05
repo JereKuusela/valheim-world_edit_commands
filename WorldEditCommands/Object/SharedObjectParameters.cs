@@ -90,11 +90,11 @@ public class SharedObjectParameters
       {
         var values = value.Split(',');
         if (values.Length < 3) continue;
-        var prefab = DataAutoComplete.PrefabFromCommand(string.Join(" ", args));
-        var component = DataAutoComplete.RealComponent(prefab, values[0]);
-        var field = DataAutoComplete.RealField(component, values[1]);
+        var prefab = FieldAutoComplete.PrefabFromCommand(string.Join(" ", args));
+        var component = FieldAutoComplete.RealComponent(prefab, values[0]);
+        var field = FieldAutoComplete.RealField(component, values[1]);
         var fieldValue = string.Join(",", values.Skip(2));
-        var type = DataAutoComplete.GetType(component, field);
+        var type = FieldAutoComplete.GetType(component, field);
         var key = $"{component}.{field}";
         if (type == typeof(int))
           Fields.Add(key, Parse.Int(fieldValue));

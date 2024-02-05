@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Data;
 using ServerDevcommands;
 namespace WorldEditCommands;
 public class SpawnObjectAutoComplete : SharedObjectAutoComplete
@@ -25,7 +26,7 @@ public class SpawnObjectAutoComplete : SharedObjectAutoComplete
     AutoComplete.Register(SpawnObjectCommand.Name, (int index) => index == 0 ? ParameterInfo.Ids : NamedParameters, WithSharedFetchers(new() {
       {
         "data",
-        (int index) => index == 0 ? ParameterInfo.Create("data=<color=yellow>base64 data/false</color>", "Sets ZDO data.") : ParameterInfo.None
+        (int index) => index == 0 ? DataLoading.DataKeys : ParameterInfo.None
       },
       {
         "crafterId",

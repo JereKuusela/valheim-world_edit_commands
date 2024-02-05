@@ -1,108 +1,18 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using ServerDevcommands;
-using Service;
-using UnityEngine;
 namespace WorldEditCommands;
-public class TweakParameters
+public class TweakParameters(Dictionary<string, Type> supportedOperations, Terminal.ConsoleEventArgs args) : BaseParameters(supportedOperations, args)
 {
-  public Vector3 From;
-  public Vector3? Center;
-  public string[] IncludedIds = [];
-  public string[] ExcludedIds = [];
-  public float Angle = 0f;
   public long Creator = 0;
-  public Range<float>? Radius;
-  public Range<float>? Width;
-  public Range<float>? Depth;
-  public float Height = 0f;
-  public float Chance = 1f;
   public bool Force;
-  public bool Connect;
-  public HashSet<string> Components = [];
 
-  public Dictionary<string, Type> SupportedOperations = [];
-
-  public TweakParameters(Dictionary<string, Type> supportedOperations, Terminal.ConsoleEventArgs args)
+  protected override void ParseArg(string arg)
   {
-    SupportedOperations = supportedOperations;
-    if (Player.m_localPlayer)
-    {
-      From = Player.m_localPlayer.transform.position;
-    }
-    ParseArgs(args.Args);
+    if (arg == "force") Force = true;
   }
-
-  public Dictionary<string, object?> Operations = [];
-
-  protected virtual void ParseArgs(string[] args)
+  protected override void ParseArg(string arg, string value)
   {
-    foreach (var arg in args)
-    {
-      var split = arg.Split('=');
-      var name = split[0].ToLower();
-      if (SupportedOperations.TryGetValue(name, out var type))
-      {
-        if (Operations.ContainsKey(name) && type != typeof(string[]))
-          throw new InvalidOperationException($"Operation {name} used multiple times.");
-        if (type == typeof(string[]))
-        {
-          if (!Operations.ContainsKey(name))
-            Operations.Add(name, new string[0]);
-        }
-        else
-          Operations.Add(name, null);
-      }
-      if (name == "connect") Connect = true;
-      if (name == "force") Force = true;
-      if (split.Length < 2) continue;
-      var value = string.Join("=", split.Skip(1));
-      if (SupportedOperations.TryGetValue(name, out type))
-      {
-        if (type == typeof(int))
-          Operations[name] = Parse.Int(value);
-        else if (type == typeof(float))
-          Operations[name] = Parse.Float(value);
-        else if (type == typeof(bool))
-          Operations[name] = Parse.Boolean(value);
-        else if (type == typeof(string[]))
-          Operations[name] = (Operations[name] as string[]).Append(value).ToArray();
-        else
-          Operations[name] = value;
-      }
-      var values = Parse.Split(value);
-      if (name == "center" || name == "from") Center = Parse.VectorXZY(values);
-      if (name == "id") IncludedIds = values;
-      if (name == "ignore") ExcludedIds = values;
-      if (name == "chance") Chance = Parse.Float(value, 1f);
-      if (name == "type") AddComponents(values);
-      if (name == "rect")
-      {
-        var size = Parse.ScaleRange(value);
-        Width = new(size.Min.x, size.Max.x);
-        Depth = new(size.Min.z, size.Max.z);
-      }
-      if (name == "radius" || name == "range" || name == "circle")
-        Radius = Parse.FloatRange(value);
-      if (name == "height")
-        Height = Parse.Float(value, 0f);
-      if (name == "creator")
-        Creator = Parse.Long(value, 0L);
-      if (name == "angle")
-        Angle = Parse.Float(value, 0f) * Mathf.PI / 180f;
-    }
-    if (Operations.Count == 0 && !Force)
-      throw new InvalidOperationException("Missing the operation.");
-    if (Radius != null && Depth != null)
-      throw new InvalidOperationException($"<color=yellow>circle</color> and <color=yellow>rect</color> parameters can't be used together.");
-    if (Radius != null && Connect)
-      throw new InvalidOperationException($"<color=yellow>circle</color> and <color=yellow>connect</color> parameters can't be used together.");
-    if (Depth != null && Connect)
-      throw new InvalidOperationException($"<color=yellow>connect</color> and <color=yellow>rect</color> parameters can't be used together.");
-  }
-  private void AddComponents(string[] values)
-  {
-    foreach (var value in values) Components.Add(value);
+    if (arg == "creator") Creator = Parse.Long(value, 0L);
   }
 }

@@ -111,8 +111,7 @@ public class SpawnObjectCommand
   public SpawnObjectCommand()
   {
     SpawnObjectAutoComplete autoComplete = new();
-    var description = CommandInfo.Create("Spawns an object.", new[] { "name" }, autoComplete.NamedParameters);
-    Helper.Command(Name, description, (args) =>
+    Helper.Command(Name, "Spawns objects", (args) =>
     {
       Helper.ArgsCheck(args, 2, "Missing object id.");
       var prefabName = args[1];

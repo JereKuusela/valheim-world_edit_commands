@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Bootstrap;
+using Data;
 using HarmonyLib;
 
 namespace WorldEditCommands;
@@ -26,7 +27,9 @@ public class WorldEditCommands : BaseUnityPlugin
     IsCLLC = Chainloader.PluginInfos.ContainsKey("rg.bepinex.plugins.creaturelevelcontrol");
     IsTweaks = Chainloader.PluginInfos.ContainsKey("world_edit_tweaks");
     IsEWFactions = Chainloader.PluginInfos.ContainsKey("expand_world_factions");
-    DataAutoComplete.Init();
+    FieldAutoComplete.Init();
+    DataLoading.SetupWatcher();
+    DataLoading.LoadEntries();
   }
 }
 [HarmonyPatch(typeof(Terminal), nameof(Terminal.InitTerminal))]
@@ -40,6 +43,8 @@ public class SetCommands
     new TerrainCommand();
     new AliasesCommand();
     new DungeonCommand();
+    new DataCommand();
+    new DataRawCommand();
     if (WorldEditCommands.IsSpawnerTweaks || WorldEditCommands.IsStructureTweaks)
       new TweakObjectCommand();
     if (WorldEditCommands.IsSpawnerTweaks)

@@ -14,8 +14,7 @@ public class DungeonCommand
   public DungeonCommand()
   {
     ObjectAutoComplete autoComplete = new();
-    var description = CommandInfo.Create("Modifies the nearest dungeon.", null, autoComplete.NamedParameters);
-    Helper.Command(Name, description, (args) =>
+    Helper.Command(Name, "Modifies the nearest dungeon.", (args) =>
     {
       var player = Helper.GetPlayer();
       var dungeon = ZNetScene.instance.m_instances.Values.Where(view => view.GetComponent<DungeonGenerator>()).OrderBy(view => Vector3.Distance(player.transform.position, view.transform.position)).FirstOrDefault();

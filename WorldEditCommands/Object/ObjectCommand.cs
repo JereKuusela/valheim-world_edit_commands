@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Data;
 using ServerDevcommands;
 using Service;
 using UnityEngine;
@@ -83,10 +84,6 @@ public class ObjectCommand
           output = GetInfo(view);
         if (operation == "components")
           output = GetComponents(view);
-        if (operation == "data")
-          output = PrintData(view, pars.Data);
-        if (operation == "copy")
-          output = CopyData(view, pars.Copy);
         if (operation == "sleep")
           output = MakeSleep(view);
         if (operation == "visual")
@@ -169,8 +166,7 @@ public class ObjectCommand
   public ObjectCommand()
   {
     ObjectAutoComplete autoComplete = new();
-    var description = CommandInfo.Create("Modifies the selected object(s).", null, autoComplete.NamedParameters);
-    Helper.Command(Name, description, (args) =>
+    Helper.Command(Name, "Modifies objects.", (args) =>
     {
       ObjectParameters pars = new(args);
       ZNetView[] views;
@@ -504,67 +500,4 @@ public class ObjectCommand
     return string.Join(", ", info);
   }
   private static string GetComponents(ZNetView obj) => string.Join(", ", ComponentInfo.Get(obj));
-
-
-  private static string CopyData(ZNetView obj, string value)
-  {
-    var zdo = obj.GetZDO();
-    ZPackage pkg = new();
-    DataHelper.Serialize(zdo, pkg, value);
-    var str = pkg.GetBase64();
-    if (str == "AAAAAA==") str = "";
-    GUIUtility.systemCopyBuffer = str;
-    return str;
-  }
-  private static string PrintData(ZNetView obj, string data)
-  {
-    List<string> info = [];
-    var zdo = obj.GetZDO();
-    var id = zdo.m_uid;
-    info.Add("Id: ¤");
-    info.Add($"Owner: {zdo.GetOwner()}");
-    info.Add($"Revision: {zdo.DataRevision} + {zdo.OwnerRevision}");
-    if (data != "")
-    {
-      var split = data.Split(',');
-      var hash = split[0].GetStableHashCode();
-      if (ZDOExtraData.s_vec3.TryGetValue(id, out var vec) && vec.ContainsKey(hash))
-      {
-        if (split.Length > 1)
-          zdo.Set(hash, Parse.VectorXZY(split, 1));
-        info.Add($"{split[0]}: {Helper.PrintVectorXZY(vec[hash])}");
-      }
-      if (ZDOExtraData.s_quats.TryGetValue(id, out var quats) && quats.ContainsKey(hash))
-      {
-        info.Add($"{split[0]}: {Helper.PrintAngleYXZ(quats[hash])}");
-      }
-      if (ZDOExtraData.s_floats.TryGetValue(id, out var floats) && floats.ContainsKey(hash))
-      {
-        if (split.Length > 1)
-          zdo.Set(hash, Parse.Float(split[1]));
-        info.Add($"{data}: {floats[hash]:F1}");
-      }
-      if (ZDOExtraData.s_longs.TryGetValue(id, out var longs) && longs.ContainsKey(hash))
-      {
-        if (split.Length > 1)
-          zdo.Set(hash, Parse.Long(split[1]));
-        info.Add($"{data}: {longs[hash]}");
-      }
-      if (ZDOExtraData.s_strings.TryGetValue(id, out var strings) && strings.ContainsKey(hash))
-      {
-        if (split.Length > 1)
-          zdo.Set(hash, split[1]);
-        info.Add($"{split[0]}: {strings[hash]}");
-      }
-      if (ZDOExtraData.s_ints.TryGetValue(id, out var ints) && ints.ContainsKey(hash))
-      {
-        if (split.Length > 1)
-          zdo.Set(hash, Parse.Int(split[1]));
-        info.Add($"{split[0]}: {ints[hash]}");
-      }
-      if (info.Count() < 4)
-        info.Add($"{split[0]}: No data!");
-    }
-    return string.Join(", ", info);
-  }
 }

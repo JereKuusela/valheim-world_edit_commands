@@ -57,8 +57,7 @@ public class TerrainCommand
   public TerrainCommand()
   {
     TerrainAutoComplete autoComplete = new();
-    var description = CommandInfo.Create("Manipulates the terrain.", null, autoComplete.NamedParameters);
-    Helper.Command(Name, description, (args) =>
+    Helper.Command(Name, "Manipulates the terrain.", (args) =>
     {
       TerrainParameters pars = new(args);
       var compilers = GetCompilers(pars);

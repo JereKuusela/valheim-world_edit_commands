@@ -1,18 +1,22 @@
 using System;
 using System.Linq;
+using Data;
 using ServerDevcommands;
 
 namespace WorldEditCommands;
 
-public class TweakSpawnerCommand : TweakCommand {
-  protected override string DoOperation(ZNetView view, string operation, string? value) {
+public class TweakSpawnerCommand : TweakCommand
+{
+  protected override string DoOperation(ZNetView view, string operation, string? value)
+  {
     if (operation == "globalkey")
       return TweakActions.GlobalKey(view, value);
     if (operation == "faction")
       return TweakActions.Faction(view, value);
     throw new NotImplementedException();
   }
-  protected override string DoOperation(ZNetView view, string operation, float? value) {
+  protected override string DoOperation(ZNetView view, string operation, float? value)
+  {
     if (operation == "spawnhealth")
       return TweakActions.SpawnHealth(view, value);
     if (operation == "levelchance")
@@ -30,7 +34,8 @@ public class TweakSpawnerCommand : TweakCommand {
     throw new NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, int? value) {
+  protected override string DoOperation(ZNetView view, string operation, int? value)
+  {
     if (operation == "minlevel")
       return TweakActions.MinLevel(view, value);
     if (operation == "maxlevel")
@@ -44,7 +49,8 @@ public class TweakSpawnerCommand : TweakCommand {
     throw new NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, string[] value) {
+  protected override string DoOperation(ZNetView view, string operation, string[] value)
+  {
     if (operation == "spawn")
       return TweakActions.Spawns(view, value);
     if (operation == "spawneffect")
@@ -52,15 +58,18 @@ public class TweakSpawnerCommand : TweakCommand {
     throw new NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, bool? value) {
+  protected override string DoOperation(ZNetView view, string operation, bool? value)
+  {
     throw new NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, long? value) {
+  protected override string DoOperation(ZNetView view, string operation, long? value)
+  {
     throw new NotImplementedException();
   }
 
-  public TweakSpawnerCommand() {
+  public TweakSpawnerCommand()
+  {
     Component = typeof(SpawnArea);
     ComponentName = "spawner";
     SupportedOperations.Add("globalkey", typeof(string));
@@ -94,12 +103,13 @@ public class TweakSpawnerCommand : TweakCommand {
     AutoComplete.Add("spawnradius", (int index) => index == 0 ? ParameterInfo.Create("spawnradius=<color=yellow>meters</color>", "Maximum spawn radius. No value to reset.") : ParameterInfo.None);
     AutoComplete.Add("nearradius", (int index) => index == 0 ? ParameterInfo.Create("nearradius=<color=yellow>meters</color>", "Radius for <color=yellow>maxnear</color>. No value to reset.") : ParameterInfo.None);
     AutoComplete.Add("farradius", (int index) => index == 0 ? ParameterInfo.Create("farradius=<color=yellow>meters</color>", "Radius for <color=yellow>maxtotal</color>. No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("spawn", (int index) => {
+    AutoComplete.Add("spawn", (int index) =>
+    {
       if (index == 0) return ParameterInfo.Ids;
-      if (index == 1) return ParameterInfo.Create("spawn=id,<color=yellow>weight</color>,minlevel,maxlevel,health", "Spawn chance relative to other spawns.");
-      if (index == 2) return ParameterInfo.Create("spawn=id,weight,<color=yellow>minlevel</color>,maxlevel,health", "Minimum level (level 1 = 0 star).");
-      if (index == 3) return ParameterInfo.Create("spawn=id,weight,minlevel,<color=yellow>maxlevel</color>,health", "Maximum level (level 1 = 0 star).");
-      if (index == 4) return ParameterInfo.Create("spawn=id,weight,minlevel,maxlevel,<color=yellow>health/data</color>", "Health or ZDO data.");
+      if (index == 1) return ParameterInfo.Create("spawn=id,<color=yellow>weight</color>,minlevel,maxlevel,health/data", "Spawn chance relative to other spawns.");
+      if (index == 2) return ParameterInfo.Create("spawn=id,weight,<color=yellow>minlevel</color>,maxlevel,health/data", "Minimum level (level 1 = 0 star).");
+      if (index == 3) return ParameterInfo.Create("spawn=id,weight,minlevel,<color=yellow>maxlevel</color>,health/data", "Maximum level (level 1 = 0 star).");
+      if (index == 4) return DataLoading.DataKeys;
       return ParameterInfo.Create("For additional entries, add more <color>spawn=...</color> parameters.");
     });
     AutoComplete.Add("spawneffect", (int index) => TweakAutoComplete.Effect("spawneffect", index));

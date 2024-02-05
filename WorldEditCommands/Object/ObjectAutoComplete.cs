@@ -8,9 +8,7 @@ public class ObjectAutoComplete : SharedObjectAutoComplete
   {
     NamedParameters = WithSharedParameters([
       "wild",
-      "copy",
       "info",
-      "data",
       "sleep",
       "id",
       "ignore",
@@ -68,19 +66,6 @@ public class ObjectAutoComplete : SharedObjectAutoComplete
       },
       {
         "info", (int index) => ParameterInfo.Flag("info")
-      },
-      {
-        "data", (int index) => {
-          if (index == 0) return ParameterInfo.Create("data=<color=yellow>key</color> or data=<color=yellow>key,value</color>", "Prints data information. If value is given, sets the data.");
-          if (index == 1) return ParameterInfo.Create("data=key,<color=yellow>value</color>", "Value to set the data.");
-          return ParameterInfo.None;
-        }
-      },
-      {
-        "copy", (int index) => {
-          if (index == 0) return ParameterInfo.Create("copy or copy=<color=yellow>all</color> or copy=<color=yellow>key1,key2,...</color>", "Prints and copies object data to clipboard. By default excludes some data for better results.");
-          return ParameterInfo.None;
-        }
       },
       {
         "id", (int index) => ParameterInfo.Ids

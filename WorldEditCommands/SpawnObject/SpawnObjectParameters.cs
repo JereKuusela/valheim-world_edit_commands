@@ -1,10 +1,12 @@
 using System;
 using System.Linq;
+using Data;
 using ServerDevcommands;
 using Service;
 using UnityEngine;
 namespace WorldEditCommands;
-class SpawnObjectParameters : SharedObjectParameters {
+class SpawnObjectParameters : SharedObjectParameters
+{
   public Quaternion BaseRotation;
   public Range<Vector3> Rotation = new(Vector3.zero);
   public Range<Vector3> RelativePosition = new(Vector3.zero);
@@ -18,10 +20,12 @@ class SpawnObjectParameters : SharedObjectParameters {
   public bool? Tamed;
   public bool? Hunt;
   private bool UseDefaultRelativePosition = false;
-  public ZPackage? Data;
+  public ZDOData? Data;
 
-  public SpawnObjectParameters(Terminal.ConsoleEventArgs args) {
-    if (Player.m_localPlayer) {
+  public SpawnObjectParameters(Terminal.ConsoleEventArgs args)
+  {
+    if (Player.m_localPlayer)
+    {
       From = Player.m_localPlayer.transform.position;
       BaseRotation = Player.m_localPlayer.transform.rotation;
       UseDefaultRelativePosition = true;
@@ -29,9 +33,11 @@ class SpawnObjectParameters : SharedObjectParameters {
     ParseArgs(args.Args);
   }
 
-  protected override void ParseArgs(string[] args) {
+  protected override void ParseArgs(string[] args)
+  {
     base.ParseArgs(args);
-    foreach (var arg in args) {
+    foreach (var arg in args)
+    {
       var split = arg.Split('=');
       var name = split[0].ToLower();
       if (name == "tame" || name == "tamed")
@@ -52,36 +58,48 @@ class SpawnObjectParameters : SharedObjectParameters {
         Hunt = Parse.Boolean(value);
       if (name == "tame" || name == "tamed")
         Tamed = Parse.Boolean(value);
-      if (name == "refrot" || name == "refrotation") {
+      if (name == "refrot" || name == "refrotation")
+      {
         BaseRotation = Parse.AngleYXZ(value, BaseRotation);
       }
-      if (name == "pos" || name == "position") {
+      if (name == "pos" || name == "position")
+      {
         UseDefaultRelativePosition = false;
         RelativePosition = Parse.VectorXZYRange(value, Vector3.zero);
         Snap = value.Split(',').Length < 3;
       }
-      if (name == "rot" || name == "rotation") {
+      if (name == "rot" || name == "rotation")
+      {
         Rotation = Parse.VectorYXZRange(value, Vector3.zero);
       }
-      if (name == "from" || name == "refpos") {
+      if (name == "from" || name == "refpos")
+      {
         UseDefaultRelativePosition = false;
         From = Parse.VectorXZY(value.Split(','), From);
       }
-      if (name == "to") {
+      if (name == "to")
+      {
         UseDefaultRelativePosition = false;
         To = Parse.VectorXZY(value.Split(','), From);
       }
-      if (name == "data") {
-        Data = DataHelper.Deserialize(value);
+      if (name == "data")
+      {
+        Data = DataLoading.Get(value);
       }
-      if (name == "refplayer") {
+      if (name == "refplayer")
+      {
         UseDefaultRelativePosition = false;
         var player = Helper.FindPlayer(value);
-        if (player.m_characterID.IsNone()) {
+        if (player.m_characterID.IsNone())
+        {
           throw new InvalidOperationException("Unable to find the player.");
-        } else if (!player.m_publicPosition) {
+        }
+        else if (!player.m_publicPosition)
+        {
           throw new InvalidOperationException("Player doesn't have a public position.");
-        } else {
+        }
+        else
+        {
           From = player.m_position;
         }
       }
@@ -95,7 +113,8 @@ class SpawnObjectParameters : SharedObjectParameters {
   }
 
   public Vector3 GetPosition() => From + BaseRotation * Helper.RandomValue(RelativePosition);
-  public Vector3 GetPosition(int index, int max) {
+  public Vector3 GetPosition(int index, int max)
+  {
     if (To.HasValue)
       return From + (To.Value - From) * index / (max - 1);
     return From;

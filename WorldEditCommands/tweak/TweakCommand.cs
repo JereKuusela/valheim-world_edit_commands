@@ -125,8 +125,7 @@ public abstract class TweakCommand
   {
     var namedParameters = TweakAutoComplete.WithFilters(AutoComplete.Keys.ToList());
     ServerDevcommands.AutoComplete.Register(name, (int index) => namedParameters, TweakAutoComplete.WithFilters(AutoComplete));
-    var fullDescription = CommandInfo.Create(description, null, namedParameters);
-    Helper.Command(name, fullDescription, (args) =>
+    Helper.Command(name, description, (args) =>
     {
       TweakParameters pars = new(SupportedOperations, args);
       ZNetView[] views;

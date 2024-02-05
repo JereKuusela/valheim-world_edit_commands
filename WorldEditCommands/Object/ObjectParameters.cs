@@ -19,8 +19,6 @@ public class ObjectParameters : SharedObjectParameters
   public HashSet<string> Operations = [];
   public bool ResetRotation = false;
   public bool Respawn = false;
-  public string Data = "";
-  public string Copy = "";
   public Item? Visual = null;
   public float Angle = 0f;
   public long Creator = 0;
@@ -109,8 +107,6 @@ public class ObjectParameters : SharedObjectParameters
       if (name == "move") Offset = Parse.VectorZXYRange(value, Vector3.zero);
       if (name == "id") IncludedIds = values;
       if (name == "ignore") ExcludedIds = values;
-      if (name == "data") Data = value;
-      if (name == "copy") Copy = value;
       if (name == "prefab") Prefab = value;
       if (name == "origin") Origin = value.ToLower();
       if (name == "visual") Visual = new(value);

@@ -10,8 +10,7 @@ public class SpawnLocationCommand
   public SpawnLocationCommand()
   {
     SpawnLocationAutoComplete autoComplete = new();
-    var description = CommandInfo.Create("Spawns a given location.", new[] { "name" }, autoComplete.NamedParameters);
-    Helper.Command(Name, description, (args) =>
+    Helper.Command(Name, "Spawns locations", (args) =>
     {
       Helper.ArgsCheck(args, 2, "Missing location id.");
       var obj = ZoneSystem.instance;

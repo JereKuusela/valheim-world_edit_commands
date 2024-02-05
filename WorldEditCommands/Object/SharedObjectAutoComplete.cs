@@ -117,11 +117,11 @@ public class SharedObjectAutoComplete
       },
       {
         "field",
-        (int index) => index == 0 ? DataAutoComplete.GetComponents() : index == 1 ? DataAutoComplete.GetFields() : DataAutoComplete.GetTypes(index - 2)
+        (int index) => index == 0 ? FieldAutoComplete.GetComponents() : index == 1 ? FieldAutoComplete.GetFields() : FieldAutoComplete.GetTypes(index - 2)
       },
       {
         "f",
-        (int index) => index == 0 ? DataAutoComplete.GetComponents() : index == 1 ? DataAutoComplete.GetFields() : DataAutoComplete.GetTypes(index - 2)
+        (int index) => index == 0 ? FieldAutoComplete.GetComponents() : index == 1 ? FieldAutoComplete.GetFields() : FieldAutoComplete.GetTypes(index - 2)
       },
     };
     foreach (var kvp in fetchers) baseFetchers[kvp.Key] = kvp.Value;

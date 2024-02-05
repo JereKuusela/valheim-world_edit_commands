@@ -1,19 +1,131 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using Data;
 using ServerDevcommands;
 using UnityEngine;
 namespace Service;
 
 public class DataHelper
 {
-  public static void Init(GameObject obj, Vector3 pos, Quaternion rot, Vector3 scale, ZPackage? data)
+  public static ZDO Regen(ZDO existing, ZDO zdo)
+  {
+    ZNetScene.instance.CreateObject(zdo);
+    Destroy(existing);
+    return zdo;
+  }
+  public static ZDO Regen(ZDO existing, ZDOData data)
+  {
+    var newZdo = CloneBase(existing);
+    data.Write(newZdo);
+    ZNetScene.instance.CreateObject(newZdo);
+    Destroy(existing);
+    return newZdo;
+  }
+  public static void Destroy(ZDO zdo)
+  {
+    zdo.SetOwner(ZDOMan.instance.m_sessionID);
+    if (ZNetScene.instance.m_instances.TryGetValue(zdo, out var view) && view)
+      ZNetScene.instance.Destroy(view.gameObject);
+    else
+      ZDOMan.instance.DestroyZDO(zdo);
+
+  }
+  public static ZDO CloneBase(ZDO zdo)
+  {
+    var clone = ZDOMan.instance.CreateNewZDO(zdo.m_position, zdo.m_prefab);
+    clone.m_prefab = zdo.m_prefab;
+    clone.m_rotation = zdo.m_rotation;
+    clone.Type = zdo.Type;
+    clone.Distant = zdo.Distant;
+    clone.Persistent = zdo.Persistent;
+    // Needed to trigger changes.
+    clone.IncreaseDataRevision();
+    return clone;
+  }
+  public static ZDO CloneWithKeys(ZDO zdo, string[] keys)
+  {
+    var hashed = keys.Select(s => s.GetStableHashCode()).ToHashSet();
+    var clone = CloneBase(zdo);
+    var id = zdo.m_uid;
+    var cid = clone.m_uid;
+    foreach (var key in hashed)
+    {
+      if (ZDOExtraData.GetFloat(id, key, out var value))
+        ZDOExtraData.Set(cid, key, value);
+      if (ZDOExtraData.GetVec3(id, key, out var vec))
+        ZDOExtraData.Set(cid, key, vec);
+      if (ZDOExtraData.GetQuaternion(id, key, out var quat))
+        ZDOExtraData.Set(cid, key, quat);
+      if (ZDOExtraData.GetInt(id, key, out var i))
+        ZDOExtraData.Set(cid, key, i);
+      if (ZDOExtraData.GetLong(id, key, out var l))
+        ZDOExtraData.Set(cid, key, l);
+      if (ZDOExtraData.GetString(id, key, out var s))
+        ZDOExtraData.Set(cid, key, s);
+      if (ZDOExtraData.GetByteArray(id, key, out var b))
+        ZDOExtraData.Set(cid, key, b);
+    }
+    return clone;
+  }
+  public static ZDO CloneWithoutKeys(ZDO zdo, string[] keys)
+  {
+    var hashed = keys.Select(s => s.GetStableHashCode()).ToHashSet();
+    var clone = CloneBase(zdo);
+    var id = zdo.m_uid;
+    var cid = clone.m_uid;
+    var floats = ZDOExtraData.GetFloats(id).Where(kvp => !hashed.Contains(kvp.Key)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+    var vecs = ZDOExtraData.GetVec3s(id).Where(kvp => !hashed.Contains(kvp.Key)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+    var quats = ZDOExtraData.GetQuaternions(id).Where(kvp => !hashed.Contains(kvp.Key)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+    var ints = ZDOExtraData.GetInts(id).Where(kvp => !hashed.Contains(kvp.Key)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+    var longs = ZDOExtraData.GetLongs(id).Where(kvp => !hashed.Contains(kvp.Key)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+    var strings = ZDOExtraData.GetStrings(id).Where(kvp => !hashed.Contains(kvp.Key)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+    var byteArrays = ZDOExtraData.GetByteArrays(id).Where(kvp => !hashed.Contains(kvp.Key)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+    foreach (var kvp in floats)
+      ZDOExtraData.Set(cid, kvp.Key, kvp.Value);
+    foreach (var kvp in vecs)
+      ZDOExtraData.Set(cid, kvp.Key, kvp.Value);
+    foreach (var kvp in quats)
+      ZDOExtraData.Set(cid, kvp.Key, kvp.Value);
+    foreach (var kvp in ints)
+      ZDOExtraData.Set(cid, kvp.Key, kvp.Value);
+    foreach (var kvp in longs)
+      ZDOExtraData.Set(cid, kvp.Key, kvp.Value);
+    foreach (var kvp in strings)
+      ZDOExtraData.Set(cid, kvp.Key, kvp.Value);
+    foreach (var kvp in byteArrays)
+      ZDOExtraData.Set(cid, kvp.Key, kvp.Value);
+    return clone;
+  }
+  public static List<string> Print(ZDO zdo)
+  {
+    var prefab = ZNetScene.instance.GetPrefab(zdo.m_prefab);
+    var id = zdo.m_uid;
+    List<string> lines = [
+      $"Id: {id}",
+      $"Prefab: {(prefab ? prefab.name : "Unknown")}",
+      $"Owner: {zdo.GetOwner()}",
+      $"Position: {Helper.PrintVectorXZY(zdo.m_position)} (vec x,z,y)",
+      $"Rotation: {Helper.PrintVectorYXZ(zdo.m_rotation)} (quat y,x,z)",
+      $"Revision: {zdo.DataRevision} + {zdo.OwnerRevision}"
+    ];
+    var vecs = ZDOExtraData.GetVec3s(id).Select(kvp => $"{ZDOKeys.Convert(kvp.Key)}: {Helper.PrintVectorXZY(kvp.Value)} (vec x,z,y)");
+    var ints = ZDOExtraData.GetInts(id).Select(kvp => $"{ZDOKeys.Convert(kvp.Key)}: {kvp.Value} (int)");
+    var floats = ZDOExtraData.GetFloats(id).Select(kvp => $"{ZDOKeys.Convert(kvp.Key)}: {kvp.Value} (float)");
+    var quats = ZDOExtraData.GetQuaternions(id).Select(kvp => $"{ZDOKeys.Convert(kvp.Key)}: {Helper.PrintAngleYXZ(kvp.Value)} (quat y,x,z)");
+    var strings = ZDOExtraData.GetStrings(id).Select(kvp => $"{ZDOKeys.Convert(kvp.Key)}: {kvp.Value} (string)");
+    var longs = ZDOExtraData.GetLongs(id).Select(kvp => $"{ZDOKeys.Convert(kvp.Key)}: {kvp.Value} (long)");
+    var byteArrays = ZDOExtraData.GetByteArrays(id).Select(kvp => $"{ZDOKeys.Convert(kvp.Key)}: {Convert.ToBase64String(kvp.Value)} (byte array)");
+    return lines.Concat(vecs).Concat(ints).Concat(floats).Concat(quats).Concat(strings).Concat(longs).Concat(byteArrays).ToList();
+  }
+  public static void Init(GameObject obj, Vector3 pos, Quaternion rot, Vector3 scale, ZDOData? data)
   {
     if (data == null && scale == Vector3.one) return;
     if (!obj.TryGetComponent<ZNetView>(out var view)) return;
     var prefab = Utils.GetPrefabName(obj).GetStableHashCode();
     ZNetView.m_initZDO = ZDOMan.instance.CreateNewZDO(pos, prefab);
-    if (data != null)
-      Load(data, ZNetView.m_initZDO);
+    data?.Write(ZNetView.m_initZDO);
     ZNetView.m_initZDO.m_rotation = rot.eulerAngles;
     ZNetView.m_initZDO.Type = view.m_type;
     ZNetView.m_initZDO.Distant = view.m_distant;
@@ -36,185 +148,5 @@ public class DataHelper
   public static void CleanUp()
   {
     ZNetView.m_initZDO = null;
-  }
-  public static ZPackage? Deserialize(string data) => data == "" ? null : new(data);
-
-  public static void Serialize(ZDO zdo, ZPackage pkg, string filter)
-  {
-    var id = zdo.m_uid;
-    var vecs = ZDOExtraData.s_vec3.ContainsKey(id) ? ZDOExtraData.s_vec3[id].ToDictionary(kvp => kvp.Key, kvp => kvp.Value) : [];
-    var ints = ZDOExtraData.s_ints.ContainsKey(id) ? ZDOExtraData.s_ints[id].ToDictionary(kvp => kvp.Key, kvp => kvp.Value) : [];
-    var floats = ZDOExtraData.s_floats.ContainsKey(id) ? ZDOExtraData.s_floats[id].ToDictionary(kvp => kvp.Key, kvp => kvp.Value) : [];
-    var quats = ZDOExtraData.s_quats.ContainsKey(id) ? ZDOExtraData.s_quats[id].ToDictionary(kvp => kvp.Key, kvp => kvp.Value) : [];
-    var strings = ZDOExtraData.s_strings.ContainsKey(id) ? ZDOExtraData.s_strings[id].ToDictionary(kvp => kvp.Key, kvp => kvp.Value) : [];
-    var longs = ZDOExtraData.s_longs.ContainsKey(id) ? ZDOExtraData.s_longs[id].ToDictionary(kvp => kvp.Key, kvp => kvp.Value) : [];
-    var byteArrays = ZDOExtraData.s_byteArrays.ContainsKey(id) ? ZDOExtraData.s_byteArrays[id].ToDictionary(kvp => kvp.Key, kvp => kvp.Value) : [];
-    if (filter == "")
-    {
-      vecs.Remove(Hash.Scale);
-      vecs.Remove(Hash.SpawnPoint);
-      ints.Remove(Hash.Seed);
-      ints.Remove(Hash.Location);
-      if (strings.ContainsKey(Hash.OverrideItems))
-      {
-        ints.Remove(Hash.AddedDefaultItems);
-        strings.Remove(Hash.Items);
-      }
-    }
-    else if (filter != "all")
-    {
-      var filters = Parse.Split(filter).Select(s => s.GetStableHashCode()).ToHashSet();
-      vecs = FilterZdo(vecs, filters);
-      quats = FilterZdo(quats, filters);
-      floats = FilterZdo(floats, filters);
-      ints = FilterZdo(ints, filters);
-      longs = FilterZdo(longs, filters);
-      byteArrays = FilterZdo(byteArrays, filters);
-    }
-    var num = 0;
-    if (floats.Count() > 0)
-      num |= 1;
-    if (vecs.Count() > 0)
-      num |= 2;
-    if (quats.Count() > 0)
-      num |= 4;
-    if (ints.Count() > 0)
-      num |= 8;
-    if (strings.Count() > 0)
-      num |= 16;
-    if (longs.Count() > 0)
-      num |= 64;
-    if (byteArrays.Count() > 0)
-      num |= 128;
-    var conn = ZDOExtraData.s_connectionsHashData.TryGetValue(id, out var c) ? c : null;
-    if (conn != null && filter == "all" && conn.m_type != ZDOExtraData.ConnectionType.None && conn.m_hash != 0)
-      num |= 256;
-
-    pkg.Write(num);
-    if (floats.Count() > 0)
-    {
-      pkg.Write((byte)floats.Count());
-      foreach (var kvp in floats)
-      {
-        pkg.Write(kvp.Key);
-        pkg.Write(kvp.Value);
-      }
-    }
-    if (vecs.Count() > 0)
-    {
-      pkg.Write((byte)vecs.Count());
-      foreach (var kvp in vecs)
-      {
-        pkg.Write(kvp.Key);
-        pkg.Write(kvp.Value);
-      }
-    }
-    if (quats.Count() > 0)
-    {
-      pkg.Write((byte)quats.Count());
-      foreach (var kvp in quats)
-      {
-        pkg.Write(kvp.Key);
-        pkg.Write(kvp.Value);
-      }
-    }
-    if (ints.Count() > 0)
-    {
-      pkg.Write((byte)ints.Count());
-      foreach (var kvp in ints)
-      {
-        pkg.Write(kvp.Key);
-        pkg.Write(kvp.Value);
-      }
-    }
-    if (longs.Count() > 0)
-    {
-      pkg.Write((byte)longs.Count());
-      foreach (var kvp in longs)
-      {
-        pkg.Write(kvp.Key);
-        pkg.Write(kvp.Value);
-      }
-    }
-    if (strings.Count() > 0)
-    {
-      pkg.Write((byte)strings.Count());
-      foreach (var kvp in strings)
-      {
-        pkg.Write(kvp.Key);
-        pkg.Write(kvp.Value);
-      }
-    }
-    if (byteArrays.Count() > 0)
-    {
-      pkg.Write((byte)byteArrays.Count());
-      foreach (var kvp in byteArrays)
-      {
-        pkg.Write(kvp.Key);
-        pkg.Write(kvp.Value);
-      }
-    }
-    if (conn != null && (num & 256) != 0)
-    {
-      pkg.Write((byte)conn.m_type);
-      pkg.Write(conn.m_hash);
-    }
-  }
-  private static void Load(ZPackage pkg, ZDO zdo)
-  {
-    var id = zdo.m_uid;
-    var num = pkg.ReadInt();
-    if ((num & 1) != 0)
-    {
-      var count = pkg.ReadByte();
-      for (var i = 0; i < count; ++i)
-        ZDOExtraData.Set(id, pkg.ReadInt(), pkg.ReadSingle());
-    }
-    if ((num & 2) != 0)
-    {
-      var count = pkg.ReadByte();
-      for (var i = 0; i < count; ++i)
-        ZDOExtraData.Set(id, pkg.ReadInt(), pkg.ReadVector3());
-    }
-    if ((num & 4) != 0)
-    {
-      var count = pkg.ReadByte();
-      for (var i = 0; i < count; ++i)
-        ZDOExtraData.Set(id, pkg.ReadInt(), pkg.ReadQuaternion());
-    }
-    if ((num & 8) != 0)
-    {
-      var count = pkg.ReadByte();
-      for (var i = 0; i < count; ++i)
-        ZDOExtraData.Set(id, pkg.ReadInt(), pkg.ReadInt());
-    }
-    if ((num & 16) != 0)
-    {
-      var count = pkg.ReadByte();
-      for (var i = 0; i < count; ++i)
-        ZDOExtraData.Set(id, pkg.ReadInt(), pkg.ReadString());
-    }
-    if ((num & 64) != 0)
-    {
-      var count = pkg.ReadByte();
-      for (var i = 0; i < count; ++i)
-        ZDOExtraData.Set(id, pkg.ReadInt(), pkg.ReadLong());
-    }
-    if ((num & 128) != 0)
-    {
-      var count = pkg.ReadByte();
-      for (var i = 0; i < count; ++i)
-        ZDOExtraData.Set(id, pkg.ReadInt(), pkg.ReadByteArray());
-    }
-    if ((num & 256) != 0)
-    {
-      var type = (ZDOExtraData.ConnectionType)pkg.ReadByte();
-      var hash = pkg.ReadInt();
-      ZDOExtraData.SetConnectionData(id, type, hash);
-    }
-  }
-  private static Dictionary<int, T> FilterZdo<T>(Dictionary<int, T> dict, HashSet<int> filters)
-  {
-    return dict.Where(kvp => filters.Contains(kvp.Key)).ToDictionary(kvp => kvp.Key, pair => pair.Value);
   }
 }
