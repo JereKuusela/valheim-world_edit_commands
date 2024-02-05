@@ -80,7 +80,7 @@ public class DataCommand
           ZDOExtraData.Set(id, key, Parse.Long(val));
         else if (type == "string")
           ZDOExtraData.Set(id, key, val);
-        else if (type == "byte")
+        else if (type == "array")
           ZDOExtraData.Set(id, key, Convert.FromBase64String(val));
         else throw new InvalidOperationException($"Unknown type {type}.");
       }

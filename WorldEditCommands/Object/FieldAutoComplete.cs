@@ -184,7 +184,13 @@ public class FieldAutoComplete
     return type;
   }
 
-  public static string RealComponent(string prefab, string component) => GetComponents(prefab).FirstOrDefault(s => s.StartsWith(component, StringComparison.OrdinalIgnoreCase)) ?? component;
+  public static string RealComponent(string prefab, string component)
+  {
+    var components = GetComponents(prefab);
+    return components.FirstOrDefault(s => s.Equals(component, StringComparison.OrdinalIgnoreCase))
+    ?? components.FirstOrDefault(s => s.StartsWith(component, StringComparison.OrdinalIgnoreCase))
+    ?? component;
+  }
   public static string RealField(string component, string field)
   {
     var f = $"m_{field}";

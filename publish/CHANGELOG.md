@@ -1,3 +1,6 @@
+- v1.54
+  - Fixes the `field` parameter not working with the `Piece` component.
+
 - v1.53
   - Fixes data not always being synced on servers.
 

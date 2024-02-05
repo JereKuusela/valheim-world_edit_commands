@@ -108,26 +108,30 @@ public class SharedObjectParameters
           Fields.Add(key, Parse.VectorXZY(values, 2));
         else if (type == typeof(GameObject) || type == typeof(ItemDrop) || type == typeof(EffectList))
           Fields.Add(key, fieldValue);
-        else if (type == typeof(Character.Faction))
-          Fields.Add(key, (int)ToEnum<Character.Faction>(fieldValue));
+        else if (type.IsEnum)
+          Fields.Add(key, ToEnum(type, fieldValue));
+        else if (type == typeof(void))
+          throw new InvalidOperationException($"Field {key} of component {component} is not supported.");
         else
-          throw new Exception($"Unhandled type for field {key}");
+          throw new InvalidOperationException($"Unhandled type {type} for field {key}");
       }
     }
   }
 
-  public static T ToEnum<T>(string str) where T : struct, Enum => ToEnum<T>(ToList(str));
-  public static T ToEnum<T>(List<string> list) where T : struct, Enum
+  public static int ToEnum(Type type, string str) => ToEnum(type, ToList(str));
+  public static int ToEnum(Type type, List<string> list)
   {
-    int value = 0;
-    foreach (var item in list)
+    try
     {
-      if (Enum.TryParse<T>(item, true, out var parsed))
-        value += (int)(object)parsed;
-      else
-        throw new Exception($"Failed to parse value {item} as {nameof(T)}.");
+      int value = 0;
+      foreach (var item in list)
+        value += (int)Enum.Parse(type, item, true);
+      return value;
     }
-    return (T)(object)value;
+    catch
+    {
+      throw new InvalidOperationException($"Failed to parse enum {type.Name} with values {string.Join(", ", list)}");
+    }
   }
   public static List<string> ToList(string str, bool removeEmpty = true) => Split(str, removeEmpty).ToList();
 
