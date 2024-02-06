@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Runtime.InteropServices;
 using ServerDevcommands;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -59,6 +61,7 @@ public class ZDOData
   }
   public void Load(DataData data)
   {
+    HashSet<string> componentsToAdd = [];
     if (data.floats != null)
     {
       Floats ??= [];
@@ -66,6 +69,8 @@ public class ZDOData
       {
         var split = Parse.Split(value);
         if (split.Length < 2) continue;
+        if (split[0].Contains("."))
+          componentsToAdd.Add(split[0].Split('.')[0]);
         var hash = int.TryParse(split[0], out var h) ? h : Helper.Hash(split[0]);
         Floats.Add(hash, new(split));
       }
@@ -77,6 +82,8 @@ public class ZDOData
       {
         var split = Parse.Split(value);
         if (split.Length < 2) continue;
+        if (split[0].Contains("."))
+          componentsToAdd.Add(split[0].Split('.')[0]);
         var hash = int.TryParse(split[0], out var h) ? h : Helper.Hash(split[0]);
         Ints.Add(hash, new(split));
       }
@@ -88,6 +95,8 @@ public class ZDOData
       {
         var split = Parse.Split(value);
         if (split.Length < 2) continue;
+        if (split[0].Contains("."))
+          componentsToAdd.Add(split[0].Split('.')[0]);
         var hash = int.TryParse(split[0], out var h) ? h : Helper.Hash(split[0]);
         Ints.Add(hash, new BoolValue(split));
       }
@@ -99,6 +108,8 @@ public class ZDOData
       {
         var split = Parse.Split(value);
         if (split.Length < 2) continue;
+        if (split[0].Contains("."))
+          componentsToAdd.Add(split[0].Split('.')[0]);
         var hash = int.TryParse(split[0], out var h) ? h : Helper.Hash(split[0]);
         Ints.Add(hash, new HashValue(split));
       }
@@ -110,6 +121,8 @@ public class ZDOData
       {
         var split = Parse.Split(value);
         if (split.Length < 2) continue;
+        if (split[0].Contains("."))
+          componentsToAdd.Add(split[0].Split('.')[0]);
         var hash = int.TryParse(split[0], out var h) ? h : Helper.Hash(split[0]);
         Longs.Add(hash, new(split));
       }
@@ -121,6 +134,8 @@ public class ZDOData
       {
         var split = Parse.Split(value);
         if (split.Length < 2) continue;
+        if (split[0].Contains("."))
+          componentsToAdd.Add(split[0].Split('.')[0]);
         var hash = int.TryParse(split[0], out var h) ? h : Helper.Hash(split[0]);
         Strings.Add(hash, new(split));
       }
@@ -132,6 +147,8 @@ public class ZDOData
       {
         var split = Parse.Split(value);
         if (split.Length != 4) continue;
+        if (split[0].Contains("."))
+          componentsToAdd.Add(split[0].Split('.')[0]);
         var hash = int.TryParse(split[0], out var h) ? h : Helper.Hash(split[0]);
         Vecs.Add(hash, Parse.VectorXZY(split, 1));
       }
@@ -143,6 +160,8 @@ public class ZDOData
       {
         var split = Parse.Split(value);
         if (split.Length != 4) continue;
+        if (split[0].Contains("."))
+          componentsToAdd.Add(split[0].Split('.')[0]);
         var hash = int.TryParse(split[0], out var h) ? h : Helper.Hash(split[0]);
         Quats.Add(hash, Parse.AngleYXZ(split, 1));
       }
@@ -154,10 +173,24 @@ public class ZDOData
       {
         var split = Parse.Split(value);
         if (split.Length < 2) continue;
+        if (split[0].Contains("."))
+          componentsToAdd.Add(split[0].Split('.')[0]);
         var str = string.Join(",", split.Skip(1));
         var hash = int.TryParse(split[0], out var h) ? h : Helper.Hash(split[0]);
         ByteArrays.Add(hash, Convert.FromBase64String(str));
       }
+    }
+    if (data.items != null)
+    {
+      Strings ??= [];
+      Strings[ZDOVars.s_items] = new(LoadItems(data.items));
+    }
+    if (componentsToAdd.Count > 0)
+    {
+      Ints ??= [];
+      Ints[$"HasFields".GetStableHashCode()] = new(1);
+      foreach (var component in componentsToAdd)
+        Ints[$"HasFields{component}".GetStableHashCode()] = new(1);
     }
     if (!string.IsNullOrWhiteSpace(data.connection))
     {
@@ -407,6 +440,125 @@ public class ZDOData
       pkg.Write((byte)ConnectionType);
       pkg.Write(ConnectionHash);
     }
+  }
+  private static readonly HashSet<int> HashKeys = [
+    ZDOVars.s_helmetItem,
+    ZDOVars.s_chestItem,
+    ZDOVars.s_legItem,
+    ZDOVars.s_shoulderItem,
+    ZDOVars.s_utilityItem,
+    ZDOVars.s_leftItem,
+    ZDOVars.s_rightItem
+  ];
+  public void Write(DataData data)
+  {
+
+    data.floats = Floats?.Select(pair => $"{ZDOKeys.Convert(pair.Key)}, {pair.Value.Get()}").ToArray();
+    data.ints = Ints?.Where(kvp => !HashKeys.Contains(kvp.Key)).Select(pair => $"{ZDOKeys.Convert(pair.Key)}, {pair.Value.Get()}").ToArray();
+    if (data.ints?.Length == 0) data.ints = null;
+    data.hashes = Ints?.Where(kvp => HashKeys.Contains(kvp.Key)).Select(pair => $"{ZDOKeys.Convert(pair.Key)}, {ZNetScene.instance.GetPrefab(pair.Value.Get())?.name ?? pair.Value.Get().ToString()}").ToArray();
+    if (data.hashes?.Length == 0) data.hashes = null;
+
+    data.longs = Longs?.Select(pair => $"{ZDOKeys.Convert(pair.Key)}, {pair.Value.Get()}").ToArray();
+    data.strings = Strings?.Select(pair => $"{ZDOKeys.Convert(pair.Key)}, {pair.Value.Get()}").ToArray();
+    data.vecs = Vecs?.Select(pair => $"{ZDOKeys.Convert(pair.Key)}, {Serialize(pair.Value)}").ToArray();
+    data.quats = Quats?.Select(pair => $"{ZDOKeys.Convert(pair.Key)}, {Serialize(pair.Value)}").ToArray();
+    data.bytes = ByteArrays?.Select(pair => $"{ZDOKeys.Convert(pair.Key)}, {Convert.ToBase64String(pair.Value)}").ToArray();
+    var items = Strings?.FirstOrDefault(kvp => kvp.Key == ZDOVars.s_items).Value;
+    if (items != null)
+      data.items = GetItems(items.Get());
+    if (ConnectionType != ZDOExtraData.ConnectionType.None && ConnectionHash != 0)
+      data.connection = $"{ConnectionType}, {ConnectionHash}";
+  }
+  private static ItemData[] GetItems(string encoded)
+  {
+    ZPackage pkg = new(encoded);
+    var version = pkg.ReadInt();
+    if (version != 106) return [];
+    var amount = pkg.ReadInt();
+    var list = new ItemData[amount];
+    for (var i = 0; i < amount; ++i)
+    {
+      var text = pkg.ReadString();
+      var stack = pkg.ReadInt();
+      var durability = pkg.ReadSingle();
+      var pos = pkg.ReadVector2i();
+      var equipped = pkg.ReadBool();
+      var quality = pkg.ReadInt();
+      var variant = pkg.ReadInt();
+      var crafterID = pkg.ReadLong();
+      var crafterName = pkg.ReadString();
+      var dictionary = new Dictionary<string, string>();
+      var num3 = pkg.ReadInt();
+      for (var j = 0; j < num3; ++j)
+      {
+        dictionary[pkg.ReadString()] = pkg.ReadString();
+      }
+      var worldLevel = pkg.ReadInt();
+      var pickedUp = pkg.ReadBool();
+      var extra = num3 > 0 ? $", {string.Join(", ", dictionary.Select(kvp => $"{kvp.Key}: {kvp.Value}"))}" : "";
+      list[i] = new()
+      {
+        pos = $"{pos.x}, {pos.y}",
+        prefab = text,
+        stack = stack,
+        quality = quality,
+        variant = variant,
+        customData = dictionary.Count > 0 ? dictionary : null,
+        equipped = equipped,
+        durability = durability,
+        crafterID = crafterID,
+        crafterName = crafterName,
+        pickedUp = pickedUp,
+        worldLevel = worldLevel
+      };
+    }
+    return list;
+  }
+  private static string LoadItems(ItemData[] items)
+  {
+    ZPackage pkg = new();
+    pkg.Write(106);
+    pkg.Write(items.Length);
+    foreach (var item in items)
+    {
+      pkg.Write(item.prefab);
+      pkg.Write(item.stack);
+      pkg.Write(item.durability);
+      var split = Parse.Split(item.pos);
+      Vector2i pos = new(Parse.Int(split, 0, 0), Parse.Int(split, 1, 0));
+      pkg.Write(pos);
+      pkg.Write(item.equipped);
+      pkg.Write(item.quality);
+      pkg.Write(item.variant);
+      pkg.Write(item.crafterID);
+      pkg.Write(item.crafterName);
+      pkg.Write(item.customData?.Count ?? 0);
+      foreach (var kvp in item.customData ?? [])
+      {
+        pkg.Write(kvp.Key);
+        pkg.Write(kvp.Value);
+      }
+      pkg.Write(item.worldLevel);
+      pkg.Write(item.pickedUp);
+    }
+    return pkg.GetBase64();
+  }
+  private static string Serialize(Quaternion quat)
+  {
+    var euler = quat.eulerAngles;
+    if (euler.x == 0f && euler.z == 0f)
+      return Serialize(euler.y);
+    else
+      return $"{Serialize(euler.y)},{Serialize(euler.x)},{Serialize(euler.z)}";
+  }
+  private static string Serialize(float value)
+  {
+    return value.ToString("0.#####", NumberFormatInfo.InvariantInfo);
+  }
+  private static string Serialize(Vector3 vec)
+  {
+    return $"{Serialize(vec.x)},{Serialize(vec.z)},{Serialize(vec.y)}";
   }
   private void HandleConnection(ZDO ownZdo)
   {

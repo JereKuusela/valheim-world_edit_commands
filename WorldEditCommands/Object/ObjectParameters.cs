@@ -148,6 +148,15 @@ public class ObjectParameters : SharedObjectParameters
 
   private void AddComponents(string[] values)
   {
-    foreach (var value in values) Components.Add(value);
+    foreach (var value in values)
+    {
+      var lower = value.ToLowerInvariant();
+      if (lower == "strucutre")
+        Components.Add("WearNTear");
+      else if (lower == "creature")
+        Components.Add("Humanoid");
+      else
+        Components.Add(value);
+    }
   }
 }

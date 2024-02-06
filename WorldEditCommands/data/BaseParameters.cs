@@ -110,7 +110,16 @@ public abstract class BaseParameters
   }
   private void AddComponents(string[] values)
   {
-    foreach (var value in values) Components.Add(value);
+    foreach (var value in values)
+    {
+      var lower = value.ToLowerInvariant();
+      if (lower == "strucutre")
+        Components.Add("WearNTear");
+      else if (lower == "creature")
+        Components.Add("Humanoid");
+      else
+        Components.Add(value);
+    }
   }
 
   public ZNetView[] GetObjects()
@@ -118,7 +127,7 @@ public abstract class BaseParameters
     ZNetView[] views;
     if (Connect)
     {
-      var view = Selector.GetHovered(50f, IncludedIds, ExcludedIds);
+      var view = Selector.GetHovered(50f, IncludedIds, Components, ExcludedIds);
       if (view == null) return [];
       views = Selector.GetConnected(view, IncludedIds, ExcludedIds);
     }
@@ -132,7 +141,7 @@ public abstract class BaseParameters
     }
     else
     {
-      var view = Selector.GetHovered(50f, IncludedIds, ExcludedIds);
+      var view = Selector.GetHovered(50f, IncludedIds, Components, ExcludedIds);
       if (view == null) return [];
       if (!Selector.GetPrefabs(IncludedIds).Contains(view.GetZDO().GetPrefab()))
       {

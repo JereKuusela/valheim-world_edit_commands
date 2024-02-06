@@ -80,36 +80,9 @@ public class DataLoading
 
   public static DataData ToData(ZDOData zdo, string name)
   {
-    DataData data = new()
-    {
-      name = name,
-      floats = zdo.Floats?.Select(pair => $"{ZDOKeys.Convert(pair.Key)}, {Serialize(pair.Value.Get())}").ToArray(),
-      ints = zdo.Ints?.Select(pair => $"{ZDOKeys.Convert(pair.Key)}, {pair.Value.Get()}").ToArray(),
-      longs = zdo.Longs?.Select(pair => $"{ZDOKeys.Convert(pair.Key)}, {pair.Value.Get()}").ToArray(),
-      strings = zdo.Strings?.Select(pair => $"{ZDOKeys.Convert(pair.Key)}, {pair.Value.Get()}").ToArray(),
-      vecs = zdo.Vecs?.Select(pair => $"{ZDOKeys.Convert(pair.Key)}, {Serialize(pair.Value)}").ToArray(),
-      quats = zdo.Quats?.Select(pair => $"{ZDOKeys.Convert(pair.Key)}, {Serialize(pair.Value)}").ToArray(),
-      bytes = zdo.ByteArrays?.Select(pair => $"{ZDOKeys.Convert(pair.Key)}, {Convert.ToBase64String(pair.Value)}").ToArray(),
-    };
-    if (zdo.ConnectionType != ZDOExtraData.ConnectionType.None && zdo.ConnectionHash != 0)
-      data.connection = $"{zdo.ConnectionType}, {zdo.ConnectionHash}";
+    DataData data = new() { name = name };
+    zdo.Write(data);
     return data;
-  }
-  private static string Serialize(float value)
-  {
-    return value.ToString("0.#####", NumberFormatInfo.InvariantInfo);
-  }
-  private static string Serialize(Vector3 vec)
-  {
-    return $"{Serialize(vec.x)},{Serialize(vec.z)},{Serialize(vec.y)}";
-  }
-  private static string Serialize(Quaternion quat)
-  {
-    var euler = quat.eulerAngles;
-    if (euler.x == 0f && euler.z == 0f)
-      return Serialize(euler.y);
-    else
-      return $"{Serialize(euler.y)},{Serialize(euler.x)},{Serialize(euler.z)}";
   }
 
   public static void SetupWatcher()

@@ -131,7 +131,7 @@ public abstract class TweakCommand
       ZNetView[] views;
       if (pars.Connect)
       {
-        var view = Selector.GetHovered(50f, pars.IncludedIds, pars.ExcludedIds);
+        var view = Selector.GetHovered(50f, pars.IncludedIds, pars.Components, pars.ExcludedIds);
         if (view == null) return;
         views = Selector.GetConnected(view, pars.IncludedIds, pars.ExcludedIds);
       }
