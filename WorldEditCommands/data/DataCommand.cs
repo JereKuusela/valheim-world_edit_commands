@@ -8,7 +8,14 @@ namespace WorldEditCommands;
 
 public class DataCommand
 {
-  private static readonly List<EditData> EditedInfo = [];
+  // Dictionary to only add undo for edited objects.
+  private static readonly Dictionary<ZDOID, EditData> EditedInfo = [];
+  private static void AddUndo(ZNetView view)
+  {
+    var zdo = view.GetZDO();
+    if (EditedInfo.ContainsKey(zdo.m_uid)) return;
+    EditedInfo[zdo.m_uid] = new EditData(zdo);
+  }
 
 
   protected string DoOperation(ZNetView view, string operation, string? value)
@@ -20,6 +27,7 @@ public class DataCommand
     }
     if (operation == "load" && value != null)
     {
+      AddUndo(view);
       var zdo = DataHelper.CloneBase(view.GetZDO());
       DataLoading.Load(value, zdo);
       Regen(view, zdo);
@@ -35,6 +43,7 @@ public class DataCommand
   {
     if (operation == "merge" && value.Length > 0)
     {
+      AddUndo(view);
       var values = value.SelectMany(str => str.Split(',')).ToArray();
       foreach (var str in values)
       {
@@ -45,18 +54,21 @@ public class DataCommand
     }
     if (operation == "keep" && value.Length > 0)
     {
+      AddUndo(view);
       var keys = value.SelectMany(str => str.Split(',')).ToArray();
       Regen(view, DataHelper.CloneWithKeys(view.GetZDO(), keys));
       return $"¤ data cleaned except {string.Join(", ", keys)}.";
     }
     if (operation == "remove" && value.Length > 0)
     {
+      AddUndo(view);
       var keys = value.SelectMany(str => str.Split(',')).ToArray();
       Regen(view, DataHelper.CloneWithoutKeys(view.GetZDO(), keys));
       return $"¤ data keys removed {string.Join(", ", keys)}.";
     }
     if (operation == "set" && value.Length > 0)
     {
+      AddUndo(view);
       var zdo = view.GetZDO();
       var id = zdo.m_uid;
       foreach (var str in value)
@@ -74,6 +86,8 @@ public class DataCommand
           ZDOExtraData.Set(id, key, Parse.AngleYXZ(val));
         else if (type == "int")
           ZDOExtraData.Set(id, key, Parse.Int(val));
+        else if (type == "hash")
+          ZDOExtraData.Set(id, key, val.GetStableHashCode());
         else if (type == "bool")
           ZDOExtraData.Set(id, key, Parse.Boolean(val) == true ? 1 : 0);
         else if (type == "long")
@@ -113,21 +127,26 @@ public class DataCommand
     throw new NotImplementedException();
   }
   // Removing properties is not supported, so have to recreate the object.
+  // This means undo information has to be updated.
   private void Regen(ZNetView view, ZDO zdo)
   {
     var existing = view.GetZDO();
-    var entry = EditedInfo.First(info => info.Zdo == existing);
+    var entry = EditedInfo[existing.m_uid];
     entry.Zdo = DataHelper.Regen(existing, zdo);
+    EditedInfo[entry.Zdo.m_uid] = entry;
+    EditedInfo.Remove(existing.m_uid);
   }
+  static readonly int Player = "Player".GetStableHashCode();
   private void Execute(Terminal context, Dictionary<string, object?> operations, ZNetView[] views)
   {
     EditedInfo.Clear();
+
     var count = views.Count();
     foreach (var view in views)
     {
       var zdo = view.GetZDO();
-      EditedInfo.Add(new(zdo));
-      view.ClaimOwnership();
+      if (zdo.GetPrefab() != Player)
+        view.ClaimOwnership();
 
       foreach (var operation in operations)
       {
@@ -158,8 +177,8 @@ public class DataCommand
     if (EditedInfo.Count > 0)
     {
       foreach (var info in EditedInfo)
-        info.Update();
-      UndoManager.Add(new UndoEdit(EditedInfo));
+        info.Value.Update();
+      UndoManager.Add(new UndoEdit(EditedInfo.Select(kvp => kvp.Value)));
     }
   }
   public const string Name = "data";

@@ -10,50 +10,56 @@ public class DataData
   [DefaultValue("")]
   public string connection = "";
   [DefaultValue(null)]
-  public string[]? bools = null;
+  public string[]? bools;
   [DefaultValue(null)]
-  public string[]? ints = null;
+  public string[]? ints;
   [DefaultValue(null)]
-  public string[]? hashes = null;
+  public string[]? hashes;
   [DefaultValue(null)]
-  public string[]? floats = null;
+  public string[]? floats;
   [DefaultValue(null)]
-  public string[]? strings = null;
+  public string[]? strings;
   [DefaultValue(null)]
-  public string[]? longs = null;
+  public string[]? longs;
   [DefaultValue(null)]
-  public string[]? vecs = null;
+  public string[]? vecs;
   [DefaultValue(null)]
-  public string[]? quats = null;
+  public string[]? quats;
   [DefaultValue(null)]
-  public string[]? bytes = null;
+  public string[]? bytes;
   [DefaultValue(null)]
-  public ItemData[]? items = null;
+  public ItemData[]? items;
+  [DefaultValue(null)]
+  public string? containerSize;
+  [DefaultValue(null)]
+  public string? itemAmount;
 }
 
 public class ItemData
 {
-  public string pos = "0, 0";
+  public string pos = "";
+  [DefaultValue(1f)]
+  public float chance = 1f;
   [DefaultValue("")]
   public string prefab = "";
-  [DefaultValue(1)]
-  public int stack = 1;
-  [DefaultValue(1)]
-  public int quality = 1;
-  [DefaultValue(0)]
-  public int variant = 0;
-  [DefaultValue(0f)]
-  public float durability = 0;
-  [DefaultValue(0L)]
-  public long crafterID = 0;
+  [DefaultValue("1")]
+  public string stack = "1";
+  [DefaultValue("1")]
+  public string quality = "1";
+  [DefaultValue("0")]
+  public string variant = "0";
+  [DefaultValue("0")]
+  public string durability = "0";
+  [DefaultValue("0")]
+  public string crafterID = "0";
   [DefaultValue("")]
   public string crafterName = "";
-  [DefaultValue(0)]
-  public int worldLevel = 0;
-  [DefaultValue(false)]
-  public bool equipped = false;
-  [DefaultValue(false)]
-  public bool pickedUp = false;
+  [DefaultValue("0")]
+  public string worldLevel = "0";
+  [DefaultValue("false")]
+  public string equipped = "false";
+  [DefaultValue("false")]
+  public string pickedUp = "false";
   [DefaultValue(null)]
-  public Dictionary<string, string>? customData = null;
+  public Dictionary<string, string>? customData;
 }

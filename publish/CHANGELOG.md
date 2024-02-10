@@ -1,5 +1,12 @@
 - v1.54
+  - Adds support for targeting players when `id=Player` is used.
+  - Adds new command `data` for data related operations.
+  - Adds keywords `creature` (Humanoid) and `structure` (WearNTear) back to the `type` parameter.
+  - Fixes the `type` parameter being case sensitive.
+  - Fixes the `type` parameter not working for the hovered object.
   - Fixes the `field` parameter not working with the `Piece` component.
+  - Improves reliability of the undo feature.
+  - Removes `object copy` as obsolete.
 
 - v1.53
   - Fixes data not always being synced on servers.

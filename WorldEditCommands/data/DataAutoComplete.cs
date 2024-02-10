@@ -28,13 +28,14 @@ public class DataAutoComplete
   public static NamedOptionsFetchers GetNamedOptions()
   {
     List<string> dataTypes = [
-      "float",
-      "int",
-      "string",
+      "array",
       "bool",
-      "vec3",
+      "float",
+      "hash",
+      "int",
       "quat",
-      "array"
+      "string",
+      "vec3",
     ];
     NamedOptionsFetchers baseFetchers = new() {
       {

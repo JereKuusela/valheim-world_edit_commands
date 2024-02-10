@@ -151,7 +151,7 @@ public class ObjectParameters : SharedObjectParameters
     foreach (var value in values)
     {
       var lower = value.ToLowerInvariant();
-      if (lower == "strucutre")
+      if (lower == "structure")
         Components.Add("WearNTear");
       else if (lower == "creature")
         Components.Add("Humanoid");

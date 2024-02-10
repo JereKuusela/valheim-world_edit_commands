@@ -16,17 +16,19 @@ public class ObjectCommand
     return Random.NextDouble() < value;
   }
   public const string Name = "object";
+  // Dictionary to only add undo for edited objects.
   private static readonly Dictionary<ZDOID, EditData> EditedInfo = [];
-  private static void AddData(ZNetView view)
+  private static void AddUndo(ZNetView view)
   {
     var zdo = view.GetZDO();
     if (EditedInfo.ContainsKey(zdo.m_uid)) return;
     EditedInfo[zdo.m_uid] = new EditData(zdo);
   }
+  static readonly int Player = "Player".GetStableHashCode();
   private static void Execute(Terminal context, ObjectParameters pars, IEnumerable<string> operations, ZNetView[] views)
   {
     var scene = ZNetScene.instance;
-    Dictionary<ZDOID, long> oldOwner = [];
+    // TODO: Shouldbe like data command, that pars filter.
     views = views.Where(view =>
     {
       if (!view || !view.GetZDO().IsValid())
@@ -45,8 +47,9 @@ public class ObjectCommand
     EditedInfo.Clear();
     foreach (var view in views)
     {
-      oldOwner.Add(view.GetZDO().m_uid, view.GetZDO().GetOwner());
-      view.ClaimOwnership();
+      var zdo = view.GetZDO();
+      if (zdo.GetPrefab() != Player)
+        view.ClaimOwnership();
     }
     var count = views.Count();
     foreach (var operation in operations)
@@ -139,14 +142,13 @@ public class ObjectCommand
       }
     }
     var moved = operations.Contains("move") || operations.Contains("scale") || operations.Contains("rotate") || operations.Contains("mirror");
-    foreach (var view in views)
+    if (moved)
     {
-      if (!view || view.GetZDO() == null || !view.GetZDO().IsValid() || !oldOwner.ContainsKey(view.GetZDO().m_uid)) continue;
-      if (moved && view.TryGetComponent<WearNTear>(out var wearNTear))
-        wearNTear.m_colliders = null; // Forces the next support check to refresh collider positions.
-      if (oldOwner.TryGetValue(view.GetZDO().m_uid, out var owner))
-        view.GetZDO().SetOwner(owner);
-
+      foreach (var view in views)
+      {
+        if (view && view.TryGetComponent<WearNTear>(out var wearNTear))
+          wearNTear.m_colliders = null; // Forces the next support check to refresh collider positions.
+      }
     }
     if (removed.Count() > 0)
     {
@@ -156,11 +158,8 @@ public class ObjectCommand
     if (EditedInfo.Count() > 0)
     {
       foreach (var info in EditedInfo)
-      {
         info.Value.Update();
-      }
-      UndoEdit undo = new(EditedInfo.Select(info => info.Value));
-      UndoManager.Add(undo);
+      UndoManager.Add(new UndoEdit(EditedInfo.Select(kvp => kvp.Value)));
     }
   }
   public ObjectCommand()
@@ -204,7 +203,7 @@ public class ObjectCommand
   {
     if (!obj.GetComponent<Character>() && !obj.GetComponent<WearNTear>() && !obj.GetComponent<TreeLog>() && !obj.GetComponent<Destructible>() && !obj.GetComponent<TreeBase>())
       return "Skipped: ¤ is not a creature or a destructible.";
-    AddData(obj);
+    AddUndo(obj);
     var previous = Actions.SetHealth(obj.gameObject, amount, isPercentage);
     var amountStr = amount == 0f ? "default" : isPercentage ? $"{100 * amount:0.##} %" : amount.ToString("F0");
     return $"¤ health changed from {previous:F0} to {amountStr}.";
@@ -213,7 +212,7 @@ public class ObjectCommand
   {
     var obj = view.GetComponent<Character>();
     if (!obj) return "Skipped: ¤ is not a creature.";
-    AddData(view);
+    AddUndo(view);
     var previous = obj.GetLevel() - 1;
     Actions.SetLevel(obj, amount + 1);
     return $"¤ stars changed from {previous} to {amount}.";
@@ -229,7 +228,7 @@ public class ObjectCommand
   }
   private static string SetFields(ZNetView view, Dictionary<string, object> fields)
   {
-    AddData(view);
+    AddUndo(view);
     var added = Actions.SetFields(view, fields);
     if (added == 0) return "Skipped: ¤ doesn't have valid components.";
     if (added == fields.Count) return $"¤ {fields.Count} fields set.";
@@ -241,38 +240,38 @@ public class ObjectCommand
     hasFuel |= view.TryGetComponent(out Fireplace fireplace) && fireplace.m_fuelItem != null;
     hasFuel |= view.TryGetComponent(out CookingStation cs) && cs.m_fuelItem != null;
     if (!hasFuel) return "Skipped: ¤ doesn't use fuel.";
-    AddData(view);
+    AddUndo(view);
     var previous = view.GetZDO().GetFloat("fuel", 0f);
     Actions.SetFuel(view, amount);
     return $"¤ fuel changed from {previous} to {amount}.";
   }
   private static string Move(ZNetView view, Vector3 offset, string origin)
   {
-    AddData(view);
+    AddUndo(view);
     Actions.Move(view, offset, origin);
     return $"¤ moved {offset:F1} from the {origin}.";
   }
   private static string ResetRotation(ZNetView view)
   {
-    AddData(view);
+    AddUndo(view);
     Actions.ResetRotation(view);
     return $"¤ rotation reseted.";
   }
   private static string Mirror(ZNetView view, Vector3 center)
   {
-    AddData(view);
+    AddUndo(view);
     Actions.Mirror(view, center);
     return $"¤ mirrored.";
   }
   private static string Rotate(ZNetView view, Vector3 rotation, string origin, Vector3? center = null)
   {
-    AddData(view);
+    AddUndo(view);
     Actions.Rotate(view, rotation, origin, center);
     return $"¤ rotated {rotation:F1} from the {origin}.";
   }
   private static string Scale(ZNetView view, Vector3 scale)
   {
-    AddData(view);
+    AddUndo(view);
     var tweaked = Actions.Scale(view, scale);
     var tweakStr = tweaked ? " (scaling enabled)" : "";
     return $"¤ scaled to {scale:F1}{tweakStr}.";
@@ -281,7 +280,7 @@ public class ObjectCommand
   {
     var obj = view.GetComponent<Growup>();
     if (!obj) return "Skipped: ¤ is not an offspring.";
-    AddData(view);
+    AddUndo(view);
     Actions.SetBaby(obj);
     return "¤ growth disabled.";
   }
@@ -289,7 +288,7 @@ public class ObjectCommand
   {
     if (!Actions.CanRespawn(view.gameObject))
       return "Skipped: ¤ is not a loot container, pickable or spawn point.";
-    AddData(view);
+    AddUndo(view);
     Actions.Respawn(view.gameObject);
     return "¤ respawned.";
   }
@@ -297,7 +296,7 @@ public class ObjectCommand
   {
     var obj = view.GetComponent<Character>();
     if (!obj) return "Skipped: ¤ is not a creature.";
-    AddData(view);
+    AddUndo(view);
     Actions.SetTame(obj, true);
     return "¤ made tame.";
   }
@@ -305,7 +304,7 @@ public class ObjectCommand
   {
     var obj = view.GetComponent<Character>();
     if (!obj) return "Skipped: ¤ is not a creature.";
-    AddData(view);
+    AddUndo(view);
     Actions.SetTame(obj, false);
     return "¤ made wild.";
   }
@@ -313,7 +312,7 @@ public class ObjectCommand
   {
     var obj = view.GetComponent<MonsterAI>();
     if (!obj) return "Skipped: ¤ is not a creature.";
-    AddData(view);
+    AddUndo(view);
     Actions.SetSleeping(obj, true);
     return "¤ made to sleep.";
   }
@@ -321,13 +320,13 @@ public class ObjectCommand
   {
     var obj = view.GetComponent<Piece>();
     if (!obj) return "Skipped: ¤ is not a piece.";
-    AddData(view);
+    AddUndo(view);
     var previous = Actions.SetCreator(obj, creator);
     return $"Creator of ¤ set from {previous} to {creator}.";
   }
   private static string SetPrefab(ZNetView view, string prefab)
   {
-    AddData(view);
+    AddUndo(view);
     if (Actions.SetPrefab(view, prefab))
       return $"Prefab of ¤ set to {prefab}.";
     return $"Error: Prefab of ¤ was not set to {prefab}. Probably invalid prefab name.";
@@ -337,7 +336,7 @@ public class ObjectCommand
     if (item == null) return "Skipped: Invalid item.";
     var obj = view.GetComponent<ItemStand>();
     if (!obj) return "Skipped: ¤ is not an item stand.";
-    AddData(view);
+    AddUndo(view);
     Actions.SetVisual(obj, item);
     return $"Visual of ¤ set to {item.Name} with variant {item.Variant}.";
   }
@@ -346,7 +345,7 @@ public class ObjectCommand
     if (item == null) return "Skipped: Invalid item.";
     var obj = view.GetComponent<Character>();
     if (!obj) return "Skipped: ¤ is not a creature.";
-    AddData(view);
+    AddUndo(view);
     Actions.SetVisual(obj, VisSlot.Helmet, item);
     return $"Helmet of ¤ set to {item.Name} with variant {item.Variant}.";
   }
@@ -355,7 +354,7 @@ public class ObjectCommand
     if (item == null) return "Skipped: Invalid item.";
     var obj = view.GetComponent<Character>();
     if (!obj) return "Skipped: ¤ is not a creature.";
-    AddData(view);
+    AddUndo(view);
     Actions.SetVisual(obj, VisSlot.HandLeft, item);
     return $"Left hand of ¤ set to {item.Name} with variant {item.Variant}.";
   }
@@ -364,7 +363,7 @@ public class ObjectCommand
     if (item == null) return "Skipped: Invalid item.";
     var obj = view.GetComponent<Character>();
     if (!obj) return "Skipped: ¤ is not a creature.";
-    AddData(view);
+    AddUndo(view);
     Actions.SetVisual(obj, VisSlot.HandRight, item);
     return $"Right hand of ¤ set to {item.Name} with variant {item.Variant}.";
   }
@@ -373,7 +372,7 @@ public class ObjectCommand
     if (item == null) return "Skipped: Invalid item.";
     var obj = view.GetComponent<Character>();
     if (!obj) return "Skipped: ¤ is not a creature.";
-    AddData(view);
+    AddUndo(view);
     Actions.SetVisual(obj, VisSlot.Chest, item);
     return $"Chest of ¤ set to {item.Name} with variant {item.Variant}.";
   }
@@ -382,7 +381,7 @@ public class ObjectCommand
     if (item == null) return "Skipped: Invalid item.";
     var obj = view.GetComponent<Character>();
     if (!obj) return "Skipped: ¤ is not a creature.";
-    AddData(view);
+    AddUndo(view);
     Actions.SetVisual(obj, VisSlot.Shoulder, item);
     return $"Shoulder of ¤ set to {item.Name} with variant {item.Variant}.";
   }
@@ -391,7 +390,7 @@ public class ObjectCommand
     if (item == null) return "Skipped: Invalid item.";
     var obj = view.GetComponent<Character>();
     if (!obj) return "Skipped: ¤ is not a creature.";
-    AddData(view);
+    AddUndo(view);
     Actions.SetVisual(obj, VisSlot.Legs, item);
     return $"Legs of ¤ set to {item.Name} with variant {item.Variant}.";
   }
@@ -407,7 +406,7 @@ public class ObjectCommand
     if (item == null) return "Skipped: Invalid item.";
     var obj = view.GetComponent<Character>();
     if (!obj) return "Skipped: ¤ is not a creature.";
-    AddData(view);
+    AddUndo(view);
     Actions.SetVisual(obj, VisSlot.Utility, item);
     return $"Utility item of ¤ set to {item.Name} with variant {item.Variant}.";
   }
