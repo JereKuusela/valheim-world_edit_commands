@@ -5,7 +5,7 @@ using HarmonyLib;
 
 namespace WorldEditCommands;
 [BepInPlugin(GUID, NAME, VERSION)]
-[BepInDependency("server_devcommands", "1.68")]
+[BepInDependency("server_devcommands", "1.75")]
 public class WorldEditCommands : BaseUnityPlugin
 {
   public const string GUID = "world_edit_commands";
