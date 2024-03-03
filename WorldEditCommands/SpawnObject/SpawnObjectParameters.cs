@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Data;
 using ServerDevcommands;
@@ -20,7 +21,7 @@ class SpawnObjectParameters : SharedObjectParameters
   public bool? Tamed;
   public bool? Hunt;
   private bool UseDefaultRelativePosition = false;
-  public ZDOData? Data;
+  public DataEntry? Data;
 
   public SpawnObjectParameters(Terminal.ConsoleEventArgs args)
   {
@@ -38,14 +39,14 @@ class SpawnObjectParameters : SharedObjectParameters
     base.ParseArgs(args);
     foreach (var arg in args)
     {
-      var split = arg.Split('=');
+      var split = arg.Split(['='], 2);
       var name = split[0].ToLower();
       if (name == "tame" || name == "tamed")
         Tamed = true;
       if (name == "hunt")
         Hunt = true;
       if (split.Length < 2) continue;
-      var value = string.Join("=", split.Skip(1));
+      var value = split[1];
       if (name == "name" || name == "crafter")
         Name = value.Replace("_", " ");
       if (name == "crafterid")

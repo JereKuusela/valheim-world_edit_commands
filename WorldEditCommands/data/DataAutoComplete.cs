@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using Data;
 using ServerDevcommands;
 namespace WorldEditCommands;
@@ -21,6 +22,9 @@ public class DataAutoComplete
       "chance",
       "type",
       "connect",
+      "match",
+      "unmatch",
+      "par",
       ..DataParameters.SupportedOperations.Keys
     ];
     return parameters.Distinct().OrderBy(s => s).ToList();
@@ -100,8 +104,8 @@ public class DataAutoComplete
       {
         "set", (int index) =>
           index == 0 ? dataTypes :
-          index == 1 ? ParameterInfo.Create("remove=type,<color=yellow>key</color>,value", "Name of the key.") :
-          index == 2 ? ParameterInfo.Create("remove=type,key,<color=yellow>value</color>", "Value of the key.") :
+          index == 1 ? ParameterInfo.Create("set=type,<color=yellow>key</color>,value", "Name of the key.") :
+          index == 2 ? ParameterInfo.Create("set=type,key,<color=yellow>value</color>", "Value of the key.") :
           ParameterInfo.None
       },
       {
@@ -109,8 +113,58 @@ public class DataAutoComplete
       },
       {
         "merge", (int index) => DataLoading.DataKeys
+      },
+      {
+        "match", (int index) => index == 0 ? DataLoading.DataKeys : ParameterInfo.None
+      },
+      {
+        "unmatch", (int index) => index == 0 ? DataLoading.DataKeys : ParameterInfo.None
+      },
+      {
+        "par", (int index) => index == 0 ? GetDataParameters() : ParameterInfo.Create("par=key,<color=yellow>value</color>", "Value of the parameter.")
       }
     };
     return baseFetchers;
+  }
+
+  public static List<string> GetDataParameters()
+  {
+    var command = GetInput();
+    var ret = DataFromCommand(command);
+    if (ret.Count == 0)
+      return ParameterInfo.Create("par=<color=yellow>key</color>,value", "Name of the parameter.");
+    return [.. ret];
+  }
+  public static List<string> GetRawDataParameters()
+  {
+    var command = GetInput();
+    var split = command.Split(' ');
+    if (split.Length < 2) return ParameterInfo.Create("par=<color=yellow>key</color>,value", "Name of the parameter."); ;
+    if (DataLoading.Data.TryGetValue(split[1].GetStableHashCode(), out var data))
+      return [.. data.RequiredParameters];
+    return ParameterInfo.Create("par=<color=yellow>key</color>,value", "Name of the parameter.");
+  }
+
+  private static HashSet<string> DataFromCommand(string command)
+  {
+    var split = command.Split(' ');
+    var dataNames = split
+      .Where(s => s.StartsWith("data=", StringComparison.Ordinal) || s.StartsWith("merge=", StringComparison.Ordinal) || s.StartsWith("load=", StringComparison.Ordinal))
+      .SelectMany(s => Parse.Split(s.Split('=')[1])).ToArray();
+    HashSet<string> parameters = [];
+    foreach (var name in dataNames)
+    {
+      if (DataLoading.Data.TryGetValue(name.GetStableHashCode(), out var data))
+        foreach (var oar in data.RequiredParameters)
+          parameters.Add(oar);
+    }
+    return parameters;
+  }
+  private static string GetInput()
+  {
+    Aliasing.RestoreAlias(Console.m_instance.m_input);
+    var text = Aliasing.Plain(Console.m_instance.m_input.text);
+    Aliasing.RemoveAlias(Console.m_instance.m_input);
+    return text;
   }
 }

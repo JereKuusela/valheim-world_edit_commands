@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Data;
 using ServerDevcommands;
 namespace WorldEditCommands;
 public class ObjectAutoComplete : SharedObjectAutoComplete
@@ -29,7 +30,10 @@ public class ObjectAutoComplete : SharedObjectAutoComplete
       "type",
       "connect",
       "status",
-      "components"
+      "components",
+      "match",
+      "unmatch",
+      "copy"
     ]);
     AutoComplete.Register(ObjectCommand.Name, (int index) => NamedParameters, WithSharedFetchers(new() {
       {
@@ -131,6 +135,15 @@ public class ObjectAutoComplete : SharedObjectAutoComplete
         "chance",
         (int index) => index == 0 ? ParameterInfo.Create("chance=<color=yellow>number</color>", "Chance to affect the object (from 0.0 to 1.0).") : ParameterInfo.None
       },
+      {
+        "match", (int index) => index == 0 ? DataLoading.DataKeys : ParameterInfo.None
+      },
+      {
+        "unmatch", (int index) => index == 0 ? DataLoading.DataKeys : ParameterInfo.None
+      },
+      {
+        "copy", (int index) => ParameterInfo.Flag("copy")
+      }
     }));
   }
 }

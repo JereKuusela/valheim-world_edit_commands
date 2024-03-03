@@ -1,14 +1,14 @@
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data.SqlTypes;
 
 namespace Data;
 
 public class DataData
 {
-  public string name = "";
-  [DefaultValue("")]
-  public string connection = "";
+  [DefaultValue(null)]
+  public string? name;
+  [DefaultValue(null)]
+  public string? connection;
   [DefaultValue(null)]
   public string[]? bools;
   [DefaultValue(null)]
@@ -33,6 +33,13 @@ public class DataData
   public string? containerSize;
   [DefaultValue(null)]
   public string? itemAmount;
+
+  [DefaultValue(null)]
+  public string? valueGroup;
+  [DefaultValue(null)]
+  public string? value;
+  [DefaultValue(null)]
+  public string[]? values;
 }
 
 public class ItemData

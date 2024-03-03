@@ -71,8 +71,8 @@ public class EditData
     Current = new(Zdo);
   }
   public ZDO Zdo;
-  public ZDOData Previous;
-  public ZDOData Current;
+  public PlainDataEntry Previous;
+  public PlainDataEntry Current;
 }
 public class UndoEdit(IEnumerable<EditData> data) : MonoBehaviour, IUndoAction
 {

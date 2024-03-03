@@ -121,40 +121,17 @@ public abstract class TweakCommand
   public Dictionary<string, Type> SupportedOperations = [];
   public Dictionary<string, Func<int, List<string>>> AutoComplete = [];
 
+  private TweakParameters Parameters = new([]);
   protected void Init(string name, string description)
   {
     var namedParameters = TweakAutoComplete.WithFilters(AutoComplete.Keys.ToList());
     ServerDevcommands.AutoComplete.Register(name, (int index) => namedParameters, TweakAutoComplete.WithFilters(AutoComplete));
     Helper.Command(name, description, (args) =>
     {
-      TweakParameters pars = new(SupportedOperations, args);
-      ZNetView[] views;
-      if (pars.Connect)
-      {
-        var view = Selector.GetHovered(50f, pars.IncludedIds, pars.Components, pars.ExcludedIds);
-        if (view == null) return;
-        views = Selector.GetConnected(view, pars.IncludedIds, pars.ExcludedIds);
-      }
-      else if (pars.Radius != null)
-      {
-        views = Selector.GetNearby(pars.IncludedIds, pars.Components, pars.ExcludedIds, pars.Center ?? pars.From, pars.Radius, pars.Height);
-      }
-      else if (pars.Width != null && pars.Depth != null)
-      {
-        views = Selector.GetNearby(pars.IncludedIds, pars.Components, pars.ExcludedIds, pars.Center ?? pars.From, pars.Angle, pars.Width, pars.Depth, pars.Height);
-      }
-      else
-      {
-        var view = Selector.GetHovered(50f, pars.IncludedIds, pars.ExcludedIds);
-        if (view == null) return;
-        if (!Selector.GetPrefabs(pars.IncludedIds).Contains(view.GetZDO().GetPrefab()))
-        {
-          Helper.AddMessage(args.Context, $"Skipped: {view.name} has invalid id.");
-          return;
-        }
-        views = [view];
-      }
-      Execute(args.Context, pars.Chance, pars.Force, pars.Operations, views);
+      Parameters = new(SupportedOperations);
+      Parameters.ParseCommand(args);
+      var views = Parameters.GetObjects();
+      Execute(args.Context, Parameters.Chance, Parameters.Force, Parameters.Operations, views);
 
     });
   }

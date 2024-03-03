@@ -1,230 +1,185 @@
 
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using ServerDevcommands;
 using UnityEngine;
 
 namespace Data;
-public class StringValue
+
+public class DataValue
 {
-  private readonly string? Value;
-  private readonly string?[]? Values;
-  public StringValue(KeyValuePair<int, string> value)
+  // Different function name because string would be ambiguous.
+  public static IIntValue Simple(int value) => new SimpleIntValue(value);
+  public static IStringValue Simple(string value) => new SimpleStringValue(value);
+
+  public static IIntValue Int(ZPackage pkg) => new SimpleIntValue(pkg.ReadInt());
+  public static IIntValue Int(string values, HashSet<string> requiredParameters)
   {
-    Value = value.Value;
+    var hasParameters = CheckParameters(values, requiredParameters);
+    var split = Parse.SplitWithEmpty(values);
+    if (!hasParameters && split.Length == 1 && int.TryParse(split[0], out var result))
+      return new SimpleIntValue(result);
+    return new IntValue(split);
   }
-  public StringValue(ZPackage pkg)
+
+  public static IFloatValue Float(ZPackage pkg) => new SimpleFloatValue(pkg.ReadSingle());
+  public static IFloatValue Float(string values, HashSet<string> requiredParameters)
   {
-    Value = pkg.ReadString();
+    var hasParameters = CheckParameters(values, requiredParameters);
+    var split = Parse.SplitWithEmpty(values);
+    if (!hasParameters && split.Length == 1 && Parse.TryFloat(split[0], out var result))
+      return new SimpleFloatValue(result);
+    return new FloatValue(split);
   }
-  public StringValue(string value) : this(Parse.SplitWithEscape(value))
+
+  public static ILongValue Long(ZPackage pkg) => new SimpleLongValue(pkg.ReadLong());
+  public static ILongValue Long(string values, HashSet<string> requiredParameters)
   {
+    var hasParameters = CheckParameters(values, requiredParameters);
+    var split = Parse.SplitWithEmpty(values);
+    if (!hasParameters && split.Length == 1 && long.TryParse(split[0], out var result))
+      return new SimpleLongValue(result);
+    return new LongValue(split);
   }
-  public StringValue(IEnumerable<string> values)
+
+  public static IStringValue String(ZPackage pkg) => new SimpleStringValue(pkg.ReadString());
+  public static IStringValue String(string values, HashSet<string> requiredParameters)
   {
-    if (values.Count() == 1)
-      Value = Read(values.First());
-    else
-    {
-      Values = values.Select(Read).ToArray();
-    }
+    var hasParameters = CheckParameters(values, requiredParameters);
+    var split = Parse.SplitWithEscape(values);
+    if (!hasParameters && split.Length == 1)
+      return new SimpleStringValue(split[0]);
+    return new StringValue(split);
   }
-  static string? Read(string value) => value == "<none>" ? null : value;
-  public string? Get()
+  public static IBoolValue Bool(bool value) => new SimpleBoolValue(value);
+  public static IBoolValue Bool(string values, HashSet<string> requiredParameters)
   {
-    if (Values != null) return Values[Random.Range(0, Values.Length)];
-    return Value;
+    var hasParameters = CheckParameters(values, requiredParameters);
+    var split = Parse.SplitWithEmpty(values);
+    if (!hasParameters && split.Length == 1 && bool.TryParse(split[0], out var result))
+      return new SimpleBoolValue(result);
+    return new BoolValue(split);
   }
-  public bool Match(string value)
+
+
+  public static IHashValue Hash(string value) => new SimpleHashValue(value);
+  public static IHashValue Hash(string values, HashSet<string> requiredParameters)
   {
-    if (Values != null) return Values.Contains(value);
-    return Value == value;
+    var hasParameters = CheckParameters(values, requiredParameters);
+    var split = Parse.SplitWithEmpty(values);
+    if (!hasParameters && split.Length == 1)
+      return new SimpleHashValue(split[0]);
+    return new HashValue(split);
   }
-}
-public class IntValue
-{
-  protected int? Value;
-  protected Range<int>? Range;
-  protected int?[]? Values;
-  public IntValue(KeyValuePair<int, int> value)
+  public static IVector3Value Vector3(ZPackage pkg) => new SimpleVector3Value(pkg.ReadVector3());
+  public static IVector3Value Vector3(string values, HashSet<string> requiredParameters)
   {
-    Value = value.Value;
+    var hasParameters = CheckParameters(values, requiredParameters);
+    var split = Parse.SplitWithEscape(values);
+    var parsed = Parse.VectorXZYNull(values);
+    if (!hasParameters && parsed.HasValue)
+      return new SimpleVector3Value(parsed.Value);
+    return new Vector3Value(split);
   }
-  public IntValue(ZPackage pkg)
+  public static IQuaternionValue Quaternion(ZPackage pkg) => new SimpleQuaternionValue(pkg.ReadQuaternion());
+  public static IQuaternionValue Quaternion(string values, HashSet<string> requiredParameters)
   {
-    Value = pkg.ReadInt();
+    var hasParameters = CheckParameters(values, requiredParameters);
+    var split = Parse.SplitWithEscape(values);
+    var parsed = Parse.AngleYXZNull(values);
+    if (!hasParameters && parsed.HasValue)
+      return new SimpleQuaternionValue(parsed.Value);
+    return new QuaternionValue(split);
   }
-  public IntValue(string value) : this(Parse.SplitWithEmpty(value))
+
+  private static bool CheckParameters(string value, HashSet<string> requiredParameters)
   {
+    // Parameter format is <par>.
+    if (!value.Contains("<") || !value.Contains(">")) return false;
+    var split = value.Split('<', '>');
+    for (var i = 1; i < split.Length; i += 2)
+      requiredParameters.Add(split[i]);
+    return split.Length > 1;
   }
-  public IntValue(int value)
-  {
-    Value = value;
-  }
-  public IntValue(IEnumerable<string> values)
-  {
-    if (values.Count() == 1)
-    {
-      var range = Parse.IntRange(values.First());
-      if (range.Min == range.Max)
-        Value = Read(values.First());
-      else
-        Range = range;
-    }
-    else
-      Values = values.Select(Read).ToArray();
-  }
-  protected virtual int? Read(string value) => Parse.IntNull(value);
-  public int? Get()
-  {
-    if (Values != null) return Values[Random.Range(0, Values.Length)];
-    if (Range != null) return Random.Range(Range.Min, Range.Max + 1);
-    return Value;
-  }
-  public bool Match(int value)
-  {
-    if (Values != null) return Values.Contains(value);
-    if (Range != null) return value >= Range.Min && value <= Range.Max;
-    return (Value ?? 0) == value;
-  }
-}
-public class HashValue : IntValue
-{
-  protected override int? Read(string value) => value == "<none>" ? null : value == "" ? null : value.GetStableHashCode();
-  public HashValue(string value) : base(value)
-  {
-  }
-  public HashValue(IEnumerable<string> values) : base(values)
-  {
-  }
-}
-public class BoolValue : IntValue
-{
-  protected override int? Read(string value) => value == "true" ? 1 : value == "false" ? 0 : null;
-  public BoolValue(string value) : base(value)
-  {
-  }
-  public BoolValue(IEnumerable<string> values) : base(values)
-  {
-  }
-}
-public class FloatValue
-{
-  private readonly float? Value;
-  private readonly Range<float>? Range;
-  private readonly float?[]? Values;
-  public FloatValue(KeyValuePair<int, float> value)
-  {
-    Value = value.Value;
-  }
-  public FloatValue(ZPackage pkg)
-  {
-    Value = pkg.ReadSingle();
-  }
-  public FloatValue(string value) : this(Parse.SplitWithEmpty(value))
-  {
-  }
-  public FloatValue(IEnumerable<string> values)
-  {
-    if (values.Count() == 1)
-    {
-      var range = Parse.FloatRange(values.First());
-      if (range.Min == range.Max)
-        Value = Parse.FloatNull(values.First());
-      else
-        Range = range;
-    }
-    else
-      Values = values.Select(Parse.FloatNull).ToArray();
-  }
-  public float? Get()
-  {
-    if (Values != null) return Values[Random.Range(0, Values.Length)];
-    if (Range != null) return Random.Range(Range.Min, Range.Max);
-    return Value;
-  }
-  public bool Match(float value)
-  {
-    if (Values != null) return Values.Any(v => Helper.Approx(v ?? 0, value));
-    if (Range != null) return value >= Range.Min - 0.001f && value <= Range.Max + 0.001f;
-    return Helper.Approx(Value ?? 0f, value);
-  }
-}
-public class LongValue
-{
-  private readonly long? Value;
-  private readonly long?[]? Values;
-  public LongValue(KeyValuePair<int, long> value)
-  {
-    Value = value.Value;
-  }
-  public LongValue(ZPackage pkg)
-  {
-    Value = pkg.ReadLong();
-  }
-  public LongValue(string value) : this(Parse.SplitWithEmpty(value))
-  {
-  }
-  public LongValue(IEnumerable<string> values)
-  {
-    if (values.Count() == 1)
-      Value = Parse.LongNull(values.First());
-    else
-      Values = values.Select(Parse.LongNull).ToArray();
-  }
-  public long? Get()
-  {
-    if (Values != null) return Values[Random.Range(0, Values.Length)];
-    return Value;
-  }
-  public bool Match(long value)
-  {
-    if (Values != null) return Values.Contains(value);
-    return Value == value;
-  }
+
 }
 
-public class ItemValue(ItemData data)
+
+public class AnyValue(string[] values)
 {
-  public static string LoadItems(ItemValue[] items, Vector2i? size, Range<int>? amount)
+  protected readonly string[] Values = values;
+
+  private string? RollValue()
+  {
+    if (Values.Length == 1)
+      return Values[0];
+    return Values[Random.Range(0, Values.Length)];
+  }
+  protected string? GetValue(Dictionary<string, string> pars)
+  {
+    var value = RollValue();
+    if (value == null || value == "<none>")
+      return null;
+    return ReplaceParameters(value, pars);
+  }
+  protected string? GetValue()
+  {
+    var value = RollValue();
+    return value == null || value == "<none>" ? null : value;
+  }
+  protected string[] GetAllValues(Dictionary<string, string> pars)
+  {
+    return Values.Select(v => ReplaceParameters(v, pars)).Where(v => v != null && v != "<none").ToArray();
+  }
+
+  protected string ReplaceParameters(string value, Dictionary<string, string> pars)
+  {
+    foreach (var kvp in pars)
+      value = value.Replace(kvp.Key, kvp.Value);
+    return value;
+  }
+}
+public class ItemValue(ItemData data, HashSet<string> requiredParameters)
+{
+  public static string LoadItems(Dictionary<string, string> pars, ItemValue[] items, Vector2i? size, int amount)
   {
     ZPackage pkg = new();
     pkg.Write(106);
-    items = Generate(items, size ?? new(0, 0), amount ?? new(0));
+    items = Generate(pars, items, size ?? new(0, 0), amount);
     pkg.Write(items.Length);
     foreach (var item in items)
-      item.Write(pkg);
+      item.Write(pars, pkg);
     return pkg.GetBase64();
   }
-  public static ItemValue[] Generate(ItemValue[] data, Vector2i size, Range<int> amount)
+  public static ItemValue[] Generate(Dictionary<string, string> pars, ItemValue[] data, Vector2i size, int amount)
   {
     var fixedPos = data.Where(item => item.Position != "").ToList();
     var randomPos = data.Where(item => item.Position == "").ToList();
     Dictionary<Vector2i, ItemValue> inventory = [];
     foreach (var item in fixedPos)
     {
-      if (!item.Roll()) continue;
+      if (!item.Roll(pars)) continue;
       inventory[item.RolledPosition] = item;
     }
-    var amountToGenerate = amount.Min == amount.Max ? amount.Min : Random.Range(amount.Min, amount.Max + 1);
-    if (amountToGenerate == 0)
-      GenerateEach(inventory, size, randomPos);
+    if (amount == 0)
+      GenerateEach(pars, inventory, size, randomPos);
     else
-      GenerateAmount(inventory, size, randomPos, amountToGenerate);
+      GenerateAmount(pars, inventory, size, randomPos, amount);
     return [.. inventory.Values];
   }
-  private static void GenerateEach(Dictionary<Vector2i, ItemValue> inventory, Vector2i size, List<ItemValue> items)
+  private static void GenerateEach(Dictionary<string, string> pars, Dictionary<Vector2i, ItemValue> inventory, Vector2i size, List<ItemValue> items)
   {
     foreach (var item in items)
     {
-      if (!item.Roll()) continue;
+      if (!item.Roll(pars)) continue;
       var slot = FindNextFreeSlot(inventory, size);
       if (!slot.HasValue) break;
       item.RolledPosition = slot.Value;
       inventory[slot.Value] = item;
     }
   }
-  private static void GenerateAmount(Dictionary<Vector2i, ItemValue> inventory, Vector2i size, List<ItemValue> items, int amount)
+  private static void GenerateAmount(Dictionary<string, string> pars, Dictionary<Vector2i, ItemValue> inventory, Vector2i size, List<ItemValue> items, int amount)
   {
     var maxWeight = items.Sum(item => item.Chance);
     for (var i = 0; i < amount && items.Count > 0; ++i)
@@ -233,7 +188,7 @@ public class ItemValue(ItemData data)
       if (!slot.HasValue) break;
       var item = RollItem(items, maxWeight);
       item.RolledPosition = slot.Value;
-      if (item.RollPrefab())
+      if (item.RollPrefab(pars))
         inventory[slot.Value] = item;
       maxWeight -= item.Chance;
       items.Remove(item);
@@ -263,47 +218,48 @@ public class ItemValue(ItemData data)
       }
     return null;
   }
-  public StringValue Prefab = new(data.prefab);
+  // Prefab is saved as string, so hash can't be used.
+  public IStringValue Prefab = DataValue.String(data.prefab, requiredParameters);
   public float Chance = data.chance;
-  public IntValue Stack = new(data.stack);
-  public FloatValue Durability = new(data.durability);
+  public IIntValue Stack = DataValue.Int(data.stack, requiredParameters);
+  public IFloatValue Durability = DataValue.Float(data.durability, requiredParameters);
   public string Position = data.pos;
   private Vector2i RolledPosition = Parse.Vector2Int(data.pos);
-  public BoolValue Equipped = new(data.equipped);
-  public IntValue Quality = new(data.quality);
-  public IntValue Variant = new(data.variant);
-  public LongValue CrafterID = new(data.crafterID);
-  public StringValue CrafterName = new(data.crafterName);
-  public Dictionary<string, StringValue> CustomData = data.customData?.ToDictionary(kvp => kvp.Key, kvp => new StringValue(kvp.Value)) ?? [];
-  public IntValue WorldLevel = new(data.worldLevel);
-  public BoolValue PickedUp = new(data.pickedUp);
+  public IBoolValue Equipped = DataValue.Bool(data.equipped, requiredParameters);
+  public IIntValue Quality = DataValue.Int(data.quality, requiredParameters);
+  public IIntValue Variant = DataValue.Int(data.variant, requiredParameters);
+  public ILongValue CrafterID = DataValue.Long(data.crafterID, requiredParameters);
+  public IStringValue CrafterName = DataValue.String(data.crafterName, requiredParameters);
+  public Dictionary<string, IStringValue> CustomData = data.customData?.ToDictionary(kvp => kvp.Key, kvp => DataValue.String(kvp.Value, requiredParameters)) ?? [];
+  public IIntValue WorldLevel = DataValue.Int(data.worldLevel, requiredParameters);
+  public IBoolValue PickedUp = DataValue.Bool(data.pickedUp, requiredParameters);
   // Must know before writing is the prefab good, so it has to be rolled first.
   private string RolledPrefab = "";
-  public bool RollPrefab()
+  public bool RollPrefab(Dictionary<string, string> pars)
   {
-    RolledPrefab = Prefab.Get() ?? "";
+    RolledPrefab = Prefab.Get(pars) ?? "";
     return RolledPrefab != "";
   }
   public bool RollChance() => Chance >= 1f || Random.value <= Chance;
-  public bool Roll() => RollChance() && RollPrefab();
-  public void Write(ZPackage pkg)
+  public bool Roll(Dictionary<string, string> pars) => RollChance() && RollPrefab(pars);
+  public void Write(Dictionary<string, string> pars, ZPackage pkg)
   {
     pkg.Write(RolledPrefab);
-    pkg.Write(Stack.Get() ?? 1);
-    pkg.Write(Durability.Get() ?? 100f);
+    pkg.Write(Stack.Get(pars) ?? 1);
+    pkg.Write(Durability.Get(pars) ?? 100f);
     pkg.Write(RolledPosition);
-    pkg.Write(Equipped.Get() > 0);
-    pkg.Write(Quality.Get() ?? 1);
-    pkg.Write(Variant.Get() ?? 1);
-    pkg.Write(CrafterID.Get() ?? 0);
-    pkg.Write(CrafterName.Get() ?? "");
+    pkg.Write(Equipped.Get(pars) ?? 0);
+    pkg.Write(Quality.Get(pars) ?? 1);
+    pkg.Write(Variant.Get(pars) ?? 1);
+    pkg.Write(CrafterID.Get(pars) ?? 0);
+    pkg.Write(CrafterName.Get(pars) ?? "");
     pkg.Write(CustomData?.Count ?? 0);
     foreach (var kvp in CustomData ?? [])
     {
       pkg.Write(kvp.Key);
-      pkg.Write(kvp.Value.Get());
+      pkg.Write(kvp.Value.Get(pars));
     }
-    pkg.Write(WorldLevel.Get() ?? 1);
-    pkg.Write(PickedUp.Get() > 0);
+    pkg.Write(WorldLevel.Get(pars) ?? 1);
+    pkg.Write(PickedUp.Get(pars) ?? 0);
   }
 }

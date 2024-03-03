@@ -14,7 +14,7 @@ public class DataHelper
     Destroy(existing);
     return zdo;
   }
-  public static ZDO Regen(ZDO existing, ZDOData data)
+  public static ZDO Regen(ZDO existing, PlainDataEntry data)
   {
     var newZdo = CloneBase(existing);
     data.Write(newZdo);
@@ -68,6 +68,19 @@ public class DataHelper
     }
     return clone;
   }
+  public static bool HasKey(ZDO zdo, string[] keys)
+  {
+    var hashed = keys.Select(s => s.GetStableHashCode()).ToHashSet();
+    var id = zdo.m_uid;
+    var floats = ZDOExtraData.GetFloats(id).Select(kvp => kvp.Key);
+    var vecs = ZDOExtraData.GetVec3s(id).Select(kvp => kvp.Key);
+    var quats = ZDOExtraData.GetQuaternions(id).Select(kvp => kvp.Key);
+    var ints = ZDOExtraData.GetInts(id).Select(kvp => kvp.Key);
+    var longs = ZDOExtraData.GetLongs(id).Select(kvp => kvp.Key);
+    var strings = ZDOExtraData.GetStrings(id).Select(kvp => kvp.Key);
+    var byteArrays = ZDOExtraData.GetByteArrays(id).Select(kvp => kvp.Key);
+    return floats.Concat(vecs).Concat(quats).Concat(ints).Concat(longs).Concat(strings).Concat(byteArrays).Any(hashed.Contains);
+  }
   public static ZDO CloneWithoutKeys(ZDO zdo, string[] keys)
   {
     var hashed = keys.Select(s => s.GetStableHashCode()).ToHashSet();
@@ -119,19 +132,19 @@ public class DataHelper
     var byteArrays = ZDOExtraData.GetByteArrays(id).Select(kvp => $"{ZDOKeys.Convert(kvp.Key)}: {Convert.ToBase64String(kvp.Value)} (byte array)");
     return lines.Concat(vecs).Concat(ints).Concat(floats).Concat(quats).Concat(strings).Concat(longs).Concat(byteArrays).ToList();
   }
-  public static void Init(GameObject obj, Vector3 pos, Quaternion rot, Vector3 scale, ZDOData? data)
+  public static void Init(GameObject obj, Vector3 pos, Quaternion rot, Vector3? scale, DataEntry? data, Dictionary<string, string> pars)
   {
-    if (data == null && scale == Vector3.one) return;
+    if (data == null && scale == null) return;
     if (!obj.TryGetComponent<ZNetView>(out var view)) return;
     var prefab = Utils.GetPrefabName(obj).GetStableHashCode();
     ZNetView.m_initZDO = ZDOMan.instance.CreateNewZDO(pos, prefab);
-    data?.Write(ZNetView.m_initZDO);
+    data?.Write(pars, ZNetView.m_initZDO);
     ZNetView.m_initZDO.m_rotation = rot.eulerAngles;
     ZNetView.m_initZDO.Type = view.m_type;
     ZNetView.m_initZDO.Distant = view.m_distant;
     ZNetView.m_initZDO.Persistent = view.m_persistent;
     ZNetView.m_initZDO.m_prefab = prefab;
-    if (!view.m_syncInitialScale && WorldEditCommands.WorldEditCommands.IsTweaks)
+    if (!view.m_syncInitialScale && scale != null && WorldEditCommands.WorldEditCommands.IsTweaks)
     {
       ZNetView.m_initZDO.Set(Hash.HasFields, true);
       ZNetView.m_initZDO.Set("HasFieldsZNetView", true);
@@ -139,8 +152,8 @@ public class DataHelper
       view.m_syncInitialScale = true;
       Console.instance.AddString("Note: Scaling set to true.");
     }
-    if (view.m_syncInitialScale)
-      ZNetView.m_initZDO.Set(ZDOVars.s_scaleHash, scale);
+    if (view.m_syncInitialScale && scale != null)
+      ZNetView.m_initZDO.Set(ZDOVars.s_scaleHash, scale.Value);
     ZNetView.m_initZDO.DataRevision = 0;
     // This is needed to trigger the ZDO sync.
     ZNetView.m_initZDO.IncreaseDataRevision();

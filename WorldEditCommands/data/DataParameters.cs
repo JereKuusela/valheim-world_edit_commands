@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
-using ServerDevcommands;
 namespace WorldEditCommands;
-public class DataParameters(Terminal.ConsoleEventArgs args) : BaseParameters(SupportedOperations, args)
+public class DataParameters() : BaseParameters(SupportedOperations)
 {
   public static Dictionary<string, Type> SupportedOperations = new()
   {

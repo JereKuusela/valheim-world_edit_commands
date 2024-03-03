@@ -26,6 +26,8 @@ public class ObjectParameters : SharedObjectParameters
   public Range<float>? Depth;
   public float Height = 0f;
   public float Chance = 1f;
+  public string Match = "";
+  public string Unmatch = "";
   public bool Connect;
   public HashSet<string> Components = [];
   public string? StatusName;
@@ -68,7 +70,8 @@ public class ObjectParameters : SharedObjectParameters
     "copy",
     "field",
     "f",
-    "components"
+    "components",
+    "copy"
   ];
 
   public ObjectParameters(Terminal.ConsoleEventArgs args)
@@ -113,6 +116,8 @@ public class ObjectParameters : SharedObjectParameters
       if (name == "fuel") Fuel = Parse.FloatRange(value, 0f);
       if (name == "chance") Chance = Parse.Float(value, 1f);
       if (name == "type") AddComponents(values);
+      if (name == "match") Match = value;
+      if (name == "unmatch") Unmatch = value;
       if (name == "rect")
       {
         var size = Parse.ScaleRange(value);

@@ -9,6 +9,8 @@
 ## Usage
 
   See [documentation](https://github.com/JereKuusela/valheim-world_edit_commands/blob/main/README.md).
+  
+  See [data documentation](https://github.com/JereKuusela/valheim-world_edit_commands/blob/main/README_data.md).
 
   [<img width="80px" style="margin-bottom: -4" src="https://cdn.prod.website-files.com/6257adef93867e50d84d30e2/636e0b5493894cf60b300587_full_logo_white_RGB.svg">](https://discord.gg/VFRJcPwUdm) for help and examples.
 

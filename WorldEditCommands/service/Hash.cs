@@ -123,4 +123,5 @@ public static class Hash
   public static int Location = "location".GetStableHashCode();
   public static int SpawnPoint = "spawnpoint".GetStableHashCode();
   public static int Scale = "scale".GetStableHashCode();
+  public static int Player = "Player".GetStableHashCode();
 }

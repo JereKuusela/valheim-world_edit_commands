@@ -36,7 +36,8 @@ public class SharedObjectAutoComplete
       "ammo",
       "ammoType",
       "field",
-      "f"
+      "f",
+      "par"
     ];
     parameters.AddRange(namedParameters);
     return parameters.Distinct().OrderBy(s => s).ToList();
@@ -123,6 +124,9 @@ public class SharedObjectAutoComplete
         "f",
         (int index) => index == 0 ? FieldAutoComplete.GetComponents() : index == 1 ? FieldAutoComplete.GetFields() : FieldAutoComplete.GetTypes(index - 2)
       },
+      {
+        "par", (int index) => index == 0 ? DataAutoComplete.GetDataParameters() : ParameterInfo.Create("par=key,<color=yellow>value</color>", "Value of the parameter.")
+      }
     };
     foreach (var kvp in fetchers) baseFetchers[kvp.Key] = kvp.Value;
     return baseFetchers;

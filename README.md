@@ -14,7 +14,7 @@ Install also [Server Devcommands](https://valheim.thunderstore.io/package/JereKu
 
 ## Commands
 
-This mods add 4 new commands. Most parameters are given as named parameters that have a "key=value" format (or just "key" if no value is needed). All of them are optional and can be put in any order. All keys and some values are case insensitive too.
+This mods add new commands. Most parameters are given as named parameters that have a "key=value" format (or just "key" if no value is needed). All of them are optional and can be put in any order. All keys and some values are case insensitive too.
 
 Some parameters accept ranges with "key=min-max" format. This causes each affected object to randomly get a value within the range which allows creating some random variation.
 
@@ -22,9 +22,17 @@ Use the `alias` command to create new simpler commands. This should significantl
 
 Remember to bind `undo` and `redo` commands for easier undoing. Recommended also to read the manual of Server Devcommands mod.
 
+## Data
+
+Advanced command for saving and loading object data.
+
+See [data documentation](https://github.com/JereKuusela/valheim-world_edit_commands/blob/main/README_data.md).
+
 ## Object
 
-The `object [...args]` alters the hovered object or objects within a given radius. The `undo`/`redo` system is supported by saving snapshots of the object.
+Basic command for modifying objects.
+
+The `undo`/`redo` system is supported by saving snapshots of the object.
 
 Following parameters are available:
 
@@ -32,13 +40,6 @@ Following parameters are available:
 - `ammoType=item`: Sets the ammo type for turrets. Throwables, magic weapons and enemy weapons ranged weapons seem to work. Arrows work too but instantly fall to the ground.
 - `angle=degrees`: Direction of the rectangle when used with `rect`.
 - `baby`: Prevents offspring from growing up.
-- `copy`: Copies most of the ZDO data to the clipboard. Excludes data:
-  - Object scale (redundant because scale usually comes from the spawn system).
-  - Creature spawn coordinates (harmful because creatures try returning to the spawn coordinates when idle).
-  - LocationProxy data (redundant because the location spawn system sets this).
-  - Connected ZDO (usually not needed).
-- `copy=all`: Copies all of the ZDO data to the clipboard.
-- `copy=key1,key2,...`: Copies give data keys to the clipboard. See bottom of the file for available keys.
 - `center`: Sets `rotate` center point at player position.
 - `center=x,z,y`: Overrides the player position and sets `rotate` center point.
 - `chance=number`: Randomly filters included objects. For example 0.5 includes about half of the objects (50%).
@@ -46,8 +47,6 @@ Following parameters are available:
 - `circle=number` or `circle=min-max`: Radius for included objects. If not given, the hovered object is only affected.
 - `connect`: Includes entire structures.
 - `damage=number`: Sets damage multiplier.
-- `data=[key]`: Prints ZDO data.
-- `data=[key,value]`: Sets ZDO data. The key must already exist in the data.
 - `durability=number` or `health=number`: Sets the current durability for items, the current health for structures and the maximum health for creatures. Very high values like 1E30 turn the target invulnerable (including gravity for structures).
   - Note: Invulnerable objects without structure support take continuous damage which causes network traffic.
 - `durability=number%` or `health=number%`: Sets the durabilty/health based on the max amount.
@@ -62,9 +61,13 @@ Following parameters are available:
 - `from=x,z,y`: Same as the `center`.
 - `height`: Maximum height from the `center` point (default is 1000 meters).
 - `id=id1,id2,...`: List of included ids. Supports starts with, ends with or contains by using "*". Default is `*` that allows all objects which don't start with "_".
+  - If `id=Player` is used, the command can target players.
+  - However the player object ownership is not changed, so the changes may not affect other players.
 - `ignore=id1,id2,..`: List of ignored ids. Supports starts with, ends with or contains by using "*"
 - `info`: Prints information of objects.
 - `level=integer`: Sets levels for creatures (level = stars + 1).
+- `match=data`: Only selects objects with the given ZDO data.
+  - See [data documentation](https://github.com/JereKuusela/valheim-world_edit_commands/blob/main/README_data.md/#Pattern_matching) for more info.
 - `mirror`: Mirrors the position and rotation based on the player position. Always mirrors the x-axis.
 - `move=forward,right,up`: Moves objects (meters). Static objects only update their position for other players when they leave the area.
 - `origin=player|object|world`: Base direction for `move` and `rotate`. Default value `player` uses the player's rotation, `object` uses the objects rotation and `world` uses the global coordinate system (x=north/south,y=up/down,z=west/east).
@@ -79,7 +82,10 @@ Following parameters are available:
 - `sleep`: Makes creatures fall asleep (that support it).
 - `stars=integer`: Sets stars for creatures (stars = level - 1).
 - `status=name,duration,intensity`: Adds a status effect. Note: These are not stored to the save file.
-- `type=creature/chest/fireplace/item/spawner/spawnpoint/structure`: Only selects creatures or structures.
+- `type=type1,type2,...`: Only selects objects with any of the given types.
+  - Keywords `creature` (Humanoid) and `structure` (WearNTear) can be used instead of the actual type names.
+- `unmatch=data`: Only selects objects without the given ZDO data.
+  - See [data documentation](https://github.com/JereKuusela/valheim-world_edit_commands/blob/main/README_data.md/#Pattern_matching) for more info.
 - `wild`: Untames creatures.
 
 Additional style parameters:

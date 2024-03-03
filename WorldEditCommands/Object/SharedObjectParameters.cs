@@ -17,7 +17,7 @@ public class Item
 }
 public class SharedObjectParameters
 {
-  public Range<Vector3> Scale = new(Vector3.one);
+  public Range<Vector3>? Scale;
   public Range<int>? Level;
   public Range<float>? Health;
   public bool isHealthPercentage = false;
@@ -35,16 +35,23 @@ public class SharedObjectParameters
   public Range<float>? Radius;
   public Range<int>? Model;
   public Dictionary<string, object> Fields = [];
+  public Dictionary<string, string> DataParameters = [];
 
   protected virtual void ParseArgs(string[] args)
   {
     foreach (var arg in args)
     {
-      var split = arg.Split('=');
+      var split = arg.Split(['='], 2);
       var name = split[0].ToLower();
       if (name == "baby") Baby = true;
       if (split.Length < 2) continue;
-      var value = split[1];
+      var value = split[1].Trim();
+      if (name == "par")
+      {
+        var kvp = Parse.Kvp(value);
+        if (kvp.Key == "") throw new InvalidOperationException($"Invalid data parameter {value}.");
+        DataParameters[$"<{kvp.Key}>"] = kvp.Value;
+      }
       if (name == "health" || name == "durability")
       {
         if (value.EndsWith("%"))

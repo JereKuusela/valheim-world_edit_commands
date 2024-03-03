@@ -43,8 +43,8 @@ public class SpawnObjectCommand
         spawnPosition.y = height;
       }
       var rotation = pars.BaseRotation * Quaternion.Euler(Helper.RandomValue(pars.Rotation));
-      var scale = Helper.RandomValue(pars.Scale);
-      DataHelper.Init(prefab, spawnPosition, rotation, scale, pars.Data);
+      Vector3? scale = pars.Scale == null ? null : Helper.RandomValue(pars.Scale);
+      DataHelper.Init(prefab, spawnPosition, rotation, scale, pars.Data, pars.DataParameters);
       try
       {
         var obj = UnityEngine.Object.Instantiate(prefab, spawnPosition, rotation);

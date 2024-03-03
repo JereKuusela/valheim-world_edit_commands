@@ -21,19 +21,30 @@ public class ObjectCommand
   private static void AddUndo(ZNetView view)
   {
     var zdo = view.GetZDO();
+    if (zdo.GetPrefab() == Hash.Player) return;
     if (EditedInfo.ContainsKey(zdo.m_uid)) return;
     EditedInfo[zdo.m_uid] = new EditData(zdo);
   }
-  static readonly int Player = "Player".GetStableHashCode();
   private static void Execute(Terminal context, ObjectParameters pars, IEnumerable<string> operations, ZNetView[] views)
   {
     var scene = ZNetScene.instance;
-    // TODO: Shouldbe like data command, that pars filter.
+    DataEntry? matchData = pars.Match == "" ? null : DataLoading.Get(pars.Match);
+    DataEntry? unmatchData = pars.Unmatch == "" ? null : DataLoading.Get(pars.Unmatch);
     views = views.Where(view =>
     {
       if (!view || !view.GetZDO().IsValid())
       {
         context.AddString($"Skipped: {view.name} is not loaded.");
+        return false;
+      }
+      if (matchData != null && !matchData.Match(pars.DataParameters.ToDictionary(kvp => kvp.Key, kvp => kvp.Value), view.GetZDO()))
+      {
+        context.AddString($"Skipped: {view.name} not matching filter.");
+        return false;
+      }
+      if (unmatchData != null && !unmatchData.Unmatch(pars.DataParameters.ToDictionary(kvp => kvp.Key, kvp => kvp.Value), view.GetZDO()))
+      {
+        context.AddString($"Skipped: {view.name} matching filter.");
         return false;
       }
       if (!Roll(pars.Chance))
@@ -48,7 +59,7 @@ public class ObjectCommand
     foreach (var view in views)
     {
       var zdo = view.GetZDO();
-      if (zdo.GetPrefab() != Player)
+      if (zdo.GetPrefab() != Hash.Player)
         view.ClaimOwnership();
     }
     var count = views.Count();
@@ -111,6 +122,8 @@ public class ObjectCommand
           output = SetUtility(view, pars.Utility);
         if (operation == "prefab")
           output = SetPrefab(view, pars.Prefab);
+        if (operation == "copy")
+          output = CopyId(view);
         if (operation == "status" && pars.StatusName != null)
           output = SetStatus(view, pars.StatusName, Helper.RandomValue(pars.StatusDuration), Helper.RandomValue(pars.StatusIntensity));
         if (operation == "move")
@@ -330,6 +343,12 @@ public class ObjectCommand
     if (Actions.SetPrefab(view, prefab))
       return $"Prefab of ¤ set to {prefab}.";
     return $"Error: Prefab of ¤ was not set to {prefab}. Probably invalid prefab name.";
+  }
+  private static string CopyId(ZNetView view)
+  {
+    var basePrefab = ZNetScene.instance.GetPrefab(view.GetZDO().GetPrefab());
+    GUIUtility.systemCopyBuffer = basePrefab.name;
+    return $"Copied id of ¤.";
   }
   private static string SetVisual(ZNetView view, Item? item)
   {

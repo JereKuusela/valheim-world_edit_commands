@@ -17,7 +17,7 @@ public static class Actions
   public static GameObject Refresh(ZDO zdo)
   {
     var obj = ZNetScene.instance.m_instances[zdo].gameObject;
-    if (!obj) return obj;
+    if (!obj || zdo.GetPrefab() == Hash.Player) return obj;
     UnityEngine.Object.Destroy(obj);
     var newObj = ZNetScene.instance.CreateObject(zdo);
     ZNetScene.instance.m_instances[zdo] = newObj.GetComponent<ZNetView>();

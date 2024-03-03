@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Data;
 using ServerDevcommands;
 using Service;
 using UnityEngine;
 namespace WorldEditCommands;
-public abstract class BaseParameters
+public abstract class BaseParameters(Dictionary<string, Type> supportedOperations)
 {
   public Vector3 From;
   public Vector3? Center;
@@ -17,15 +18,17 @@ public abstract class BaseParameters
   public Range<float>? Depth;
   public float Height = 0f;
   public float Chance = 1f;
+  public string Match = "";
+  public string Unmatch = "";
   public bool Connect;
   public HashSet<string> Components = [];
+  public Dictionary<string, string> DataParameters = [];
 
-  private readonly Dictionary<string, Type> SupportedOperations;
-  private readonly Terminal terminal;
+  private readonly Dictionary<string, Type> SupportedOperations = supportedOperations;
+  private Terminal terminal = null!;
 
-  public BaseParameters(Dictionary<string, Type> supportedOperations, Terminal.ConsoleEventArgs args)
+  public void ParseCommand(Terminal.ConsoleEventArgs args)
   {
-    SupportedOperations = supportedOperations;
     if (Player.m_localPlayer)
       From = Player.m_localPlayer.transform.position;
     terminal = args.Context;
@@ -40,12 +43,12 @@ public abstract class BaseParameters
   {
     foreach (var arg in args)
     {
-      var split = arg.Split('=');
+      var split = arg.Split(['='], 2);
       var name = split[0].ToLower();
       ParseArgInternal(name);
       ParseArg(name);
       if (split.Length < 2) continue;
-      var value = string.Join("=", split.Skip(1));
+      var value = split[1].Trim();
       ParseArgInternal(name, value);
       ParseArg(name, value);
     }
@@ -90,11 +93,19 @@ public abstract class BaseParameters
         Operations[name] = value;
     }
     var values = Parse.Split(value);
+    if (name == "par")
+    {
+      var kvp = Parse.Kvp(value);
+      if (kvp.Key == "") throw new InvalidOperationException($"Invalid data parameter {value}.");
+      DataParameters[$"<{kvp.Key}>"] = kvp.Value;
+    }
     if (name == "center" || name == "from") Center = Parse.VectorXZY(values);
     if (name == "id") IncludedIds = values;
     if (name == "ignore") ExcludedIds = values;
     if (name == "chance") Chance = Parse.Float(value, 1f);
     if (name == "type") AddComponents(values);
+    if (name == "match") Match = value;
+    if (name == "unmatch") Unmatch = value;
     if (name == "rect")
     {
       var size = Parse.ScaleRange(value);
@@ -113,7 +124,7 @@ public abstract class BaseParameters
     foreach (var value in values)
     {
       var lower = value.ToLowerInvariant();
-      if (lower == "strucutre")
+      if (lower == "structure")
         Components.Add("WearNTear");
       else if (lower == "creature")
         Components.Add("Humanoid");
@@ -150,11 +161,23 @@ public abstract class BaseParameters
       }
       views = [view];
     }
+    DataEntry? matchData = Match == "" ? null : DataLoading.Get(Match);
+    DataEntry? unmatchData = Unmatch == "" ? null : DataLoading.Get(Unmatch);
     return views.Where(view =>
     {
       if (!view || !view.GetZDO().IsValid())
       {
         terminal.AddString($"Skipped: {view.name} is not loaded.");
+        return false;
+      }
+      if (matchData != null && !matchData.Match(DataParameters.ToDictionary(kvp => kvp.Key, kvp => kvp.Value), view.GetZDO()))
+      {
+        terminal.AddString($"Skipped: {view.name} not matching filter.");
+        return false;
+      }
+      if (unmatchData != null && !unmatchData.Unmatch(DataParameters.ToDictionary(kvp => kvp.Key, kvp => kvp.Value), view.GetZDO()))
+      {
+        terminal.AddString($"Skipped: {view.name} matching filter.");
         return false;
       }
       if (!Roll(Chance))

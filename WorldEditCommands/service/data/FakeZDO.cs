@@ -4,7 +4,7 @@ namespace Data;
 // Replicates ZDO from Valheim for an abstract ZDO that isn't in the world.
 public class FakeZDO(ZDO zdo)
 {
-  public readonly ZDOData Data = new(zdo);
+  public readonly PlainDataEntry Data = new(zdo);
   public readonly ZDO Source = zdo.Clone();
   public int Prefab => Source.m_prefab;
   public Vector3 Position => Source.m_position;

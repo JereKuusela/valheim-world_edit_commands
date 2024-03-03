@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Markup;
 using Data;
 using ServerDevcommands;
 using Service;
@@ -13,23 +14,27 @@ public class DataCommand
   private static void AddUndo(ZNetView view)
   {
     var zdo = view.GetZDO();
+    if (zdo.GetPrefab() == Hash.Player) return;
     if (EditedInfo.ContainsKey(zdo.m_uid)) return;
     EditedInfo[zdo.m_uid] = new EditData(zdo);
   }
 
-
   protected string DoOperation(ZNetView view, string operation, string? value)
   {
-    if (operation == "save" && value != null)
+    if (operation == "save")
     {
-      DataLoading.Save(new ZDOData(view.GetZDO()), value, false);
+      if (value == null || value == "")
+        throw new InvalidOperationException("Save: Missing data entry name.");
+      DataLoading.Save(new PlainDataEntry(view.GetZDO()), value, false);
       return $"¤ data saved.";
     }
-    if (operation == "load" && value != null)
+    if (operation == "load")
     {
+      if (value == null || value == "")
+        throw new InvalidOperationException("Load: Missing data entry name.");
       AddUndo(view);
       var zdo = DataHelper.CloneBase(view.GetZDO());
-      DataLoading.Load(value, zdo);
+      DataLoading.Load(value, Parameters.DataParameters, zdo);
       Regen(view, zdo);
       return $"¤ data loaded from {value}.";
     }
@@ -41,40 +46,56 @@ public class DataCommand
   }
   protected string DoOperation(ZNetView view, string operation, string[] value)
   {
-    if (operation == "merge" && value.Length > 0)
+    if (operation == "merge")
     {
+      if (value.Length == 0)
+        throw new InvalidOperationException("Merge: Missing data entry name.");
       AddUndo(view);
-      var values = value.SelectMany(str => str.Split(',')).ToArray();
+      var values = value.SelectMany(str => str.Split(',')).Select(s => s.Trim()).ToArray();
       foreach (var str in values)
       {
-        DataLoading.Load(str, view.GetZDO());
+        DataLoading.Load(str, Parameters.DataParameters, view.GetZDO());
       }
       Actions.Refresh(view);
       return $"¤ data merged from {string.Join(", ", values)}.";
     }
-    if (operation == "keep" && value.Length > 0)
+    if (operation == "keep")
     {
-      AddUndo(view);
-      var keys = value.SelectMany(str => str.Split(',')).ToArray();
-      Regen(view, DataHelper.CloneWithKeys(view.GetZDO(), keys));
-      return $"¤ data cleaned except {string.Join(", ", keys)}.";
+      if (value.Length == 0)
+        throw new InvalidOperationException("Keep: Missing data keys.");
+      var keys = value.SelectMany(str => str.Split(',')).Select(s => s.Trim()).ToArray();
+      if (DataHelper.HasKey(view.GetZDO(), keys))
+      {
+
+        AddUndo(view);
+        Regen(view, DataHelper.CloneWithKeys(view.GetZDO(), keys));
+        return $"¤ data cleaned except {string.Join(", ", keys)}.";
+      }
+      return $"¤ skipped, keys {string.Join(", ", keys)} not found.";
     }
-    if (operation == "remove" && value.Length > 0)
+    if (operation == "remove")
     {
+      if (value.Length == 0)
+        throw new InvalidOperationException("Remove: Missing data keys.");
       AddUndo(view);
-      var keys = value.SelectMany(str => str.Split(',')).ToArray();
+      var keys = value.SelectMany(str => str.Split(',')).Select(s => s.Trim()).ToArray();
       Regen(view, DataHelper.CloneWithoutKeys(view.GetZDO(), keys));
       return $"¤ data keys removed {string.Join(", ", keys)}.";
     }
-    if (operation == "set" && value.Length > 0)
+    if (operation == "set")
     {
+      if (value.Length == 0)
+        throw new InvalidOperationException("Set: Missing values.");
       AddUndo(view);
       var zdo = view.GetZDO();
       var id = zdo.m_uid;
       foreach (var str in value)
       {
         var split = str.Split(',');
-        if (split.Length != 3) continue;
+        if (split.Length < 2)
+          throw new InvalidOperationException($"Set: Missing value for {split[0]}.");
+        if (split.Length < 3)
+          throw new InvalidOperationException($"Set: Missing key for {split[1]}.");
         var type = split[0].ToLowerInvariant();
         var key = int.TryParse(split[1], out var i) ? i : split[1].GetStableHashCode();
         var val = split[2];
@@ -113,6 +134,7 @@ public class DataCommand
     if (value == false) return "";
     if (operation == "clear")
     {
+      AddUndo(view);
       Regen(view, DataHelper.CloneBase(view.GetZDO()));
       return $"¤ data cleared.";
     }
@@ -130,14 +152,14 @@ public class DataCommand
   // This means undo information has to be updated.
   private void Regen(ZNetView view, ZDO zdo)
   {
+    if (zdo.GetPrefab() == Hash.Player) return;
     var existing = view.GetZDO();
     var entry = EditedInfo[existing.m_uid];
     entry.Zdo = DataHelper.Regen(existing, zdo);
     EditedInfo[entry.Zdo.m_uid] = entry;
     EditedInfo.Remove(existing.m_uid);
   }
-  static readonly int Player = "Player".GetStableHashCode();
-  private void Execute(Terminal context, Dictionary<string, object?> operations, ZNetView[] views)
+  private void Execute(Terminal context, ZNetView[] views)
   {
     EditedInfo.Clear();
 
@@ -145,10 +167,10 @@ public class DataCommand
     foreach (var view in views)
     {
       var zdo = view.GetZDO();
-      if (zdo.GetPrefab() != Player)
+      if (zdo.GetPrefab() != Hash.Player)
         view.ClaimOwnership();
 
-      foreach (var operation in operations)
+      foreach (var operation in Parameters.Operations)
       {
         var type = DataParameters.SupportedOperations[operation.Key];
         var name = Utils.GetPrefabName(view.gameObject);
@@ -182,16 +204,18 @@ public class DataCommand
     }
   }
   public const string Name = "data";
+  private DataParameters Parameters = new();
   public DataCommand()
   {
     AutoComplete.Register(Name, (int index) => DataAutoComplete.GetOptions(), DataAutoComplete.GetNamedOptions());
     Helper.Command(Name, "Modifies object data.", (args) =>
     {
-      DataParameters pars = new(args);
-      var views = pars.GetObjects();
-      if (pars.Operations.ContainsKey("save") && views.Length > 1)
+      Parameters = new();
+      Parameters.ParseCommand(args);
+      var views = Parameters.GetObjects();
+      if (Parameters.Operations.ContainsKey("save") && views.Length > 1)
         throw new InvalidOperationException("Can't save multiple objects at once.");
-      Execute(args.Context, pars.Operations, views);
+      Execute(args.Context, views);
 
     });
   }
