@@ -5,6 +5,7 @@ using System.Windows.Markup;
 using Data;
 using ServerDevcommands;
 using Service;
+using UnityEngine;
 namespace WorldEditCommands;
 
 public class DataCommand
@@ -21,22 +22,22 @@ public class DataCommand
 
   protected string DoOperation(ZNetView view, string operation, string? value)
   {
+    if (operation == "copy_raw")
+    {
+      ZPackage package = new();
+      DataRawCommand.LegacySerialize(view.GetZDO(), package, value ?? "");
+      var str = package.GetBase64();
+      if (str == "AAAAAA==")
+        return $"¤ raw data is empty.";
+      GUIUtility.systemCopyBuffer = str;
+      return $"¤ raw data copied to clipboard.";
+    }
     if (operation == "save")
     {
       if (value == null || value == "")
         throw new InvalidOperationException("Save: Missing data entry name.");
       DataLoading.Save(new PlainDataEntry(view.GetZDO()), value, false);
       return $"¤ data saved.";
-    }
-    if (operation == "load")
-    {
-      if (value == null || value == "")
-        throw new InvalidOperationException("Load: Missing data entry name.");
-      AddUndo(view);
-      var zdo = DataHelper.CloneBase(view.GetZDO());
-      DataLoading.Load(value, Parameters.DataParameters, zdo);
-      Regen(view, zdo);
-      return $"¤ data loaded from {value}.";
     }
     throw new NotImplementedException();
   }
@@ -52,12 +53,22 @@ public class DataCommand
         throw new InvalidOperationException("Merge: Missing data entry name.");
       AddUndo(view);
       var values = value.SelectMany(str => str.Split(',')).Select(s => s.Trim()).ToArray();
-      foreach (var str in values)
-      {
-        DataLoading.Load(str, Parameters.DataParameters, view.GetZDO());
-      }
+      var data = DataHelper.Merge(values.Select(DataHelper.Get).ToArray());
+      data?.Write(Parameters.DataParameters, view.GetZDO());
       Actions.Refresh(view);
       return $"¤ data merged from {string.Join(", ", values)}.";
+    }
+    if (operation == "load")
+    {
+      if (value.Length == 0)
+        throw new InvalidOperationException("Load: Missing data entry name.");
+      AddUndo(view);
+      var zdo = DataHelper.CloneBase(view.GetZDO());
+      var values = value.SelectMany(str => str.Split(',')).Select(s => s.Trim()).ToArray();
+      var data = DataHelper.Merge(values.Select(DataHelper.Get).ToArray());
+      data?.Write(Parameters.DataParameters, zdo);
+      Regen(view, zdo);
+      return $"¤ data loaded from {string.Join(", ", values)}.";
     }
     if (operation == "keep")
     {

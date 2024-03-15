@@ -1,16 +1,21 @@
 
 using System.Collections.Generic;
-using ServerDevcommands;
 
 namespace Data;
 
 public class BoolValue(string[] values) : AnyValue(values), IBoolValue
 {
-  public int? Get(Dictionary<string, string> pars)
+  public int? GetInt(Dictionary<string, string> pars)
   {
-    var value = Parse.Boolean(GetValue(pars));
+    var value = GetValue(pars);
     if (value == null) return null;
-    return value.Value ? 1 : 0;
+    return value == "true" ? 1 : 0;
+  }
+  public bool? GetBool(Dictionary<string, string> pars)
+  {
+    var value = GetValue(pars);
+    if (value == null) return null;
+    return value == "true";
   }
   public bool? Match(Dictionary<string, string> pars, bool value)
   {
@@ -19,10 +24,11 @@ public class BoolValue(string[] values) : AnyValue(values), IBoolValue
     var allNull = true;
     foreach (var rawValue in Values)
     {
-      var v = Parse.Boolean(ReplaceParameters(rawValue, pars));
+      var v = ReplaceParameters(rawValue, pars);
       if (v == null) continue;
       allNull = false;
-      if (value == v)
+      var truthy = v == "true";
+      if (truthy == value)
         return true;
     }
     return allNull ? null : false;
@@ -33,12 +39,14 @@ public class SimpleBoolValue(bool value) : IBoolValue
 {
   private readonly bool Value = value;
 
-  public int? Get(Dictionary<string, string> pars) => Value ? 1 : 0;
+  public int? GetInt(Dictionary<string, string> pars) => Value ? 1 : 0;
+  public bool? GetBool(Dictionary<string, string> pars) => Value;
   public bool? Match(Dictionary<string, string> pars, bool value) => Value == value;
 }
 
 public interface IBoolValue
 {
-  int? Get(Dictionary<string, string> pars);
+  int? GetInt(Dictionary<string, string> pars);
+  bool? GetBool(Dictionary<string, string> pars);
   bool? Match(Dictionary<string, string> pars, bool value);
 }

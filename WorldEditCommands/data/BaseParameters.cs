@@ -161,8 +161,8 @@ public abstract class BaseParameters(Dictionary<string, Type> supportedOperation
       }
       views = [view];
     }
-    DataEntry? matchData = Match == "" ? null : DataLoading.Get(Match);
-    DataEntry? unmatchData = Unmatch == "" ? null : DataLoading.Get(Unmatch);
+    DataEntry? matchData = Match == "" ? null : DataHelper.Get(Match);
+    DataEntry? unmatchData = Unmatch == "" ? null : DataHelper.Get(Unmatch);
     return views.Where(view =>
     {
       if (!view || !view.GetZDO().IsValid())

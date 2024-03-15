@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Data;
 using ServerDevcommands;
 using UnityEngine;
-namespace Service;
+namespace Data;
 
 public class DataHelper
 {
@@ -162,4 +161,43 @@ public class DataHelper
   {
     ZNetView.m_initZDO = null;
   }
+
+
+  public static DataEntry? Merge(params DataEntry?[] datas)
+  {
+    var nonNull = datas.Where(d => d != null).ToArray();
+    if (nonNull.Length == 0) return null;
+    if (nonNull.Length == 1) return nonNull[0];
+    DataEntry result = new();
+    foreach (var data in nonNull)
+      result.Load(data!);
+    return result;
+  }
+
+  public static DataEntry Get(string name)
+  {
+    var hash = name.GetStableHashCode();
+    if (!DataLoading.Data.ContainsKey(hash))
+    {
+      try
+      {
+        DataLoading.Data[hash] = new DataEntry(name);
+      }
+      catch (Exception e)
+      {
+        if (name.Contains("=") || name.Length > 32)
+          throw new InvalidOperationException($"Can't load data value: {name}", e);
+        else
+          throw new InvalidOperationException($"Can't find data entry: {name}", e);
+      }
+    }
+    return DataLoading.Data[hash];
+  }
+  public static string Base64(Dictionary<string, string> pars, string data)
+  {
+    if (!DataLoading.Data.TryGetValue(data.GetStableHashCode(), out var zdo))
+      return data;
+    return zdo.GetBase64(pars);
+  }
+
 }

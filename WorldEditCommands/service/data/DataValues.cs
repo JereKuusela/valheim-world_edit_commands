@@ -12,6 +12,11 @@ public class DataValue
   // Different function name because string would be ambiguous.
   public static IIntValue Simple(int value) => new SimpleIntValue(value);
   public static IStringValue Simple(string value) => new SimpleStringValue(value);
+  public static IFloatValue Simple(float value) => new SimpleFloatValue(value);
+  public static ILongValue Simple(long value) => new SimpleLongValue(value);
+  public static IVector3Value Simple(Vector3 value) => new SimpleVector3Value(value);
+  public static IQuaternionValue Simple(Quaternion value) => new SimpleQuaternionValue(value);
+
 
   public static IIntValue Int(ZPackage pkg) => new SimpleIntValue(pkg.ReadInt());
   public static IIntValue Int(string values, HashSet<string> requiredParameters)
@@ -142,17 +147,17 @@ public class AnyValue(string[] values)
 }
 public class ItemValue(ItemData data, HashSet<string> requiredParameters)
 {
-  public static string LoadItems(Dictionary<string, string> pars, ItemValue[] items, Vector2i? size, int amount)
+  public static string LoadItems(Dictionary<string, string> pars, List<ItemValue> items, Vector2i? size, int amount)
   {
     ZPackage pkg = new();
     pkg.Write(106);
     items = Generate(pars, items, size ?? new(0, 0), amount);
-    pkg.Write(items.Length);
+    pkg.Write(items.Count);
     foreach (var item in items)
       item.Write(pars, pkg);
     return pkg.GetBase64();
   }
-  public static ItemValue[] Generate(Dictionary<string, string> pars, ItemValue[] data, Vector2i size, int amount)
+  private static List<ItemValue> Generate(Dictionary<string, string> pars, List<ItemValue> data, Vector2i size, int amount)
   {
     var fixedPos = data.Where(item => item.Position != "").ToList();
     var randomPos = data.Where(item => item.Position == "").ToList();
@@ -248,7 +253,7 @@ public class ItemValue(ItemData data, HashSet<string> requiredParameters)
     pkg.Write(Stack.Get(pars) ?? 1);
     pkg.Write(Durability.Get(pars) ?? 100f);
     pkg.Write(RolledPosition);
-    pkg.Write(Equipped.Get(pars) ?? 0);
+    pkg.Write(Equipped.GetBool(pars) ?? false);
     pkg.Write(Quality.Get(pars) ?? 1);
     pkg.Write(Variant.Get(pars) ?? 1);
     pkg.Write(CrafterID.Get(pars) ?? 0);
@@ -260,6 +265,6 @@ public class ItemValue(ItemData data, HashSet<string> requiredParameters)
       pkg.Write(kvp.Value.Get(pars));
     }
     pkg.Write(WorldLevel.Get(pars) ?? 1);
-    pkg.Write(PickedUp.Get(pars) ?? 0);
+    pkg.Write(PickedUp.GetBool(pars) ?? false);
   }
 }

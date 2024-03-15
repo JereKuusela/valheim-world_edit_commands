@@ -28,8 +28,8 @@ public class ObjectCommand
   private static void Execute(Terminal context, ObjectParameters pars, IEnumerable<string> operations, ZNetView[] views)
   {
     var scene = ZNetScene.instance;
-    DataEntry? matchData = pars.Match == "" ? null : DataLoading.Get(pars.Match);
-    DataEntry? unmatchData = pars.Unmatch == "" ? null : DataLoading.Get(pars.Unmatch);
+    DataEntry? matchData = pars.Match == "" ? null : DataHelper.Get(pars.Match);
+    DataEntry? unmatchData = pars.Unmatch == "" ? null : DataHelper.Get(pars.Unmatch);
     views = views.Where(view =>
     {
       if (!view || !view.GetZDO().IsValid())

@@ -14,8 +14,9 @@ This document explains how to save object data to a file and then load it back t
 The `data` command has following operations:
 
 - `clear`: Removes all data values.
+- `copy_raw`: Copies the data of hovered object as base64 encoded string (legacy).
 - `keep=key1,key2,...`: Removes data values except the given ones.
-- `load=data`: Replaces all data from a data entry or base64 encoded string.
+- `load=ata1,data2,...`: Replaces all data from data entries or base64 encoded strings.
 - `merge=data1,data2,...`: Adds data from data entries or base64 encoded strings.
 - `print`: Prints the data values.
 - `save=name`: Saves the data of an object to a data entry.

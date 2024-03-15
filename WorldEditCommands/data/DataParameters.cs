@@ -7,12 +7,13 @@ public class DataParameters() : BaseParameters(SupportedOperations)
   {
     ["save"] = typeof(string),
     ["clear"] = typeof(bool),
-    ["load"] = typeof(string),
+    ["load"] = typeof(string[]),
     ["merge"] = typeof(string[]),
     ["set"] = typeof(string[]),
     ["remove"] = typeof(string[]),
     ["keep"] = typeof(string),
     ["print"] = typeof(bool),
+    ["copy_raw"] = typeof(string),
 
   };
   protected override void ParseArg(string arg)

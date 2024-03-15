@@ -109,7 +109,7 @@ public class DataAutoComplete
           ParameterInfo.None
       },
       {
-        "load", (int index) => index == 0 ? DataLoading.DataKeys : ParameterInfo.None
+        "load", (int index) => DataLoading.DataKeys
       },
       {
         "merge", (int index) => DataLoading.DataKeys
@@ -122,7 +122,13 @@ public class DataAutoComplete
       },
       {
         "par", (int index) => index == 0 ? GetDataParameters() : ParameterInfo.Create("par=key,<color=yellow>value</color>", "Value of the parameter.")
-      }
+      },
+      {
+        "copy_raw", (int index) => {
+          if (index == 0) return ParameterInfo.Create("copy_raw or copy_raw=<color=yellow>all</color> or copy_raw=<color=yellow>key1,key2,...</color>", "Prints and copies object data to clipboard. By default excludes some data for better results.");
+          return ParameterInfo.None;
+        }
+      },
     };
     return baseFetchers;
   }

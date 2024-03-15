@@ -16,33 +16,7 @@ public class DataLoading
   public static readonly Dictionary<int, List<string>> ValueGroups = [];
   public static readonly List<string> DataKeys = [];
 
-  public static void Load(string data, Dictionary<string, string> pars, ZDO zdo) => Get(data).Write(pars, zdo);
-  public static string Base64(Dictionary<string, string> pars, string data)
-  {
-    if (!Data.TryGetValue(data.GetStableHashCode(), out var zdo))
-      return data;
-    return zdo.GetBase64(pars);
-  }
 
-  public static DataEntry Get(string name)
-  {
-    var hash = name.GetStableHashCode();
-    if (!Data.ContainsKey(hash))
-    {
-      try
-      {
-        Data[hash] = new DataEntry(name);
-      }
-      catch (Exception e)
-      {
-        if (name.Contains("=") || name.Length > 32)
-          throw new InvalidOperationException($"Can't load data value: {name}", e);
-        else
-          throw new InvalidOperationException($"Can't find data entry: {name}", e);
-      }
-    }
-    return Data[hash];
-  }
   public static bool TryGetValueFromGroup(string group, out string value)
   {
     var hash = group.GetStableHashCode();
@@ -60,7 +34,7 @@ public class DataLoading
     Data.Clear();
     DataKeys.Clear();
     ValueGroups.Clear();
-    var files = Directory.GetFiles(GamePath, "*.yaml").Concat(Directory.GetFiles(ProfilePath, "*.yml")).ToArray();
+    var files = Directory.GetFiles(GamePath, "*.yaml").Concat(Directory.GetFiles(ProfilePath, "*.yaml")).ToArray();
     foreach (var file in files)
     {
       var yaml = Yaml.LoadList<DataData>(file);

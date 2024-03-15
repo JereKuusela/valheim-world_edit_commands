@@ -10,6 +10,9 @@ namespace Data;
 // Replicates ZDO data from Valheim.
 public class DataEntry
 {
+  public DataEntry()
+  {
+  }
   public DataEntry(string base64)
   {
     Load(new ZPackage(base64));
@@ -29,7 +32,7 @@ public class DataEntry
   public Dictionary<int, IVector3Value>? Vecs;
   public Dictionary<int, IQuaternionValue>? Quats;
   public Dictionary<int, byte[]>? ByteArrays;
-  public ItemValue[]? Items;
+  public List<ItemValue>? Items;
   public Vector2i? ContainerSize;
   public IIntValue? ItemAmount;
   public ZDOExtraData.ConnectionType ConnectionType = ZDOExtraData.ConnectionType.None;
@@ -38,7 +41,80 @@ public class DataEntry
   public ZDOID TargetConnectionId = ZDOID.None;
 
   public HashSet<string> RequiredParameters = [];
+  public void Load(DataEntry data)
+  {
+    if (data.Floats != null)
+    {
+      Floats ??= [];
+      foreach (var pair in data.Floats)
+        Floats[pair.Key] = pair.Value;
+    }
+    if (data.Vecs != null)
+    {
+      Vecs ??= [];
+      foreach (var pair in data.Vecs)
+        Vecs[pair.Key] = pair.Value;
+    }
+    if (data.Quats != null)
+    {
+      Quats ??= [];
+      foreach (var pair in data.Quats)
+        Quats[pair.Key] = pair.Value;
+    }
+    if (data.Ints != null)
+    {
+      Ints ??= [];
+      foreach (var pair in data.Ints)
+        Ints[pair.Key] = pair.Value;
+    }
+    if (data.Strings != null)
+    {
+      Strings ??= [];
+      foreach (var pair in data.Strings)
+        Strings[pair.Key] = pair.Value;
+    }
+    if (data.ByteArrays != null)
+    {
+      ByteArrays ??= [];
+      foreach (var pair in data.ByteArrays)
+        ByteArrays[pair.Key] = pair.Value;
+    }
+    if (data.Longs != null)
+    {
+      Longs ??= [];
+      foreach (var pair in data.Longs)
+        Longs[pair.Key] = pair.Value;
+    }
+    if (data.Bools != null)
+    {
+      Bools ??= [];
+      foreach (var pair in data.Bools)
+        Bools[pair.Key] = pair.Value;
+    }
+    if (data.Hashes != null)
+    {
+      Hashes ??= [];
+      foreach (var pair in data.Hashes)
+        Hashes[pair.Key] = pair.Value;
+    }
+    if (data.Items != null)
+    {
+      Items ??= [];
+      foreach (var item in data.Items)
+        Items.Add(item);
+    }
+    if (data.ContainerSize != null)
+      ContainerSize = data.ContainerSize;
+    if (data.ItemAmount != null)
+      ItemAmount = data.ItemAmount;
 
+    ConnectionType = data.ConnectionType;
+    ConnectionHash = data.ConnectionHash;
+    OriginalId = data.OriginalId;
+    TargetConnectionId = data.TargetConnectionId;
+    foreach (var par in data.RequiredParameters)
+      RequiredParameters.Add(par);
+  }
   public void Load(DataData data)
   {
     HashSet<string> componentsToAdd = [];
@@ -51,7 +127,7 @@ public class DataEntry
         if (kvp.Key == "") throw new InvalidOperationException($"Failed to parse float {value}.");
         if (kvp.Key.Contains("."))
           componentsToAdd.Add(kvp.Key.Split('.')[0]);
-        Floats.Add(Helper.Hash(kvp.Key), DataValue.Float(kvp.Value, RequiredParameters));
+        Floats.Add(Hash(kvp.Key), DataValue.Float(kvp.Value, RequiredParameters));
       }
     }
     if (data.ints != null)
@@ -63,7 +139,7 @@ public class DataEntry
         if (kvp.Key == "") throw new InvalidOperationException($"Failed to parse int {value}.");
         if (kvp.Key.Contains("."))
           componentsToAdd.Add(kvp.Key.Split('.')[0]);
-        Ints.Add(Helper.Hash(kvp.Key), DataValue.Int(kvp.Value, RequiredParameters));
+        Ints.Add(Hash(kvp.Key), DataValue.Int(kvp.Value, RequiredParameters));
       }
     }
     if (data.bools != null)
@@ -75,7 +151,7 @@ public class DataEntry
         if (kvp.Key == "") throw new InvalidOperationException($"Failed to parse bool {value}.");
         if (kvp.Key.Contains("."))
           componentsToAdd.Add(kvp.Key.Split('.')[0]);
-        Bools.Add(Helper.Hash(kvp.Key), DataValue.Bool(kvp.Value, RequiredParameters));
+        Bools.Add(Hash(kvp.Key), DataValue.Bool(kvp.Value, RequiredParameters));
       }
     }
     if (data.hashes != null)
@@ -87,7 +163,7 @@ public class DataEntry
         if (kvp.Key == "") throw new InvalidOperationException($"Failed to parse hash {value}.");
         if (kvp.Key.Contains("."))
           componentsToAdd.Add(kvp.Key.Split('.')[0]);
-        Hashes.Add(Helper.Hash(kvp.Key), DataValue.Hash(kvp.Value, RequiredParameters));
+        Hashes.Add(Hash(kvp.Key), DataValue.Hash(kvp.Value, RequiredParameters));
       }
     }
     if (data.longs != null)
@@ -99,7 +175,7 @@ public class DataEntry
         if (kvp.Key == "") throw new InvalidOperationException($"Failed to parse long {value}.");
         if (kvp.Key.Contains("."))
           componentsToAdd.Add(kvp.Key.Split('.')[0]);
-        Longs.Add(Helper.Hash(kvp.Key), DataValue.Long(kvp.Value, RequiredParameters));
+        Longs.Add(Hash(kvp.Key), DataValue.Long(kvp.Value, RequiredParameters));
       }
     }
     if (data.strings != null)
@@ -111,7 +187,7 @@ public class DataEntry
         if (kvp.Key == "") throw new InvalidOperationException($"Failed to parse string {value}.");
         if (kvp.Key.Contains("."))
           componentsToAdd.Add(kvp.Key.Split('.')[0]);
-        Strings.Add(Helper.Hash(kvp.Key), DataValue.String(kvp.Value, RequiredParameters));
+        Strings.Add(Hash(kvp.Key), DataValue.String(kvp.Value, RequiredParameters));
       }
     }
     if (data.vecs != null)
@@ -123,7 +199,7 @@ public class DataEntry
         if (kvp.Key == "") throw new InvalidOperationException($"Failed to parse vector {value}.");
         if (kvp.Key.Contains("."))
           componentsToAdd.Add(kvp.Key.Split('.')[0]);
-        Vecs.Add(Helper.Hash(kvp.Key), DataValue.Vector3(kvp.Value, RequiredParameters));
+        Vecs.Add(Hash(kvp.Key), DataValue.Vector3(kvp.Value, RequiredParameters));
       }
     }
     if (data.quats != null)
@@ -135,7 +211,7 @@ public class DataEntry
         if (kvp.Key == "") throw new InvalidOperationException($"Failed to parse quaternion {value}.");
         if (kvp.Key.Contains("."))
           componentsToAdd.Add(kvp.Key.Split('.')[0]);
-        Quats.Add(Helper.Hash(kvp.Key), DataValue.Quaternion(kvp.Value, RequiredParameters));
+        Quats.Add(Hash(kvp.Key), DataValue.Quaternion(kvp.Value, RequiredParameters));
       }
     }
     if (data.bytes != null)
@@ -147,12 +223,12 @@ public class DataEntry
         if (kvp.Key == "") throw new InvalidOperationException($"Failed to parse byte array {value}.");
         if (kvp.Key.Contains("."))
           componentsToAdd.Add(kvp.Key.Split('.')[0]);
-        ByteArrays.Add(Helper.Hash(kvp.Key), Convert.FromBase64String(kvp.Value));
+        ByteArrays.Add(Hash(kvp.Key), Convert.FromBase64String(kvp.Value));
       }
     }
     if (data.items != null)
     {
-      Items = data.items.Select(item => new ItemValue(item, RequiredParameters)).ToArray();
+      Items = data.items.Select(item => new ItemValue(item, RequiredParameters)).ToList();
     }
     if (!string.IsNullOrWhiteSpace(data.containerSize))
       ContainerSize = Parse.Vector2Int(data.containerSize);
@@ -418,7 +494,7 @@ public class DataEntry
       ZDOHelper.Init(ZDOExtraData.s_ints, id);
       foreach (var pair in Bools)
       {
-        var value = pair.Value.Get(pars);
+        var value = pair.Value.GetInt(pars);
         if (value.HasValue)
           ZDOExtraData.s_ints[id].SetValue(pair.Key, value.Value);
       }
@@ -517,7 +593,7 @@ public class DataEntry
     {
       var intKvps = Ints?.Select(kvp => new KeyValuePair<int, int?>(kvp.Key, kvp.Value.Get(pars))).Where(kvp => kvp.Value.HasValue).ToArray() ?? [];
       var hashKvps = Hashes?.Select(kvp => new KeyValuePair<int, int?>(kvp.Key, kvp.Value.Get(pars))).Where(kvp => kvp.Value.HasValue).ToArray() ?? [];
-      var boolKvps = Bools?.Select(kvp => new KeyValuePair<int, int?>(kvp.Key, kvp.Value.Get(pars))).Where(kvp => kvp.Value.HasValue).ToArray() ?? [];
+      var boolKvps = Bools?.Select(kvp => new KeyValuePair<int, int?>(kvp.Key, kvp.Value.GetInt(pars))).Where(kvp => kvp.Value.HasValue).ToArray() ?? [];
       var count = intKvps.Length + hashKvps.Length + boolKvps.Length;
       pkg.Write((byte)count);
       foreach (var kvp in intKvps)
@@ -574,7 +650,7 @@ public class DataEntry
 
   private void RollItems(Dictionary<string, string> pars)
   {
-    if (Items?.Length > 0)
+    if (Items?.Count > 0)
     {
       var encoded = ItemValue.LoadItems(pars, Items, ContainerSize, ItemAmount?.Get(pars) ?? 0);
       Strings ??= [];
@@ -648,5 +724,15 @@ public class DataEntry
       otherZdo.SetConnection(ZDOExtraData.ConnectionType.Portal, ownId);
       ownZdo.SetConnection(ZDOExtraData.ConnectionType.Portal, otherId);
     }
+  }
+  private static int Hash(string key)
+  {
+    if (key.StartsWith("$", StringComparison.InvariantCultureIgnoreCase))
+    {
+      var hash = ZSyncAnimation.GetHash(key.Substring(1));
+      if (key == "$anim_speed") return hash;
+      return 438569 + hash;
+    }
+    return key.GetStableHashCode();
   }
 }

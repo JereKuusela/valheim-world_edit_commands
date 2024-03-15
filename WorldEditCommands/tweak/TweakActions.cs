@@ -238,7 +238,7 @@ public static class TweakActions
   }
   public static string SpawnData(ZNetView view, string? value)
   {
-    Actions.SetString(view, value == null ? null : DataLoading.Base64([], value), Hash.Data);
+    Actions.SetString(view, value == null ? null : DataHelper.Base64([], value), Hash.Data);
     return $"¤ spawn data set to {Print(value)}.";
   }
   public static string Spawn(ZNetView view, int hash, string? value)
@@ -341,7 +341,7 @@ public static class TweakActions
   public static string Spawns(ZNetView view, string[] value)
   {
     if (value.Length > 4 && !Parse.TryFloat(value[4], out _))
-      value[4] = DataLoading.Base64([], value[4]);
+      value[4] = DataHelper.Base64([], value[4]);
     var str = value.Length == 0 ? null : string.Join("|", value);
     Actions.SetString(view, str, Hash.SpawnSpawnArea);
     return $"¤ spawn prefabs set to {Print(str)}.";

@@ -1,3 +1,9 @@
+- v1.55
+  - Adds new paramater `data copy_raw` to make it easier to use the old system.
+  - Fixes multiple data entries not working for `spawn_object data`.
+  - Fixes multiple data entries not working for `data data`.
+  - Fixes item generation not working from data.
+
 - v1.54
   - Adds support for targeting players when `id=Player` is used.
   - Adds new command `data` for data related operations.

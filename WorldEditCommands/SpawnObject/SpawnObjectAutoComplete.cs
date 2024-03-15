@@ -26,7 +26,7 @@ public class SpawnObjectAutoComplete : SharedObjectAutoComplete
     AutoComplete.Register(SpawnObjectCommand.Name, (int index) => index == 0 ? ParameterInfo.Ids : NamedParameters, WithSharedFetchers(new() {
       {
         "data",
-        (int index) => index == 0 ? DataLoading.DataKeys : ParameterInfo.None
+        (int index) =>  DataLoading.DataKeys
       },
       {
         "crafterId",

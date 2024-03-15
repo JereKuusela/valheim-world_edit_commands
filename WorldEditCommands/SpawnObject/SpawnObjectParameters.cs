@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Data;
 using ServerDevcommands;
@@ -85,7 +84,7 @@ class SpawnObjectParameters : SharedObjectParameters
       }
       if (name == "data")
       {
-        Data = DataLoading.Get(value);
+        Data = DataHelper.Merge(Parse.Split(value).Select(DataHelper.Get).ToArray());
       }
       if (name == "refplayer")
       {
