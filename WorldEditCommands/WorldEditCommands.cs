@@ -5,12 +5,12 @@ using HarmonyLib;
 
 namespace WorldEditCommands;
 [BepInPlugin(GUID, NAME, VERSION)]
-[BepInDependency("server_devcommands", "1.75")]
+[BepInDependency("server_devcommands", "1.76")]
 public class WorldEditCommands : BaseUnityPlugin
 {
   public const string GUID = "world_edit_commands";
   public const string NAME = "World Edit Commands";
-  public const string VERSION = "1.55";
+  public const string VERSION = "1.56";
   public void Awake()
   {
     new Harmony(GUID).PatchAll();
@@ -27,8 +27,16 @@ public class WorldEditCommands : BaseUnityPlugin
     IsCLLC = Chainloader.PluginInfos.ContainsKey("rg.bepinex.plugins.creaturelevelcontrol");
     IsTweaks = Chainloader.PluginInfos.ContainsKey("world_edit_tweaks");
     IsEWFactions = Chainloader.PluginInfos.ContainsKey("expand_world_factions");
-    FieldAutoComplete.Init();
     DataLoading.SetupWatcher();
+
+  }
+}
+[HarmonyPatch(typeof(ZoneSystem), nameof(ZoneSystem.Start))]
+public class ZoneSystemStart
+{
+  static void Postfix()
+  {
+    FieldAutoComplete.Init();
     DataLoading.LoadEntries();
   }
 }

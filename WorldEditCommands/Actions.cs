@@ -424,7 +424,7 @@ public static class Actions
     view.LoadFields();
     if (view.TryGetComponent<WearNTear>(out var wearNTear))
     {
-      wearNTear.m_healthPercentage = zdo.GetFloat(ZDOVars.s_health, wearNTear.m_health);
+      wearNTear.m_healthPercentage = zdo.GetFloat(ZDOVars.s_health, wearNTear.m_health) / wearNTear.m_health;
       wearNTear.UpdateVisual(false);
     }
     return count;
@@ -508,8 +508,7 @@ public static class Actions
   public static void RemoveZDO(ZDO zdo)
   {
     if (zdo == null || !zdo.IsValid()) return;
-    if (!zdo.IsOwner())
-      zdo.SetOwner(ZDOMan.GetSessionID());
+    zdo.SetOwner(ZDOMan.GetSessionID());
     if (ZNetScene.instance.m_instances.TryGetValue(zdo, out var view))
       ZNetScene.instance.Destroy(view.gameObject);
     else

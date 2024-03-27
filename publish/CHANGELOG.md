@@ -1,3 +1,9 @@
+- v1.56
+  - Adds new default value groups containing all objects of a certain type.
+  - Changes the `ignore` parameter to also prevent the connecting with the `connect` parameter.
+  - Fixes value groups being case sensitive.
+  - Fixes setting max health not updating the visual correctly.
+
 - v1.55
   - Adds new paramater `data copy_raw` to make it easier to use the old system.
   - Fixes multiple data entries not working for `spawn_object data`.

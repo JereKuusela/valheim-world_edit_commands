@@ -19,7 +19,7 @@ public class DataLoading
 
   public static bool TryGetValueFromGroup(string group, out string value)
   {
-    var hash = group.GetStableHashCode();
+    var hash = group.ToLowerInvariant().GetStableHashCode();
     if (!ValueGroups.ContainsKey(hash))
     {
       value = group;
@@ -31,6 +31,8 @@ public class DataLoading
   }
   public static void LoadEntries()
   {
+    if (!ZNet.instance)
+      return;
     Data.Clear();
     DataKeys.Clear();
     ValueGroups.Clear();
@@ -43,7 +45,7 @@ public class DataLoading
         if (data.value != null)
         {
           var kvp = Parse.Kvp(data.value);
-          var hash = kvp.Key.GetStableHashCode();
+          var hash = kvp.Key.ToLowerInvariant().GetStableHashCode();
           if (ValueGroups.ContainsKey(hash))
             ServerDevcommands.ServerDevcommands.Log.LogWarning($"Duplicate value group entry: {kvp.Key} at {file}");
           if (!ValueGroups.ContainsKey(hash))
@@ -52,7 +54,7 @@ public class DataLoading
         }
         if (data.valueGroup != null && data.values != null)
         {
-          var hash = data.valueGroup.GetStableHashCode();
+          var hash = data.valueGroup.ToLowerInvariant().GetStableHashCode();
           if (ValueGroups.ContainsKey(hash))
             ServerDevcommands.ServerDevcommands.Log.LogWarning($"Duplicate value group entry: {data.valueGroup} at {file}");
           if (!ValueGroups.ContainsKey(hash))
@@ -73,6 +75,7 @@ public class DataLoading
     ServerDevcommands.ServerDevcommands.Log.LogInfo($"Loaded {Data.Count} data entries.");
     if (ValueGroups.Count > 0)
       ServerDevcommands.ServerDevcommands.Log.LogInfo($"Loaded {ValueGroups.Count} value groups.");
+    LoadDefaultValueGroups();
 
   }
   public static void Save(PlainDataEntry data, string name, bool profile)
@@ -93,6 +96,31 @@ public class DataLoading
     DataData data = new() { name = name };
     zdo.Write(data);
     return data;
+  }
+
+  private static readonly Dictionary<int, List<string>> DefaultValueGroups = [];
+  private static readonly int WearNTearHash = "wearntear".GetStableHashCode();
+  private static readonly int HumanoidHash = "humanoid".GetStableHashCode();
+  private static readonly int CreatureHash = "creature".GetStableHashCode();
+  private static readonly int StructureHash = "structure".GetStableHashCode();
+  private static void LoadDefaultValueGroups()
+  {
+    if (DefaultValueGroups.Count == 0)
+    {
+      foreach (var type in ComponentInfo.Types)
+      {
+        var hash = type.Name.ToLowerInvariant().GetStableHashCode();
+        DefaultValueGroups[hash] = [.. ComponentInfo.PrefabsByComponent(type.Name)];
+      }
+      // Some key codes are hardcoded for legacy reasons.
+      DefaultValueGroups[CreatureHash] = DefaultValueGroups[HumanoidHash];
+      DefaultValueGroups[StructureHash] = DefaultValueGroups[WearNTearHash];
+    }
+    foreach (var kvp in DefaultValueGroups)
+    {
+      if (!ValueGroups.ContainsKey(kvp.Key))
+        ValueGroups[kvp.Key] = kvp.Value;
+    }
   }
 
   public static void SetupWatcher()
