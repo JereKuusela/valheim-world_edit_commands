@@ -29,8 +29,7 @@ public class DungeonCommand
   }
   private static DungeonDB.RoomData FindRoom(string type)
   {
-    var room = DungeonDB.instance.m_rooms.FirstOrDefault(r => r.m_room.name.ToLower() == type.ToLower()) ?? throw new InvalidOperationException($"Can't find room {type}.");
-    return room;
+    throw new NotImplementedException();
   }
 
   private static string EditRoom(ZNetView obj, int i, string type, Vector3 pos, Quaternion rot)
@@ -57,7 +56,7 @@ public class DungeonCommand
       var type = zdo.GetInt(id, 0);
       var pos = zdo.GetVec3(id + "_pos", Vector3.zero);
       var rot = zdo.GetQuaternion(id + "_rot", Quaternion.identity);
-      info.Add($"Room {i}: {DungeonDB.instance.GetRoom(type).m_room.name} {Helper.PrintVectorXZY(pos)} {Helper.PrintAngleYXZ(rot)}");
+      info.Add($"Room {i}: {DungeonDB.instance.GetRoom(type).RoomInPrefab.name} {Helper.PrintVectorXZY(pos)} {Helper.PrintAngleYXZ(rot)}");
     }
     return string.Join(", ", info);
   }

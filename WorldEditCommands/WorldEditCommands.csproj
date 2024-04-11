@@ -33,14 +33,17 @@
     <Reference Include="Unity.TextMeshPro">
       <HintPath>..\..\Libs\Unity.TextMeshPro.dll</HintPath>
     </Reference>
-    <Reference Include="ui_lib">
-      <HintPath>..\..\Libs\ui_lib.dll</HintPath>
+    <Reference Include="gui_framework">
+      <HintPath>..\..\Libs\gui_framework.dll</HintPath>
     </Reference>
     <Reference Include="0Harmony">
       <HintPath>..\..\Libs\0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="BepInEx.Harmony">
       <HintPath>..\..\Libs\BepInEx.Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="SoftReferenceableAssets_publicized">
+      <HintPath>..\..\Libs\SoftReferenceableAssets_publicized.dll</HintPath>
     </Reference>
     <Reference Include="assembly_valheim_publicized">
       <HintPath>..\..\Libs\assembly_valheim_publicized.dll</HintPath>

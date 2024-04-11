@@ -1,3 +1,8 @@
+- v1.57
+  - Fixes data from profile folder not being loaded.
+  - Fixes `tweak_runestone compendium` not working.
+  - Fixed for the new game version.
+
 - v1.56
   - Adds new default value groups containing all objects of a certain type.
   - Changes the `ignore` parameter to also prevent the connecting with the `connect` parameter.

@@ -1,10 +1,10 @@
 {
   "name": "World_Edit_Commands",
-  "version_number": "1.56.0",
+  "version_number": "1.57.0",
   "website_url": "https://github.com/JereKuusela/valheim-world_edit_commands",
   "description": "Adds new client side commands for advanced world editing.",
   "dependencies": [
     "denikson-BepInExPack_Valheim-5.4.2202",
-    "JereKuusela-Server_devcommands-1.76.0"
+    "JereKuusela-Server_devcommands-1.77.0"
   ]
 }

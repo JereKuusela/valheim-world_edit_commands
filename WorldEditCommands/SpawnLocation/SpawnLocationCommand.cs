@@ -16,11 +16,11 @@ public class SpawnLocationCommand
       var obj = ZoneSystem.instance;
       var name = args[1];
       var location = obj.GetLocation(name.GetStableHashCode()) ?? throw new InvalidOperationException($"Can't find location {name}.");
-      if (location.m_prefab == null)
+      if (!location.m_prefab.IsValid)
         throw new InvalidOperationException($"Can't find prefab for location {name}.");
       var seed = UnityEngine.Random.Range(0, 99999);
       var dungeonSeed = int.MinValue;
-      var relativeAngle = (float)UnityEngine.Random.Range(0, 16) * 22.5f;
+      var relativeAngle = UnityEngine.Random.Range(0, 16) * 22.5f;
       var baseAngle = 0f;
       var relativePosition = Vector3.zero;
       var basePosition = Vector3.zero;

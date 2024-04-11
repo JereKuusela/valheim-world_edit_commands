@@ -8,8 +8,8 @@ namespace Data;
 
 public class DataLoading
 {
-  private static readonly string GamePath = Path.Combine("BepInEx", "config", "data");
-  private static readonly string ProfilePath = Path.Combine(Paths.ConfigPath, "config", "data");
+  private static readonly string GamePath = Path.GetFullPath(Path.Combine("BepInEx", "config", "data"));
+  private static readonly string ProfilePath = Path.GetFullPath(Path.Combine(Paths.ConfigPath, "data"));
 
   // Each file can have multiple data entries so we need to load them all.
   public static readonly Dictionary<int, DataEntry> Data = [];
@@ -36,7 +36,8 @@ public class DataLoading
     Data.Clear();
     DataKeys.Clear();
     ValueGroups.Clear();
-    var files = Directory.GetFiles(GamePath, "*.yaml").Concat(Directory.GetFiles(ProfilePath, "*.yaml")).ToArray();
+    var files = Directory.GetFiles(GamePath, "*.yaml").Concat(Directory.GetFiles(ProfilePath, "*.yaml")).
+      Select(Path.GetFullPath).Distinct().ToArray();
     foreach (var file in files)
     {
       var yaml = Yaml.LoadList<DataData>(file);
@@ -113,8 +114,10 @@ public class DataLoading
         DefaultValueGroups[hash] = [.. ComponentInfo.PrefabsByComponent(type.Name)];
       }
       // Some key codes are hardcoded for legacy reasons.
-      DefaultValueGroups[CreatureHash] = DefaultValueGroups[HumanoidHash];
-      DefaultValueGroups[StructureHash] = DefaultValueGroups[WearNTearHash];
+      if (DefaultValueGroups.ContainsKey(HumanoidHash))
+        DefaultValueGroups[CreatureHash] = DefaultValueGroups[HumanoidHash];
+      if (DefaultValueGroups.ContainsKey(WearNTearHash))
+        DefaultValueGroups[StructureHash] = DefaultValueGroups[WearNTearHash];
     }
     foreach (var kvp in DefaultValueGroups)
     {
