@@ -21,6 +21,13 @@ public class DataHelper
     Destroy(existing);
     return newZdo;
   }
+  public static ZDO Regen(ZDO existing, FakeZDO data)
+  {
+    var newZdo = data.Create();
+    ZNetScene.instance.CreateObject(newZdo);
+    Destroy(existing);
+    return newZdo;
+  }
   public static void Destroy(ZDO zdo)
   {
     zdo.SetOwner(ZDOMan.instance.m_sessionID);

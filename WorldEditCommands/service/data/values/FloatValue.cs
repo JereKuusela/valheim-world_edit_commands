@@ -57,6 +57,7 @@ public class FloatValue(string[] values) : AnyValue(values), IFloatValue
         allNull = false;
         if (Helper.Approx(parsed.Value, value))
           return true;
+        continue;
       }
       var split = v.Split(';');
       if (split.Length < 2)

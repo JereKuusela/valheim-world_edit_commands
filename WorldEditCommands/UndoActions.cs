@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Data;
 using ServerDevcommands;
-using Service;
 using UnityEngine;
 namespace WorldEditCommands;
 
@@ -37,13 +36,10 @@ public class UndoHelper
 }
 
 
-public class UndoRemove : MonoBehaviour, IUndoAction
+public class UndoRemove(IEnumerable<FakeZDO> zdos) : MonoBehaviour, IUndoAction
 {
-  private FakeZDO[] Zdos;
-  public UndoRemove(IEnumerable<FakeZDO> zdos)
-  {
-    Zdos = zdos.ToArray();
-  }
+  private FakeZDO[] Zdos = zdos.ToArray();
+
   public string Undo()
   {
     Zdos = Zdos.Select(UndoHelper.Place).ToArray();
@@ -71,8 +67,8 @@ public class EditData
     Current = new(Zdo);
   }
   public ZDO Zdo;
-  public PlainDataEntry Previous;
-  public PlainDataEntry Current;
+  public FakeZDO Previous;
+  public FakeZDO Current;
 }
 public class UndoEdit(IEnumerable<EditData> data) : MonoBehaviour, IUndoAction
 {

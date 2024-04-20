@@ -57,6 +57,7 @@ public class LongValue(string[] values) : AnyValue(values), ILongValue
         allNull = false;
         if (parsed.Value == value)
           return true;
+        continue;
       }
       var split = v.Split(';');
       if (split.Length < 2)

@@ -4,15 +4,11 @@ using Data;
 using HarmonyLib;
 using ServerDevcommands;
 namespace WorldEditCommands;
-public class UndoSpawn : IUndoAction
+public class UndoSpawn(IEnumerable<ZDO> zdos, string command) : IUndoAction
 {
-  private FakeZDO[] ZDOs;
-  private readonly string Command;
-  public UndoSpawn(IEnumerable<ZDO> zdos, string command)
-  {
-    ZDOs = zdos.Select(zdo => new FakeZDO(zdo)).ToArray();
-    Command = command;
-  }
+  private FakeZDO[] ZDOs = zdos.Select(zdo => new FakeZDO(zdo)).ToArray();
+  private readonly string Command = command;
+
   public string Undo()
   {
     var message = $"Removed {UndoHelper.Print(ZDOs)}";

@@ -1,3 +1,7 @@
+- v1.58
+  - Fixes possible error when matching float, int or long values.
+  - Fixes undo not reverting `object move` and `object rotate` commands.
+
 - v1.57
   - Fixes data from profile folder not being loaded.
   - Fixes `tweak_runestone compendium` not working.
@@ -28,13 +32,3 @@
   - Improves reliability of the undo feature.
   - Replaces `object copy` command, now it copies the object id.
   - Removes `object data` as obsolete.
-
-- v1.53
-  - Fixes data not always being synced on servers.
-
-- v1.52
-  - Adds a parameter `chance` to the command `terrain`.
-  - Adds a parameter `components` to the command `object`.
-  - Adds support for multiple values to the parameter `type`.
-  - Changes the parameter `type` to use actual component names instead of some hardcoded values.
-  - Fixes the `field` parameters being applied to all objects without checking the components.

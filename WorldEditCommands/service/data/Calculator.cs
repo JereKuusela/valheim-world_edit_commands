@@ -82,7 +82,7 @@ public class Calculator
   {
     try
     {
-      return (long?)EvaluateDouble(expression);
+      return EvalLong(expression);
     }
     catch
     {

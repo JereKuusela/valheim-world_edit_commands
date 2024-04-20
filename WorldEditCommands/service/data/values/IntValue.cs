@@ -57,6 +57,7 @@ public class IntValue(string[] values) : AnyValue(values), IIntValue
         allNull = false;
         if (parsed.Value == value)
           return true;
+        continue;
       }
       var split = v.Split(';');
       if (split.Length < 2)
