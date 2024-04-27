@@ -14,13 +14,13 @@ public class IntValue(string[] values) : AnyValue(values), IIntValue
     if (value == null)
       return null;
     if (!value.Contains(";"))
-      return Parse.IntNull(value);
+      return Calculator.EvaluateInt(value);
     // Format for range is "start;end;step;statement".
     var split = value.Split(';');
     if (split.Length < 2)
       throw new System.InvalidOperationException($"Invalid range format: {value}");
-    var min = Parse.IntNull(split[0]);
-    var max = Parse.IntNull(split[1]);
+    var min = Calculator.EvaluateInt(split[0]);
+    var max = Calculator.EvaluateInt(split[1]);
     if (min == null || max == null)
       return null;
     int? roll;
@@ -28,7 +28,7 @@ public class IntValue(string[] values) : AnyValue(values), IIntValue
       roll = Random.Range(min.Value, max.Value + 1);
     else
     {
-      var step = Parse.IntNull(split[2]);
+      var step = Calculator.EvaluateInt(split[2]);
       if (step == null)
         roll = Random.Range(min.Value, max.Value + 1);
       else
@@ -40,7 +40,7 @@ public class IntValue(string[] values) : AnyValue(values), IIntValue
     }
     if (split.Length < 4)
       return roll;
-    return Parse.IntNull(split[3].Replace("<value>", roll.ToString()));
+    return Calculator.EvaluateInt(split[3].Replace("<value>", roll.ToString()));
   }
   public bool? Match(Dictionary<string, string> pars, int value)
   {

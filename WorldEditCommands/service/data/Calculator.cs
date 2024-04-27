@@ -10,7 +10,7 @@ public class Calculator
   {
     try
     {
-      return (int?)EvaluateDouble(expression);
+      return (int?)EvaluateLong(expression);
     }
     catch
     {
@@ -30,20 +30,6 @@ public class Calculator
   }
   private static double EvaluateDouble(string expression)
   {
-    var mult = expression.Split('*');
-    if (mult.Length > 1)
-    {
-      var sum = 1d;
-      foreach (var m in mult) sum *= EvaluateDouble(m);
-      return sum;
-    }
-    var div = expression.Split('/');
-    if (div.Length > 1)
-    {
-      var sum = EvaluateDouble(div[0]);
-      for (var i = 1; i < div.Length; ++i) sum /= EvaluateDouble(div[i]);
-      return sum;
-    }
     var plus = expression.Split('+');
     if (plus.Length > 1)
     {
@@ -68,6 +54,20 @@ public class Calculator
       }
       return sum ?? 0;
     }
+    var mult = expression.Split('*');
+    if (mult.Length > 1)
+    {
+      var sum = 1d;
+      foreach (var m in mult) sum *= EvaluateDouble(m);
+      return sum;
+    }
+    var div = expression.Split('/');
+    if (div.Length > 1)
+    {
+      var sum = EvaluateDouble(div[0]);
+      for (var i = 1; i < div.Length; ++i) sum /= EvaluateDouble(div[i]);
+      return sum;
+    }
     try
     {
       return double.Parse(expression.Trim(), NumberFormatInfo.InvariantInfo);
@@ -91,20 +91,6 @@ public class Calculator
   }
   private static long EvalLong(string expression)
   {
-    var mult = expression.Split('*');
-    if (mult.Length > 1)
-    {
-      var sum = 1L;
-      foreach (var m in mult) sum *= EvalLong(m);
-      return sum;
-    }
-    var div = expression.Split('/');
-    if (div.Length > 1)
-    {
-      var sum = EvalLong(div[0]);
-      for (var i = 1; i < div.Length; ++i) sum /= EvalLong(div[i]);
-      return sum;
-    }
     var plus = expression.Split('+');
     if (plus.Length > 1)
     {
@@ -128,6 +114,20 @@ public class Calculator
         else sum -= EvalLong(minus[i]);
       }
       return sum ?? 0;
+    }
+    var mult = expression.Split('*');
+    if (mult.Length > 1)
+    {
+      var sum = 1L;
+      foreach (var m in mult) sum *= EvalLong(m);
+      return sum;
+    }
+    var div = expression.Split('/');
+    if (div.Length > 1)
+    {
+      var sum = EvalLong(div[0]);
+      for (var i = 1; i < div.Length; ++i) sum /= EvalLong(div[i]);
+      return sum;
     }
     try
     {

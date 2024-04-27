@@ -14,13 +14,13 @@ public class LongValue(string[] values) : AnyValue(values), ILongValue
     if (value == null)
       return null;
     if (!value.Contains(";"))
-      return Parse.LongNull(value);
+      return Calculator.EvaluateLong(value);
     // Format for range is "start;end;step;statement".
     var split = value.Split(';');
     if (split.Length < 2)
       throw new System.InvalidOperationException($"Invalid range format: {value}");
-    var min = Parse.LongNull(split[0]);
-    var max = Parse.LongNull(split[1]);
+    var min = Calculator.EvaluateLong(split[0]);
+    var max = Calculator.EvaluateLong(split[1]);
     if (min == null || max == null)
       return null;
     long? roll;
@@ -28,7 +28,7 @@ public class LongValue(string[] values) : AnyValue(values), ILongValue
       roll = (long?)(Random.value * (max.Value - min.Value) + min.Value);
     else
     {
-      var step = Parse.LongNull(split[2]);
+      var step = Calculator.EvaluateLong(split[2]);
       if (step == null)
         roll = (long?)(Random.value * (max.Value - min.Value) + min.Value);
       else
@@ -40,7 +40,7 @@ public class LongValue(string[] values) : AnyValue(values), ILongValue
     }
     if (split.Length < 4)
       return roll;
-    return Parse.LongNull(split[3].Replace("<value>", roll.ToString()));
+    return Calculator.EvaluateLong(split[3].Replace("<value>", roll.ToString()));
   }
   public bool? Match(Dictionary<string, string> pars, long value)
   {

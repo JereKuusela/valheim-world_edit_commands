@@ -1,3 +1,6 @@
+- v1.59
+  - Fixes arithmetics not working for int and long values.
+
 - v1.58
   - Fixes possible error when matching float, int or long values.
   - Fixes undo not reverting `object move` and `object rotate` commands.
