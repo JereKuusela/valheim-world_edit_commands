@@ -78,7 +78,7 @@ public partial class Terrain
     void action(TerrainComp compiler, int index, TerrainNode node)
     {
       var multiplier = CalculateSlope(angle, node.DistanceWidth, node.DistanceDepth) * CalculateSmooth(smooth, node.Distance);
-      compiler.m_levelDelta[index] += (altitude - compiler.m_hmap.m_heights[index]) + multiplier * amount / 2f;
+      compiler.m_levelDelta[index] += altitude - compiler.m_hmap.m_heights[index] + multiplier * amount / 2f;
       compiler.m_smoothDelta[index] = 0f;
       compiler.m_modifiedHeight[index] = compiler.m_levelDelta[index] != 0f;
     }

@@ -146,15 +146,12 @@ public partial class Terrain
 
   public static void GetPaintNodesWithRect(List<PaintNode> nodes, TerrainComp compiler, Vector3 centerPos, Range<float> width, Range<float> depth, float angle)
   {
-    var max = compiler.m_width;
+    var max = compiler.m_width + 1;
     for (int x = 0; x < max; x++)
     {
       for (int z = 0; z < max; z++)
       {
         var nodePos = VertexToWorld(compiler.m_hmap, x, z);
-        // Painting is applied from the corner of the node, not the center.
-        nodePos.x += 0.5f;
-        nodePos.z += 0.5f;
         var rawDx = nodePos.x - centerPos.x;
         var rawDz = nodePos.z - centerPos.z;
         var dx = GetX(rawDx, rawDz, angle);
@@ -178,15 +175,12 @@ public partial class Terrain
 
   public static void GetPaintNodesWithCircle(List<PaintNode> nodes, TerrainComp compiler, Vector3 centerPos, Range<float> radius)
   {
-    var max = compiler.m_width;
+    var max = compiler.m_width + 1;
     for (int x = 0; x < max; x++)
     {
       for (int z = 0; z < max; z++)
       {
         var nodePos = VertexToWorld(compiler.m_hmap, x, z);
-        // Painting is applied from the corner of the node, not the center.
-        nodePos.x += 0.5f;
-        nodePos.z += 0.5f;
         var dx = nodePos.x - centerPos.x;
         var dz = nodePos.z - centerPos.z;
         var distance = Utils.DistanceXZ(centerPos, nodePos);

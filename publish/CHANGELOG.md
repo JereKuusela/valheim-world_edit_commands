@@ -1,3 +1,6 @@
+- v1.60
+  - Fixes for the new game version.
+
 - v1.59
   - Fixes arithmetics not working for int and long values.
 
