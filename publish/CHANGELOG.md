@@ -1,3 +1,6 @@
+- v1.61
+  - No real changes, just compatibility for Expand World Prefabs data changes.
+
 - v1.60
   - Fixes for the new game version.
 

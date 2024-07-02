@@ -8,6 +8,10 @@ public class DataData
   [DefaultValue(null)]
   public string? name;
   [DefaultValue(null)]
+  public string? position;
+  [DefaultValue(null)]
+  public string? rotation;
+  [DefaultValue(null)]
   public string? connection;
   [DefaultValue(null)]
   public string[]? bools;
