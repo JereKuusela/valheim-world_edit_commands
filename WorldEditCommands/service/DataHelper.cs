@@ -136,7 +136,7 @@ public class DataHelper
     var strings = ZDOExtraData.GetStrings(id).Select(kvp => $"{ZDOKeys.Convert(kvp.Key)}: {kvp.Value} (string)");
     var longs = ZDOExtraData.GetLongs(id).Select(kvp => $"{ZDOKeys.Convert(kvp.Key)}: {kvp.Value} (long)");
     var byteArrays = ZDOExtraData.GetByteArrays(id).Select(kvp => $"{ZDOKeys.Convert(kvp.Key)}: {Convert.ToBase64String(kvp.Value)} (byte array)");
-    return lines.Concat(vecs).Concat(ints).Concat(floats).Concat(quats).Concat(strings).Concat(longs).Concat(byteArrays).ToList();
+    return [.. lines, .. vecs, .. ints, .. floats, .. quats, .. strings, .. longs, .. byteArrays];
   }
   public static void Init(GameObject obj, Vector3 pos, Quaternion rot, Vector3? scale, DataEntry? data, Dictionary<string, string> pars)
   {

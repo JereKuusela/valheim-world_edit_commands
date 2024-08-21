@@ -231,7 +231,7 @@ public class DataEntry
       Items = data.items.Select(item => new ItemValue(item, RequiredParameters)).ToList();
     }
     if (!string.IsNullOrWhiteSpace(data.containerSize))
-      ContainerSize = Parse.Vector2Int(data.containerSize);
+      ContainerSize = Parse.Vector2Int(data.containerSize!);
     if (!string.IsNullOrWhiteSpace(data.itemAmount))
       ItemAmount = DataValue.Int(data.itemAmount!, RequiredParameters);
     if (componentsToAdd.Count > 0)
@@ -243,7 +243,7 @@ public class DataEntry
     }
     if (!string.IsNullOrWhiteSpace(data.connection))
     {
-      var split = Parse.SplitWithEmpty(data.connection);
+      var split = Parse.SplitWithEmpty(data.connection!);
       if (split.Length > 1)
       {
         var types = split.Take(split.Length - 1).ToList();

@@ -121,7 +121,7 @@ public class TweakAltarCommand : TweakCommand
     AutoComplete.Add("itemstandrange", (int index) => index == 0 ? ParameterInfo.Create("itemstandrange=<color=yellow>meters</color>", "Radius for included item stands. No value to reset.") : ParameterInfo.None);
     AutoComplete.Add("text", (int index) => index == 0 ? ParameterInfo.Create("text=<color=yellow>text</color>", "Use text. Use _ as the space. No value to reset.") : ParameterInfo.None);
     AutoComplete.Add("name", (int index) => index == 0 ? ParameterInfo.Create("name=<color=yellow>text</color>", "Display name. Use _ as the space. No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("faction", (int index) => index == 0 ? Enum.GetNames(typeof(Character.Faction)).ToList() : ParameterInfo.None);
+    AutoComplete.Add("faction", (int index) => index == 0 ? [.. Enum.GetNames(typeof(Character.Faction))] : ParameterInfo.None);
     AutoComplete.Add("itemstandprefix", (int index) => index == 0 ? ParameterInfo.Create("itemstandprefix=<color=yellow>text</color>", "Prefix for included item stands. No value to reset.") : ParameterInfo.None);
     AutoComplete.Add("globalkey", (int index) => index == 0 ? ParameterInfo.Create("text=<color=yellow>key</color>", "Sets the global key when used. Start with - to remove the key. No value to reset.") : ParameterInfo.None);
     AutoComplete.Add("spawn", (int index) => index == 0 ? ParameterInfo.ObjectIds : ParameterInfo.None);

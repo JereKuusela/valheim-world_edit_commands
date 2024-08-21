@@ -175,10 +175,11 @@ public class DataCommand
     EditedInfo.Clear();
 
     var count = views.Count();
+    var claimOwner = Parameters.Operations.Count > 1 || !Parameters.Operations.ContainsKey("print");
     foreach (var view in views)
     {
       var zdo = view.GetZDO();
-      if (zdo.GetPrefab() != Hash.Player)
+      if (claimOwner && zdo.GetPrefab() != Hash.Player)
         view.ClaimOwnership();
 
       foreach (var operation in Parameters.Operations)

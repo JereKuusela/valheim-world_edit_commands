@@ -63,7 +63,7 @@ public class TweakRunestoneCommand : TweakCommand
     {
       if (index == 0) return ParameterInfo.LocationIds;
       if (index == 1) return ParameterInfo.Create("discover=id,<color=yellow>pinName</color>,pinType,openMap", "Pin name on the map.");
-      if (index == 2) return Enum.GetNames(typeof(Minimap.PinType)).ToList();
+      if (index == 2) return [.. Enum.GetNames(typeof(Minimap.PinType))];
       if (index == 3) return ParameterInfo.Create("discover=id,pinName,pinType,<color=yellow>openMap</color>", "1 = automatically open the map.");
       return ParameterInfo.None;
     });

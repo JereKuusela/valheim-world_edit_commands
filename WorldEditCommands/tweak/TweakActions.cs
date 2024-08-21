@@ -28,7 +28,7 @@ public enum Fall
   Terrain,
   Solid
 }
-public enum BossAffix
+public enum Enum_CLLC_Boss
 {
   None,
   Reflective,
@@ -38,6 +38,26 @@ public enum BossAffix
   Elementalist,
   Enraged,
   Twin
+}
+public enum Enum_CLLC_Infusion
+{
+  None,
+  Lightning,
+  Fire,
+  Frost,
+  Poison,
+  Chaos,
+  Spirit
+}
+public enum Enum_CLLC_Effect
+{
+  None,
+  Aggressive,
+  Quick,
+  Regenerating,
+  Curious,
+  Splitting,
+  Armored
 }
 
 public static class TweakActions
@@ -226,15 +246,35 @@ public static class TweakActions
     Actions.SetInt(view, val, Hash.Smoke);
     return $"¤ smoke set to {Print(value)}.";
   }
-  public static string CLLC(ZNetView view, string[] values)
+  public static string CLLC_BossEffect(ZNetView view, string[] values)
   {
-    var cllc = BossAffix.None;
+    var cllc = Enum_CLLC_Boss.None;
     foreach (var value in values)
     {
-      if (Enum.TryParse<BossAffix>(value, true, out var affix)) cllc |= affix;
+      if (Enum.TryParse<Enum_CLLC_Boss>(value, true, out var v)) cllc |= v;
     }
-    Actions.SetInt(view, (int)cllc, Hash.CLLC_Affix);
-    return $"¤ affix set to {Print(cllc)}.";
+    Actions.SetInt(view, (int)cllc, Hash.CLLC_BossEffect);
+    return $"¤ CLLC affix set to {Print(cllc)}.";
+  }
+  public static string CLLC_Effect(ZNetView view, string[] values)
+  {
+    var cllc = Enum_CLLC_Effect.None;
+    foreach (var value in values)
+    {
+      if (Enum.TryParse<Enum_CLLC_Effect>(value, true, out var v)) cllc |= v;
+    }
+    Actions.SetInt(view, (int)cllc, Hash.CLLC_Effect);
+    return $"¤ CLLC effect set to {Print(cllc)}.";
+  }
+  public static string CLLC_Infusion(ZNetView view, string[] values)
+  {
+    var cllc = Enum_CLLC_Infusion.None;
+    foreach (var value in values)
+    {
+      if (Enum.TryParse<Enum_CLLC_Infusion>(value, true, out var v)) cllc |= v;
+    }
+    Actions.SetInt(view, (int)cllc, Hash.CLLC_Infusion);
+    return $"¤ CLLC infusion set to {Print(cllc)}.";
   }
   public static string SpawnData(ZNetView view, string? value)
   {

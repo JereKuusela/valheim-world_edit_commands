@@ -141,8 +141,6 @@ public class ObjectParameters : SharedObjectParameters
       throw new InvalidOperationException("Remove can't be used with other operations.");
     if (Operations.Count == 0)
       throw new InvalidOperationException("Missing the operation.");
-    if (Operations.Contains("remove") && IncludedIds.Length == 0 && Components.Count == 0 && (Radius != null || Width != null || Depth != null || Connect))
-      throw new InvalidOperationException("Area remove can't be used without <color=yellow>id</color> or <color=yellow>type</color>.");
     if (Radius != null && Depth != null)
       throw new InvalidOperationException($"<color=yellow>circle</color> and <color=yellow>rect</color> parameters can't be used together.");
     if (Radius != null && Connect)

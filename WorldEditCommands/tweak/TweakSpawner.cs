@@ -98,7 +98,7 @@ public class TweakSpawnerCommand : TweakCommand
     AutoComplete.Add("spawnhealth", (int index) => index == 0 ? ParameterInfo.Create("spawnhealth=<color=yellow>number</color>", "Overrides the creature health. No value to reset.") : ParameterInfo.None);
     AutoComplete.Add("respawn", (int index) => ParameterInfo.Create("respawn=<color=yellow>seconds</color>", "Sets the respawn time. No value to reset."));
     AutoComplete.Add("levelchance", (int index) => index == 0 ? ParameterInfo.Create("levelchance=<color=yellow>percent</color>", "Level up chance (from 0 to 100). No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("faction", (int index) => index == 0 ? Enum.GetNames(typeof(Character.Faction)).ToList() : ParameterInfo.None);
+    AutoComplete.Add("faction", (int index) => index == 0 ? [.. Enum.GetNames(typeof(Character.Faction))] : ParameterInfo.None);
     AutoComplete.Add("triggerdistance", (int index) => index == 0 ? ParameterInfo.Create("triggerdistance=<color=yellow>meters</color>", "Player distance to activate the spawner. No value to reset.") : ParameterInfo.None);
     AutoComplete.Add("spawnradius", (int index) => index == 0 ? ParameterInfo.Create("spawnradius=<color=yellow>meters</color>", "Maximum spawn radius. No value to reset.") : ParameterInfo.None);
     AutoComplete.Add("nearradius", (int index) => index == 0 ? ParameterInfo.Create("nearradius=<color=yellow>meters</color>", "Radius for <color=yellow>maxnear</color>. No value to reset.") : ParameterInfo.None);

@@ -7,7 +7,11 @@ namespace Data;
 
 public class Vector3Value(string[] values) : AnyValue(values), IVector3Value
 {
-  public Vector3? Get(Dictionary<string, string> pars) => Parse.VectorXZYNull(GetValue(pars));
+  public Vector3? Get(Dictionary<string, string> pars)
+  {
+    var v = GetValue(pars);
+    return v == null ? null : Parse.VectorXZYNull(v);
+  }
   public bool? Match(Dictionary<string, string> pars, Vector3 value)
   {
     var values = GetAllValues(pars);

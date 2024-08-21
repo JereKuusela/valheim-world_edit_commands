@@ -1,3 +1,10 @@
+- v1.62
+  - Adds some missing zdo keys.
+  - Adds normal ZDO data keys to fields.
+  - Adds support for setting CLLC infusion with the command `tweak_creature infusion=`.
+  - Fixes the `data print` command taking object ownership.
+  - Removes the id requirement when using the `object remove` command.
+
 - v1.61
   - No real changes, just compatibility for Expand World Prefabs data changes.
 

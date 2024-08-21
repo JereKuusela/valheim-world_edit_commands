@@ -4,8 +4,10 @@ using ServerDevcommands;
 
 namespace WorldEditCommands;
 
-public class TweakBeehiveCommand : TweakCommand {
-  protected override string DoOperation(ZNetView view, string operation, string? value) {
+public class TweakBeehiveCommand : TweakCommand
+{
+  protected override string DoOperation(ZNetView view, string operation, string? value)
+  {
     if (operation == "spawn")
       return TweakActions.Spawn(view, Hash.Spawn, value);
     if (operation == "spawnoffset")
@@ -30,7 +32,8 @@ public class TweakBeehiveCommand : TweakCommand {
       return TweakActions.TextSpace(view, value);
     throw new NotImplementedException();
   }
-  protected override string DoOperation(ZNetView view, string operation, float? value) {
+  protected override string DoOperation(ZNetView view, string operation, float? value)
+  {
     if (operation == "speed")
       return TweakActions.Speed(view, value);
     if (operation == "maxcover")
@@ -38,7 +41,8 @@ public class TweakBeehiveCommand : TweakCommand {
     throw new NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, int? value) {
+  protected override string DoOperation(ZNetView view, string operation, int? value)
+  {
     if (operation == "maxamount")
       return TweakActions.MaxAmount(view, value);
     if (operation == "spawncondition")
@@ -46,21 +50,25 @@ public class TweakBeehiveCommand : TweakCommand {
     throw new NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, string[] value) {
+  protected override string DoOperation(ZNetView view, string operation, string[] value)
+  {
     if (operation == "spawneffect")
       return TweakActions.OutputEffect(view, value);
     throw new NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, bool? value) {
+  protected override string DoOperation(ZNetView view, string operation, bool? value)
+  {
     throw new NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, long? value) {
+  protected override string DoOperation(ZNetView view, string operation, long? value)
+  {
     throw new NotImplementedException();
   }
 
-  public TweakBeehiveCommand() {
+  public TweakBeehiveCommand()
+  {
     Component = typeof(Beehive);
     ComponentName = "beehive";
     SupportedOperations.Add("maxamount", typeof(int));
@@ -90,7 +98,7 @@ public class TweakBeehiveCommand : TweakCommand {
     AutoComplete.Add("textsleep", (int index) => index == 0 ? ParameterInfo.Create("textsleep=<color=yellow>text</color>", "Text when sleeping. No value to reset.") : ParameterInfo.None);
     AutoComplete.Add("textspace", (int index) => index == 0 ? ParameterInfo.Create("textspace=<color=yellow>text</color>", "Text when covered. No value to reset.") : ParameterInfo.None);
     AutoComplete.Add("spawn", (int index) => index == 0 ? ParameterInfo.ItemIds : ParameterInfo.None);
-    AutoComplete.Add("biome", (int index) => Enum.GetNames(typeof(Heightmap.Biome)).ToList());
+    AutoComplete.Add("biome", (int index) => [.. Enum.GetNames(typeof(Heightmap.Biome))]);
     AutoComplete.Add("speed", (int index) => index == 0 ? ParameterInfo.Create("speed=<color=yellow>number</color>", "Production speed in seconds. No value to reset.") : ParameterInfo.None);
     AutoComplete.Add("spawncondition", (int index) => index == 0 ? ParameterInfo.Create("spawncondition=<color=yellow>flag</color>", "Sum up: 1 = produces also during the night.") : ParameterInfo.None);
     AutoComplete.Add("coveroffset", (int index) => ParameterInfo.XZY("coveroffset", "Offset for calculating cover.", index));

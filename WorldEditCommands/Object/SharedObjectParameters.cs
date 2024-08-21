@@ -99,10 +99,10 @@ public class SharedObjectParameters
         if (values.Length < 3) continue;
         var prefab = FieldAutoComplete.PrefabFromCommand(string.Join(" ", args));
         var component = FieldAutoComplete.RealComponent(prefab, values[0]);
-        var field = FieldAutoComplete.RealField(component, values[1]);
+        var field = FieldAutoComplete.RealField(component, values[1], out bool zdoField);
         var fieldValue = string.Join(",", values.Skip(2));
-        var type = FieldAutoComplete.GetType(component, field);
-        var key = $"{component}.{field}";
+        var type = FieldAutoComplete.GetType(component, field, zdoField);
+        var key = zdoField ? field : $"{component}.{field}";
         if (type == typeof(int))
           Fields.Add(key, Parse.Int(fieldValue));
         else if (type == typeof(float))
@@ -110,11 +110,15 @@ public class SharedObjectParameters
         else if (type == typeof(string))
           Fields.Add(key, fieldValue);
         else if (type == typeof(bool))
-          Fields.Add(key, bool.Parse(fieldValue) ? 1 : 0);
+          Fields.Add(key, fieldValue == "1" || fieldValue == "true" || fieldValue == "True" ? 1 : 0);
         else if (type == typeof(Vector3))
           Fields.Add(key, Parse.VectorXZY(values, 2));
+        else if (type == typeof(Quaternion))
+          Fields.Add(key, Parse.AngleYXZ(values, 2));
         else if (type == typeof(GameObject) || type == typeof(ItemDrop) || type == typeof(EffectList))
           Fields.Add(key, fieldValue);
+        else if (type == typeof(ObjectHash) || type == typeof(LocationHash) || type == typeof(RoomHash))
+          Fields.Add(key, fieldValue.GetStableHashCode());
         else if (type.IsEnum)
           Fields.Add(key, ToEnum(type, fieldValue));
         else if (type == typeof(void))
@@ -140,7 +144,7 @@ public class SharedObjectParameters
       throw new InvalidOperationException($"Failed to parse enum {type.Name} with values {string.Join(", ", list)}");
     }
   }
-  public static List<string> ToList(string str, bool removeEmpty = true) => Split(str, removeEmpty).ToList();
+  public static List<string> ToList(string str, bool removeEmpty = true) => [.. Split(str, removeEmpty)];
 
   public static string[] Split(string arg, bool removeEmpty = true, char split = ',') => arg.Split(split).Select(s => s.Trim()).Where(s => !removeEmpty || s != "").ToArray();
 }

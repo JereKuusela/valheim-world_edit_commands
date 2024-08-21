@@ -117,7 +117,7 @@ public class SpawnObjectCommand
       Helper.ArgsCheck(args, 2, "Missing object id.");
       var prefabName = args[1];
       var prefab = Helper.GetPrefab(prefabName);
-      if (!prefab) throw new InvalidOperationException("Unable to find the object.");
+      if (prefab == null) throw new InvalidOperationException("Unable to find the object.");
 
       SpawnObjectParameters pars = new(args);
       var itemDrop = prefab.GetComponent<ItemDrop>();

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
 using Data;
 using ServerDevcommands;
 namespace WorldEditCommands;
@@ -27,7 +26,7 @@ public class DataAutoComplete
       "par",
       ..DataParameters.SupportedOperations.Keys
     ];
-    return parameters.Distinct().OrderBy(s => s).ToList();
+    return [.. parameters.Distinct().OrderBy(s => s)];
   }
   public static NamedOptionsFetchers GetNamedOptions()
   {
@@ -37,6 +36,7 @@ public class DataAutoComplete
       "float",
       "hash",
       "int",
+      "long",
       "quat",
       "string",
       "vec3",

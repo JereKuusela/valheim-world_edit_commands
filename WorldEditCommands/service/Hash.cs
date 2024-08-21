@@ -91,7 +91,9 @@ public static class Hash
   public static int NoRestrict = "override_restrict".GetStableHashCode();
   public static int Boss = "override_boss".GetStableHashCode();
   public static int Smoke = "override_smoke".GetStableHashCode();
-  public static int CLLC_Affix = "CL&LC effect".GetStableHashCode();
+  public static int CLLC_BossEffect = "CL&LC effect".GetStableHashCode();
+  public static int CLLC_Infusion = "CL&LC infusion".GetStableHashCode();
+  public static int CLLC_Effect = "CL&LC effect".GetStableHashCode();
   public static int Unlock = "override_unlock".GetStableHashCode();
   public static int DoorConsume = "override_door_consume".GetStableHashCode();
   public static int DoorNoClose = "override_door_no_close".GetStableHashCode();

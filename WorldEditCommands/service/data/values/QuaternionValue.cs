@@ -7,7 +7,11 @@ namespace Data;
 
 public class QuaternionValue(string[] values) : AnyValue(values), IQuaternionValue
 {
-  public Quaternion? Get(Dictionary<string, string> pars) => Parse.AngleYXZNull(GetValue(pars));
+  public Quaternion? Get(Dictionary<string, string> pars)
+  {
+    var v = GetValue(pars);
+    return v == null ? null : Parse.AngleYXZNull(v);
+  }
   public bool? Match(Dictionary<string, string> pars, Quaternion value)
   {
     var values = GetAllValues(pars);

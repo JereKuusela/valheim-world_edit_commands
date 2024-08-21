@@ -74,7 +74,7 @@ Following parameters are available:
 - `prefab=id`: Replaces the object with the given id.
 - `radius=number` or `radius=min-max`: Radius for included objects. If not given, the hovered object is only affected.
 - `rect=width,depth` or `rect=min-max,min-max`: Area for included objects. If not given, the hovered object is only affected.
-- `remove`: Removes objects. Must use the `id` parameter (`id=*` is ok). Can't be used with other operations.
+- `remove`: Removes objects. Can't be used with other operations.
 - `respawn`: Resets loot chests, pickables and spawn points.
 - `rotate=yaw,roll,pitch`: Rotates objects (degrees). Static objects only update their rotation for other players when they leave the area.
 - `rotate=reset`: Resets object rotation. Static objects only update their rotation for other players when they leave the area.

@@ -43,11 +43,25 @@ public class ZDOKeys
     keys.AddRange(types.SelectMany(t => t.GetFields(BindingFlags.Instance | BindingFlags.Public).Select(f => $"{t.Name}.{f.Name}")));
     keys.AddRange(typeof(ZDOVars).GetFields(BindingFlags.Static | BindingFlags.Public).Select(f => f.Name.Replace("s_", "")));
     keys.AddRange(typeof(ZDOVars).GetFields(BindingFlags.Static | BindingFlags.Public).Select(f => FirstLetterUpper(f.Name.Replace("s_", ""))));
-    for (var i = 0; i < 10; i++)
+    for (var i = 0; i < 20; i++)
     {
       keys.Add($"item{i}");
       keys.Add($"quality{i}");
       keys.Add($"variant{i}");
+      keys.Add($"data_{i}");
+      keys.Add($"data__{i}");
+      keys.Add($"drop_hash{i}");
+      keys.Add($"drop_amount{i}");
+      keys.Add($"slot{i}");
+      keys.Add($"slotstatus{i}");
+      keys.Add($"{i}_item");
+      keys.Add($"pu_id{i}");
+      keys.Add($"pu_name{i}");
+      keys.Add($"Health{i}");
+      keys.Add($"room{i}");
+      keys.Add($"room_pos{i}");
+      keys.Add($"room_rot{i}");
+      keys.Add($"target{i}");
     }
     keys.AddRange(AnimationKeys.Select(k => $"${k}"));
     return [.. keys.Distinct()];
@@ -58,6 +72,7 @@ public class ZDOKeys
     "attachJoint",
     "body_avel",
     "body_vel",
+    "bosscount",
     "emote_oneshot",
     "HaveSaddle",
     "haveTarget",
@@ -81,12 +96,14 @@ public class ZDOKeys
     "CatchID_i",
     "target_u",
     "target_i",
+    "rooms",
     "spawn_id_u",
     "spawn_id_i",
     "parent_id_u",
     "parent_id_i",
     // CLLC mod
     "CL&LC effect",
+    "CL&LC infusion",
     // Structure / Spawner Tweaks
     "override_amount",
     "override_attacks",
@@ -110,6 +127,7 @@ public class ZDOKeys
     "override_event",
     "override_faction",
     "override_fall",
+    "override_far_radius",
     "override_fuel",
     "override_fuel_effect",
     "override_globalkey",
@@ -203,7 +221,12 @@ public class ZDOKeys
     "itemstand_hide",
     "itemstand_offset",
     "itemstand_rotation",
-    "itemstand_scale"];
+    "itemstand_scale",
+    // X Ray vision
+    "steamName",
+    "steamID",
+    "xray_created",
+    ];
 
   private static readonly string[] AnimationKeys = [
     "alert",

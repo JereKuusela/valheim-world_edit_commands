@@ -40,7 +40,7 @@ public class SharedObjectAutoComplete
       "par"
     ];
     parameters.AddRange(namedParameters);
-    return parameters.Distinct().OrderBy(s => s).ToList();
+    return [.. parameters.Distinct().OrderBy(s => s)];
   }
   public static NamedOptionsFetchers WithSharedFetchers(NamedOptionsFetchers fetchers)
   {

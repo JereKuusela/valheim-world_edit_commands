@@ -23,7 +23,7 @@ public class TweakAutoComplete
       "force"
     ];
     parameters.AddRange(namedParameters);
-    return parameters.Distinct().OrderBy(s => s).ToList();
+    return [.. parameters.Distinct().OrderBy(s => s)];
   }
   public static NamedOptionsFetchers WithFilters(NamedOptionsFetchers fetchers)
   {

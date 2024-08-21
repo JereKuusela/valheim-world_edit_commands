@@ -59,7 +59,7 @@ public static class Actions
   public static void SetPrefab(ZNetView obj, string? value, int hash, bool refresh = false)
   {
     if (!obj) return;
-    obj.GetZDO().Set(hash, value == null ? "" : value);
+    obj.GetZDO().Set(hash, value ?? "");
     if (refresh)
       Refresh(obj);
   }
@@ -400,14 +400,20 @@ public static class Actions
   {
     var zdo = view?.GetZDO();
     if (view == null || zdo == null) return 0;
-    zdo.Set(Hash.HasFields, true);
     var components = ComponentInfo.Get(view).ToHashSet();
     var count = 0;
+    var refresh = false;
     foreach (var kvp in fields)
     {
-      var component = kvp.Key.Split('.')[0];
-      if (!components.Contains(component)) continue;
-      zdo.Set("HasFields" + component, true);
+      var split = kvp.Key.Split('.');
+      if (split.Length > 1)
+      {
+        var component = kvp.Key.Split('.')[0];
+        if (!components.Contains(component)) continue;
+        zdo.Set(Hash.HasFields, true);
+        zdo.Set("HasFields" + component, true);
+      }
+      else refresh = true;
       var hash = kvp.Key.GetStableHashCode();
       if (kvp.Value is int v)
         zdo.Set(hash, v);
@@ -421,11 +427,16 @@ public static class Actions
         zdo.Set(hash, vector);
       count += 1;
     }
-    view.LoadFields();
-    if (view.TryGetComponent<WearNTear>(out var wearNTear))
+    if (refresh)
+      Refresh(view);
+    else
     {
-      wearNTear.m_healthPercentage = zdo.GetFloat(ZDOVars.s_health, wearNTear.m_health) / wearNTear.m_health;
-      wearNTear.UpdateVisual(false);
+      view.LoadFields();
+      if (view.TryGetComponent<WearNTear>(out var wearNTear))
+      {
+        wearNTear.m_healthPercentage = zdo.GetFloat(ZDOVars.s_health, wearNTear.m_health) / wearNTear.m_health;
+        wearNTear.UpdateVisual(false);
+      }
     }
     return count;
   }

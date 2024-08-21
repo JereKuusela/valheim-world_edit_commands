@@ -79,7 +79,7 @@ public class ObjectCommand
         if (operation == "ammotype")
           output = Actions.AmmoType(view, pars.AmmoType);
         if (operation == "stars" || operation == "level")
-          output = SetStars(view, Helper.RandomValue(pars.Level) - 1);
+          output = SetStars(view, Helper.RandomValue(pars.Level!) - 1);
         if (operation == "fuel" && pars.Fuel != null)
           output = SetFuel(view, Helper.RandomValue(pars.Fuel));
         if (operation == "creator")

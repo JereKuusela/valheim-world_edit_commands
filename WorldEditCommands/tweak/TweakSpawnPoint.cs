@@ -76,7 +76,7 @@ public class TweakSpawnPointCommand : TweakCommand
     SupportedOperations.Add("faction", typeof(string));
     SupportedOperations.Add("spawndata", typeof(string));
 
-    AutoComplete.Add("faction", (int index) => index == 0 ? Enum.GetNames(typeof(Character.Faction)).ToList() : ParameterInfo.None);
+    AutoComplete.Add("faction", (int index) => index == 0 ? [.. Enum.GetNames(typeof(Character.Faction))] : ParameterInfo.None);
     AutoComplete.Add("minlevel", (int index) => index == 0 ? ParameterInfo.Create("minlevel=<color=yellow>number</color>", "Minimum level (level 1 = no star). No value to reset.") : ParameterInfo.None);
     AutoComplete.Add("maxlevel", (int index) => index == 0 ? ParameterInfo.Create("maxlevel=<color=yellow>number</color>", "Maximum level (level 1 = no star). No value to reset.") : ParameterInfo.None);
     AutoComplete.Add("triggernoise", (int index) => index == 0 ? ParameterInfo.Create("triggernoise=<color=yellow>meters</color>", "Required noise to activate the spawn point. No value to reset.") : ParameterInfo.None);
