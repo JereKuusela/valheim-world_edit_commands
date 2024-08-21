@@ -2,7 +2,8 @@
   - Adds some missing zdo keys.
   - Adds normal ZDO data keys to fields.
   - Adds support for setting CLLC infusion with the command `tweak_creature infusion=`.
-  - Fixes the `data print` command taking object ownership.
+  - Fixes the command `data print` taking object ownership.
+  - Fixes the command `data set` not showing "long" on the autocomplete.
   - Removes the id requirement when using the `object remove` command.
 
 - v1.61

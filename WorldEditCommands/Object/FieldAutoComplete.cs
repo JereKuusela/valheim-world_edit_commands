@@ -282,7 +282,7 @@ public class FieldAutoComplete
         { "2_variant", typeof(int) }
       }
     },{
-      nameof(BaseAI), new Dictionary<string, Type>
+      nameof(AnimalAI), new Dictionary<string, Type>
       {
         { "aggravated", typeof(bool) },
         { "alert", typeof(bool) },
@@ -313,18 +313,6 @@ public class FieldAutoComplete
       {
         { "Locked", typeof(bool) },
         { "visual", typeof(GameObject) },
-      }
-    },{
-      nameof(Character), new Dictionary<string, Type>
-      {
-        { "BodyVelocity", typeof(Vector3) },
-        { "bosscount", typeof(bool) },
-        { "health", typeof(float) },
-        { "level", typeof(int) },
-        { "max_health", typeof(float) },
-        { "noise", typeof(float) },
-        { "RandomSkillFactor", typeof(float) },
-        { "tamed", typeof(bool) },
       }
     },{
       nameof(CharacterAnimEvent), new Dictionary<string, Type>
@@ -433,8 +421,16 @@ public class FieldAutoComplete
     },{
       nameof(Humanoid), new Dictionary<string, Type>
       {
+        { "BodyVelocity", typeof(Vector3) },
+        { "bosscount", typeof(bool) },
+        { "health", typeof(float) },
         { "IsBlocking", typeof(bool) },
+        { "level", typeof(int) },
+        { "max_health", typeof(float) },
+        { "noise", typeof(float) },
+        { "RandomSkillFactor", typeof(float) },
         { "seed", typeof(int) },
+        { "tamed", typeof(bool) },
       }
     },{
       nameof(ItemDrop), new Dictionary<string, Type>
@@ -498,9 +494,19 @@ public class FieldAutoComplete
     },{
       nameof(MonsterAI), new Dictionary<string, Type>
       {
+        { "aggravated", typeof(bool) },
+        { "alert", typeof(bool) },
+        { "bosscount", typeof(bool) },
         { "DespawnInDay", typeof(bool) },
         { "EventCreature", typeof(bool) },
+        { "huntplayer", typeof(bool) },
+        { "lastWorldTime", typeof(long) },
+        { "patrol", typeof(bool) },
+        { "patrolPoint", typeof(Vector3) },
+        { "ShownAlertMessage", typeof(bool) },
         { "sleeping", typeof(bool) },
+        { "spawnpoint", typeof(Vector3) },
+        { "spawntime", typeof(long) },
       }
     },{
       nameof(MusicLocation), new Dictionary<string, Type>
@@ -534,14 +540,18 @@ public class FieldAutoComplete
       nameof(Player), new Dictionary<string, Type>
       {
         { "baseValue", typeof(int) },
+        { "BodyVelocity", typeof(Vector3) },
         { "DebugFly", typeof(bool) },
         { "dodgeinv", typeof(bool) },
         { "dead", typeof(bool) },
+        { "health", typeof(float) },
+        { "IsBlocking", typeof(bool) },
         { "eitr", typeof(float) },
         { "emote", typeof(string) },
         { "emoteID", typeof(int) },
         { "emote_oneshot", typeof(bool) },
         { "inBed", typeof(bool) },
+        { "noise", typeof(float) },
         { "playerID", typeof(long) },
         { "playerName", typeof(string) },
         { "pvp", typeof(bool) },
