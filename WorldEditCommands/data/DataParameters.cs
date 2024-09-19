@@ -6,6 +6,7 @@ public class DataParameters() : BaseParameters(SupportedOperations)
   public static Dictionary<string, Type> SupportedOperations = new()
   {
     ["save"] = typeof(string),
+    ["dump"] = typeof(string),
     ["clear"] = typeof(bool),
     ["load"] = typeof(string[]),
     ["merge"] = typeof(string[]),

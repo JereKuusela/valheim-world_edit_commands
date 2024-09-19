@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Windows.Markup;
 using Data;
 using ServerDevcommands;
@@ -37,6 +39,13 @@ public class DataCommand
       if (value == null || value == "")
         throw new InvalidOperationException("Save: Missing data entry name.");
       DataLoading.Save(new PlainDataEntry(view.GetZDO()), value, false);
+      return $"¤ data saved.";
+    }
+    if (operation == "dump")
+    {
+      if (value == null || value == "")
+        throw new InvalidOperationException("Save: Missing data entry name.");
+      DataLoading.Save(AddDefaultFields(view.GetZDO(), new PlainDataEntry(view.GetZDO())), value, false);
       return $"¤ data saved.";
     }
     throw new NotImplementedException();
@@ -214,6 +223,59 @@ public class DataCommand
         info.Value.Update();
       UndoManager.Add(new UndoEdit(EditedInfo.Select(kvp => kvp.Value)));
     }
+  }
+
+  private static PlainDataEntry AddDefaultFields(ZDO zdo, PlainDataEntry entry)
+  {
+    var prefab = ZNetScene.instance.GetPrefab(zdo.GetPrefab());
+    if (!prefab) return entry;
+    prefab.GetComponentsInChildren(ZNetView.m_tempComponents);
+    foreach (var comp in ZNetView.m_tempComponents)
+    {
+      foreach (FieldInfo fieldInfo in comp.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public))
+      {
+        var hash = StringExtensionMethods.GetStableHashCode(comp.GetType().Name + "." + fieldInfo.Name);
+        var type = fieldInfo.FieldType;
+        if (type == typeof(int))
+        {
+          entry.Ints ??= [];
+          if (!entry.Ints.ContainsKey(hash))
+            entry.Ints[hash] = (int)fieldInfo.GetValue(comp);
+        }
+        if (type == typeof(float))
+        {
+          entry.Floats ??= [];
+          if (!entry.Floats.ContainsKey(hash))
+            entry.Floats[hash] = (float)fieldInfo.GetValue(comp);
+        }
+        if (type == typeof(string))
+        {
+          entry.Strings ??= [];
+          if (!entry.Strings.ContainsKey(hash))
+            entry.Strings[hash] = (string)fieldInfo.GetValue(comp);
+        }
+        if (type == typeof(bool))
+        {
+          entry.Ints ??= [];
+          if (!entry.Ints.ContainsKey(hash))
+            entry.Ints[hash] = (bool)fieldInfo.GetValue(comp) ? 1 : 0;
+        }
+        if (type == typeof(Vector3))
+        {
+          entry.Vecs ??= [];
+          if (!entry.Vecs.ContainsKey(hash))
+            entry.Vecs[hash] = (Vector3)fieldInfo.GetValue(comp);
+        }
+        if (type == typeof(GameObject))
+        {
+          entry.Strings ??= [];
+          if (!entry.Strings.ContainsKey(hash))
+            entry.Strings[hash] = ((GameObject)fieldInfo.GetValue(comp)).name;
+        }
+      }
+    }
+    ZNetView.m_tempComponents.Clear();
+    return entry;
   }
   public const string Name = "data";
   private DataParameters Parameters = new();

@@ -130,9 +130,10 @@ public class FieldAutoComplete
     }
     return prefab;
   }
-  private static List<string> GetComponents(string prefab)
+  public static List<string> GetComponents(string prefab) => GetComponents(prefab.GetStableHashCode());
+  public static List<string> GetComponents(int prefab)
   {
-    if (ZNetScene.instance.m_namedPrefabs.TryGetValue(prefab.GetStableHashCode(), out var gameObject))
+    if (ZNetScene.instance.m_namedPrefabs.TryGetValue(prefab, out var gameObject))
       return [.. gameObject.GetComponentsInChildren<MonoBehaviour>().Select(c => c.GetType().Name), "zdo"];
     return Components;
   }

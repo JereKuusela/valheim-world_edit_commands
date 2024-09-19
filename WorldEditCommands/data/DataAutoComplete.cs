@@ -90,6 +90,9 @@ public class DataAutoComplete
         "save", (int index) => ParameterInfo.Create("save=<color=yellow>name</color>", "Saves the object data to the file.")
       },
       {
+        "dump", (int index) => ParameterInfo.Create("dump=<color=yellow>name</color>", "Saves the object data with default fields to the file.")
+      },
+      {
         "keep", (int index) => ParameterInfo.Create("keep=<color=yellow>key,key,key,...</color>", "Removes all data except given keys.")
       },
       {
