@@ -12,7 +12,7 @@ public class DataParameters() : BaseParameters(SupportedOperations)
     ["merge"] = typeof(string[]),
     ["set"] = typeof(string[]),
     ["remove"] = typeof(string[]),
-    ["keep"] = typeof(string),
+    ["keep"] = typeof(string[]),
     ["print"] = typeof(bool),
     ["copy_raw"] = typeof(string),
 
