@@ -1,3 +1,7 @@
+- v1.63
+  - Adds a new command `data dump` to save data with default fields.
+  - Fixes the `data keep` command not working. Thanks ddein!
+
 - v1.62
   - Adds some missing zdo keys.
   - Adds normal ZDO data keys to fields.

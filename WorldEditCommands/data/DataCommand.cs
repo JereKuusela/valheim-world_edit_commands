@@ -229,7 +229,7 @@ public class DataCommand
   {
     var prefab = ZNetScene.instance.GetPrefab(zdo.GetPrefab());
     if (!prefab) return entry;
-    prefab.GetComponentsInChildren(ZNetView.m_tempComponents);
+    prefab.GetComponentsInChildren<MonoBehaviour>(ZNetView.m_tempComponents);
     foreach (var comp in ZNetView.m_tempComponents)
     {
       foreach (FieldInfo fieldInfo in comp.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public))
@@ -252,7 +252,10 @@ public class DataCommand
         {
           entry.Strings ??= [];
           if (!entry.Strings.ContainsKey(hash))
-            entry.Strings[hash] = (string)fieldInfo.GetValue(comp);
+          {
+            var v = (string)fieldInfo.GetValue(comp);
+            entry.Strings[hash] = v == "" ? "<none>" : v;
+          }
         }
         if (type == typeof(bool))
         {
@@ -270,7 +273,7 @@ public class DataCommand
         {
           entry.Strings ??= [];
           if (!entry.Strings.ContainsKey(hash))
-            entry.Strings[hash] = ((GameObject)fieldInfo.GetValue(comp)).name;
+            entry.Strings[hash] = ((GameObject)fieldInfo.GetValue(comp))?.name ?? "<none>";
         }
       }
     }
