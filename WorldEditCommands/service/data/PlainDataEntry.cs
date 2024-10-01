@@ -127,7 +127,7 @@ public class PlainDataEntry
     return list;
   }
 
-  private static string Serialize(string? str) => str == null ? "<none>" : str.Contains(",") ? $"\"{str}\"" : str;
+  private static string Serialize(string? str) => str == null || str == "" ? "\"\"" : str.Contains(",") ? $"\"{str}\"" : str;
   private static string Serialize(Quaternion quat)
   {
     var euler = quat.eulerAngles;

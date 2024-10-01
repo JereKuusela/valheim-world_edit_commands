@@ -66,15 +66,11 @@ public class SpawnLocationCommand
       if (snap && ZoneSystem.instance.FindFloor(spawnPosition, out var value))
         spawnPosition.y = value;
 
-      AddedZDOs.StartTracking();
       DungeonGenerator.m_forceSeed = dungeonSeed;
+      UndoHelper.BeginAction();
       ZoneSystem.instance.SpawnLocation(location, seed, spawnPosition, spawnRotation, ZoneSystem.SpawnMode.Full, []);
+      UndoHelper.EndAction();
       args.Context.AddString("Spawned: " + name + " at " + Helper.PrintVectorXZY(spawnPosition));
-      var spawns = AddedZDOs.StopTracking();
-      // Disable player based positioning.
-      var undoCommand = "spawn_location " + name + " refRot=" + baseAngle + " from=" + Helper.PrintVectorXZY(basePosition) + " seed=" + seed + " rot=" + relativePosition + " " + string.Join(" ", args.Args.Skip(2));
-      UndoSpawn undo = new(spawns, undoCommand);
-      UndoManager.Add(undo);
     });
   }
 }

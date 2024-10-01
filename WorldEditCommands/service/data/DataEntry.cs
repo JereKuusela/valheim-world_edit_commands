@@ -21,6 +21,10 @@ public class DataEntry
   {
     Load(data);
   }
+  public DataEntry(ZDO zdo)
+  {
+    Load(zdo);
+  }
 
   // Nulls add more code but should be more performant.
   public Dictionary<int, IStringValue>? Strings;
@@ -39,6 +43,101 @@ public class DataEntry
   public int ConnectionHash = 0;
   public ZDOID OriginalId = ZDOID.None;
   public ZDOID TargetConnectionId = ZDOID.None;
+
+  public void Set(int key, string value)
+  {
+    Strings ??= [];
+    Strings[key] = new SimpleStringValue(value);
+  }
+  public void Set(int key, float value)
+  {
+    Floats ??= [];
+    Floats[key] = new SimpleFloatValue(value);
+  }
+  public void Set(int key, int value)
+  {
+    Ints ??= [];
+    Ints[key] = new SimpleIntValue(value);
+  }
+  public void Set(int key, bool value)
+  {
+    Bools ??= [];
+    Bools[key] = new SimpleBoolValue(value);
+  }
+  public void Set(int key, long value)
+  {
+    Longs ??= [];
+    Longs[key] = new SimpleLongValue(value);
+  }
+  public void Set(int key, Vector3 value)
+  {
+    Vecs ??= [];
+    Vecs[key] = new SimpleVector3Value(value);
+  }
+  public void Set(int key, Quaternion value)
+  {
+    Quats ??= [];
+    Quats[key] = new SimpleQuaternionValue(value);
+  }
+  public void Set(int key, byte[] value)
+  {
+    ByteArrays ??= [];
+    ByteArrays[key] = value;
+  }
+  public bool TryGetString(Dictionary<string, string> pars, int key, out string value)
+  {
+    value = "";
+    if (Strings == null || !Strings.TryGetValue(key, out var val)) return false;
+    var v = val.Get(pars);
+    if (v == null) return false;
+    value = v;
+    return true;
+  }
+  public bool TryGetFloat(Dictionary<string, string> pars, int key, out float value)
+  {
+    value = 0;
+    if (Floats == null || !Floats.TryGetValue(key, out var val)) return false;
+    var v = val.Get(pars);
+    if (!v.HasValue) return false;
+    value = v.Value;
+    return true;
+  }
+  public bool TryGetInt(Dictionary<string, string> pars, int key, out int value)
+  {
+    value = 0;
+    if (Ints == null || !Ints.TryGetValue(key, out var val)) return false;
+    var v = val.Get(pars);
+    if (!v.HasValue) return false;
+    value = v.Value;
+    return true;
+  }
+  public bool TryGetBool(Dictionary<string, string> pars, int key, out bool value)
+  {
+    value = false;
+    if (Bools == null || !Bools.TryGetValue(key, out var val)) return false;
+    var v = val.GetInt(pars);
+    if (!v.HasValue) return false;
+    value = v.Value != 0;
+    return true;
+  }
+  public bool TryGetHash(Dictionary<string, string> pars, int key, out int value)
+  {
+    value = 0;
+    if (Hashes == null || !Hashes.TryGetValue(key, out var val)) return false;
+    var v = val.Get(pars);
+    if (!v.HasValue) return false;
+    value = v.Value;
+    return true;
+  }
+  public bool TryGetLong(Dictionary<string, string> pars, int key, out long value)
+  {
+    value = 0;
+    if (Longs == null || !Longs.TryGetValue(key, out var val)) return false;
+    var v = val.Get(pars);
+    if (!v.HasValue) return false;
+    value = v.Value;
+    return true;
+  }
 
   public HashSet<string> RequiredParameters = [];
   public void Load(DataEntry data)
@@ -114,6 +213,28 @@ public class DataEntry
     TargetConnectionId = data.TargetConnectionId;
     foreach (var par in data.RequiredParameters)
       RequiredParameters.Add(par);
+  }
+  public void Load(ZDO zdo)
+  {
+    var id = zdo.m_uid;
+    Floats = ZDOExtraData.s_floats.ContainsKey(id) ? ZDOExtraData.s_floats[id].ToDictionary(kvp => kvp.Key, kvp => new SimpleFloatValue(kvp.Value) as IFloatValue) : null;
+    Vecs = ZDOExtraData.s_vec3.ContainsKey(id) ? ZDOExtraData.s_vec3[id].ToDictionary(kvp => kvp.Key, kvp => new SimpleVector3Value(kvp.Value) as IVector3Value) : null;
+    Quats = ZDOExtraData.s_quats.ContainsKey(id) ? ZDOExtraData.s_quats[id].ToDictionary(kvp => kvp.Key, kvp => new SimpleQuaternionValue(kvp.Value) as IQuaternionValue) : null;
+    Ints = ZDOExtraData.s_ints.ContainsKey(id) ? ZDOExtraData.s_ints[id].ToDictionary(kvp => kvp.Key, kvp => new SimpleIntValue(kvp.Value) as IIntValue) : null;
+    Strings = ZDOExtraData.s_strings.ContainsKey(id) ? ZDOExtraData.s_strings[id].ToDictionary(kvp => kvp.Key, kvp => new SimpleStringValue(kvp.Value) as IStringValue) : null;
+    Longs = ZDOExtraData.s_longs.ContainsKey(id) ? ZDOExtraData.s_longs[id].ToDictionary(kvp => kvp.Key, kvp => new SimpleLongValue(kvp.Value) as ILongValue) : null;
+    ByteArrays = ZDOExtraData.s_byteArrays.ContainsKey(id) ? ZDOExtraData.s_byteArrays[id].ToDictionary(kvp => kvp.Key, kvp => kvp.Value) : null;
+    if (ZDOExtraData.s_connectionsHashData.TryGetValue(id, out var conn))
+    {
+      ConnectionType = conn.m_type;
+      ConnectionHash = conn.m_hash;
+    }
+    OriginalId = id;
+    if (ZDOExtraData.s_connections.TryGetValue(id, out var zdoConn) && zdoConn.m_target != ZDOID.None)
+    {
+      TargetConnectionId = zdoConn.m_target;
+      ConnectionType = zdoConn.m_type;
+    }
   }
   public void Load(DataData data)
   {

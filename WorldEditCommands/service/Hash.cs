@@ -126,4 +126,12 @@ public static class Hash
   public static int SpawnPoint = "spawnpoint".GetStableHashCode();
   public static int Scale = "scale".GetStableHashCode();
   public static int Player = "Player".GetStableHashCode();
+
+
+  public static int BuildingSkillLevel = "BuildingSkill Level".GetStableHashCode();
+  public static int Interact = "override_interact".GetStableHashCode();
+  public static int Restrict = "override_restrict".GetStableHashCode();
+  public static int Render = "override_render".GetStableHashCode();
+  public static int Collision = "override_collision".GetStableHashCode();
+  public static int Portal = "portal_wood".GetStableHashCode();
 }

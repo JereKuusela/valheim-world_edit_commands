@@ -138,10 +138,18 @@ public class DataHelper
     var byteArrays = ZDOExtraData.GetByteArrays(id).Select(kvp => $"{ZDOKeys.Convert(kvp.Key)}: {Convert.ToBase64String(kvp.Value)} (byte array)");
     return [.. lines, .. vecs, .. ints, .. floats, .. quats, .. strings, .. longs, .. byteArrays];
   }
-  public static void Init(GameObject obj, Vector3 pos, Quaternion rot, Vector3? scale, DataEntry? data, Dictionary<string, string> pars)
+  public static ZDO? Init(int prefab, Transform tr, DataEntry? data)
   {
-    if (data == null && scale == null) return;
-    if (!obj.TryGetComponent<ZNetView>(out var view)) return;
+    CleanUp();
+    var obj = ZNetScene.instance.GetPrefab(prefab);
+    if (!obj) return null;
+    return Init(obj, tr.position, tr.rotation, tr.lossyScale, data, []);
+  }
+  public static ZDO? Init(GameObject obj, Vector3 pos, Quaternion rot, Vector3? scale, DataEntry? data, Dictionary<string, string> pars)
+  {
+    CleanUp();
+    if (data == null && scale == null) return null;
+    if (!obj.TryGetComponent<ZNetView>(out var view)) return null;
     var prefab = Utils.GetPrefabName(obj).GetStableHashCode();
     ZNetView.m_initZDO = ZDOMan.instance.CreateNewZDO(pos, prefab);
     data?.Write(pars, ZNetView.m_initZDO);
@@ -163,6 +171,7 @@ public class DataHelper
     ZNetView.m_initZDO.DataRevision = 0;
     // This is needed to trigger the ZDO sync.
     ZNetView.m_initZDO.IncreaseDataRevision();
+    return ZNetView.m_initZDO;
   }
   public static void CleanUp()
   {

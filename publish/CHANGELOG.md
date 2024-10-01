@@ -1,6 +1,9 @@
 - v1.63
   - Adds a new command `data dump` to save data with default fields.
+  - Adds some missing zdo keys.
+  - Changes `object f=DungeonGenerator,room0_pos` to use relative coordinates (converted automatically to absolute).
   - Fixes the `data keep` command not working. Thanks ddein!
+  - Reworks the undo system.
 
 - v1.62
   - Adds some missing zdo keys.

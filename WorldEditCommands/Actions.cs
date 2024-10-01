@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Data;
 using ServerDevcommands;
 using UnityEngine;
 namespace WorldEditCommands;
@@ -424,7 +425,9 @@ public static class Actions
       else if (kvp.Value is bool v3)
         zdo.Set(hash, v3);
       else if (kvp.Value is Vector3 vector)
-        zdo.Set(hash, vector);
+        zdo.Set(hash, TransformPos(zdo, kvp.Key, vector));
+      else if (kvp.Value is Quaternion quaternion)
+        zdo.Set(hash, TransformRot(zdo, kvp.Key, quaternion));
       count += 1;
     }
     if (refresh)
@@ -439,6 +442,18 @@ public static class Actions
       }
     }
     return count;
+  }
+  private static Vector3 TransformPos(ZDO zdo, string key, Vector3 pos)
+  {
+    if (ZDOKeys.IsRoomPos(key))
+      return zdo.GetPosition() + zdo.GetRotation() * pos;
+    return pos;
+  }
+  private static Quaternion TransformRot(ZDO zdo, string key, Quaternion rot)
+  {
+    if (ZDOKeys.IsRoomRot(key))
+      return zdo.GetRotation() * rot;
+    return rot;
   }
   public static void SetVisual(ItemStand obj, Item? item)
   {

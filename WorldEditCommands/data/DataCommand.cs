@@ -1,26 +1,13 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Windows.Markup;
 using Data;
 using ServerDevcommands;
-using Service;
 using UnityEngine;
 namespace WorldEditCommands;
 
 public class DataCommand
 {
-  // Dictionary to only add undo for edited objects.
-  private static readonly Dictionary<ZDOID, EditData> EditedInfo = [];
-  private static void AddUndo(ZNetView view)
-  {
-    var zdo = view.GetZDO();
-    if (zdo.GetPrefab() == Hash.Player) return;
-    if (EditedInfo.ContainsKey(zdo.m_uid)) return;
-    EditedInfo[zdo.m_uid] = new EditData(zdo);
-  }
 
   protected string DoOperation(ZNetView view, string operation, string? value)
   {
@@ -60,7 +47,7 @@ public class DataCommand
     {
       if (value.Length == 0)
         throw new InvalidOperationException("Merge: Missing data entry name.");
-      AddUndo(view);
+      UndoHelper.AddEditAction(view);
       var values = value.SelectMany(str => str.Split(',')).Select(s => s.Trim()).ToArray();
       var data = DataHelper.Merge(values.Select(DataHelper.Get).ToArray());
       data?.Write(Parameters.DataParameters, view.GetZDO());
@@ -71,7 +58,7 @@ public class DataCommand
     {
       if (value.Length == 0)
         throw new InvalidOperationException("Load: Missing data entry name.");
-      AddUndo(view);
+      UndoHelper.AddEditAction(view);
       var zdo = DataHelper.CloneBase(view.GetZDO());
       var values = value.SelectMany(str => str.Split(',')).Select(s => s.Trim()).ToArray();
       var data = DataHelper.Merge(values.Select(DataHelper.Get).ToArray());
@@ -87,7 +74,7 @@ public class DataCommand
       if (DataHelper.HasKey(view.GetZDO(), keys))
       {
 
-        AddUndo(view);
+        UndoHelper.AddEditAction(view);
         Regen(view, DataHelper.CloneWithKeys(view.GetZDO(), keys));
         return $"¤ data cleaned except {string.Join(", ", keys)}.";
       }
@@ -97,7 +84,7 @@ public class DataCommand
     {
       if (value.Length == 0)
         throw new InvalidOperationException("Remove: Missing data keys.");
-      AddUndo(view);
+      UndoHelper.AddEditAction(view);
       var keys = value.SelectMany(str => str.Split(',')).Select(s => s.Trim()).ToArray();
       Regen(view, DataHelper.CloneWithoutKeys(view.GetZDO(), keys));
       return $"¤ data keys removed {string.Join(", ", keys)}.";
@@ -106,7 +93,7 @@ public class DataCommand
     {
       if (value.Length == 0)
         throw new InvalidOperationException("Set: Missing values.");
-      AddUndo(view);
+      UndoHelper.AddEditAction(view);
       var zdo = view.GetZDO();
       var id = zdo.m_uid;
       foreach (var str in value)
@@ -154,7 +141,7 @@ public class DataCommand
     if (value == false) return "";
     if (operation == "clear")
     {
-      AddUndo(view);
+      UndoHelper.AddEditAction(view);
       Regen(view, DataHelper.CloneBase(view.GetZDO()));
       return $"¤ data cleared.";
     }
@@ -173,15 +160,13 @@ public class DataCommand
   private void Regen(ZNetView view, ZDO zdo)
   {
     if (zdo.GetPrefab() == Hash.Player) return;
-    var existing = view.GetZDO();
-    var entry = EditedInfo[existing.m_uid];
-    entry.Zdo = DataHelper.Regen(existing, zdo);
-    EditedInfo[entry.Zdo.m_uid] = entry;
-    EditedInfo.Remove(existing.m_uid);
+    var existing = view.GetZDO().m_uid;
+    var newZdo = DataHelper.Regen(view.GetZDO(), zdo);
+    UndoHelper.RefreshEditAction(existing, newZdo);
   }
   private void Execute(Terminal context, ZNetView[] views)
   {
-    EditedInfo.Clear();
+    UndoHelper.BeginAction();
 
     var count = views.Count();
     var claimOwner = Parameters.Operations.Count > 1 || !Parameters.Operations.ContainsKey("print");
@@ -217,12 +202,7 @@ public class DataCommand
           context.AddString(message);
       }
     }
-    if (EditedInfo.Count > 0)
-    {
-      foreach (var info in EditedInfo)
-        info.Value.Update();
-      UndoManager.Add(new UndoEdit(EditedInfo.Select(kvp => kvp.Value)));
-    }
+    UndoHelper.EndAction();
   }
 
   private static PlainDataEntry AddDefaultFields(ZDO zdo, PlainDataEntry entry)
@@ -252,10 +232,7 @@ public class DataCommand
         {
           entry.Strings ??= [];
           if (!entry.Strings.ContainsKey(hash))
-          {
-            var v = (string)fieldInfo.GetValue(comp);
-            entry.Strings[hash] = v == "" ? "<none>" : v;
-          }
+            entry.Strings[hash] = (string)fieldInfo.GetValue(comp);
         }
         if (type == typeof(bool))
         {
@@ -273,7 +250,7 @@ public class DataCommand
         {
           entry.Strings ??= [];
           if (!entry.Strings.ContainsKey(hash))
-            entry.Strings[hash] = ((GameObject)fieldInfo.GetValue(comp))?.name ?? "<none>";
+            entry.Strings[hash] = ((GameObject)fieldInfo.GetValue(comp))?.name ?? "";
         }
       }
     }

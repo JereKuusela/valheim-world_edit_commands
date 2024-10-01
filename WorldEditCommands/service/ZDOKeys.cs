@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using BepInEx.Bootstrap;
+using HarmonyLib;
 using UnityEngine;
 
 namespace Data;
@@ -54,18 +55,36 @@ public class ZDOKeys
       keys.Add($"drop_amount{i}");
       keys.Add($"slot{i}");
       keys.Add($"slotstatus{i}");
+
       keys.Add($"{i}_item");
+      keys.Add($"{i}_durability");
+      keys.Add($"{i}_stack");
+      keys.Add($"{i}_quality");
+      keys.Add($"{i}_variant");
+      keys.Add($"{i}_crafterID");
+      keys.Add($"{i}_crafterName");
+      keys.Add($"{i}_dataCount");
+      for (var j = 0; j < 20; j++)
+      {
+        keys.Add($"{i}_data_{j}");
+        keys.Add($"{i}_data__{j}");
+      }
+      keys.Add($"{i}_worldLevel");
+      keys.Add($"{i}_pickedUp");
+
       keys.Add($"pu_id{i}");
       keys.Add($"pu_name{i}");
       keys.Add($"Health{i}");
       keys.Add($"room{i}");
-      keys.Add($"room_pos{i}");
-      keys.Add($"room_rot{i}");
+      keys.Add($"room{i}_pos");
+      keys.Add($"room{i}_rot");
       keys.Add($"target{i}");
     }
     keys.AddRange(AnimationKeys.Select(k => $"${k}"));
     return [.. keys.Distinct()];
   }
+  public static bool IsRoomPos(string key) => key.EndsWith("_pos") && key.StartsWith("room");
+  public static bool IsRoomRot(string key) => key.EndsWith("_rot") && key.StartsWith("room");
   private static string FirstLetterUpper(string s) => char.ToUpper(s[0]) + s.Substring(1);
   private static readonly string[] StaticKeys = [
     "alive_time",
@@ -264,7 +283,7 @@ public class ZDOKeys
     "onGround",
     "minoraction",
     "minoraction_fast",
-    "emote"
+    "emote",
   ];
 
   private static Dictionary<int, string>? hashToKey;
@@ -291,37 +310,37 @@ public class KeyCollector
   [HarmonyPatch(nameof(ZDO.Set), typeof(int), typeof(string)), HarmonyPrefix]
   static void String(int hash)
   {
-    if (DefaultData.Exists(hash)) return;
+    if (ZDOKeys.Exists(hash)) return;
     var stack = new System.Diagnostics.StackTrace();
-    EWD.Log.LogWarning($"Found new string key: {hash}\n{stack}");
+    Debug.LogWarning($"Found new string key: {hash}\n{stack}");
   }
   [HarmonyPatch(nameof(ZDO.Set), typeof(int), typeof(int)), HarmonyPrefix]
   static void Int(int hash)
   {
-    if (DefaultData.Exists(hash)) return;
+    if (ZDOKeys.Exists(hash)) return;
     var stack = new System.Diagnostics.StackTrace();
-    EWD.Log.LogWarning($"Found new int key: {hash}\n{stack}");
+    Debug.LogWarning($"Found new int key: {hash}\n{stack}");
   }
   [HarmonyPatch(nameof(ZDO.Set), typeof(int), typeof(long)), HarmonyPrefix]
   static void Long(int hash)
   {
-    if (DefaultData.Exists(hash)) return;
+    if (ZDOKeys.Exists(hash)) return;
     var stack = new System.Diagnostics.StackTrace();
-    EWD.Log.LogWarning($"Found new long key: {hash}\n{stack}");
+    Debug.LogWarning($"Found new long key: {hash}\n{stack}");
   }
   [HarmonyPatch(nameof(ZDO.Set), typeof(int), typeof(float)), HarmonyPrefix]
   static void Float(int hash)
   {
-    if (DefaultData.Exists(hash)) return;
+    if (ZDOKeys.Exists(hash)) return;
     var stack = new System.Diagnostics.StackTrace();
-    EWD.Log.LogWarning($"Found new float key: {hash}\n{stack}");
+    Debug.LogWarning($"Found new float key: {hash}\n{stack}");
   }
   [HarmonyPatch(nameof(ZDO.Set), typeof(int), typeof(Vector3)), HarmonyPrefix]
   static void Vector3(int hash)
   {
-    if (DefaultData.Exists(hash)) return;
+    if (ZDOKeys.Exists(hash)) return;
     var stack = new System.Diagnostics.StackTrace();
-    EWD.Log.LogWarning($"Found new Vector3 key: {hash}\n{stack}");
+    Debug.LogWarning($"Found new Vector3 key: {hash}\n{stack}");
   }
 }
 [HarmonyPatch(typeof(ZSyncAnimation), nameof(ZSyncAnimation.GetHash))]
@@ -329,8 +348,8 @@ public class ZSyncAnimation_GetHash_Patch
 {
   static void Postfix(string name, int __result)
   {
-    if (DefaultData.Exists(__result + 438569)) return;
-    EWD.Log.LogWarning($"Found new animation key: {name}");
+    if (ZDOKeys.Exists(__result + 438569)) return;
+    Debug.LogWarning($"Found new animation key: {name}");
   }
 }
 */

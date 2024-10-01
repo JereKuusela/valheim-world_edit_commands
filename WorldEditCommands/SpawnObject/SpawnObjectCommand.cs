@@ -126,15 +126,12 @@ public class SpawnObjectCommand
       if (itemDrop)
         count = (int)Math.Ceiling((double)count / itemDrop.m_itemData.m_shared.m_maxStackSize);
 
+      UndoHelper.BeginAction();
       var spawned = SpawnObject(pars, prefab, count);
       Manipulate(spawned, pars, amount);
+      UndoHelper.EndAction();
       Player.m_localPlayer?.Message(MessageHud.MessageType.TopLeft, "Spawning object " + prefabName, spawned.Count, null);
       args.Context.AddString("Spawned: " + prefabName + " at " + Helper.PrintVectorXZY(pars.GetPosition()));
-      var spawns = spawned.Select(obj => obj.GetComponent<ZNetView>()).Where(obj => obj != null).Select(obj => obj.GetZDO()).ToList();
-      // from and refRot override the player based positioning (fixes undo position).
-      var undoCommand = "spawn_object " + prefabName + " refRot=" + Helper.PrintAngleYXZ(pars.BaseRotation) + " from=" + Helper.PrintVectorXZY(pars.From) + " " + string.Join(" ", args.Args.Skip(2));
-      UndoSpawn undo = new(spawns, undoCommand);
-      UndoManager.Add(undo);
     });
   }
 }
