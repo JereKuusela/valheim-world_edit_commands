@@ -110,7 +110,7 @@ public class SharedObjectParameters
         else if (type == typeof(string))
           Fields.Add(key, fieldValue);
         else if (type == typeof(bool))
-          Fields.Add(key, fieldValue == "1" || fieldValue == "true" || fieldValue == "True" ? 1 : 0);
+          Fields.Add(key, Parse.BoolNull(fieldValue) == true ? 1 : 0);
         else if (type == typeof(Vector3))
           Fields.Add(key, Parse.VectorXZY(values, 2));
         else if (type == typeof(Quaternion))

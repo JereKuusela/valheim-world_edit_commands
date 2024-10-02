@@ -168,6 +168,7 @@ public class FieldAutoComplete
     if (type == typeof(string)) return ["Text"];
     if (type == typeof(int)) return ["Number"];
     if (type == typeof(float)) return ["Decimal"];
+    if (type == typeof(long)) return ["Timestamp"];
     if (type == typeof(bool)) return ["true", "false"];
     if (type == typeof(Vector3)) return ServerDevcommands.ParameterInfo.XZY("Field", index);
     if (type == typeof(Quaternion)) return ServerDevcommands.ParameterInfo.YXZ("Field", index);
@@ -214,7 +215,7 @@ public class FieldAutoComplete
   {
     if (zdoField)
     {
-      if (!ZdoFields.TryGetValue(component, out var zdo)) return typeof(void);
+      if (!ZdoFields.TryGetValue("zdo", out var zdo)) return typeof(void);
       if (!zdo.TryGetValue(field, out var type)) return typeof(void);
       return type;
     }

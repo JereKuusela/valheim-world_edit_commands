@@ -3,6 +3,7 @@
   - Adds some missing zdo keys.
   - Changes `object f=DungeonGenerator,room0_pos` to use relative coordinates (converted automatically to absolute).
   - Fixes the `data keep` command not working. Thanks ddein!
+  - Fixes autocomplete missing for normal ZDO data keys.
   - Reworks the undo system.
 
 - v1.62
