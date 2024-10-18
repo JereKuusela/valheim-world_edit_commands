@@ -54,11 +54,11 @@ public class FieldAutoComplete
     typeof(float),
     typeof(bool),
     typeof(Vector3),
-    typeof(GameObject)
+    typeof(GameObject),
+    typeof(ItemDrop),
   ];
   private static readonly HashSet<Type> ValidTweakTypes = [
     ..ValidTypes,
-    typeof(ItemDrop),
     typeof(EffectList)
   ];
   private static Dictionary<string, Dictionary<string, Type>> LoadFields()
@@ -176,7 +176,7 @@ public class FieldAutoComplete
     if (type == typeof(ObjectHash)) return ServerDevcommands.ParameterInfo.ObjectIds;
     if (type == typeof(LocationHash)) return ServerDevcommands.ParameterInfo.LocationIds;
     if (type == typeof(RoomHash)) return ServerDevcommands.ParameterInfo.RoomIds;
-    if (tweaks && type == typeof(ItemDrop)) return ServerDevcommands.ParameterInfo.ItemIds;
+    if (type == typeof(ItemDrop)) return ServerDevcommands.ParameterInfo.ItemIds;
     if (tweaks && type.IsEnum) return [.. Enum.GetNames(type)];
     if (tweaks && type == typeof(EffectList)) return ServerDevcommands.ParameterInfo.Ids;
     return [];
@@ -400,6 +400,7 @@ public class FieldAutoComplete
       {
         { "fuel", typeof(float) },
         { "lastTime", typeof(long) },
+        { "state", typeof(bool) },
       }
     },{
       nameof(Fish), new Dictionary<string, Type>
@@ -447,6 +448,7 @@ public class FieldAutoComplete
         { "data__2", typeof(string) },
         { "durability", typeof(float) },
         { "pickedUp", typeof(bool) },
+        { "piece", typeof(bool) },
         { "quality", typeof(int) },
         { "spawntime", typeof(long) },
         { "stack", typeof(int) },

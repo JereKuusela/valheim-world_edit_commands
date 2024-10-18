@@ -23,7 +23,7 @@ public class SpawnObjectAutoComplete : SharedObjectAutoComplete
       "data",
       "crafterId"
     ]);
-    AutoComplete.Register(SpawnObjectCommand.Name, (int index) => index == 0 ? ParameterInfo.Ids : NamedParameters, WithSharedFetchers(new() {
+    AutoComplete.Register(SpawnObjectCommand.Name, (int index) => index == 0 ? ParameterInfo.ObjectIds : NamedParameters, WithSharedFetchers(new() {
       {
         "data",
         (int index) =>  DataLoading.DataKeys

@@ -264,7 +264,7 @@ public class ItemValue(ItemData data, HashSet<string> requiredParameters)
       pkg.Write(kvp.Key);
       pkg.Write(kvp.Value.Get(pars));
     }
-    pkg.Write(WorldLevel.Get(pars) ?? 1);
+    pkg.Write(WorldLevel.Get(pars) ?? 0);
     pkg.Write(PickedUp.GetBool(pars) ?? false);
   }
 }

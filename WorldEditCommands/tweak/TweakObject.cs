@@ -52,8 +52,8 @@ public class TweakObjectCommand : TweakCommand
   {
     if (obj.TryGetComponent<StaticPhysics>(out var sp))
     {
-      sp.m_createTime = Time.time - 30f;
-      sp.SUpdate();
+      sp.m_updateTime = Time.time - 30f;
+      sp.SUpdate(Time.time, ZoneSystem.GetZone(obj.transform.position));
     }
   }
 

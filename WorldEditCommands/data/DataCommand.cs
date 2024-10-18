@@ -252,6 +252,12 @@ public class DataCommand
           if (!entry.Strings.ContainsKey(hash))
             entry.Strings[hash] = ((GameObject)fieldInfo.GetValue(comp))?.name ?? "";
         }
+        if (type == typeof(ItemDrop))
+        {
+          entry.Strings ??= [];
+          if (!entry.Strings.ContainsKey(hash))
+            entry.Strings[hash] = ((ItemDrop)fieldInfo.GetValue(comp))?.name ?? "";
+        }
       }
     }
     ZNetView.m_tempComponents.Clear();
