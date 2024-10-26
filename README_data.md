@@ -15,6 +15,7 @@ The `data` command has following operations:
 
 - `clear`: Removes all data values.
 - `copy_raw`: Copies the data of hovered object as base64 encoded string (legacy).
+- `dump=name`: Saves all of the data to a data entry, including the default values of fields.
 - `keep=key1,key2,...`: Removes data values except the given ones.
 - `load=ata1,data2,...`: Replaces all data from data entries or base64 encoded strings.
 - `merge=data1,data2,...`: Adds data from data entries or base64 encoded strings.
