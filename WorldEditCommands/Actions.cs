@@ -368,14 +368,24 @@ public static class Actions
     if (!obj) return;
     var zdo = obj.m_nview?.GetZDO();
     if (zdo == null) return;
+    FakeZDO data = new(zdo);
+
     var spawnId = zdo.GetConnectionZDOID(ZDOExtraData.ConnectionType.Spawned);
-    if (!spawnId.IsNone())
+    if (ZDOMan.instance.m_objectsByID.TryGetValue(spawnId, out var spawnedZdo))
     {
-      if (ZDOMan.instance.m_objectsByID.TryGetValue(spawnId, out var spawnedZdo))
-        RemoveZDO(spawnedZdo);
-      ZDOExtraData.ReleaseConnection(zdo.m_uid);
-      zdo.Set(ZDOVars.s_aliveTime, 0);
+      UndoHelper.AddRemoveAction(spawnedZdo);
+      RemoveZDO(spawnedZdo);
     }
+    // Connection removal is not synced to other clients, so a more reliable way is to completely regenerate the spawner.
+    UndoHelper.AddRemoveAction(zdo);
+    RemoveZDO(zdo);
+
+    data.Data.ConnectionType = ZDOExtraData.ConnectionType.None;
+    data.Data.ConnectionHash = 0;
+    data.Data.TargetConnectionId = ZDOID.None;
+    data.Data.Longs?.Remove(ZDOVars.s_aliveTime);
+    var created = data.Create();
+    UndoHelper.AddSpawnAction(created);
   }
   public static void SetModel(GameObject obj, int index)
   {

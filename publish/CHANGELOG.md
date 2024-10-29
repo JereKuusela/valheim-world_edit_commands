@@ -1,3 +1,7 @@
+- v1.64
+  - Fixed for the new game version.
+  - Fixes the command `object refresh`.
+
 - v1.63
   - Adds a new command `data dump` to save data with default fields.
   - Adds some missing zdo keys.

@@ -39,6 +39,7 @@ public class UndoHelper
   public static void AddRemoveAction(ZDO zdo)
   {
     RemovedInfo.Add(new(zdo));
+    EditedInfo.Remove(zdo.m_uid);
   }
   public static void AddSpawnAction(ZDO zdo)
   {
