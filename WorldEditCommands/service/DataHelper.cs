@@ -23,7 +23,7 @@ public class DataHelper
   }
   public static ZDO Regen(ZDO existing, FakeZDO data)
   {
-    var newZdo = data.Create();
+    var newZdo = data.CreateNew();
     ZNetScene.instance.CreateObject(newZdo);
     Destroy(existing);
     return newZdo;

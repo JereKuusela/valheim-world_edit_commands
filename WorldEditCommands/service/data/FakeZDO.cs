@@ -5,11 +5,18 @@ namespace Data;
 public class FakeZDO(ZDO zdo)
 {
   public readonly PlainDataEntry Data = new(zdo);
-  public readonly ZDO Source = zdo.Clone();
-  public int Prefab => Source.m_prefab;
-  public Vector3 Position => Source.m_position;
+  public int Prefab = zdo.m_prefab;
+  public Vector3 Position = zdo.m_position;
+  public Vector3 Rotation = zdo.m_rotation;
+  public ZDO.ObjectType Type = zdo.Type;
+  public bool Distant = zdo.Distant;
+  public bool Persistent = zdo.Persistent;
+  public uint DataRevision = zdo.DataRevision;
+  public ushort OwnerRevision = zdo.OwnerRevision;
+  public ZDOID Id = zdo.m_uid;
 
-  public ZDO Create()
+
+  public ZDO CreateNew()
   {
     var zdo = ZDOMan.instance.CreateNewZDO(Position, Prefab);
     Write(zdo);
@@ -18,20 +25,38 @@ public class FakeZDO(ZDO zdo)
     zdo.IncreaseDataRevision();
     return zdo;
   }
+  public ZDO Regenerate()
+  {
+    Destroy();
+    // Since the previous ZDO is always destroyed, it's safe to reuse the same ID.
+    var zdo = ZDOMan.instance.CreateNewZDO(Id, Position, Prefab);
+    Write(zdo);
+    zdo.DataRevision = DataRevision;
+    zdo.OwnerRevision = OwnerRevision;
+    // This is needed to trigger the ZDO sync.
+    zdo.IncreaseDataRevision();
+    return zdo;
+  }
   public void Write(ZDO zdo)
   {
-    zdo.m_prefab = Source.m_prefab;
-    zdo.m_position = Source.m_position;
-    zdo.m_rotation = Source.m_rotation;
-    zdo.Type = Source.Type;
-    zdo.Distant = Source.Distant;
-    zdo.Persistent = Source.Persistent;
+    zdo.m_prefab = Prefab;
+    zdo.m_position = Position;
+    zdo.m_rotation = Rotation;
+    zdo.Type = Type;
+    zdo.Distant = Distant;
+    zdo.Persistent = Persistent;
     Data.Write(zdo);
   }
   public void Destroy()
   {
-    if (!Source.IsOwner())
-      Source.SetOwner(ZDOMan.instance.m_sessionID);
-    ZDOMan.instance.DestroyZDO(Source);
+    var zdo = ZDOMan.instance.GetZDO(Id);
+    if (zdo == null) return;
+    // Revision might have changed since this FakeZDO was created.
+    // Updating it ensures changes are synced to other clients.
+    if (!zdo.IsOwner())
+      zdo.SetOwner(ZDOMan.instance.m_sessionID);
+    DataRevision = zdo.DataRevision;
+    OwnerRevision = zdo.OwnerRevision;
+    ZDOMan.instance.DestroyZDO(zdo);
   }
 }

@@ -75,7 +75,7 @@ public class UndoHelper
   {
     var prefab = ZNetScene.instance.GetPrefab(zdo.Prefab);
     if (!prefab) throw new InvalidOperationException("Error: Prefab not found.");
-    ZNetView.m_initZDO = zdo.Create();
+    ZNetView.m_initZDO = zdo.Regenerate();
     FakeZDO newZdo = new(ZNetView.m_initZDO);
     UnityEngine.Object.Instantiate(prefab, ZNetView.m_initZDO.GetPosition(), ZNetView.m_initZDO.GetRotation());
     return newZdo;
