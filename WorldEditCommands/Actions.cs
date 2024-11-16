@@ -384,7 +384,7 @@ public static class Actions
     data.Data.ConnectionHash = 0;
     data.Data.TargetConnectionId = ZDOID.None;
     data.Data.Longs?.Remove(ZDOVars.s_aliveTime);
-    var created = data.CreateNew();
+    var created = data.Create();
     UndoHelper.AddSpawnAction(created);
   }
   public static void SetModel(GameObject obj, int index)

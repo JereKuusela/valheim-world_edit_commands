@@ -1,3 +1,6 @@
+- v1.66
+  - Improves the undo system (again).
+
 - v1.65
   - Improves the undo system.
 

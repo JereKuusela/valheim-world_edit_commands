@@ -68,22 +68,29 @@ public class UndoHelper
     if (EditedInfo.Count == 0 && RemovedInfo.Count == 0 && SpawnedInfo.Count == 0) return;
     foreach (var data in EditedInfo.Values)
       data.Update();
-    UndoAction action = new([.. EditedInfo.Values, .. RemovedInfo, .. SpawnedInfo.Select(s => new SpawnData(s))]);
+    // Someone reported null reference error related to spawn action.
+    // So there is a check to not get blamed for it.
+    UndoData[] undoData = [.. EditedInfo.Values, .. RemovedInfo, .. SpawnedInfo.Where(zdo => zdo != null && zdo.IsValid()).Select(s => new SpawnData(s))];
+    if (undoData.Length == 0) return;
+    UndoAction action = new(undoData);
     UndoManager.Add(action);
   }
-  public static FakeZDO Place(FakeZDO zdo)
+  public static void Place(FakeZDO zdo)
   {
     var prefab = ZNetScene.instance.GetPrefab(zdo.Prefab);
     if (!prefab) throw new InvalidOperationException("Error: Prefab not found.");
-    ZNetView.m_initZDO = zdo.Regenerate();
-    FakeZDO newZdo = new(ZNetView.m_initZDO);
+    ZNetView.m_initZDO = zdo.Create();
+    Regenerated[zdo.Id] = ZNetView.m_initZDO.m_uid;
+    zdo.Id = ZNetView.m_initZDO.m_uid;
     UnityEngine.Object.Instantiate(prefab, ZNetView.m_initZDO.GetPosition(), ZNetView.m_initZDO.GetRotation());
-    return newZdo;
   }
-  public static void Remove(FakeZDO[] toRemove)
+  // Redoing an object makes a new instance so have to keep track of the situation.
+  private static readonly Dictionary<ZDOID, ZDOID> Regenerated = [];
+  public static void Destroy(FakeZDO zdo)
   {
-    foreach (var zdo in toRemove)
-      zdo.Destroy();
+    while (Regenerated.ContainsKey(zdo.Id))
+      zdo.Id = Regenerated[zdo.Id];
+    zdo.Destroy();
   }
 
   public static string Name(int hash) => Utils.GetPrefabName(ZNetScene.instance.GetPrefab(hash));
@@ -111,11 +118,13 @@ public class EditData : UndoData
   }
   public override void Undo()
   {
-    Original = DataHelper.Regen(Original, Previous);
+    UndoHelper.Destroy(Current);
+    UndoHelper.Place(Previous);
   }
   public override void Redo()
   {
-    Original = DataHelper.Regen(Original, Current);
+    UndoHelper.Destroy(Previous);
+    UndoHelper.Place(Current);
   }
 
   public FakeZDO Previous;
@@ -126,22 +135,22 @@ public class RemoveData(ZDO zdo) : UndoData(new(zdo))
 {
   public override void Undo()
   {
-    Current = UndoHelper.Place(Current);
+    UndoHelper.Place(Current);
   }
   public override void Redo()
   {
-    Current.Destroy();
+    UndoHelper.Destroy(Current);
   }
 }
 public class SpawnData(ZDO zdo) : UndoData(new(zdo))
 {
   public override void Undo()
   {
-    Current.Destroy();
+    UndoHelper.Destroy(Current);
   }
   public override void Redo()
   {
-    Current = UndoHelper.Place(Current);
+    UndoHelper.Place(Current);
   }
 }
 
