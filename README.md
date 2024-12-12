@@ -46,6 +46,8 @@ Following parameters are available:
 - `creator=player id`: Sets the piece creator. Use 0 for no creator.
 - `circle=number` or `circle=min-max`: Radius for included objects. If not given, the hovered object is only affected.
 - `connect`: Includes entire structures.
+- `copy`: Copies the object id to clipboard.
+  - Recommended to bind this to a key, if you use the command often.
 - `damage=number`: Sets damage multiplier.
 - `durability=number` or `health=number`: Sets the current durability for items, the current health for structures and the maximum health for creatures. Very high values like 1E30 turn the target invulnerable (including gravity for structures).
   - Note: Invulnerable objects without structure support take continuous damage which causes network traffic.
