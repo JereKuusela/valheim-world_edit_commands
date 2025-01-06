@@ -1,3 +1,6 @@
+- v1.67
+  - Fixes the command `tweak_object weather=` not working properly for environment names with spacebars/underscores.
+
 - v1.66
   - Improves the undo system (again).
 

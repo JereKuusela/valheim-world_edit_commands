@@ -122,6 +122,9 @@ public static class TweakActions
   }
   public static string Weather(ZNetView view, int hash, string? value)
   {
+    // Names can be both with underscore or spacebar, autocomplete uses underscores to work without quoting.
+    if (!EnvMan.instance.m_environments.Any(env => env.m_name == value))
+      value = value?.Replace("_", " ");
     Actions.SetString(view, value, hash);
     return $"¤ weather set to {Print(value)}.";
   }
