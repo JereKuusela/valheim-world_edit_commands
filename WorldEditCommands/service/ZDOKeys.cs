@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using BepInEx.Bootstrap;
-using HarmonyLib;
 using UnityEngine;
 
 namespace Data;
@@ -46,6 +45,7 @@ public class ZDOKeys
     keys.AddRange(typeof(ZDOVars).GetFields(BindingFlags.Static | BindingFlags.Public).Select(f => FirstLetterUpper(f.Name.Replace("s_", ""))));
     for (var i = 0; i < 20; i++)
     {
+      keys.Add($"MatVar{i}");
       keys.Add($"item{i}");
       keys.Add($"quality{i}");
       keys.Add($"variant{i}");
@@ -286,16 +286,26 @@ public class ZDOKeys
     "emote",
   ];
 
+  private static Dictionary<string, int> keyToHash = [];
   private static Dictionary<int, string>? hashToKey;
-  private static Dictionary<int, string> HashToKey => hashToKey ??= KnownKeys.ToDictionary(Hash, x => x);
+  private static Dictionary<int, string> HashToKey => hashToKey ??= KnownKeys.ToDictionary(CalculateHash, x => x);
   public static string Convert(int hash) => HashToKey.TryGetValue(hash, out var key) ? key : hash.ToString();
   public static int Hash(string key)
+  {
+    if (keyToHash.TryGetValue(key, out var hash)) return hash;
+    hash = CalculateHash(key);
+    keyToHash[key] = hash;
+    HashToKey[hash] = key;
+    return hash;
+  }
+  private static int CalculateHash(string key)
   {
     if (key.StartsWith("$", StringComparison.InvariantCultureIgnoreCase))
     {
       var hash = ZSyncAnimation.GetHash(key.Substring(1));
+      // Animation keys are offset by 438569, except for $anim_speed.
       if (key == "$anim_speed") return hash;
-      return 438569 + hash;
+      return hash + 438569;
     }
     return key.GetStableHashCode();
   }

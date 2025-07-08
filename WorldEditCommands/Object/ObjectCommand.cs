@@ -120,6 +120,10 @@ public class ObjectCommand
           output = Move(view, Helper.RandomValue(pars.Offset), pars.Origin);
         if (operation == "mirror" && pars.Center.HasValue)
           output = Mirror(view, pars.Center.Value);
+        if (operation == "distant" && pars.Distant != null)
+          output = SetDistant(view, pars.Distant.Value);
+        if (operation == "persist" && pars.Persist != null)
+          output = SetPersistent(view, pars.Persist.Value);
         if (operation == "rotate")
         {
           if (pars.ResetRotation)
@@ -268,6 +272,18 @@ public class ObjectCommand
     var tweaked = Actions.Scale(view, scale);
     var tweakStr = tweaked ? " (scaling enabled)" : "";
     return $"¤ scaled to {scale:F1}{tweakStr}.";
+  }
+  private static string SetDistant(ZNetView view, bool distant)
+  {
+    UndoHelper.AddEditAction(view);
+    Actions.SetDistant(view.gameObject, distant);
+    return distant ? "¤ made distant loaded." : "¤ made normally loaded.";
+  }
+  private static string SetPersistent(ZNetView view, bool persist)
+  {
+    UndoHelper.AddEditAction(view);
+    Actions.SetPersistent(view.gameObject, persist);
+    return persist ? "¤ made persistent." : "¤ made non-persistent.";
   }
   private static string SetBaby(ZNetView view)
   {

@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using ServerDevcommands;
 using UnityEngine;
+using WorldEditCommands;
 
 namespace Data;
 
@@ -43,6 +44,9 @@ public class DataEntry
   public int ConnectionHash = 0;
   public ZDOID OriginalId = ZDOID.None;
   public ZDOID TargetConnectionId = ZDOID.None;
+  public IBoolValue? Persistent;
+  public IBoolValue? Distant;
+  public ZDO.ObjectType? Priority;
 
   public void Set(int key, string value)
   {
@@ -211,6 +215,12 @@ public class DataEntry
     ConnectionHash = data.ConnectionHash;
     OriginalId = data.OriginalId;
     TargetConnectionId = data.TargetConnectionId;
+    if (data.Persistent != null)
+      Persistent = data.Persistent;
+    if (data.Distant != null)
+      Distant = data.Distant;
+    if (data.Priority != null)
+      Priority = data.Priority;
     foreach (var par in data.RequiredParameters)
       RequiredParameters.Add(par);
   }
@@ -235,6 +245,9 @@ public class DataEntry
       TargetConnectionId = zdoConn.m_target;
       ConnectionType = zdoConn.m_type;
     }
+    Persistent = zdo.Persistent ? new SimpleBoolValue(true) : null;
+    Distant = zdo.Distant ? new SimpleBoolValue(true) : null;
+    Priority = zdo.Type;
   }
   public void Load(DataData data)
   {
@@ -248,7 +261,7 @@ public class DataEntry
         if (kvp.Key == "") throw new InvalidOperationException($"Failed to parse float {value}.");
         if (kvp.Key.Contains("."))
           componentsToAdd.Add(kvp.Key.Split('.')[0]);
-        Floats.Add(Hash(kvp.Key), DataValue.Float(kvp.Value, RequiredParameters));
+        Floats.Add(ZDOKeys.Hash(kvp.Key), DataValue.Float(kvp.Value, RequiredParameters));
       }
     }
     if (data.ints != null)
@@ -260,7 +273,7 @@ public class DataEntry
         if (kvp.Key == "") throw new InvalidOperationException($"Failed to parse int {value}.");
         if (kvp.Key.Contains("."))
           componentsToAdd.Add(kvp.Key.Split('.')[0]);
-        Ints.Add(Hash(kvp.Key), DataValue.Int(kvp.Value, RequiredParameters));
+        Ints.Add(ZDOKeys.Hash(kvp.Key), DataValue.Int(kvp.Value, RequiredParameters));
       }
     }
     if (data.bools != null)
@@ -272,7 +285,7 @@ public class DataEntry
         if (kvp.Key == "") throw new InvalidOperationException($"Failed to parse bool {value}.");
         if (kvp.Key.Contains("."))
           componentsToAdd.Add(kvp.Key.Split('.')[0]);
-        Bools.Add(Hash(kvp.Key), DataValue.Bool(kvp.Value, RequiredParameters));
+        Bools.Add(ZDOKeys.Hash(kvp.Key), DataValue.Bool(kvp.Value, RequiredParameters));
       }
     }
     if (data.hashes != null)
@@ -284,7 +297,7 @@ public class DataEntry
         if (kvp.Key == "") throw new InvalidOperationException($"Failed to parse hash {value}.");
         if (kvp.Key.Contains("."))
           componentsToAdd.Add(kvp.Key.Split('.')[0]);
-        Hashes.Add(Hash(kvp.Key), DataValue.Hash(kvp.Value, RequiredParameters));
+        Hashes.Add(ZDOKeys.Hash(kvp.Key), DataValue.Hash(kvp.Value, RequiredParameters));
       }
     }
     if (data.longs != null)
@@ -296,7 +309,7 @@ public class DataEntry
         if (kvp.Key == "") throw new InvalidOperationException($"Failed to parse long {value}.");
         if (kvp.Key.Contains("."))
           componentsToAdd.Add(kvp.Key.Split('.')[0]);
-        Longs.Add(Hash(kvp.Key), DataValue.Long(kvp.Value, RequiredParameters));
+        Longs.Add(ZDOKeys.Hash(kvp.Key), DataValue.Long(kvp.Value, RequiredParameters));
       }
     }
     if (data.strings != null)
@@ -308,7 +321,7 @@ public class DataEntry
         if (kvp.Key == "") throw new InvalidOperationException($"Failed to parse string {value}.");
         if (kvp.Key.Contains("."))
           componentsToAdd.Add(kvp.Key.Split('.')[0]);
-        Strings.Add(Hash(kvp.Key), DataValue.String(kvp.Value, RequiredParameters));
+        Strings.Add(ZDOKeys.Hash(kvp.Key), DataValue.String(kvp.Value, RequiredParameters));
       }
     }
     if (data.vecs != null)
@@ -320,7 +333,7 @@ public class DataEntry
         if (kvp.Key == "") throw new InvalidOperationException($"Failed to parse vector {value}.");
         if (kvp.Key.Contains("."))
           componentsToAdd.Add(kvp.Key.Split('.')[0]);
-        Vecs.Add(Hash(kvp.Key), DataValue.Vector3(kvp.Value, RequiredParameters));
+        Vecs.Add(ZDOKeys.Hash(kvp.Key), DataValue.Vector3(kvp.Value, RequiredParameters));
       }
     }
     if (data.quats != null)
@@ -332,7 +345,7 @@ public class DataEntry
         if (kvp.Key == "") throw new InvalidOperationException($"Failed to parse quaternion {value}.");
         if (kvp.Key.Contains("."))
           componentsToAdd.Add(kvp.Key.Split('.')[0]);
-        Quats.Add(Hash(kvp.Key), DataValue.Quaternion(kvp.Value, RequiredParameters));
+        Quats.Add(ZDOKeys.Hash(kvp.Key), DataValue.Quaternion(kvp.Value, RequiredParameters));
       }
     }
     if (data.bytes != null)
@@ -344,7 +357,7 @@ public class DataEntry
         if (kvp.Key == "") throw new InvalidOperationException($"Failed to parse byte array {value}.");
         if (kvp.Key.Contains("."))
           componentsToAdd.Add(kvp.Key.Split('.')[0]);
-        ByteArrays.Add(Hash(kvp.Key), Convert.FromBase64String(kvp.Value));
+        ByteArrays.Add(ZDOKeys.Hash(kvp.Key), Convert.FromBase64String(kvp.Value));
       }
     }
     if (data.items != null)
@@ -362,6 +375,12 @@ public class DataEntry
       foreach (var component in componentsToAdd)
         Ints[$"HasFields{component}".GetStableHashCode()] = DataValue.Simple(1);
     }
+    if (data.persistent != null)
+      Persistent = DataValue.Bool(data.persistent, RequiredParameters);
+    if (data.distant != null)
+      Distant = DataValue.Bool(data.distant, RequiredParameters);
+    if (data.priority != null)
+      Priority = Enum.TryParse<ZDO.ObjectType>(data.priority, true, out var parsed) ? parsed : null;
     if (!string.IsNullOrWhiteSpace(data.connection))
     {
       var split = Parse.SplitWithEmpty(data.connection!);
@@ -434,6 +453,12 @@ public class DataEntry
       ConnectionType = (ZDOExtraData.ConnectionType)pkg.ReadByte();
       ConnectionHash = pkg.ReadInt();
     }
+    if ((num & 512) != 0)
+      Persistent = DataValue.Bool(pkg);
+    if ((num & 1024) != 0)
+      Distant = DataValue.Bool(pkg);
+    if ((num & 2048) != 0)
+      Priority = (ZDO.ObjectType)pkg.ReadByte();
   }
   public bool Match(Dictionary<string, string> pars, ZDO zdo)
   {
@@ -447,6 +472,9 @@ public class DataEntry
     if (Vecs != null && Vecs.Any(pair => pair.Value.Match(pars, zdo.GetVec3(pair.Key, Vector3.zero)) == false)) return false;
     if (Quats != null && Quats.Any(pair => pair.Value.Match(pars, zdo.GetQuaternion(pair.Key, Quaternion.identity)) == false)) return false;
     if (ByteArrays != null && ByteArrays.Any(pair => pair.Value.SequenceEqual(zdo.GetByteArray(pair.Key)) == false)) return false;
+    if (Persistent != null && Persistent.Match(pars, zdo.Persistent) == false) return false;
+    if (Distant != null && Distant.Match(pars, zdo.Distant) == false) return false;
+    if (Priority != null && Priority.Value != zdo.Type) return false;
     return true;
   }
   public bool Unmatch(Dictionary<string, string> pars, ZDO zdo)
@@ -461,6 +489,9 @@ public class DataEntry
     if (Vecs != null && Vecs.Any(pair => pair.Value.Match(pars, zdo.GetVec3(pair.Key, Vector3.zero)) == true)) return false;
     if (Quats != null && Quats.Any(pair => pair.Value.Match(pars, zdo.GetQuaternion(pair.Key, Quaternion.identity)) == true)) return false;
     if (ByteArrays != null && ByteArrays.Any(pair => pair.Value.SequenceEqual(zdo.GetByteArray(pair.Key)) == true)) return false;
+    if (Persistent != null && Persistent.Match(pars, zdo.Persistent) == true) return false;
+    if (Distant != null && Distant.Match(pars, zdo.Distant) == true) return false;
+    if (Priority != null && Priority.Value == zdo.Type) return false;
     return true;
   }
   private void AddParameters(Dictionary<string, string> pars, ZDO? zdo)
@@ -648,6 +679,12 @@ public class DataEntry
       foreach (var pair in ByteArrays)
         ZDOExtraData.s_byteArrays[id].SetValue(pair.Key, pair.Value);
     }
+    if (Persistent != null)
+      zdo.Persistent = Persistent.GetBool(pars) ?? zdo.Persistent;
+    if (Distant != null)
+      zdo.Distant = Distant.GetBool(pars) ?? zdo.Distant;
+    if (Priority != null)
+      zdo.Type = Priority.Value;
     HandleConnection(zdo);
     HandleHashConnection(zdo);
   }
@@ -678,6 +715,12 @@ public class DataEntry
       num |= 128;
     if (ConnectionType != ZDOExtraData.ConnectionType.None && ConnectionHash != 0)
       num |= 256;
+    if (Persistent != null)
+      num |= 512;
+    if (Distant != null)
+      num |= 1024;
+    if (Priority != null)
+      num |= 2028;
 
     pkg.Write(num);
     if (Floats != null)
@@ -767,6 +810,12 @@ public class DataEntry
       pkg.Write((byte)ConnectionType);
       pkg.Write(ConnectionHash);
     }
+    if (Persistent != null)
+      pkg.Write(Persistent.GetBool(pars) ?? true);
+    if (Distant != null)
+      pkg.Write(Distant.GetBool(pars) ?? false);
+    if (Priority != null)
+      pkg.Write((byte)Priority.Value);
   }
 
   private void RollItems(Dictionary<string, string> pars)
@@ -845,15 +894,5 @@ public class DataEntry
       otherZdo.SetConnection(ZDOExtraData.ConnectionType.Portal, ownId);
       ownZdo.SetConnection(ZDOExtraData.ConnectionType.Portal, otherId);
     }
-  }
-  private static int Hash(string key)
-  {
-    if (key.StartsWith("$", StringComparison.InvariantCultureIgnoreCase))
-    {
-      var hash = ZSyncAnimation.GetHash(key.Substring(1));
-      if (key == "$anim_speed") return hash;
-      return 438569 + hash;
-    }
-    return key.GetStableHashCode();
   }
 }

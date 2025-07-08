@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 
 namespace Data;
@@ -27,6 +28,9 @@ public class PlainDataEntry
   public int ConnectionHash = 0;
   public ZDOID OriginalId = ZDOID.None;
   public ZDOID TargetConnectionId = ZDOID.None;
+  public bool Distant = false;
+  public bool Persistent = true;
+  public ZDO.ObjectType Priority = ZDO.ObjectType.Default;
 
 
   public void Load(ZDO zdo)
@@ -50,6 +54,9 @@ public class PlainDataEntry
       TargetConnectionId = zdoConn.m_target;
       ConnectionType = zdoConn.m_type;
     }
+    Distant = zdo.Distant;
+    Persistent = zdo.Persistent;
+    Priority = zdo.Type;
   }
 
   private static readonly HashSet<int> HashKeys = [
@@ -61,7 +68,7 @@ public class PlainDataEntry
     ZDOVars.s_leftItem,
     ZDOVars.s_rightItem
   ];
-  public void Write(DataData data)
+  public void Write(DataData data, bool all)
   {
     // No need to roll here because tbis always come from ZDO that doesn't have item values.
     data.floats = Floats?.Select(pair => $"{ZDOKeys.Convert(pair.Key)}, {pair.Value}").ToArray();
@@ -80,6 +87,38 @@ public class PlainDataEntry
       data.items = GetItems(items);
     if (ConnectionType != ZDOExtraData.ConnectionType.None && ConnectionHash != 0)
       data.connection = $"{ConnectionType}, {ConnectionHash}";
+    if (all)
+    {
+      data.persistent = Persistent ? "true" : "false";
+      data.distant = Distant ? "true" : "false";
+      data.priority = Priority.ToString();
+    }
+    else
+    {
+      // Usually people don't need distant, persistent or priority.
+      // So only write when they are different or unusual.
+      var defaultDistant = false;
+      var defaultPersistent = true;
+      var defaultType = ZDO.ObjectType.Default;
+      if (OriginalId != ZDOID.None)
+      {
+        var zdo = ZDOMan.instance.GetZDO(OriginalId);
+        var prefab = ZNetScene.instance.GetPrefab(zdo.m_prefab);
+        var view = prefab?.GetComponent<ZNetView>();
+        if (view != null)
+        {
+          defaultDistant = view.m_distant;
+          defaultPersistent = view.m_persistent;
+          defaultType = view.m_type;
+        }
+      }
+      if (Persistent != defaultPersistent)
+        data.persistent = Persistent ? "true" : "false";
+      if (Distant != defaultDistant)
+        data.distant = Distant ? "true" : "false";
+      if (Priority != defaultType)
+        data.priority = Priority.ToString();
+    }
   }
   private static ItemData[] GetItems(string encoded)
   {
@@ -191,6 +230,9 @@ public class PlainDataEntry
     }
     HandleConnection(zdo);
     HandleHashConnection(zdo);
+    zdo.Distant = Distant;
+    zdo.Persistent = Persistent;
+    zdo.Type = Priority;
   }
   private void HandleConnection(ZDO ownZdo)
   {

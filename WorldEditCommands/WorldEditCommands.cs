@@ -4,13 +4,14 @@ using Data;
 using HarmonyLib;
 
 namespace WorldEditCommands;
+
 [BepInPlugin(GUID, NAME, VERSION)]
 [BepInDependency("server_devcommands", "1.83")]
 public class WorldEditCommands : BaseUnityPlugin
 {
   public const string GUID = "world_edit_commands";
   public const string NAME = "World Edit Commands";
-  public const string VERSION = "1.67";
+  public const string VERSION = "1.68";
   public void Awake()
   {
     new Harmony(GUID).PatchAll();

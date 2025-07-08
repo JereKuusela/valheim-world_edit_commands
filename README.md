@@ -49,6 +49,7 @@ Following parameters are available:
 - `copy`: Copies the object id to clipboard.
   - Recommended to bind this to a key, if you use the command often.
 - `damage=number`: Sets damage multiplier.
+- `distant=true/false`: Sets if the object is loaded from further away than normally.
 - `durability=number` or `health=number`: Sets the current durability for items, the current health for structures and the maximum health for creatures. Very high values like 1E30 turn the target invulnerable (including gravity for structures).
   - Note: Invulnerable objects without structure support take continuous damage which causes network traffic.
 - `durability=number%` or `health=number%`: Sets the durabilty/health based on the max amount.
@@ -73,6 +74,7 @@ Following parameters are available:
 - `mirror`: Mirrors the position and rotation based on the player position. Always mirrors the x-axis.
 - `move=forward,right,up`: Moves objects (meters). Static objects only update their position for other players when they leave the area.
 - `origin=player|object|world`: Base direction for `move` and `rotate`. Default value `player` uses the player's rotation, `object` uses the objects rotation and `world` uses the global coordinate system (x=north/south,y=up/down,z=west/east).
+- `persist=true/false`: Sets if the object is saved to the world file.
 - `prefab=id`: Replaces the object with the given id.
 - `radius=number` or `radius=min-max`: Radius for included objects. If not given, the hovered object is only affected.
 - `rect=width,depth` or `rect=min-max,min-max`: Area for included objects. If not given, the hovered object is only affected.
@@ -132,6 +134,7 @@ Following parameters are available:
 - `crafter=value` or `name=value`: Name of the crafter for items or name for tamed creatures (that support naming). Character _ is replaced with a space bar.
 - `damage=number`: Sets the damage multiplier.
 - `data=data1,data2,...`: Sets data from data entries or base64 encoded strings.
+- `distant=true/false`: Sets if the object is loaded from further away than normally.
 - `durability=number` or `health=number`: Overrides the current durability for items, the current health for structures and the maximum health for creatures. Very high values like 1E30 turn the target invulnerable (including gravity for structures).
 - `field=component,field,value`: Sets arbitrary component field. The autocompletion shows only components for the spawned object.
   - Multiple `field=` can be used in the same command.
@@ -143,6 +146,7 @@ Following parameters are available:
 - `from=x,z,y`: Allows overriding the player's position for the command. Used by `redo` and can be useful for some advanced usage.
 - `hunt=true/false`: Spawned creatures are in the hunt mode.
 - `level=integer`: Spawned creatures have this amount of level (level = stars + 1).
+- `persist=true/false`: Sets if the object is saved to the world file.
 - `pos=forward,right,up`: Relative position (meters) from the player. If not given, the objects are spawned 2 meters front of the player. If y coordinate is not given, the objects snaps to the ground.
 - `radius=number`: Maximum spawn distance when spawning multiple objects. Default is 0.5 meters.
 - `refPlayer=name`: Allows overriding the player's position with another player's position.

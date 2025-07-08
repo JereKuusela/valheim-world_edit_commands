@@ -37,7 +37,9 @@ public class SharedObjectAutoComplete
       "ammoType",
       "field",
       "f",
-      "par"
+      "par",
+      "persist",
+      "distant"
     ];
     parameters.AddRange(namedParameters);
     return [.. parameters.Distinct().OrderBy(s => s)];
@@ -51,6 +53,12 @@ public class SharedObjectAutoComplete
       },
       {
         "baby", (int index) => ParameterInfo.Flag("Baby")
+      },
+      {
+        "persist", (int index) => index == 0 ? ParameterInfo.Create("persist=<color=yellow>true/false</color>.", "Sets if the object is saved to the world file.") : ParameterInfo.None
+      },
+      {
+        "distant", (int index) => index == 0 ? ParameterInfo.Create("distant=<color=yellow>true/false</color> or no value for default.", "Sets if the object is loaded from further distance than normally.") : ParameterInfo.None
       },
       {
         "left_hand",

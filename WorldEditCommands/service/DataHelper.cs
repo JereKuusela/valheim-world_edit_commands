@@ -147,9 +147,9 @@ public class DataHelper
     ZNetView.m_initZDO = ZDOMan.instance.CreateNewZDO(pos, prefab);
     data?.Write(pars, ZNetView.m_initZDO);
     ZNetView.m_initZDO.m_rotation = rot.eulerAngles;
-    ZNetView.m_initZDO.Type = view.m_type;
-    ZNetView.m_initZDO.Distant = view.m_distant;
-    ZNetView.m_initZDO.Persistent = view.m_persistent;
+    ZNetView.m_initZDO.Type = data?.Priority ?? view.m_type;
+    ZNetView.m_initZDO.Distant = data?.Distant?.GetBool(pars) ?? view.m_distant;
+    ZNetView.m_initZDO.Persistent = data?.Persistent?.GetBool(pars) ?? view.m_persistent;
     ZNetView.m_initZDO.m_prefab = prefab;
     if (!view.m_syncInitialScale && scale != null && WorldEditCommands.WorldEditCommands.IsTweaks)
     {

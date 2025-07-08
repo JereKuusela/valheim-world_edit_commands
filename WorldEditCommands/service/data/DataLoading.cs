@@ -79,7 +79,7 @@ public class DataLoading
     LoadDefaultValueGroups();
 
   }
-  public static void Save(PlainDataEntry data, string name, bool profile)
+  public static void Save(PlainDataEntry data, string name, bool profile, bool dump)
   {
     var path = Path.Combine(profile ? ProfilePath : GamePath, "data.yaml");
     if (!File.Exists(path))
@@ -88,14 +88,14 @@ public class DataLoading
       File.Create(path).Close();
     }
     var yaml = File.ReadAllText(path);
-    yaml += "\n" + Yaml.Serializer().Serialize(new[] { ToData(data, name) });
+    yaml += "\n" + Yaml.Serializer().Serialize(new[] { ToData(data, name, dump) });
     File.WriteAllText(path, yaml);
   }
 
-  public static DataData ToData(PlainDataEntry zdo, string name)
+  public static DataData ToData(PlainDataEntry zdo, string name, bool dump)
   {
     DataData data = new() { name = name };
-    zdo.Write(data);
+    zdo.Write(data, dump);
     return data;
   }
 

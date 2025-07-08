@@ -406,6 +406,16 @@ public static class Actions
   {
     SetVisual(obj.GetComponent<Character>(), slot, item);
   }
+  public static void SetDistant(GameObject obj, bool distant)
+  {
+    var zdo = obj.GetComponent<ZNetView>().GetZDO();
+    zdo.Distant = distant;
+  }
+  public static void SetPersistent(GameObject obj, bool persistent)
+  {
+    var zdo = obj.GetComponent<ZNetView>().GetZDO();
+    zdo.Persistent = persistent;
+  }
   public static int SetFields(GameObject obj, Dictionary<string, object> fields) => SetFields(obj.GetComponent<ZNetView>(), fields);
   public static int SetFields(ZNetView view, Dictionary<string, object> fields)
   {

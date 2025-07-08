@@ -8,9 +8,6 @@ public class FakeZDO(ZDO zdo)
   public int Prefab = zdo.m_prefab;
   public Vector3 Position = zdo.m_position;
   public Vector3 Rotation = zdo.m_rotation;
-  public ZDO.ObjectType Type = zdo.Type;
-  public bool Distant = zdo.Distant;
-  public bool Persistent = zdo.Persistent;
   public ZDOID Id = zdo.m_uid;
 
 
@@ -28,9 +25,6 @@ public class FakeZDO(ZDO zdo)
     zdo.m_prefab = Prefab;
     zdo.m_position = Position;
     zdo.m_rotation = Rotation;
-    zdo.Type = Type;
-    zdo.Distant = Distant;
-    zdo.Persistent = Persistent;
     Data.Write(zdo);
   }
   public void Destroy()

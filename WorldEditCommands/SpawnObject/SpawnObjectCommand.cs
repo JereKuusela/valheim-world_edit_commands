@@ -105,6 +105,10 @@ public class SpawnObjectCommand
         // Temporarily losing the ownership prevents default items replacing the set items.
         zdo?.SetOwner(0);
       }
+      if (pars.Distant.HasValue)
+        Actions.SetDistant(obj, pars.Distant.Value);
+      if (pars.Persist.HasValue)
+        Actions.SetPersistent(obj, pars.Persist.Value);
       if (pars.Fields.Count > 0)
         Actions.SetFields(obj, pars.Fields);
     }

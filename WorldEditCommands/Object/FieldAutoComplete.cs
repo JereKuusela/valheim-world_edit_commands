@@ -484,6 +484,13 @@ public class FieldAutoComplete
         { "spawntime", typeof(long) },
       }
     },{
+      nameof(MaterialVariation), new Dictionary<string, Type>
+      {
+        { "MatVar0", typeof(int) },
+        { "MatVar1", typeof(int) },
+        { "MatVar2", typeof(int) },
+      }
+    },{
       nameof(MineRock), new Dictionary<string, Type>
       {
         { "Health0", typeof(float) },

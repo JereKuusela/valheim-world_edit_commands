@@ -44,6 +44,12 @@ public class DataData
   public string? value;
   [DefaultValue(null)]
   public string[]? values;
+  [DefaultValue(null)]
+  public string? persistent;
+  [DefaultValue(null)]
+  public string? distant;
+  [DefaultValue(null)]
+  public string? priority;
 }
 
 public class ItemData

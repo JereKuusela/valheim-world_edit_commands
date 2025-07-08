@@ -25,14 +25,14 @@ public class DataCommand
     {
       if (value == null || value == "")
         throw new InvalidOperationException("Save: Missing data entry name.");
-      DataLoading.Save(new PlainDataEntry(view.GetZDO()), value, false);
+      DataLoading.Save(new PlainDataEntry(view.GetZDO()), value, false, false);
       return $"¤ data saved.";
     }
     if (operation == "dump")
     {
       if (value == null || value == "")
         throw new InvalidOperationException("Save: Missing data entry name.");
-      DataLoading.Save(AddDefaultFields(view.GetZDO(), new PlainDataEntry(view.GetZDO())), value, false);
+      DataLoading.Save(AddDefaultFields(view.GetZDO(), new PlainDataEntry(view.GetZDO())), value, false, true);
       return $"¤ data saved.";
     }
     throw new NotImplementedException();

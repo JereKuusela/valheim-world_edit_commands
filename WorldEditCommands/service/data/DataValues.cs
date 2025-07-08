@@ -58,6 +58,7 @@ public class DataValue
     return new StringValue(split);
   }
   public static IBoolValue Bool(bool value) => new SimpleBoolValue(value);
+  public static IBoolValue Bool(ZPackage pkg) => new SimpleBoolValue(pkg.ReadBool());
   public static IBoolValue Bool(string values, HashSet<string> requiredParameters)
   {
     var hasParameters = CheckParameters(values, requiredParameters);

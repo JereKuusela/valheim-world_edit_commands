@@ -25,6 +25,8 @@ public class SharedObjectParameters
   public Range<int>? Ammo;
   public string? AmmoType;
   public bool? Baby;
+  public bool? Persist;
+  public bool? Distant;
   public Item? Helmet;
   public Item? LeftHand;
   public Item? RightHand;
@@ -44,6 +46,8 @@ public class SharedObjectParameters
       var split = arg.Split(['='], 2);
       var name = split[0].ToLower();
       if (name == "baby") Baby = true;
+      if (name == "persist") Persist = true;
+      if (name == "distant") Distant = true;
       if (split.Length < 2) continue;
       var value = split[1].Trim();
       if (name == "par")
@@ -93,6 +97,8 @@ public class SharedObjectParameters
       if (name == "shoulders") Shoulders = new(value);
       if (name == "legs") Legs = new(value);
       if (name == "utility") Utility = new(value);
+      if (name == "persist") Persist = Parse.Boolean(value);
+      if (name == "distant") Distant = Parse.Boolean(value);
       if (name == "field" || name == "f")
       {
         var values = value.Split(',');
