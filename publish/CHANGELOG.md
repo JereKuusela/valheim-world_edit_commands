@@ -1,3 +1,6 @@
+- v1.69
+  - Fixes wrong base64 encoding of the priority data (very minor bug).
+
 - v1.68
   - Adds new parameters `distant` and `persist` to the commands `spawn_object` and `object`.
   - Adds new fields `distant`, `persistent` and `priority` to the data file.

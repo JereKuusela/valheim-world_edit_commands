@@ -720,7 +720,7 @@ public class DataEntry
     if (Distant != null)
       num |= 1024;
     if (Priority != null)
-      num |= 2028;
+      num |= 2048;
 
     pkg.Write(num);
     if (Floats != null)
