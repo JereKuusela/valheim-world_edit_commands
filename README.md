@@ -45,7 +45,10 @@ Following parameters are available:
 - `chance=number`: Randomly filters included objects. For example 0.5 includes about half of the objects (50%).
 - `creator=player id`: Sets the piece creator. Use 0 for no creator.
 - `circle=number` or `circle=min-max`: Radius for included objects. If not given, the hovered object is only affected.
-- `connect`: Includes entire structures.
+- `connect`: Includes entire structures by affecting connected pieces.
+  - Use `id=` to limit the connections to specific piece ids. For example to affect only one section of a building.
+  - Use `ignore=` to exclude specific piece ids from the connections.
+  - Use `connect=id1,id2,...` to return specific piece ids without affecting the connections.
 - `copy`: Copies the object id to clipboard.
   - Recommended to bind this to a key, if you use the command often.
 - `damage=number`: Sets damage multiplier.

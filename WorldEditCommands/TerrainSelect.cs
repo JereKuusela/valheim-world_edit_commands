@@ -5,6 +5,7 @@ using ServerDevcommands;
 using Service;
 using UnityEngine;
 namespace WorldEditCommands;
+
 public abstract class TerrainNode
 {
   public int Index;
@@ -55,7 +56,7 @@ public partial class Terrain
   public static Func<TerrainNode, bool> CreateBlockCheckFilter(BlockCheck blockCheck, string[] includedIds, string[] excludedIds)
   {
     var included = Selector.GetPrefabs(includedIds);
-    var excluded = Selector.GetExcludedPrefabs(excludedIds);
+    var excluded = Selector.GetAllPrefabs(excludedIds);
     var zs = ZoneSystem.instance;
     return (TerrainNode index) =>
     {

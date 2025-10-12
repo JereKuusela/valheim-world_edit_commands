@@ -1,3 +1,6 @@
+- v1.70
+  - Improves `object connect` to support specifying returned ids and connection ids separately.
+
 - v1.69
   - Fixes wrong base64 encoding of the priority data (very minor bug).
 
@@ -11,10 +14,3 @@
 
 - v1.66
   - Improves the undo system (again).
-
-- v1.65
-  - Improves the undo system.
-
-- v1.64
-  - Fixed for the new game version.
-  - Fixes the command `object refresh`.

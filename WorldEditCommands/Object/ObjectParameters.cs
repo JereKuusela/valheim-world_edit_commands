@@ -4,6 +4,7 @@ using ServerDevcommands;
 using Service;
 using UnityEngine;
 namespace WorldEditCommands;
+
 public class ObjectParameters : SharedObjectParameters
 {
   public Range<Vector3> Rotation = new(Vector3.zero);
@@ -11,6 +12,7 @@ public class ObjectParameters : SharedObjectParameters
   public Vector3 From;
   public Vector3? Center = null;
   public Range<float>? Fuel = null;
+  public string[] ConnectionIds = [];
   public string[] IncludedIds = [];
   public string[] ExcludedIds = [];
   public string Prefab = "";
@@ -108,6 +110,7 @@ public class ObjectParameters : SharedObjectParameters
         if (value == "reset") ResetRotation = true;
         else Rotation = Parse.VectorYXZRange(value, Vector3.zero);
       }
+      if (name == "connect") ConnectionIds = values;
       if (name == "center" || name == "from") Center = Parse.VectorXZY(values);
       if (name == "move") Offset = Parse.VectorZXYRange(value, Vector3.zero);
       if (name == "id") IncludedIds = values;

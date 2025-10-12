@@ -48,8 +48,9 @@ public class TweakObjectCommand : TweakCommand
     throw new NotImplementedException();
   }
 
-  protected override void Postprocess(GameObject obj)
+  protected override void Postprocess(GameObject? obj)
   {
+    if (!obj) return;
     if (obj.TryGetComponent<StaticPhysics>(out var sp))
     {
       sp.m_updateTime = Time.time - 30f;

@@ -23,7 +23,8 @@ public class ObjectCommand
     DataEntry? unmatchData = pars.Unmatch == "" ? null : DataHelper.Get(pars.Unmatch);
     views = views.Where(view =>
     {
-      if (!view || !view.GetZDO().IsValid())
+      if (!view) return false;
+      if (!view.GetZDO().IsValid())
       {
         context.AddString($"Skipped: {view.name} is not loaded.");
         return false;
@@ -170,7 +171,7 @@ public class ObjectCommand
       {
         var view = Selector.GetHovered(50f, pars.IncludedIds, pars.Components, pars.ExcludedIds);
         if (view == null) return;
-        views = Selector.GetConnected(view, pars.IncludedIds, pars.ExcludedIds);
+        views = Selector.GetConnected(view, pars.ConnectionIds, pars.IncludedIds, pars.ExcludedIds);
       }
       else if (pars.Radius != null)
       {

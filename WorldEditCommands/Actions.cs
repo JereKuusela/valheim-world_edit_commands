@@ -15,7 +15,7 @@ public static class Actions
     obj.GetZDO().Set(hash, toggled);
     return toggled;
   }
-  public static GameObject Refresh(ZDO zdo)
+  public static GameObject? Refresh(ZDO zdo)
   {
     var obj = ZNetScene.instance.m_instances[zdo].gameObject;
     if (!obj || zdo.GetPrefab() == Hash.Player) return obj;
@@ -25,7 +25,7 @@ public static class Actions
     return newObj;
   }
 
-  public static GameObject Refresh(ZNetView view) => Refresh(view.GetZDO());
+  public static GameObject? Refresh(ZNetView view) => Refresh(view.GetZDO());
   public static void SetFloat(ZNetView obj, float? value, int hash, bool refresh = false)
   {
     if (!obj) return;

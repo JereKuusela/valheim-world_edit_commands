@@ -6,10 +6,12 @@ using ServerDevcommands;
 using Service;
 using UnityEngine;
 namespace WorldEditCommands;
+
 public abstract class BaseParameters(Dictionary<string, Type> supportedOperations)
 {
   public Vector3 From;
   public Vector3? Center;
+  public string[] ConnectionIds = [];
   public string[] IncludedIds = [];
   public string[] ExcludedIds = [];
   public float Angle = 0f;
@@ -99,6 +101,7 @@ public abstract class BaseParameters(Dictionary<string, Type> supportedOperation
       if (kvp.Key == "") throw new InvalidOperationException($"Invalid data parameter {value}.");
       DataParameters[$"<{kvp.Key}>"] = kvp.Value;
     }
+    if (name == "connect") ConnectionIds = values;
     if (name == "center" || name == "from") Center = Parse.VectorXZY(values);
     if (name == "id") IncludedIds = values;
     if (name == "ignore") ExcludedIds = values;
@@ -140,7 +143,7 @@ public abstract class BaseParameters(Dictionary<string, Type> supportedOperation
     {
       var view = Selector.GetHovered(50f, IncludedIds, Components, ExcludedIds);
       if (view == null) return [];
-      views = Selector.GetConnected(view, IncludedIds, ExcludedIds);
+      views = Selector.GetConnected(view, ConnectionIds, IncludedIds, ExcludedIds);
     }
     else if (Radius != null)
     {
@@ -163,9 +166,10 @@ public abstract class BaseParameters(Dictionary<string, Type> supportedOperation
     }
     DataEntry? matchData = Match == "" ? null : DataHelper.Get(Match);
     DataEntry? unmatchData = Unmatch == "" ? null : DataHelper.Get(Unmatch);
-    return views.Where(view =>
+    return [.. views.Where(view =>
     {
-      if (!view || !view.GetZDO().IsValid())
+      if (!view) return false;
+      if (!view.GetZDO().IsValid())
       {
         terminal.AddString($"Skipped: {view.name} is not loaded.");
         return false;
@@ -186,7 +190,7 @@ public abstract class BaseParameters(Dictionary<string, Type> supportedOperation
         return false;
       }
       return true;
-    }).ToArray();
+    })];
   }
 
   public static System.Random Random = new();

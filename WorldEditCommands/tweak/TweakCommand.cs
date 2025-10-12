@@ -23,7 +23,7 @@ public abstract class TweakCommand
   protected abstract string DoOperation(ZNetView view, string operation, bool? value);
   protected abstract string DoOperation(ZNetView view, string operation, long? value);
   protected virtual Dictionary<string, object?> Postprocess(ZNetView view, Dictionary<string, object?> operations) => operations;
-  protected virtual void Postprocess(GameObject obj) { }
+  protected virtual void Postprocess(GameObject? obj) { }
   protected virtual ZNetView Preprocess(Terminal context, ZNetView view) => view;
 
   public bool AddComponentAutomatically = true;
@@ -34,7 +34,8 @@ public abstract class TweakCommand
     Dictionary<ZDOID, long> oldOwner = [];
     views = views.Where(view =>
     {
-      if (!view || !view.GetZDO().IsValid())
+      if (!view) return false;
+      if (!view.GetZDO().IsValid())
       {
         context.AddString($"Skipped: {view.name} is not loaded.");
         return false;
