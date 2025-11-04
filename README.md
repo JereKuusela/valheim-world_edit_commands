@@ -256,7 +256,7 @@ Following parameters are available:
 - `terrain from=-23,23 angle=e rect=5 slope=4,e step=1,1`: Creates a slope at right side of the level rising towards south (east of east).
 - `terrain from=-23,23 angle=e rect=5 slope=4 step=1,2,1 level`: Creates a level at the end of the slope. The last parameter of step is needed because the slope is not going to the original direction so it won't be raised automatically.
 - `alias level terrain level circle=$$`: New command `level [value]` for easier leveling.
-- `alias level terrain level rect=$$`: New command `level_sq [value]` for easier leveling.
+- `alias level_sq terrain level rect=$$`: New command `level_sq [value]` for easier leveling.
 
 ## Mechanics
 
