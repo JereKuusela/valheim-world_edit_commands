@@ -111,6 +111,8 @@ public class SharedObjectParameters
         var key = zdoField ? field : $"{component}.{field}";
         if (type == typeof(int))
           Fields.Add(key, Parse.Int(fieldValue));
+        else if (type == typeof(Int64))
+          Fields.Add(key, (long)Int64.Parse(fieldValue));
         else if (type == typeof(float))
           Fields.Add(key, Parse.Float(fieldValue));
         else if (type == typeof(string))

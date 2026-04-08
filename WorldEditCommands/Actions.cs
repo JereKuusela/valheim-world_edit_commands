@@ -444,6 +444,8 @@ public static class Actions
         zdo.Set(hash, v2);
       else if (kvp.Value is bool v3)
         zdo.Set(hash, v3);
+      else if (kvp.Value is long v4)
+        zdo.Set(hash, v4);
       else if (kvp.Value is Vector3 vector)
         zdo.Set(hash, TransformPos(zdo, kvp.Key, vector));
       else if (kvp.Value is Quaternion quaternion)
