@@ -558,7 +558,12 @@ public static class Actions
     if (zdo == null || !zdo.IsValid()) return;
     zdo.SetOwner(ZDOMan.GetSessionID());
     if (ZNetScene.instance.m_instances.TryGetValue(zdo, out var view))
+    {
       ZNetScene.instance.Destroy(view.gameObject);
+      // ZNetScene destroy removes the ZDO immediately, so destroying the view instantly follows the same logic.
+      // This fixes ZNetView component being valid while the ZDO is already destroyed.
+      UnityEngine.Object.DestroyImmediate(view);
+    }
     else
       ZDOMan.instance.DestroyZDO(zdo);
   }
@@ -568,21 +573,21 @@ public static class Actions
   public static string Damage(ZNetView view, float? value)
   {
     if (!view.GetComponent<Character>()) return "Skipped: ¤ is not a creature.";
-    Actions.SetFloat(view, value ?? 1f, Hash.Damage);
+    SetFloat(view, value ?? 1f, Hash.Damage);
     return $"¤ damage set to {Print(value)}.";
   }
 
   public static string Ammo(ZNetView view, int? value)
   {
     if (!view.GetComponent<Turret>()) return "Skipped: ¤ is not a turret.";
-    Actions.SetInt(view, value ?? 0, Hash.Ammo);
+    SetInt(view, value ?? 0, Hash.Ammo);
     return $"¤ ammo set to {Print(value)}.";
   }
 
   public static string AmmoType(ZNetView view, string? value)
   {
     if (!view.GetComponent<Turret>()) return "Skipped: ¤ is not a turret.";
-    Actions.SetString(view, value ?? "", Hash.AmmoType);
+    SetString(view, value ?? "", Hash.AmmoType);
     return $"¤ ammo type set to {Print(value)}.";
   }
 }

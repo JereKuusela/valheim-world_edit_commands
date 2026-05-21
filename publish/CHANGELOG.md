@@ -1,3 +1,8 @@
+- v1.71
+  - Fixes `object` command not able to set long data value. Thanks Haloa!
+  - Fixes wrong autocomplete for `persist` operation. Thanks Haloa!
+  - Fixes `data` command to support values with commas. Thanks Haloa!
+  
 - v1.70
   - Improves `object connect` to support specifying returned ids and connection ids separately.
 

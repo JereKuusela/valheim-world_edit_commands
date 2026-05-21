@@ -98,14 +98,14 @@ public class DataCommand
       var id = zdo.m_uid;
       foreach (var str in value)
       {
-        var split = str.Split(',');
+        var split = str.Split([','], 3);
         if (split.Length < 2)
           throw new InvalidOperationException($"Set: Missing value for {split[0]}.");
         if (split.Length < 3)
           throw new InvalidOperationException($"Set: Missing key for {split[1]}.");
         var type = split[0].ToLowerInvariant();
         var key = int.TryParse(split[1], out var i) ? i : split[1].GetStableHashCode();
-        var val = string.Join(",", split.Skip(2));
+        var val = split[2];
         if (type == "float")
           ZDOExtraData.Set(id, key, Parse.Float(val));
         else if (type == "vec3")
