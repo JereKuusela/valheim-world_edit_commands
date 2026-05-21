@@ -75,7 +75,7 @@ public class ObjectParameters : SharedObjectParameters
     "components",
     "copy",
     "distant",
-    "persistent"
+    "persist"
   ];
 
   public ObjectParameters(Terminal.ConsoleEventArgs args)
