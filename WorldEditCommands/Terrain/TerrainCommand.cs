@@ -4,6 +4,7 @@ using System.Linq;
 using ServerDevcommands;
 using UnityEngine;
 namespace WorldEditCommands;
+
 public class TerrainCommand
 {
   public const string Name = "terrain";
@@ -17,6 +18,9 @@ public class TerrainCommand
     {"paved_moss", new(0f, 0f, 0.5f)},
     {"paved_dirt", new(1f, 0f, 0.5f)},
     {"paved_dark", new(0f, 1f, 0.5f)},
+    {"lava", new(float.NaN, float.NaN, float.NaN, -1f)},
+    {"lava_shallow", new(float.NaN, float.NaN, float.NaN, -0.5f)},
+    {"lava_light", new(float.NaN, float.NaN, float.NaN, -0.25f)},
   };
 
   private TerrainComp[] GetCompilers(TerrainParameters pars)
@@ -87,6 +91,11 @@ public class TerrainCommand
         var split = pars.Paint.Split(',');
         if (split.Length > 2)
         {
+          for (var i = 0; i < split.Length; i++)
+          {
+            if (split[i].StartsWith("*"))
+              split[i] = "NaN";
+          }
           Color color = new(Parse.Float(split, 0), Parse.Float(split, 1), Parse.Float(split, 2), Parse.Float(split, 3, 1f));
           Terrain.PaintTerrain(paintNodes, pars.Position, pars.Size, pars.Smooth, color);
         }

@@ -232,8 +232,11 @@ Following parameters are available:
   - 1.0: All of the terrain gets reduced changes (except the very center).
   - 0.5: Half of the terrain gets reduced changes.
   - 0.0: No reduction (default).
-- `paint=value`: Sets the terrain material (cultivated, grass, grass_dark,dirt, patches, paved, paved_dark, paved_dirt or paved_moss).
+- `paint=value`: Sets the terrain material (cultivated, grass, paved, lava and more).
 - `paint=dirt,cultivated,paved,vegetation`: Sets custom terrain material (values from 0.0 to 1.0).
+  - Vegetation value is automatically reversed for Ashlands so that value 0 applies lava (internally value 1 is lava).
+  - This is needed to prevent default paints applying lava. You can use negative vegetation value to skip the biome check.
+  - Value `*` can be used use the paint value of existing terrain. This allows only changing specific paint layers.
 - `raise=meters`: Raises terrain by X meters. Same as `lower` when a negative value is used.
 - `rect=width,depth` or `rect=min-max,min-max`: Determines the size of the affected terrain.
 - `reset`: Resets terrain height and paint changes. Ignores `smooth` parameter.

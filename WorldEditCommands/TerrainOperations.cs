@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 namespace WorldEditCommands;
+
 using Operation = Action<TerrainComp, int, TerrainNode>;
 public partial class Terrain
 {
@@ -89,9 +90,44 @@ public partial class Terrain
     void action(TerrainComp compiler, int index, TerrainNode node)
     {
       var multiplier = CalculateSmooth(smooth, node.Distance);
-      var newColor = Color.Lerp(compiler.m_paintMask[index], color, multiplier);
-      newColor.a = color.a;
-      compiler.m_paintMask[index] = newColor;
+      var sourceColor = compiler.m_paintMask[index];
+      var hm = compiler.m_hmap;
+      // Lava is implemented with alpha 1, which unfortunately is same alpha as on regular terrain.
+      // 1. Unmodified state has alpha 1 which doesn't match how Ashlands biome works (unmodified state is considered as alpha 0).
+      // 2. Regular paint colors would apply lava as they have alpha 1.
+
+      // This should be most compatible way with custom biomes.
+      // IsLava always returns false for non-lava biomes, regarless of the value.
+      var isAshlands = hm != null && hm.IsLava(pos, -1f);
+      // Fix for issue 1.
+      if (isAshlands && !compiler.m_modifiedPaint[index])
+        sourceColor.a = 0f;
+
+      var targetColor = color;
+      // Support for only changing specific channel.
+      if (float.IsNaN(color.r)) targetColor.r = sourceColor.r;
+      if (float.IsNaN(color.g)) targetColor.g = sourceColor.g;
+      if (float.IsNaN(color.b)) targetColor.b = sourceColor.b;
+
+      if (float.IsNaN(color.a))
+      {
+        targetColor.a = sourceColor.a;
+      }
+      else if (color.a >= 0f)
+      {
+        // Fix for issue 2.
+        if (isAshlands)
+          targetColor.a = 1 - color.a;
+        else
+          targetColor.a = color.a;
+      }
+      else
+      {
+        // Negative values skip biome checks for precise control.
+        targetColor.a = -color.a;
+      }
+
+      compiler.m_paintMask[index] = Color.Lerp(sourceColor, targetColor, multiplier);
       compiler.m_modifiedPaint[index] = true;
     }
     DoOperation(nodes, pos, radius, action);
