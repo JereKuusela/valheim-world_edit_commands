@@ -96,9 +96,7 @@ public partial class Terrain
       // 1. Unmodified state has alpha 1 which doesn't match how Ashlands biome works (unmodified state is considered as alpha 0).
       // 2. Regular paint colors would apply lava as they have alpha 1.
 
-      // This should be most compatible way with custom biomes.
-      // IsLava always returns false for non-lava biomes, regarless of the value.
-      var isAshlands = hm != null && hm.IsLava(pos, -1f);
+      var isAshlands = WorldGenerator.IsAshlands(pos.x, pos.z);
       // Fix for issue 1.
       if (isAshlands && !compiler.m_modifiedPaint[index])
         sourceColor.a = 0f;

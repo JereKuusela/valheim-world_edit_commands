@@ -1,3 +1,6 @@
+- v1.72
+  - Fixes terrain paint operations with Expand World Data mod.
+
 - v1.71
   - Adds new in-built paint value `lava` to create lava on Ashlands biome.
   - Adds support for changing only specific paint layers by using `*` as the layer value.
@@ -16,6 +19,3 @@
   - Adds new parameters `distant` and `persist` to the commands `spawn_object` and `object`.
   - Adds new fields `distant`, `persistent` and `priority` to the data file.
   - Improves the reverse hashing of commands `data save` and `data dump`.
-
-- v1.67
-  - Fixes the command `tweak_object weather=` not working properly for environment names with spacebars/underscores.
