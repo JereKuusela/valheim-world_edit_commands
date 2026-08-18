@@ -74,6 +74,8 @@ Each data type has its own values. It's important to use the correct type, other
   - Internally the list is converted to base64 encoded string and saved as "items".
   - If you use this, remove the "items" from strings.
   - See section "Loot generation" for more information.
+- position: (EWP only) Position in world coordinates as vector (x,z,y)
+- rotation: (EWP only) Rotation as vector (y,x,z) in degrees
 
 ## Dynamic data entries
 
@@ -90,7 +92,7 @@ Data entries can be parametrized with the `par=` parameter.
 This can be useful when you want to change a few values of a big data entry.
 
 ```yaml
-- data: leveler
+- name: leveler
   ints:
   - level, <level>
 ```
@@ -102,7 +104,7 @@ This can be useful when you want to change a few values of a big data entry.
 Parameters `x`, `y` and `z` are automatically read from the target object.
 
 ```yaml
-- data: someData
+- name: someData
   vecs:
   - spawnpoint, "<x>,<z>,<y>"
 ```
@@ -110,7 +112,7 @@ Parameters `x`, `y` and `z` are automatically read from the target object.
 Parameters containing `datatype_` are automatically read from the target object
 
 ```yaml
-- data: someData
+- name: someData
   floats:
   - RandomSkillFactor, <int_level>
 ```
@@ -120,7 +122,7 @@ Parameters containing `datatype_` are automatically read from the target object
 For numerical values, simple calculations can be used.
 
 ```yaml
-- data: leveler
+- name: leveler
   ints:
   - level, <level>
   floats:
@@ -132,7 +134,7 @@ For numerical values, simple calculations can be used.
 Multiple values can be used to randomize the result.
 
 ```yaml
-- data: randomLeveler
+- name: randomLeveler
   ints:
   - level, 1,2,3
   hashes:
@@ -144,7 +146,7 @@ Special parameter `<none>` can be used to set no value.
 No value is also set if the numerical value is not valid.
 
 ```yaml
-- data: someData
+- name: someData
   hashes:
   - ShoulderItem, CapeDeerHide,CapeLox,<none>
 ```
@@ -154,13 +156,13 @@ No value is also set if the numerical value is not valid.
 Ranges can be used to randomize numerical values.
 
 ```yaml
-- data: randomLeveler
+- name: randomLeveler
   ints:
   - level, 1;3
   health:
   - health, 100;1000;50
   
-- data: leveler
+- name: leveler
   ints:
   - level, 1;<level>
   health:
@@ -184,7 +186,7 @@ Value entries can be added to the same file as the data entries. Separate files 
 ```yaml
 - value: level, 3
 
-- data: leveler
+- name: leveler
   ints:
   - level, <level>
 ```
@@ -199,7 +201,7 @@ Value entries can be added to the same file as the data entries. Separate files 
 - value: mag, <color=#FF00FF>
 - value: cyan, <color=#00FFFF>
 
-- data: texter
+- name: texter
   strings:
   - RuneStone.m_text, <text>
 ```
@@ -211,7 +213,7 @@ Value entries can be added to the same file as the data entries. Separate files 
 ```yaml
 - value: textMag, <color=#FF00FF><text></color>
 
-- data: texter
+- name: texter
   strings:
   - RuneStone.m_text, <textMag>
 ```
@@ -229,7 +231,7 @@ Value groups randomly select one of the values. Otherwise they work like normal 
   - 2
   - 3
 
-- data: leveler
+- name: leveler
   ints:
   - level, <randomLevel>
 ```
