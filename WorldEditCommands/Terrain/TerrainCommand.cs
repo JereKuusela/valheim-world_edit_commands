@@ -63,6 +63,7 @@ public class TerrainCommand
     TerrainAutoComplete autoComplete = new();
     Helper.Command(Name, "Manipulates the terrain.", (args) =>
     {
+      UndoHelper.BeginAction();
       TerrainParameters pars = new(args);
       var compilers = GetCompilers(pars);
       var filterers = GetFilterers(pars);
@@ -107,8 +108,8 @@ public class TerrainCommand
       foreach (var compiler in compilers)
         Terrain.Save(compiler);
       var after = Terrain.GetData(heightNodes, paintNodes);
-      UndoTerrain undo = new(before, after, pars.Position, pars.Size);
-      UndoManager.Add(undo);
+      UndoHelper.AddTerrainAction(before, after, pars.Position, pars.Size);
+      UndoHelper.EndAction();
 
     });
   }

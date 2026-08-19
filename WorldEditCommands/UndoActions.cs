@@ -14,6 +14,7 @@ public class UndoHelper
   private static readonly List<RemoveData> RemovedInfo = [];
   // Collect actual ZDOs in case they get modified after being spawned.
   private static readonly List<ZDO> SpawnedInfo = [];
+  private static readonly List<UndoTerrain> TerrainInfo = [];
   public static void BeginAction()
   {
     SubStack = 0;
@@ -21,6 +22,7 @@ public class UndoHelper
     EditedInfo.Clear();
     RemovedInfo.Clear();
     SpawnedInfo.Clear();
+    TerrainInfo.Clear();
   }
   public static List<ZDO> GetSpawned() => SpawnedInfo;
   // Bit of a hack in case of nested actions.
@@ -46,6 +48,11 @@ public class UndoHelper
     SpawnedInfo.Add(zdo);
   }
 
+  public static void AddTerrainAction(Dictionary<Vector3, TerrainUndoData> before, Dictionary<Vector3, TerrainUndoData> after, Vector3 position, float radius)
+  {
+    TerrainInfo.Add(new(before, after, position, radius));
+  }
+
   public static void AddEditAction(ZNetView view) => AddEditAction(view.GetZDO());
 
   public static void AddEditAction(ZDO zdo)
@@ -65,14 +72,14 @@ public class UndoHelper
   {
     SubStack = 0;
     AddedZDOs.Track = false;
-    if (EditedInfo.Count == 0 && RemovedInfo.Count == 0 && SpawnedInfo.Count == 0) return;
+    if (EditedInfo.Count == 0 && RemovedInfo.Count == 0 && SpawnedInfo.Count == 0 && TerrainInfo.Count == 0) return;
     foreach (var data in EditedInfo.Values)
       data.Update();
     // Someone reported null reference error related to spawn action.
     // So there is a check to not get blamed for it.
     UndoData[] undoData = [.. EditedInfo.Values, .. RemovedInfo, .. SpawnedInfo.Where(zdo => zdo != null && zdo.IsValid()).Select(s => new SpawnData(s))];
-    if (undoData.Length == 0) return;
-    UndoAction action = new(undoData);
+    if (undoData.Length == 0 && TerrainInfo.Count == 0) return;
+    UndoAction action = new(undoData, TerrainInfo);
     UndoManager.Add(action);
   }
   public static void Place(FakeZDO zdo)
@@ -161,13 +168,26 @@ public abstract class UndoData(FakeZDO zdo)
   public abstract void Redo();
 }
 
-public class UndoAction(IEnumerable<UndoData> data) : MonoBehaviour, IUndoAction
+public class UndoAction(IEnumerable<UndoData> data, IEnumerable<UndoTerrain>? terrainData = null) : MonoBehaviour, IUndoAction
 {
   public readonly UndoData[] Data = data.ToArray();
+  public readonly UndoTerrain[] TerrainData = (terrainData ?? []).ToArray();
+
+  private string CreateMessage()
+  {
+    var hasObjects = Data.Length > 0;
+    var hasTerrain = TerrainData.Length > 0;
+    if (hasObjects && hasTerrain) return $"Changed {UndoHelper.Print(Data.Select(data => data.Current))} + terrain";
+    if (hasObjects) return $"Changed {UndoHelper.Print(Data.Select(data => data.Current))}";
+    if (hasTerrain) return "Changed terrain";
+    return "Changed";
+  }
 
   public string Undo()
   {
-    var message = $"Changed {UndoHelper.Print(Data.Select(data => data.Current))}";
+    var message = CreateMessage();
+    for (var i = TerrainData.Length - 1; i >= 0; i--)
+      TerrainData[i].Undo();
     foreach (var data in Data)
       data.Undo();
     return message;
@@ -175,9 +195,11 @@ public class UndoAction(IEnumerable<UndoData> data) : MonoBehaviour, IUndoAction
 
   public string Redo()
   {
-    var message = $"Changed {UndoHelper.Print(Data.Select(data => data.Current))}";
+    var message = CreateMessage();
     foreach (var data in Data)
       data.Redo();
+    foreach (var terrain in TerrainData)
+      terrain.Redo();
     return message;
   }
 }

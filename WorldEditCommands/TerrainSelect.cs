@@ -58,7 +58,7 @@ public partial class Terrain
     var included = Selector.GetPrefabs(includedIds);
     var excluded = Selector.GetAllPrefabs(excludedIds);
     var zs = ZoneSystem.instance;
-    return (TerrainNode index) =>
+    return index =>
     {
       if (blockCheck == BlockCheck.Off) return true;
       var pos = index.Position;
