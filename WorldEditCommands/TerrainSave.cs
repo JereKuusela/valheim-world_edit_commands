@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 namespace WorldEditCommands;
+
 public partial class Terrain
 {
   ///<summary>Returns terrain data of given indices</summary>
@@ -70,6 +71,6 @@ public partial class Terrain
     compiler.m_lastOpPoint = Vector3.zero;
     compiler.m_lastOpRadius = 0f;
     compiler.Save();
-    compiler.m_hmap.Poke(false);
+    compiler.m_hmap.Poke();
   }
 }

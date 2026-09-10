@@ -492,20 +492,20 @@ public class ObjectCommand
     var equipment = obj.GetComponent<VisEquipment>();
     if (equipment)
     {
-      if (equipment.m_rightItem != "")
-        info.Add("Right hand: " + equipment.m_rightItem);
-      if (equipment.m_leftItem != "")
-        info.Add("Left hand: " + equipment.m_leftItem);
-      if (equipment.m_helmetItem != "")
-        info.Add("Helmet: " + equipment.m_helmetItem);
-      if (equipment.m_shoulderItem != "")
-        info.Add("Shoulders: " + equipment.m_shoulderItem);
-      if (equipment.m_chestItem != "")
-        info.Add("Chest: " + equipment.m_chestItem);
-      if (equipment.m_legItem != "")
-        info.Add("Legs: " + equipment.m_legItem);
-      if (equipment.m_utilityItem != "")
-        info.Add("Utility: " + equipment.m_utilityItem);
+      if (equipment.m_rightItem != 0)
+        info.Add("Right hand: " + ZDOKeys.Convert(equipment.m_rightItem));
+      if (equipment.m_leftItem != 0)
+        info.Add("Left hand: " + ZDOKeys.Convert(equipment.m_leftItem));
+      if (equipment.m_helmetItem != 0)
+        info.Add("Helmet: " + ZDOKeys.Convert(equipment.m_helmetItem));
+      if (equipment.m_shoulderItem != 0)
+        info.Add("Shoulders: " + ZDOKeys.Convert(equipment.m_shoulderItem));
+      if (equipment.m_chestItem != 0)
+        info.Add("Chest: " + ZDOKeys.Convert(equipment.m_chestItem));
+      if (equipment.m_legItem != 0)
+        info.Add("Legs: " + ZDOKeys.Convert(equipment.m_legItem));
+      if (equipment.m_utilityItem != 0)
+        info.Add("Utility: " + ZDOKeys.Convert(equipment.m_utilityItem));
     }
     var piece = obj.GetComponent<Piece>();
     if (piece)

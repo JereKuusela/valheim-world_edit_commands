@@ -6,12 +6,12 @@ using HarmonyLib;
 namespace WorldEditCommands;
 
 [BepInPlugin(GUID, NAME, VERSION)]
-[BepInDependency("server_devcommands", "1.109")]
+[BepInDependency("server_devcommands", "1.110")]
 public class WorldEditCommands : BaseUnityPlugin
 {
   public const string GUID = "world_edit_commands";
   public const string NAME = "World Edit Commands";
-  public const string VERSION = "1.74";
+  public const string VERSION = "1.75";
   public void Awake()
   {
     new Harmony(GUID).PatchAll();

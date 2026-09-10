@@ -1,3 +1,6 @@
+- v1.75
+  - Fixes for the new game update.
+
 - v1.74
   - Fixes `from` parameter not turning off snapping even when y coordinate is specified.
   - Internal changes to match Server Devcommands code.
@@ -18,6 +21,3 @@
   
 - v1.70
   - Improves `object connect` to support specifying returned ids and connection ids separately.
-
-- v1.69
-  - Fixes wrong base64 encoding of the priority data (very minor bug).
