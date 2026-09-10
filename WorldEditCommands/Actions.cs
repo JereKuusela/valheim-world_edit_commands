@@ -489,7 +489,7 @@ public static class Actions
     if (!obj || item == null) return;
     var equipment = obj.GetComponent<VisEquipment>();
     if (!equipment) return;
-    equipment.SetItem(slot, ZDOKeys.Hash(item.Name), item.Variant);
+    equipment.SetItem(slot, item.Name.GetStableHashCode(), item.Variant, 1);
   }
   public static void Move(ZNetView obj, Vector3 offset, string origin)
   {

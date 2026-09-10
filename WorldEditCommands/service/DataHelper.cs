@@ -7,6 +7,9 @@ namespace Data;
 
 public class DataHelper
 {
+  private static IEnumerable<KeyValuePair<int, T>> GetValues<T>(Dictionary<ZDOID, BinarySearchDictionary<int, T>> values, ZDOID id) =>
+    values.TryGetValue(id, out var data) ? data : Enumerable.Empty<KeyValuePair<int, T>>();
+
   public static ZDO Regen(ZDO existing, ZDO zdo)
   {
     ZNetScene.instance.CreateObject(zdo);
@@ -71,13 +74,13 @@ public class DataHelper
   {
     var hashed = keys.Select(s => s.GetStableHashCode()).ToHashSet();
     var id = zdo.m_uid;
-    var floats = ZDOExtraData.s_floats.TryGetValue(id, out var floatVals) ? floatVals.Select(kvp => kvp.Key) : Enumerable.Empty<int>();
-    var vecs = ZDOExtraData.s_vec3.TryGetValue(id, out var vec3s) ? vec3s.Select(kvp => kvp.Key) : Enumerable.Empty<int>();
-    var quats = ZDOExtraData.s_quats.TryGetValue(id, out var quatVals) ? quatVals.Select(kvp => kvp.Key) : Enumerable.Empty<int>();
-    var ints = ZDOExtraData.s_ints.TryGetValue(id, out var intVals) ? intVals.Select(kvp => kvp.Key) : Enumerable.Empty<int>();
-    var longs = ZDOExtraData.s_longs.TryGetValue(id, out var longVals) ? longVals.Select(kvp => kvp.Key) : Enumerable.Empty<int>();
-    var strings = ZDOExtraData.s_strings.TryGetValue(id, out var stringVals) ? stringVals.Select(kvp => kvp.Key) : Enumerable.Empty<int>();
-    var byteArrays = ZDOExtraData.s_byteArrays.TryGetValue(id, out var byteArrayVals) ? byteArrayVals.Select(kvp => kvp.Key) : Enumerable.Empty<int>();
+    var floats = GetValues(ZDOExtraData.s_floats, id).Select(kvp => kvp.Key);
+    var vecs = GetValues(ZDOExtraData.s_vec3, id).Select(kvp => kvp.Key);
+    var quats = GetValues(ZDOExtraData.s_quats, id).Select(kvp => kvp.Key);
+    var ints = GetValues(ZDOExtraData.s_ints, id).Select(kvp => kvp.Key);
+    var longs = GetValues(ZDOExtraData.s_longs, id).Select(kvp => kvp.Key);
+    var strings = GetValues(ZDOExtraData.s_strings, id).Select(kvp => kvp.Key);
+    var byteArrays = GetValues(ZDOExtraData.s_byteArrays, id).Select(kvp => kvp.Key);
     return floats.Concat(vecs).Concat(quats).Concat(ints).Concat(longs).Concat(strings).Concat(byteArrays).Any(hashed.Contains);
   }
   public static ZDO CloneWithoutKeys(ZDO zdo, string[] keys)
@@ -86,13 +89,13 @@ public class DataHelper
     var clone = CloneBase(zdo);
     var id = zdo.m_uid;
     var cid = clone.m_uid;
-    var floats = ZDOExtraData.s_floats.TryGetValue(id, out var floatVals) ? floatVals.Where(kvp => !hashed.Contains(kvp.Key)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value) : [];
-    var vecs = ZDOExtraData.s_vec3.TryGetValue(id, out var vec3s) ? vec3s.Where(kvp => !hashed.Contains(kvp.Key)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value) : [];
-    var quats = ZDOExtraData.s_quats.TryGetValue(id, out var quatVals) ? quatVals.Where(kvp => !hashed.Contains(kvp.Key)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value) : [];
-    var ints = ZDOExtraData.s_ints.TryGetValue(id, out var intVals) ? intVals.Where(kvp => !hashed.Contains(kvp.Key)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value) : [];
-    var longs = ZDOExtraData.s_longs.TryGetValue(id, out var longVals) ? longVals.Where(kvp => !hashed.Contains(kvp.Key)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value) : [];
-    var strings = ZDOExtraData.s_strings.TryGetValue(id, out var stringVals) ? stringVals.Where(kvp => !hashed.Contains(kvp.Key)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value) : [];
-    var byteArrays = ZDOExtraData.s_byteArrays.TryGetValue(id, out var byteArrayVals) ? byteArrayVals.Where(kvp => !hashed.Contains(kvp.Key)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value) : [];
+    var floats = GetValues(ZDOExtraData.s_floats, id).Where(kvp => !hashed.Contains(kvp.Key)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+    var vecs = GetValues(ZDOExtraData.s_vec3, id).Where(kvp => !hashed.Contains(kvp.Key)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+    var quats = GetValues(ZDOExtraData.s_quats, id).Where(kvp => !hashed.Contains(kvp.Key)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+    var ints = GetValues(ZDOExtraData.s_ints, id).Where(kvp => !hashed.Contains(kvp.Key)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+    var longs = GetValues(ZDOExtraData.s_longs, id).Where(kvp => !hashed.Contains(kvp.Key)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+    var strings = GetValues(ZDOExtraData.s_strings, id).Where(kvp => !hashed.Contains(kvp.Key)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+    var byteArrays = GetValues(ZDOExtraData.s_byteArrays, id).Where(kvp => !hashed.Contains(kvp.Key)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
     foreach (var kvp in floats)
       ZDOExtraData.Set(cid, kvp.Key, kvp.Value);
@@ -122,13 +125,13 @@ public class DataHelper
       $"Rotation: {Helper.PrintVectorYXZ(zdo.m_rotation)} (quat y,x,z)",
       $"Revision: {zdo.DataRevision} + {zdo.OwnerRevision}"
     ];
-    var vecs = ZDOExtraData.s_vec3.TryGetValue(id, out var vec3s) ? vec3s.Select(kvp => $"{ZDOKeys.Convert(kvp.Key)}: {Helper.PrintVectorXZY(kvp.Value)} (vec x,z,y)") : Enumerable.Empty<string>();
-    var ints = ZDOExtraData.s_ints.TryGetValue(id, out var intVals) ? intVals.Select(kvp => $"{ZDOKeys.Convert(kvp.Key)}: {kvp.Value} (int)") : Enumerable.Empty<string>();
-    var floats = ZDOExtraData.s_floats.TryGetValue(id, out var floatVals) ? floatVals.Select(kvp => $"{ZDOKeys.Convert(kvp.Key)}: {kvp.Value} (float)") : Enumerable.Empty<string>();
-    var quats = ZDOExtraData.s_quats.TryGetValue(id, out var quatVals) ? quatVals.Select(kvp => $"{ZDOKeys.Convert(kvp.Key)}: {Helper.PrintAngleYXZ(kvp.Value)} (quat y,x,z)") : Enumerable.Empty<string>();
-    var strings = ZDOExtraData.s_strings.TryGetValue(id, out var stringVals) ? stringVals.Select(kvp => $"{ZDOKeys.Convert(kvp.Key)}: {kvp.Value} (string)") : Enumerable.Empty<string>();
-    var longs = ZDOExtraData.s_longs.TryGetValue(id, out var longVals) ? longVals.Select(kvp => $"{ZDOKeys.Convert(kvp.Key)}: {kvp.Value} (long)") : Enumerable.Empty<string>();
-    var byteArrays = ZDOExtraData.s_byteArrays.TryGetValue(id, out var byteArrayVals) ? byteArrayVals.Select(kvp => $"{ZDOKeys.Convert(kvp.Key)}: {Convert.ToBase64String(kvp.Value)} (byte array)") : Enumerable.Empty<string>();
+    var vecs = GetValues(ZDOExtraData.s_vec3, id).Select(kvp => $"{ZDOKeys.Convert(kvp.Key)}: {Helper.PrintVectorXZY(kvp.Value)} (vec x,z,y)");
+    var ints = GetValues(ZDOExtraData.s_ints, id).Select(kvp => $"{ZDOKeys.Convert(kvp.Key)}: {kvp.Value} (int)");
+    var floats = GetValues(ZDOExtraData.s_floats, id).Select(kvp => $"{ZDOKeys.Convert(kvp.Key)}: {kvp.Value} (float)");
+    var quats = GetValues(ZDOExtraData.s_quats, id).Select(kvp => $"{ZDOKeys.Convert(kvp.Key)}: {Helper.PrintAngleYXZ(kvp.Value)} (quat y,x,z)");
+    var strings = GetValues(ZDOExtraData.s_strings, id).Select(kvp => $"{ZDOKeys.Convert(kvp.Key)}: {kvp.Value} (string)");
+    var longs = GetValues(ZDOExtraData.s_longs, id).Select(kvp => $"{ZDOKeys.Convert(kvp.Key)}: {kvp.Value} (long)");
+    var byteArrays = GetValues(ZDOExtraData.s_byteArrays, id).Select(kvp => $"{ZDOKeys.Convert(kvp.Key)}: {Convert.ToBase64String(kvp.Value)} (byte array)");
     return [.. lines, .. vecs, .. ints, .. floats, .. quats, .. strings, .. longs, .. byteArrays];
   }
   public static ZDO? Init(int prefab, Transform tr, DataEntry? data)

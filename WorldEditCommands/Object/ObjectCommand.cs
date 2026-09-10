@@ -493,19 +493,19 @@ public class ObjectCommand
     if (equipment)
     {
       if (equipment.m_rightItem != 0)
-        info.Add("Right hand: " + ZDOKeys.Convert(equipment.m_rightItem));
+        info.Add("Right hand: " + UndoHelper.Name(equipment.m_rightItem));
       if (equipment.m_leftItem != 0)
-        info.Add("Left hand: " + ZDOKeys.Convert(equipment.m_leftItem));
+        info.Add("Left hand: " + UndoHelper.Name(equipment.m_leftItem));
       if (equipment.m_helmetItem != 0)
-        info.Add("Helmet: " + ZDOKeys.Convert(equipment.m_helmetItem));
+        info.Add("Helmet: " + UndoHelper.Name(equipment.m_helmetItem));
       if (equipment.m_shoulderItem != 0)
-        info.Add("Shoulders: " + ZDOKeys.Convert(equipment.m_shoulderItem));
+        info.Add("Shoulders: " + UndoHelper.Name(equipment.m_shoulderItem));
       if (equipment.m_chestItem != 0)
-        info.Add("Chest: " + ZDOKeys.Convert(equipment.m_chestItem));
+        info.Add("Chest: " + UndoHelper.Name(equipment.m_chestItem));
       if (equipment.m_legItem != 0)
-        info.Add("Legs: " + ZDOKeys.Convert(equipment.m_legItem));
+        info.Add("Legs: " + UndoHelper.Name(equipment.m_legItem));
       if (equipment.m_utilityItem != 0)
-        info.Add("Utility: " + ZDOKeys.Convert(equipment.m_utilityItem));
+        info.Add("Utility: " + UndoHelper.Name(equipment.m_utilityItem));
     }
     var piece = obj.GetComponent<Piece>();
     if (piece)

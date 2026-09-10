@@ -42,7 +42,7 @@ public class PlainDataEntry
     Strings = ZDOExtraData.s_strings.ContainsKey(id) ? ZDOExtraData.s_strings[id].ToDictionary(kvp => kvp.Key, kvp => kvp.Value) : null;
     Vecs = ZDOExtraData.s_vec3.ContainsKey(id) ? ZDOExtraData.s_vec3[id].ToDictionary(kvp => kvp.Key, kvp => kvp.Value) : null;
     Quats = ZDOExtraData.s_quats.ContainsKey(id) ? ZDOExtraData.s_quats[id].ToDictionary(kvp => kvp.Key, kvp => kvp.Value) : null;
-    ByteArrays = ZDOExtraData.s_byteArrays.ContainsKey(id) ? ZDOExtraData.s_byteArrays[id].ToDictionary(kvp => kvp.Key, kvp => kvp.Value) : null;
+    ByteArrays = ZDOExtraData.s_byteArrays.ContainsKey(id) ? ZDOExtraData.s_byteArrays[id].ToDictionary(kvp => kvp.Key, kvp => (byte[])kvp.Value.Clone()) : null;
     if (ZDOExtraData.s_connectionsHashData.TryGetValue(id, out var conn))
     {
       ConnectionType = conn.m_type;
@@ -83,7 +83,7 @@ public class PlainDataEntry
     data.quats = Quats?.Select(pair => $"{ZDOKeys.Convert(pair.Key)}, {Serialize(pair.Value)}").ToArray();
     data.bytes = ByteArrays?.Select(pair => $"{ZDOKeys.Convert(pair.Key)}, {Convert.ToBase64String(pair.Value)}").ToArray();
     var items = Strings?.FirstOrDefault(kvp => kvp.Key == ZDOVars.s_items).Value;
-    if (items != null)
+    if (items != null && !(ByteArrays?.ContainsKey(ZDOVars.s_items) ?? false))
       data.items = GetItems(items);
     if (ConnectionType != ZDOExtraData.ConnectionType.None && ConnectionHash != 0)
       data.connection = $"{ConnectionType}, {ConnectionHash}";
@@ -120,11 +120,11 @@ public class PlainDataEntry
         data.priority = Priority.ToString();
     }
   }
-  private static ItemData[] GetItems(string encoded)
+  private static ItemData[]? GetItems(string encoded)
   {
     ZPackage pkg = new(encoded);
     var version = pkg.ReadInt();
-    if (version != 106) return [];
+    if (version != 106) return null; // Keep unsupported formats in their original raw field.
     var amount = pkg.ReadInt();
     var list = new ItemData[amount];
     for (var i = 0; i < amount; ++i)
@@ -185,6 +185,7 @@ public class PlainDataEntry
   }
   public void Write(ZDO zdo)
   {
+    var inventory = InventoryPayload.Get(ByteArrays, Strings != null && Strings.TryGetValue(ZDOVars.s_items, out var legacyItems) ? legacyItems : null);
     var id = zdo.m_uid;
     if (Floats?.Count > 0)
     {
@@ -220,14 +221,17 @@ public class PlainDataEntry
     {
       ZDOHelper.Init(ZDOExtraData.s_strings, id);
       foreach (var pair in Strings)
-        ZDOExtraData.s_strings[id].SetValue(pair.Key, pair.Value);
+        if (pair.Key != ZDOVars.s_items)
+          ZDOExtraData.s_strings[id].SetValue(pair.Key, pair.Value);
     }
     if (ByteArrays?.Count > 0)
     {
       ZDOHelper.Init(ZDOExtraData.s_byteArrays, id);
       foreach (var pair in ByteArrays)
-        ZDOExtraData.s_byteArrays[id].SetValue(pair.Key, pair.Value);
+        if (pair.Key != ZDOVars.s_items)
+          ZDOExtraData.s_byteArrays[id].SetValue(pair.Key, (byte[])pair.Value.Clone());
     }
+    InventoryPayload.Write(zdo, inventory);
     HandleConnection(zdo);
     HandleHashConnection(zdo);
     zdo.Distant = Distant;

@@ -234,7 +234,7 @@ public class DataEntry
     Ints = ZDOExtraData.s_ints.ContainsKey(id) ? ZDOExtraData.s_ints[id].ToDictionary(kvp => kvp.Key, kvp => new SimpleIntValue(kvp.Value) as IIntValue) : null;
     Strings = ZDOExtraData.s_strings.ContainsKey(id) ? ZDOExtraData.s_strings[id].ToDictionary(kvp => kvp.Key, kvp => new SimpleStringValue(kvp.Value) as IStringValue) : null;
     Longs = ZDOExtraData.s_longs.ContainsKey(id) ? ZDOExtraData.s_longs[id].ToDictionary(kvp => kvp.Key, kvp => new SimpleLongValue(kvp.Value) as ILongValue) : null;
-    ByteArrays = ZDOExtraData.s_byteArrays.ContainsKey(id) ? ZDOExtraData.s_byteArrays[id].ToDictionary(kvp => kvp.Key, kvp => kvp.Value) : null;
+    ByteArrays = ZDOExtraData.s_byteArrays.ContainsKey(id) ? ZDOExtraData.s_byteArrays[id].ToDictionary(kvp => kvp.Key, kvp => (byte[])kvp.Value.Clone()) : null;
     if (ZDOExtraData.s_connectionsHashData.TryGetValue(id, out var conn))
     {
       ConnectionType = conn.m_type;
@@ -590,6 +590,7 @@ public class DataEntry
   {
     AddParameters(pars, zdo);
     RollItems(pars);
+    var inventory = InventoryPayload.Get(ByteArrays, Strings != null && Strings.TryGetValue(ZDOVars.s_items, out var legacyItems) ? legacyItems.Get(pars) : null);
     var id = zdo.m_uid;
     if (Floats?.Count > 0)
     {
@@ -668,6 +669,7 @@ public class DataEntry
       ZDOHelper.Init(ZDOExtraData.s_strings, id);
       foreach (var pair in Strings)
       {
+        if (pair.Key == ZDOVars.s_items) continue;
         var value = pair.Value.Get(pars);
         if (value != null)
           ZDOExtraData.s_strings[id].SetValue(pair.Key, value);
@@ -678,8 +680,10 @@ public class DataEntry
     {
       ZDOHelper.Init(ZDOExtraData.s_byteArrays, id);
       foreach (var pair in ByteArrays)
-        ZDOExtraData.s_byteArrays[id].SetValue(pair.Key, pair.Value);
+        if (pair.Key != ZDOVars.s_items)
+          ZDOExtraData.s_byteArrays[id].SetValue(pair.Key, (byte[])pair.Value.Clone());
     }
+    InventoryPayload.Write(zdo, inventory);
     if (Persistent != null)
       zdo.Persistent = Persistent.GetBool(pars) ?? zdo.Persistent;
     if (Distant != null)
@@ -824,8 +828,9 @@ public class DataEntry
     if (Items?.Count > 0)
     {
       var encoded = ItemValue.LoadItems(pars, Items, ContainerSize, ItemAmount?.Get(pars) ?? 0);
-      Strings ??= [];
-      Strings[ZDOVars.s_items] = DataValue.Simple(encoded);
+      ByteArrays ??= [];
+      ByteArrays[ZDOVars.s_items] = Convert.FromBase64String(encoded);
+      Strings?.Remove(ZDOVars.s_items);
     }
   }
 

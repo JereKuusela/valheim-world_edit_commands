@@ -93,6 +93,18 @@ public class UndoHelper
   }
   // Redoing an object makes a new instance so have to keep track of the situation.
   private static readonly Dictionary<ZDOID, ZDOID> Regenerated = [];
+  internal static int SessionEpoch { get; private set; }
+  internal static void ResetSession()
+  {
+    SessionEpoch++;
+    AddedZDOs.Track = false;
+    SubStack = 0;
+    EditedInfo.Clear();
+    RemovedInfo.Clear();
+    SpawnedInfo.Clear();
+    TerrainInfo.Clear();
+    Regenerated.Clear();
+  }
   public static void Destroy(FakeZDO zdo)
   {
     while (Regenerated.ContainsKey(zdo.Id))
@@ -170,6 +182,9 @@ public abstract class UndoData(FakeZDO zdo)
 
 public class UndoAction(IEnumerable<UndoData> data, IEnumerable<UndoTerrain>? terrainData = null) : MonoBehaviour, IUndoAction
 {
+  private readonly ZDOMan Session = ZDOMan.instance;
+  private readonly int Epoch = UndoHelper.SessionEpoch;
+  private bool IsCurrentSession => ReferenceEquals(Session, ZDOMan.instance) && Epoch == UndoHelper.SessionEpoch;
   public readonly UndoData[] Data = data.ToArray();
   public readonly UndoTerrain[] TerrainData = (terrainData ?? []).ToArray();
 
@@ -185,6 +200,7 @@ public class UndoAction(IEnumerable<UndoData> data, IEnumerable<UndoTerrain>? te
 
   public string Undo()
   {
+    if (!IsCurrentSession) return "Cannot undo: this action belongs to a previous world session.";
     var message = CreateMessage();
     for (var i = TerrainData.Length - 1; i >= 0; i--)
       TerrainData[i].Undo();
@@ -195,6 +211,7 @@ public class UndoAction(IEnumerable<UndoData> data, IEnumerable<UndoTerrain>? te
 
   public string Redo()
   {
+    if (!IsCurrentSession) return "Cannot redo: this action belongs to a previous world session.";
     var message = CreateMessage();
     foreach (var data in Data)
       data.Redo();
@@ -213,4 +230,17 @@ public class AddedZDOs
   {
     if (Track) UndoHelper.AddSpawnAction(__instance.GetZDO());
   }
+}
+
+// Reset before the native table invalidates every old ZDOID, including when reloading the same world.
+[HarmonyPatch(typeof(ZDOID), nameof(ZDOID.Reset))]
+internal static class ResetUndoSession
+{
+  private static void Prefix() => UndoHelper.ResetSession();
+}
+
+[HarmonyPatch(typeof(ZDOMan), nameof(ZDOMan.ShutDown))]
+internal static class StopUndoSession
+{
+  private static void Prefix() => UndoHelper.ResetSession();
 }

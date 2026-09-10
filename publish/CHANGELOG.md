@@ -1,5 +1,8 @@
-- v1.75
-  - Fixes for the new game update.
+- v1.74.1 (Deep North 1.0.7 prototype, source handoff iteration 2)
+  - Preserves binary inventories during copying/export; applies legacy text inventories and generated items through binary storage.
+  - Keeps copied byte buffers independent for undo snapshots and destination objects.
+  - Rejects undo/redo from previous world sessions and clears WEC tracking on shutdown / ZDOID reset.
+  - Requires patched SDC 1.109.1. In-game validation pending.
 
 - v1.74
   - Fixes `from` parameter not turning off snapping even when y coordinate is specified.
@@ -21,3 +24,6 @@
   
 - v1.70
   - Improves `object connect` to support specifying returned ids and connection ids separately.
+
+- v1.69
+  - Fixes wrong base64 encoding of the priority data (very minor bug).
