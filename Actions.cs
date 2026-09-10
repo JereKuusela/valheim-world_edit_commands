@@ -1,0 +1,593 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Data;
+using ServerDevcommands;
+using UnityEngine;
+namespace WorldEditCommands;
+
+public static class Actions
+{
+  public static bool? ToggleBool(ZNetView obj, bool? value, int hash)
+  {
+    var previous = obj.GetZDO().GetBool(hash);
+    var toggled = value ?? !previous;
+    obj.GetZDO().Set(hash, toggled);
+    return toggled;
+  }
+  public static GameObject? Refresh(ZDO zdo)
+  {
+    var obj = ZNetScene.instance.m_instances[zdo].gameObject;
+    if (!obj || zdo.GetPrefab() == Hash.Player) return obj;
+    UnityEngine.Object.Destroy(obj);
+    var newObj = ZNetScene.instance.CreateObject(zdo);
+    ZNetScene.instance.m_instances[zdo] = newObj.GetComponent<ZNetView>();
+    return newObj;
+  }
+
+  public static GameObject? Refresh(ZNetView view) => Refresh(view.GetZDO());
+  public static void SetFloat(ZNetView obj, float? value, int hash, bool refresh = false)
+  {
+    if (!obj) return;
+    obj.GetZDO().Set(hash, value ?? -1f);
+    if (refresh)
+      Refresh(obj);
+  }
+  public static void SetInt(ZNetView obj, int? value, int hash, bool refresh = false)
+  {
+    if (!obj) return;
+    obj.GetZDO().Set(hash, value ?? -1);
+    if (refresh)
+      Refresh(obj);
+  }
+  public static void SetLong(ZNetView obj, long? value, int hash, bool refresh = false)
+  {
+    if (!obj) return;
+    obj.GetZDO().Set(hash, value ?? -1);
+    if (refresh)
+      Refresh(obj);
+  }
+  private static Dictionary<string, int> IdToHash = [];
+  private static Dictionary<string, int> LowerIdToHash = [];
+  public static int GetId(string id)
+  {
+    if (IdToHash.Count == 0) IdToHash = ZNetScene.instance.m_namedPrefabs.ToDictionary(kvp => kvp.Value.name, kvp => kvp.Key);
+    if (LowerIdToHash.Count == 0) LowerIdToHash = ZNetScene.instance.m_namedPrefabs.ToLookup(kvp => kvp.Value.name.ToLower(), kvp => kvp.Key).ToDictionary(kvp => kvp.Key, kvp => kvp.FirstOrDefault());
+    if (IdToHash.TryGetValue(id, out var value)) return value;
+    if (LowerIdToHash.TryGetValue(id.ToLower(), out var value2)) return value2;
+    return id.GetStableHashCode();
+  }
+  public static void SetPrefab(ZNetView obj, string? value, int hash, bool refresh = false)
+  {
+    if (!obj) return;
+    obj.GetZDO().Set(hash, value ?? "");
+    if (refresh)
+      Refresh(obj);
+  }
+  public static void SetString(ZNetView obj, string? value, int hash, bool refresh = false)
+  {
+    if (!obj) return;
+    obj.GetZDO().Set(hash, value ?? "");
+    if (refresh)
+      Refresh(obj);
+  }
+
+  public static void SetTame(GameObject obj, bool tame)
+  {
+    SetTame(obj.GetComponent<Character>(), tame);
+  }
+  public static void SetTame(Character obj, bool tame)
+  {
+    if (!obj) return;
+    obj.SetTamed(tame); // Ok to use (action sent to the owner).
+    var AI = obj.GetComponent<BaseAI>();
+    if (AI)
+    {
+      AI.SetAlerted(false);
+      if (tame)
+      {
+        SetHunt(AI, false);
+        AI.SetPatrolPoint();
+      }
+      AI.SetTargetInfo(ZDOID.None);
+      var monster = obj.GetComponent<MonsterAI>();
+      if (monster)
+      {
+        monster.m_targetCreature = null;
+        monster.m_targetStatic = null;
+        if (tame)
+        {
+          monster.SetDespawnInDay(false);
+          monster.SetEventCreature(false);
+        }
+      }
+      var animal = obj.GetComponent<AnimalAI>();
+      if (animal)
+      {
+        animal.m_target = null;
+      }
+    }
+  }
+  public static void SetHunt(GameObject obj, bool hunt)
+  {
+    SetHunt(obj.GetComponent<BaseAI>(), hunt);
+  }
+  public static bool SetPrefab(ZNetView obj, string prefab)
+  {
+    if (!obj) return false;
+    var zdo = obj.GetZDO();
+    if (zdo == null || !zdo.IsValid()) return false;
+    var previous = zdo.GetPrefab();
+    zdo.SetPrefab(prefab.GetStableHashCode());
+    var newObj = ZNetScene.instance.CreateObject(zdo);
+    if (!newObj)
+    {
+      zdo.SetPrefab(previous);
+      return false;
+    }
+    UnityEngine.Object.Destroy(obj.gameObject);
+    ZNetScene.instance.m_instances[zdo] = newObj.GetComponent<ZNetView>();
+    return true;
+  }
+  public static void SetHunt(BaseAI obj, bool hunt)
+  {
+    if (!obj) return;
+    obj.m_huntPlayer = hunt;
+    obj.m_nview.GetZDO().Set(Hash.HuntPlayer, hunt);
+  }
+  public static void SetFuel(ZNetView view, float amount)
+  {
+    if (!view) return;
+    view.GetZDO().Set(Hash.Fuel, amount);
+  }
+  public static void SetSleeping(GameObject obj, bool sleep)
+  {
+    SetSleeping(obj.GetComponent<MonsterAI>(), sleep);
+  }
+  public static void SetSleeping(MonsterAI obj, bool sleep)
+  {
+    if (!obj) return;
+    obj.m_sleeping = sleep;
+    obj.m_nview.GetZDO().Set(Hash.Sleeping, sleep);
+    obj.m_animator.SetBool("sleeping", sleep);
+    //obj.m_animator.m_animator.Play("sleeping");
+  }
+
+  public static void SetBaby(GameObject obj)
+  {
+    SetBaby(obj.GetComponent<Growup>());
+  }
+  public static void SetBaby(Growup obj)
+  {
+    if (!obj) return;
+    obj.GetComponent<ZNetView>()?.GetZDO().Set(Hash.SpawnTime, DateTime.MaxValue.Ticks);
+  }
+  public static void SetLevel(GameObject obj, int level)
+  {
+    if (level < 1) return;
+    SetLevel(obj.GetComponent<ItemDrop>(), level);
+    SetLevel(obj.GetComponent<Character>(), level);
+  }
+  public static void SetLevel(Character obj, int level)
+  {
+    if (!obj) return;
+    if (obj.GetLevel() != level)
+      obj.SetLevel(level); // Ok to use (no owner check).
+  }
+  public static void SetLevel(ItemDrop obj, int level)
+  {
+    if (!obj) return;
+    obj.m_itemData.m_quality = level;
+    obj.m_nview.GetZDO().Set(Hash.Quality, level);
+  }
+  public static float GetHealth(ZNetView obj)
+  {
+    var zdo = obj.GetZDO();
+    var itemDrop = obj.GetComponent<ItemDrop>();
+    if (itemDrop) return itemDrop.m_itemData.m_durability;
+    var character = obj.GetComponent<Character>();
+    if (character) return character.GetHealth();
+    var wearNTear = obj.GetComponent<WearNTear>();
+    if (wearNTear) return zdo.GetFloat(Hash.Health, wearNTear.m_health);
+    var destructible = obj.GetComponent<Destructible>();
+    if (destructible) return zdo.GetFloat(Hash.Health, destructible.m_health);
+    var treeLog = obj.GetComponent<TreeLog>();
+    if (treeLog) return zdo.GetFloat(Hash.Health, treeLog.m_health);
+    var treeBase = obj.GetComponent<TreeBase>();
+    if (treeBase) return zdo.GetFloat(Hash.Health, treeBase.m_health);
+    return -1;
+  }
+  public static float SetHealth(GameObject obj, float health, bool isPercentage)
+  {
+    var itemDrop = obj.GetComponent<ItemDrop>();
+    if (itemDrop) return SetHealth(itemDrop, health, isPercentage);
+    var character = obj.GetComponent<Character>();
+    if (character) return SetHealth(character, health, isPercentage);
+    var wearNTear = obj.GetComponent<WearNTear>();
+    if (wearNTear) return SetHealth(wearNTear, health, isPercentage);
+    var treeLog = obj.GetComponent<TreeLog>();
+    if (treeLog) return SetHealth(treeLog, health, isPercentage);
+    var treeBase = obj.GetComponent<TreeBase>();
+    if (treeBase) return SetHealth(treeBase, health, isPercentage);
+    var destructible = obj.GetComponent<Destructible>();
+    if (destructible) return SetHealth(destructible, health, isPercentage);
+    return 0;
+  }
+  public static float SetHealth(Character obj, float health, bool isPercentage)
+  {
+    if (!obj) return 0f;
+    if (isPercentage) health *= obj.GetMaxHealth();
+    var previous = obj.GetMaxHealth();
+    if (health == 0)
+    {
+      obj.SetupMaxHealth();
+      return previous;
+    }
+    obj.SetMaxHealth(health);
+    // Max health resets on awake if health is equal to max.
+    obj.SetHealth(health * 1.000001f);
+    return previous;
+  }
+  public static float SetHealth(WearNTear obj, float health, bool isPercentage)
+  {
+    if (!obj) return 0f;
+    if (isPercentage) health *= obj.m_health;
+    if (health == 0) health = obj.m_health;
+    var previous = obj.m_nview.GetZDO().GetFloat(Hash.Health, obj.m_health);
+    obj.m_nview.GetZDO().Set(Hash.Health, health);
+    return previous;
+  }
+  public static float SetHealth(TreeLog obj, float health, bool isPercentage)
+  {
+    if (!obj) return 0f;
+    if (isPercentage) health *= obj.m_health;
+    if (health == 0) health = obj.m_health;
+    var previous = obj.m_nview.GetZDO().GetFloat(Hash.Health, obj.m_health);
+    obj.m_nview.GetZDO().Set(Hash.Health, health);
+    return previous;
+  }
+  public static float SetHealth(Destructible obj, float health, bool isPercentage)
+  {
+    if (!obj) return 0f;
+    if (isPercentage) health *= obj.m_health;
+    if (health == 0) health = obj.m_health;
+    var previous = obj.m_nview.GetZDO().GetFloat(Hash.Health, obj.m_health);
+    obj.m_nview.GetZDO().Set(Hash.Health, health);
+    return previous;
+  }
+  public static float SetHealth(TreeBase obj, float health, bool isPercentage)
+  {
+    if (!obj) return 0f;
+    if (isPercentage) health *= obj.m_health;
+    if (health == 0) health = obj.m_health;
+    var previous = obj.m_nview.GetZDO().GetFloat(Hash.Health, obj.m_health);
+    obj.m_nview.GetZDO().Set(Hash.Health, health);
+    return previous;
+  }
+  public static float SetHealth(ItemDrop obj, float health, bool isPercentage)
+  {
+    if (!obj) return 0f;
+    var previous = obj.m_itemData.m_durability;
+    if (isPercentage) health *= obj.m_itemData.GetMaxDurability();
+    if (health == 0) health = obj.m_itemData.GetMaxDurability();
+    obj.m_itemData.m_durability = health;
+    obj.m_nview.GetZDO().Set(Hash.Durability, obj.m_itemData.m_durability);
+    return previous;
+  }
+
+  public static float SetCreator(ZNetView obj, long creator)
+  {
+    if (obj.TryGetComponent<Piece>(out var piece)) return SetCreator(piece, creator);
+    return 0;
+  }
+  public static long SetCreator(Piece obj, long creator)
+  {
+    if (!obj) return 0L;
+    var previous = obj.GetCreator();
+    obj.m_creator = creator;
+    obj.m_nview.GetZDO().Set(Hash.Creator, creator);
+    return previous;
+  }
+  public static void SetVariant(GameObject obj, int variant)
+  {
+    SetVariant(obj.GetComponent<ItemDrop>(), variant);
+  }
+  public static void SetVariant(ItemDrop obj, int variant)
+  {
+    if (!obj) return;
+    obj.m_itemData.m_variant = variant;
+    obj.m_nview.GetZDO().Set(Hash.Variant, variant);
+  }
+  public static void SetName(GameObject obj, string name)
+  {
+    SetName(obj.GetComponent<Tameable>(), name);
+    SetName(obj.GetComponent<ItemDrop>(), name);
+  }
+  public static void SetName(Tameable obj, string name)
+  {
+    if (!obj) return;
+    obj.m_nview.GetZDO().Set(Hash.TamedName, name);
+  }
+  public static void SetCrafterId(ItemDrop obj, long id)
+  {
+    if (!obj) return;
+    obj.m_itemData.m_crafterID = id;
+    obj.m_nview.GetZDO().Set(Hash.CrafterID, obj.m_itemData.m_crafterID);
+  }
+  public static void SetName(ItemDrop obj, string name)
+  {
+    if (!obj) return;
+    obj.m_itemData.m_crafterID = name == "" ? 0 : -1;
+    obj.m_nview.GetZDO().Set(Hash.CrafterID, obj.m_itemData.m_crafterID);
+    obj.m_itemData.m_crafterName = name;
+    obj.m_nview.GetZDO().Set(Hash.CrafterName, name);
+  }
+  public static int SetStack(GameObject obj, int remaining)
+  {
+    if (remaining <= 0) return 0;
+    var item = obj.GetComponent<ItemDrop>();
+    if (!item) return 0;
+    var stack = Math.Min(remaining, item.m_itemData.m_shared.m_maxStackSize);
+    item.m_itemData.m_stack = stack;
+    item.m_nview.GetZDO().Set(Hash.Stack, stack);
+    return stack;
+  }
+  public static void SetRotation(GameObject obj, Quaternion rotation)
+  {
+    var view = obj.GetComponent<ZNetView>();
+    if (view == null) return;
+    if (rotation != Quaternion.identity)
+    {
+      view.GetZDO().SetRotation(rotation);
+      obj.transform.rotation = rotation;
+    }
+  }
+  public static void Respawn(GameObject obj)
+  {
+    Respawn(obj.GetComponent<Container>());
+    Respawn(obj.GetComponent<Pickable>());
+    Respawn(obj.GetComponent<CreatureSpawner>());
+  }
+  public static void Respawn(Container obj)
+  {
+    if (!obj) return;
+    if (obj.m_defaultItems.m_drops.Count == 0) return;
+    obj.m_inventory?.RemoveAll();
+    obj.AddDefaultItems();
+  }
+  public static bool CanRespawn(GameObject obj) =>
+    obj.GetComponent<Pickable>() || obj.GetComponent<CreatureSpawner>() || (obj.GetComponent<Container>()?.m_defaultItems.m_drops.Count > 0);
+
+  public static void Respawn(Pickable obj)
+  {
+    if (!obj) return;
+    obj.SetPicked(false);
+  }
+  public static void Respawn(CreatureSpawner obj)
+  {
+    if (!obj) return;
+    var zdo = obj.m_nview?.GetZDO();
+    if (zdo == null) return;
+    FakeZDO data = new(zdo);
+
+    var spawnId = zdo.GetConnectionZDOID(ZDOExtraData.ConnectionType.Spawned);
+    if (ZDOMan.instance.m_objectsByID.TryGetValue(spawnId, out var spawnedZdo))
+    {
+      UndoHelper.AddRemoveAction(spawnedZdo);
+      RemoveZDO(spawnedZdo);
+    }
+    // Connection removal is not synced to other clients, so a more reliable way is to completely regenerate the spawner.
+    UndoHelper.AddRemoveAction(zdo);
+    RemoveZDO(zdo);
+
+    data.Data.ConnectionType = ZDOExtraData.ConnectionType.None;
+    data.Data.ConnectionHash = 0;
+    data.Data.TargetConnectionId = ZDOID.None;
+    data.Data.Longs?.Remove(ZDOVars.s_aliveTime);
+    var created = data.Create();
+    UndoHelper.AddSpawnAction(created);
+  }
+  public static void SetModel(GameObject obj, int index)
+  {
+    SetModel(obj.GetComponent<Character>(), index);
+  }
+  public static void SetModel(Character obj, int index)
+  {
+    if (!obj) return;
+    var equipment = obj.GetComponent<VisEquipment>();
+    if (!equipment) return;
+    equipment.SetModel(index);
+  }
+  public static void SetVisual(GameObject obj, Item item)
+  {
+    SetVisual(obj.GetComponent<ItemStand>(), item);
+  }
+  public static void SetVisual(GameObject obj, VisSlot slot, Item? item)
+  {
+    SetVisual(obj.GetComponent<Character>(), slot, item);
+  }
+  public static void SetDistant(GameObject obj, bool distant)
+  {
+    var zdo = obj.GetComponent<ZNetView>().GetZDO();
+    zdo.Distant = distant;
+  }
+  public static void SetPersistent(GameObject obj, bool persistent)
+  {
+    var zdo = obj.GetComponent<ZNetView>().GetZDO();
+    zdo.Persistent = persistent;
+  }
+  public static int SetFields(GameObject obj, Dictionary<string, object> fields) => SetFields(obj.GetComponent<ZNetView>(), fields);
+  public static int SetFields(ZNetView view, Dictionary<string, object> fields)
+  {
+    var zdo = view?.GetZDO();
+    if (view == null || zdo == null) return 0;
+    var components = ComponentInfo.Get(view).ToHashSet();
+    var count = 0;
+    var refresh = false;
+    foreach (var kvp in fields)
+    {
+      var split = kvp.Key.Split('.');
+      if (split.Length > 1)
+      {
+        var component = kvp.Key.Split('.')[0];
+        if (!components.Contains(component)) continue;
+        zdo.Set(Hash.HasFields, true);
+        zdo.Set("HasFields" + component, true);
+      }
+      else refresh = true;
+      var hash = kvp.Key.GetStableHashCode();
+      if (kvp.Value is int v)
+        zdo.Set(hash, v);
+      else if (kvp.Value is float v1)
+        zdo.Set(hash, v1);
+      else if (kvp.Value is string v2)
+        zdo.Set(hash, v2);
+      else if (kvp.Value is bool v3)
+        zdo.Set(hash, v3);
+      else if (kvp.Value is long v4)
+        zdo.Set(hash, v4);
+      else if (kvp.Value is Vector3 vector)
+        zdo.Set(hash, TransformPos(zdo, kvp.Key, vector));
+      else if (kvp.Value is Quaternion quaternion)
+        zdo.Set(hash, TransformRot(zdo, kvp.Key, quaternion));
+      count += 1;
+    }
+    if (refresh)
+      Refresh(view);
+    else
+    {
+      view.LoadFields();
+      if (view.TryGetComponent<WearNTear>(out var wearNTear))
+      {
+        wearNTear.m_healthPercentage = zdo.GetFloat(ZDOVars.s_health, wearNTear.m_health) / wearNTear.m_health;
+        wearNTear.UpdateVisual(false);
+      }
+    }
+    return count;
+  }
+  private static Vector3 TransformPos(ZDO zdo, string key, Vector3 pos)
+  {
+    if (ZDOKeys.IsRoomPos(key))
+      return zdo.GetPosition() + zdo.GetRotation() * pos;
+    return pos;
+  }
+  private static Quaternion TransformRot(ZDO zdo, string key, Quaternion rot)
+  {
+    if (ZDOKeys.IsRoomRot(key))
+      return zdo.GetRotation() * rot;
+    return rot;
+  }
+  public static void SetVisual(ItemStand obj, Item? item)
+  {
+    if (!obj || item == null) return;
+    obj.m_nview.GetZDO().Set(Hash.Item, item.Name);
+    obj.m_nview.GetZDO().Set(Hash.Variant, item.Variant);
+    obj.UpdateVisual();
+  }
+  public static void SetVisual(Character obj, VisSlot slot, Item? item)
+  {
+    if (!obj || item == null) return;
+    var equipment = obj.GetComponent<VisEquipment>();
+    if (!equipment) return;
+    equipment.SetItem(slot, item.Name.GetStableHashCode(), item.Variant, 1);
+  }
+  public static void Move(ZNetView obj, Vector3 offset, string origin)
+  {
+    var zdo = obj.GetZDO();
+    var position = obj.transform.position;
+    var rotation = Player.m_localPlayer.transform.rotation;
+    if (origin == "world")
+      rotation = Quaternion.identity;
+    if (origin == "object")
+      rotation = obj.transform.rotation;
+    position += rotation * Vector3.right * offset.x;
+    position += rotation * Vector3.up * offset.y;
+    position += rotation * Vector3.forward * offset.z;
+    zdo.SetPosition(position);
+    obj.transform.position = position;
+  }
+
+  public static void Rotate(ZNetView obj, Vector3 relative, string origin, Vector3? center = null)
+  {
+    var zdo = obj.GetZDO();
+    var originRotation = Player.m_localPlayer.transform.rotation;
+    if (origin == "world")
+      originRotation = Quaternion.identity;
+    if (origin == "object")
+      originRotation = obj.transform.rotation;
+    var transform = obj.transform;
+    var position = center ?? transform.position;
+    transform.RotateAround(position, originRotation * Vector3.up, relative.y);
+    transform.RotateAround(position, originRotation * Vector3.forward, relative.x);
+    transform.RotateAround(position, originRotation * Vector3.right, relative.z);
+    zdo.SetRotation(obj.transform.rotation);
+  }
+  public static void Mirror(ZNetView obj, Vector3 center)
+  {
+    var tr = obj.transform;
+    tr.position = new(2 * center.x - tr.position.x, tr.position.y, tr.position.z);
+    var angles = tr.eulerAngles;
+    tr.rotation = Quaternion.Euler(angles.x, -angles.y, angles.z);
+    var zdo = obj.GetZDO();
+    zdo.SetPosition(tr.position);
+    zdo.SetRotation(tr.rotation);
+  }
+  public static void ResetRotation(ZNetView obj)
+  {
+    var zdo = obj.GetZDO();
+    zdo.SetRotation(Quaternion.identity);
+    obj.transform.rotation = Quaternion.identity;
+  }
+  public static bool Scale(ZNetView obj, Vector3 scale)
+  {
+    var tweaked = false;
+    if (!obj.m_syncInitialScale && WorldEditCommands.IsTweaks)
+    {
+      SetFields(obj, new() {
+        { "ZNetView.m_syncInitialScale", true }
+      });
+      tweaked = true;
+    }
+    if (obj.m_syncInitialScale)
+      obj.SetLocalScale(scale);
+    return tweaked;
+  }
+
+  public static void RemoveZDO(ZDO zdo)
+  {
+    if (zdo == null || !zdo.IsValid()) return;
+    zdo.SetOwnerInternal(ZDOMan.GetSessionID());
+    if (ZNetScene.instance.m_instances.TryGetValue(zdo, out var view))
+    {
+      ZNetScene.instance.Destroy(view.gameObject);
+      // ZNetScene destroy removes the ZDO immediately, so destroying the view instantly follows the same logic.
+      // This fixes ZNetView component being valid while the ZDO is already destroyed.
+      UnityEngine.Object.DestroyImmediate(view);
+    }
+    else
+      ZDOMan.instance.DestroyZDO(zdo);
+  }
+  private const string DEFAULT = "default";
+  private static string Print<T>(T? value) => value == null ? DEFAULT : value.ToString();
+
+  public static string Damage(ZNetView view, float? value)
+  {
+    if (!view.GetComponent<Character>()) return "Skipped: ¤ is not a creature.";
+    SetFloat(view, value ?? 1f, Hash.Damage);
+    return $"¤ damage set to {Print(value)}.";
+  }
+
+  public static string Ammo(ZNetView view, int? value)
+  {
+    if (!view.GetComponent<Turret>()) return "Skipped: ¤ is not a turret.";
+    SetInt(view, value ?? 0, Hash.Ammo);
+    return $"¤ ammo set to {Print(value)}.";
+  }
+
+  public static string AmmoType(ZNetView view, string? value)
+  {
+    if (!view.GetComponent<Turret>()) return "Skipped: ¤ is not a turret.";
+    SetString(view, value ?? "", Hash.AmmoType);
+    return $"¤ ammo type set to {Print(value)}.";
+  }
+}
