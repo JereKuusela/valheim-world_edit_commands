@@ -43,7 +43,7 @@ public class TweakItemStandCommand : TweakCommand
     if (!operations.ContainsKey("respawn") || operations.ContainsKey("item")) return operations;
     var itemstand = view.GetComponent<ItemStand>();
     if (!itemstand) return operations;
-    var item = ZDOKeys.Convert(itemstand.m_visualHash) + "," + itemstand.m_visualVariant;
+    var item = DataHelper.Name(itemstand.m_visualHash) + "," + itemstand.m_visualVariant;
     var newOperations = operations.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
     newOperations["item"] = item;
     return newOperations;

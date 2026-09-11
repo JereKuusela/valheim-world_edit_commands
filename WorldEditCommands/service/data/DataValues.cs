@@ -148,7 +148,7 @@ public class AnyValue(string[] values)
 }
 public class ItemValue(ItemData data, HashSet<string> requiredParameters)
 {
-  public static string LoadItems(Dictionary<string, string> pars, List<ItemValue> items, Vector2i? size, int amount)
+  public static ZPackage LoadItems(Dictionary<string, string> pars, List<ItemValue> items, Vector2i? size, int amount)
   {
     ZPackage pkg = new();
     pkg.Write(106);
@@ -156,7 +156,7 @@ public class ItemValue(ItemData data, HashSet<string> requiredParameters)
     pkg.Write(items.Count);
     foreach (var item in items)
       item.Write(pars, pkg);
-    return pkg.GetBase64();
+    return pkg;
   }
   private static List<ItemValue> Generate(Dictionary<string, string> pars, List<ItemValue> data, Vector2i size, int amount)
   {

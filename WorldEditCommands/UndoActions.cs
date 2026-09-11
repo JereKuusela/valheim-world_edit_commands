@@ -100,12 +100,11 @@ public class UndoHelper
     zdo.Destroy();
   }
 
-  public static string Name(int hash) => Utils.GetPrefabName(ZNetScene.instance.GetPrefab(hash));
   public static string Print(IEnumerable<FakeZDO> zdos) => Print(zdos.Select(zdo => zdo.Prefab));
   public static string Print(IEnumerable<int> data)
   {
-    if (data.Count() == 1) return Name(data.First());
-    var names = data.GroupBy(Name);
+    if (data.Count() == 1) return DataHelper.Name(data.First());
+    var names = data.GroupBy(DataHelper.Name);
     if (names.Count() == 1) return $"{names.First().Key} {names.First().Count()}x";
     return $" objects {data.Count()}x";
   }

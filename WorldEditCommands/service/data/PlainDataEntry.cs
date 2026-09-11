@@ -70,6 +70,14 @@ public class PlainDataEntry
   ];
   public void Write(DataData data, bool all)
   {
+    // String is old place.
+    if (Strings != null && Strings.TryGetValue(ZDOVars.s_items, out var itemsStr))
+    {
+      ByteArrays ??= [];
+      ByteArrays[ZDOVars.s_items] = Convert.FromBase64String(itemsStr);
+      Strings.Remove(ZDOVars.s_items);
+    }
+
     // No need to roll here because tbis always come from ZDO that doesn't have item values.
     data.floats = Floats?.Select(pair => $"{ZDOKeys.Convert(pair.Key)}, {pair.Value}").ToArray();
     data.ints = Ints?.Where(kvp => !HashKeys.Contains(kvp.Key)).Select(pair => $"{ZDOKeys.Convert(pair.Key)}, {pair.Value}").ToArray();
@@ -82,9 +90,9 @@ public class PlainDataEntry
     data.vecs = Vecs?.Select(pair => $"{ZDOKeys.Convert(pair.Key)}, {Serialize(pair.Value)}").ToArray();
     data.quats = Quats?.Select(pair => $"{ZDOKeys.Convert(pair.Key)}, {Serialize(pair.Value)}").ToArray();
     data.bytes = ByteArrays?.Select(pair => $"{ZDOKeys.Convert(pair.Key)}, {Convert.ToBase64String(pair.Value)}").ToArray();
-    var items = Strings?.FirstOrDefault(kvp => kvp.Key == ZDOVars.s_items).Value;
-    if (items != null)
-      data.items = GetItems(items);
+    if (ByteArrays != null && ByteArrays.TryGetValue(ZDOVars.s_items, out var items))
+      GetItems(items);
+
     if (ConnectionType != ZDOExtraData.ConnectionType.None && ConnectionHash != 0)
       data.connection = $"{ConnectionType}, {ConnectionHash}";
     if (all)
@@ -120,11 +128,12 @@ public class PlainDataEntry
         data.priority = Priority.ToString();
     }
   }
-  private static ItemData[] GetItems(string encoded)
+  private static ItemData[]? GetItems(byte[] encoded)
   {
     ZPackage pkg = new(encoded);
     var version = pkg.ReadInt();
-    if (version != 106) return [];
+    // Not latest, but this is legacy way anyways.
+    if (version != 106) return null; // Keep unsupported formats in their original raw field.
     var amount = pkg.ReadInt();
     var list = new ItemData[amount];
     for (var i = 0; i < amount; ++i)

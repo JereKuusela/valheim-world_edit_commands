@@ -234,7 +234,7 @@ public class DataEntry
     Ints = ZDOExtraData.s_ints.ContainsKey(id) ? ZDOExtraData.s_ints[id].ToDictionary(kvp => kvp.Key, kvp => new SimpleIntValue(kvp.Value) as IIntValue) : null;
     Strings = ZDOExtraData.s_strings.ContainsKey(id) ? ZDOExtraData.s_strings[id].ToDictionary(kvp => kvp.Key, kvp => new SimpleStringValue(kvp.Value) as IStringValue) : null;
     Longs = ZDOExtraData.s_longs.ContainsKey(id) ? ZDOExtraData.s_longs[id].ToDictionary(kvp => kvp.Key, kvp => new SimpleLongValue(kvp.Value) as ILongValue) : null;
-    ByteArrays = ZDOExtraData.s_byteArrays.ContainsKey(id) ? ZDOExtraData.s_byteArrays[id].ToDictionary(kvp => kvp.Key, kvp => kvp.Value) : null;
+    ByteArrays = ZDOExtraData.s_byteArrays.ContainsKey(id) ? ZDOExtraData.s_byteArrays[id].ToDictionary(kvp => kvp.Key, kvp => (byte[])kvp.Value.Clone()) : null;
     if (ZDOExtraData.s_connectionsHashData.TryGetValue(id, out var conn))
     {
       ConnectionType = conn.m_type;
@@ -363,7 +363,7 @@ public class DataEntry
     }
     if (data.items != null)
     {
-      Items = data.items.Select(item => new ItemValue(item, RequiredParameters)).ToList();
+      Items = [.. data.items.Select(item => new ItemValue(item, RequiredParameters))];
     }
     if (!string.IsNullOrWhiteSpace(data.containerSize))
       ContainerSize = Parse.Vector2Int(data.containerSize!);
@@ -823,9 +823,9 @@ public class DataEntry
   {
     if (Items?.Count > 0)
     {
-      var encoded = ItemValue.LoadItems(pars, Items, ContainerSize, ItemAmount?.Get(pars) ?? 0);
-      Strings ??= [];
-      Strings[ZDOVars.s_items] = DataValue.Simple(encoded);
+      var pkg = ItemValue.LoadItems(pars, Items, ContainerSize, ItemAmount?.Get(pars) ?? 0);
+      ByteArrays ??= [];
+      ByteArrays[ZDOVars.s_items] = pkg.GetArray();
     }
   }
 
