@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using TMPro;
 using UnityEngine;
 
 namespace Data;
@@ -57,8 +56,8 @@ public class PlainDataEntry
     Distant = zdo.Distant;
     Persistent = zdo.Persistent;
     Priority = zdo.Type;
+    Migrate();
   }
-
   private static readonly HashSet<int> HashKeys = [
     ZDOVars.s_helmetItem,
     ZDOVars.s_chestItem,
@@ -66,18 +65,13 @@ public class PlainDataEntry
     ZDOVars.s_shoulderItem,
     ZDOVars.s_utilityItem,
     ZDOVars.s_leftItem,
-    ZDOVars.s_rightItem
+    ZDOVars.s_rightItem,
+    ZDOVars.s_content,
+    ZDOVars.s_item,
+    .. Enumerable.Range(0, 11).Select(i => $"{i}_item".GetStableHashCode())
   ];
   public void Write(DataData data, bool all)
   {
-    // String is old place.
-    if (Strings != null && Strings.TryGetValue(ZDOVars.s_items, out var itemsStr))
-    {
-      ByteArrays ??= [];
-      ByteArrays[ZDOVars.s_items] = Convert.FromBase64String(itemsStr);
-      Strings.Remove(ZDOVars.s_items);
-    }
-
     // No need to roll here because tbis always come from ZDO that doesn't have item values.
     data.floats = Floats?.Select(pair => $"{ZDOKeys.Convert(pair.Key)}, {pair.Value}").ToArray();
     data.ints = Ints?.Where(kvp => !HashKeys.Contains(kvp.Key)).Select(pair => $"{ZDOKeys.Convert(pair.Key)}, {pair.Value}").ToArray();
@@ -310,4 +304,39 @@ public class PlainDataEntry
       ownZdo.SetConnection(ZDOExtraData.ConnectionType.Portal, otherId);
     }
   }
+
+  private void Migrate()
+  {
+    MigrateItems();
+    MigrateInventory();
+  }
+  // Items used to be stored as a base64 string, now they belong in ByteArrays.
+  private void MigrateItems()
+  {
+    if (Strings == null || !Strings.TryGetValue(ZDOVars.s_items, out var itemsStr)) return;
+    if (!string.IsNullOrEmpty(itemsStr))
+    {
+      ByteArrays ??= [];
+      ByteArrays[ZDOVars.s_items] = Convert.FromBase64String(itemsStr);
+    }
+    Strings.Remove(ZDOVars.s_items);
+    if (Strings.Count == 0) Strings = null;
+  }
+  // Inventory prefab fields used to be stored as strings, now they are hashed.
+  private void MigrateInventory()
+  {
+    if (Strings == null) return;
+    foreach (var key in HashKeys)
+    {
+      if (!Strings.TryGetValue(key, out var strValue)) continue;
+      if (!string.IsNullOrEmpty(strValue))
+      {
+        Ints ??= [];
+        Ints[key] = strValue.GetStableHashCode();
+      }
+      Strings.Remove(key);
+    }
+    if (Strings.Count == 0) Strings = null;
+  }
+
 }
