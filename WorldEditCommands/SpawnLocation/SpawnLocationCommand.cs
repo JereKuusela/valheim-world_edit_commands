@@ -24,7 +24,7 @@ public class SpawnLocationCommand
       var baseAngle = 0f;
       var relativePosition = Vector3.zero;
       var basePosition = Vector3.zero;
-      var player = Player.m_localPlayer.transform;
+      var player = Player.m_localPlayer ? Player.m_localPlayer.transform : null;
       if (player)
       {
         basePosition = player.position;
