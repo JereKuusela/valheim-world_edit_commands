@@ -7,7 +7,7 @@ namespace WorldEditCommands;
 
 class SpawnObjectParameters : SharedObjectParameters
 {
-  public Quaternion BaseRotation;
+  public Quaternion BaseRotation = Quaternion.identity;
   public Range<Vector3> Rotation = new(Vector3.zero);
   public Range<Vector3> RelativePosition = new(Vector3.zero);
   public Vector3 From = Vector3.zero;
