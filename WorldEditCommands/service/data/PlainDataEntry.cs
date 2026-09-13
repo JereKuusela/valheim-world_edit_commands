@@ -10,6 +10,7 @@ namespace Data;
 // This can be used for saving ZDO data to file and for undo/redo.
 public class PlainDataEntry
 {
+  public PlainDataEntry() { }
   public PlainDataEntry(ZDO zdo)
   {
     Load(zdo);
@@ -56,7 +57,6 @@ public class PlainDataEntry
     Distant = zdo.Distant;
     Persistent = zdo.Persistent;
     Priority = zdo.Type;
-    Migrate();
   }
   private static readonly HashSet<int> HashKeys = [
     ZDOVars.s_helmetItem,
@@ -186,6 +186,114 @@ public class PlainDataEntry
   {
     return $"{Serialize(vec.x)},{Serialize(vec.z)},{Serialize(vec.y)}";
   }
+  public string GetBase64()
+  {
+    var pkg = new ZPackage();
+    Write(pkg);
+    return pkg.GetBase64();
+  }
+  public void Write(ZPackage pkg)
+  {
+    var num = 0;
+    if (Floats?.Count > 0)
+      num |= 1;
+    if (Vecs?.Count > 0)
+      num |= 2;
+    if (Quats?.Count > 0)
+      num |= 4;
+    if (Ints?.Count > 0)
+      num |= 8;
+    if (Strings?.Count > 0)
+      num |= 16;
+    if (Longs?.Count > 0)
+      num |= 64;
+    if (ByteArrays?.Count > 0)
+      num |= 128;
+    if (ConnectionType != ZDOExtraData.ConnectionType.None && ConnectionHash != 0)
+      num |= 256;
+    if (!Persistent)
+      num |= 512;
+    if (Distant)
+      num |= 1024;
+    if (Priority != ZDO.ObjectType.Default)
+      num |= 2048;
+
+    pkg.Write(num);
+    if (Floats?.Count > 0)
+    {
+      pkg.Write((byte)Floats.Count);
+      foreach (var kvp in Floats)
+      {
+        pkg.Write(kvp.Key);
+        pkg.Write(kvp.Value);
+      }
+    }
+    if (Vecs?.Count > 0)
+    {
+      pkg.Write((byte)Vecs.Count);
+      foreach (var kvp in Vecs)
+      {
+        pkg.Write(kvp.Key);
+        pkg.Write(kvp.Value);
+      }
+    }
+    if (Quats?.Count > 0)
+    {
+      pkg.Write((byte)Quats.Count);
+      foreach (var kvp in Quats)
+      {
+        pkg.Write(kvp.Key);
+        pkg.Write(kvp.Value);
+      }
+    }
+    if (Ints?.Count > 0)
+    {
+      pkg.Write((byte)Ints.Count);
+      foreach (var kvp in Ints)
+      {
+        pkg.Write(kvp.Key);
+        pkg.Write(kvp.Value);
+      }
+    }
+    if (Longs?.Count > 0)
+    {
+      pkg.Write((byte)Longs.Count);
+      foreach (var kvp in Longs)
+      {
+        pkg.Write(kvp.Key);
+        pkg.Write(kvp.Value);
+      }
+    }
+    if (Strings?.Count > 0)
+    {
+      pkg.Write((byte)Strings.Count);
+      foreach (var kvp in Strings)
+      {
+        pkg.Write(kvp.Key);
+        pkg.Write(kvp.Value);
+      }
+    }
+    if (ByteArrays?.Count > 0)
+    {
+      pkg.Write((byte)ByteArrays.Count);
+      foreach (var kvp in ByteArrays)
+      {
+        pkg.Write(kvp.Key);
+        pkg.Write(kvp.Value);
+      }
+    }
+    if (ConnectionType != ZDOExtraData.ConnectionType.None && ConnectionHash != 0)
+    {
+      pkg.Write((byte)ConnectionType);
+      pkg.Write(ConnectionHash);
+    }
+    if ((num & 512) != 0)
+      pkg.Write(Persistent);
+    if ((num & 1024) != 0)
+      pkg.Write(Distant);
+    if ((num & 2048) != 0)
+      pkg.Write((byte)Priority);
+  }
   public void Write(ZDO zdo)
   {
     var id = zdo.m_uid;
@@ -304,39 +412,4 @@ public class PlainDataEntry
       ownZdo.SetConnection(ZDOExtraData.ConnectionType.Portal, otherId);
     }
   }
-
-  private void Migrate()
-  {
-    MigrateItems();
-    MigrateInventory();
-  }
-  // Items used to be stored as a base64 string, now they belong in ByteArrays.
-  private void MigrateItems()
-  {
-    if (Strings == null || !Strings.TryGetValue(ZDOVars.s_items, out var itemsStr)) return;
-    if (!string.IsNullOrEmpty(itemsStr))
-    {
-      ByteArrays ??= [];
-      ByteArrays[ZDOVars.s_items] = Convert.FromBase64String(itemsStr);
-    }
-    Strings.Remove(ZDOVars.s_items);
-    if (Strings.Count == 0) Strings = null;
-  }
-  // Inventory prefab fields used to be stored as strings, now they are hashed.
-  private void MigrateInventory()
-  {
-    if (Strings == null) return;
-    foreach (var key in HashKeys)
-    {
-      if (!Strings.TryGetValue(key, out var strValue)) continue;
-      if (!string.IsNullOrEmpty(strValue))
-      {
-        Ints ??= [];
-        Ints[key] = strValue.GetStableHashCode();
-      }
-      Strings.Remove(key);
-    }
-    if (Strings.Count == 0) Strings = null;
-  }
-
 }

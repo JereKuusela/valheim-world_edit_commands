@@ -223,7 +223,6 @@ public class DataEntry
       Priority = data.Priority;
     foreach (var par in data.RequiredParameters)
       RequiredParameters.Add(par);
-    Migrate();
   }
   public void Load(ZDO zdo)
   {
@@ -249,7 +248,6 @@ public class DataEntry
     Persistent = zdo.Persistent ? new SimpleBoolValue(true) : null;
     Distant = zdo.Distant ? new SimpleBoolValue(true) : null;
     Priority = zdo.Type;
-    Migrate();
   }
   public void Load(DataData data)
   {
@@ -395,7 +393,6 @@ public class DataEntry
         if (ConnectionHash == 0) ConnectionHash = hash.GetStableHashCode();
       }
     }
-    Migrate();
   }
   public void Load(ZPackage pkg)
   {
@@ -462,14 +459,7 @@ public class DataEntry
       Distant = DataValue.Bool(pkg);
     if ((num & 2048) != 0)
       Priority = (ZDO.ObjectType)pkg.ReadByte();
-    Migrate();
   }
-  // Prefab name fields used to be stored as strings, now they are hashed.
-  private static readonly int[] HashKeys = [
-    ZDOVars.s_content,
-    ZDOVars.s_item,
-    .. Enumerable.Range(0, 11).Select(i => $"{i}_item".GetStableHashCode())
-  ];
   public bool Match(Dictionary<string, string> pars, ZDO zdo)
   {
     AddParameters(pars, zdo);
@@ -595,351 +585,66 @@ public class DataEntry
     return (T)(object)value;
   }
 
-  public void Write(Dictionary<string, string> pars, ZDO zdo)
+  // Evaluates parameters and legacy-format migration once, producing a snapshot ready to write to a ZDO.
+  public PlainDataEntry Resolve(Dictionary<string, string> pars, ZDO? zdo = null)
   {
     AddParameters(pars, zdo);
-    RollItems(pars);
-    var id = zdo.m_uid;
-    if (Floats?.Count > 0)
+    PlainDataEntry plain = new()
     {
-      ZDOHelper.Init(ZDOExtraData.s_floats, id);
-      foreach (var pair in Floats)
-      {
-        var value = pair.Value.Get(pars);
-        if (value.HasValue)
-          ZDOExtraData.s_floats[id].SetValue(pair.Key, value.Value);
-      }
-    }
-    if (Vecs?.Count > 0)
-    {
-      ZDOHelper.Init(ZDOExtraData.s_vec3, id);
-      foreach (var pair in Vecs)
-      {
-        var value = pair.Value.Get(pars);
-        if (value.HasValue)
-          ZDOExtraData.s_vec3[id].SetValue(pair.Key, value.Value);
-
-      }
-    }
-    if (Quats?.Count > 0)
-    {
-      ZDOHelper.Init(ZDOExtraData.s_quats, id);
-      foreach (var pair in Quats)
-      {
-        var value = pair.Value.Get(pars);
-        if (value.HasValue)
-          ZDOExtraData.s_quats[id].SetValue(pair.Key, value.Value);
-      }
-    }
-    if (Ints?.Count > 0)
-    {
-      ZDOHelper.Init(ZDOExtraData.s_ints, id);
+      Strings = Strings?.Select(kvp => new KeyValuePair<int, string?>(kvp.Key, kvp.Value.Get(pars))).Where(kvp => kvp.Value != null).ToDictionary(kvp => kvp.Key, kvp => kvp.Value!),
+      Floats = Floats?.Select(kvp => new KeyValuePair<int, float?>(kvp.Key, kvp.Value.Get(pars))).Where(kvp => kvp.Value.HasValue).ToDictionary(kvp => kvp.Key, kvp => kvp.Value!.Value),
+      Longs = Longs?.Select(kvp => new KeyValuePair<int, long?>(kvp.Key, kvp.Value.Get(pars))).Where(kvp => kvp.Value.HasValue).ToDictionary(kvp => kvp.Key, kvp => kvp.Value!.Value),
+      Vecs = Vecs?.Select(kvp => new KeyValuePair<int, Vector3?>(kvp.Key, kvp.Value.Get(pars))).Where(kvp => kvp.Value.HasValue).ToDictionary(kvp => kvp.Key, kvp => kvp.Value!.Value),
+      Quats = Quats?.Select(kvp => new KeyValuePair<int, Quaternion?>(kvp.Key, kvp.Value.Get(pars))).Where(kvp => kvp.Value.HasValue).ToDictionary(kvp => kvp.Key, kvp => kvp.Value!.Value),
+      ByteArrays = ByteArrays != null ? new Dictionary<int, byte[]>(ByteArrays) : null,
+      ConnectionType = ConnectionType,
+      ConnectionHash = ConnectionHash,
+      OriginalId = OriginalId,
+      TargetConnectionId = TargetConnectionId,
+      Persistent = Persistent?.GetBool(pars) ?? zdo?.Persistent ?? true,
+      Distant = Distant?.GetBool(pars) ?? zdo?.Distant ?? false,
+      Priority = Priority ?? zdo?.Type ?? ZDO.ObjectType.Default,
+    };
+    Dictionary<int, int> ints = [];
+    if (Ints != null)
       foreach (var pair in Ints)
       {
         var value = pair.Value.Get(pars);
-        if (value.HasValue)
-          ZDOExtraData.s_ints[id].SetValue(pair.Key, value.Value);
+        if (value.HasValue) ints[pair.Key] = value.Value;
       }
-    }
-    if (Hashes?.Count > 0)
-    {
-      ZDOHelper.Init(ZDOExtraData.s_ints, id);
+    if (Hashes != null)
       foreach (var pair in Hashes)
       {
         var value = pair.Value.Get(pars);
-        if (value.HasValue)
-          ZDOExtraData.s_ints[id].SetValue(pair.Key, value.Value);
+        if (value.HasValue) ints[pair.Key] = value.Value;
       }
-    }
-    if (Bools?.Count > 0)
-    {
-      ZDOHelper.Init(ZDOExtraData.s_ints, id);
+    if (Bools != null)
       foreach (var pair in Bools)
       {
         var value = pair.Value.GetInt(pars);
-        if (value.HasValue)
-          ZDOExtraData.s_ints[id].SetValue(pair.Key, value.Value);
+        if (value.HasValue) ints[pair.Key] = value.Value;
       }
-    }
-    if (Longs?.Count > 0)
-    {
-      ZDOHelper.Init(ZDOExtraData.s_longs, id);
-      foreach (var pair in Longs)
-      {
-        var value = pair.Value.Get(pars);
-        if (value.HasValue)
-          ZDOExtraData.s_longs[id].SetValue(pair.Key, value.Value);
-
-      }
-    }
-    if (Strings?.Count > 0)
-    {
-      ZDOHelper.Init(ZDOExtraData.s_strings, id);
-      foreach (var pair in Strings)
-      {
-        var value = pair.Value.Get(pars);
-        if (value != null)
-          ZDOExtraData.s_strings[id].SetValue(pair.Key, value);
-
-      }
-    }
-    if (ByteArrays?.Count > 0)
-    {
-      ZDOHelper.Init(ZDOExtraData.s_byteArrays, id);
-      foreach (var pair in ByteArrays)
-        ZDOExtraData.s_byteArrays[id].SetValue(pair.Key, pair.Value);
-    }
-    if (Persistent != null)
-      zdo.Persistent = Persistent.GetBool(pars) ?? zdo.Persistent;
-    if (Distant != null)
-      zdo.Distant = Distant.GetBool(pars) ?? zdo.Distant;
-    if (Priority != null)
-      zdo.Type = Priority.Value;
-    HandleConnection(zdo);
-    HandleHashConnection(zdo);
+    if (ints.Count > 0) plain.Ints = ints;
+    RollItems(pars, plain.ByteArrays ??= []);
+    ItemDataHelper.ConvertInventory(plain);
+    ItemDataHelper.ConvertItemNames(plain);
+    ItemDataHelper.ConvertItemData(plain);
+    return plain;
   }
-  public string GetBase64(Dictionary<string, string> pars)
+  public void Write(Dictionary<string, string> pars, ZDO zdo)
   {
-    var pkg = new ZPackage();
-    Write(pars, pkg);
-    return pkg.GetBase64();
+    Resolve(pars, zdo).Write(zdo);
   }
-  public void Write(Dictionary<string, string> pars, ZPackage pkg)
-  {
-    AddParameters(pars, null);
-    RollItems(pars);
-    var num = 0;
-    if (Floats != null)
-      num |= 1;
-    if (Vecs != null)
-      num |= 2;
-    if (Quats != null)
-      num |= 4;
-    if (Ints != null || Hashes != null || Bools != null)
-      num |= 8;
-    if (Strings != null)
-      num |= 16;
-    if (Longs != null)
-      num |= 64;
-    if (ByteArrays != null)
-      num |= 128;
-    if (ConnectionType != ZDOExtraData.ConnectionType.None && ConnectionHash != 0)
-      num |= 256;
-    if (Persistent != null)
-      num |= 512;
-    if (Distant != null)
-      num |= 1024;
-    if (Priority != null)
-      num |= 2048;
+  public string GetBase64(Dictionary<string, string> pars) => Resolve(pars).GetBase64();
+  public void Write(Dictionary<string, string> pars, ZPackage pkg) => Resolve(pars).Write(pkg);
 
-    pkg.Write(num);
-    if (Floats != null)
-    {
-      var kvps = Floats.Select(kvp => new KeyValuePair<int, float?>(kvp.Key, kvp.Value.Get(pars))).Where(kvp => kvp.Value.HasValue).ToArray();
-      pkg.Write((byte)kvps.Count());
-      foreach (var kvp in kvps)
-      {
-        pkg.Write(kvp.Key);
-        pkg.Write(kvp.Value!.Value);
-      }
-    }
-    if (Vecs != null)
-    {
-      var kvps = Vecs.Select(kvp => new KeyValuePair<int, Vector3?>(kvp.Key, kvp.Value.Get(pars))).Where(kvp => kvp.Value.HasValue).ToArray();
-      pkg.Write((byte)kvps.Count());
-      foreach (var kvp in kvps)
-      {
-        pkg.Write(kvp.Key);
-        pkg.Write(kvp.Value!.Value);
-      }
-    }
-    if (Quats != null)
-    {
-      var kvps = Quats.Select(kvp => new KeyValuePair<int, Quaternion?>(kvp.Key, kvp.Value.Get(pars))).Where(kvp => kvp.Value.HasValue).ToArray();
-      pkg.Write((byte)kvps.Count());
-      foreach (var kvp in kvps)
-      {
-        pkg.Write(kvp.Key);
-        pkg.Write(kvp.Value!.Value);
-      }
-    }
-    if (Ints != null || Hashes != null || Bools != null)
-    {
-      var intKvps = Ints?.Select(kvp => new KeyValuePair<int, int?>(kvp.Key, kvp.Value.Get(pars))).Where(kvp => kvp.Value.HasValue).ToArray() ?? [];
-      var hashKvps = Hashes?.Select(kvp => new KeyValuePair<int, int?>(kvp.Key, kvp.Value.Get(pars))).Where(kvp => kvp.Value.HasValue).ToArray() ?? [];
-      var boolKvps = Bools?.Select(kvp => new KeyValuePair<int, int?>(kvp.Key, kvp.Value.GetInt(pars))).Where(kvp => kvp.Value.HasValue).ToArray() ?? [];
-      var count = intKvps.Length + hashKvps.Length + boolKvps.Length;
-      pkg.Write((byte)count);
-      foreach (var kvp in intKvps)
-      {
-        pkg.Write(kvp.Key);
-        pkg.Write(kvp.Value!.Value);
-      }
-      foreach (var kvp in hashKvps)
-      {
-        pkg.Write(kvp.Key);
-        pkg.Write(kvp.Value!.Value);
-      }
-      foreach (var kvp in boolKvps)
-      {
-        pkg.Write(kvp.Key);
-        pkg.Write(kvp.Value!.Value);
-      }
-    }
-    if (Longs != null)
-    {
-      var kvps = Longs.Select(kvp => new KeyValuePair<int, long?>(kvp.Key, kvp.Value.Get(pars))).Where(kvp => kvp.Value.HasValue).ToArray();
-      pkg.Write((byte)kvps.Count());
-      foreach (var kvp in kvps)
-      {
-        pkg.Write(kvp.Key);
-        pkg.Write(kvp.Value!.Value);
-      }
-    }
-    if (Strings != null)
-    {
-      var kvps = Strings.Select(kvp => new KeyValuePair<int, string?>(kvp.Key, kvp.Value.Get(pars))).Where(kvp => kvp.Value != null).ToArray();
-      pkg.Write((byte)kvps.Count());
-      foreach (var kvp in kvps)
-      {
-        pkg.Write(kvp.Key);
-        pkg.Write(kvp.Value!);
-      }
-    }
-    if (ByteArrays != null)
-    {
-      pkg.Write((byte)ByteArrays.Count());
-      foreach (var kvp in ByteArrays)
-      {
-        pkg.Write(kvp.Key);
-        pkg.Write(kvp.Value);
-      }
-    }
-    if (ConnectionType != ZDOExtraData.ConnectionType.None && ConnectionHash != 0)
-    {
-      pkg.Write((byte)ConnectionType);
-      pkg.Write(ConnectionHash);
-    }
-    if (Persistent != null)
-      pkg.Write(Persistent.GetBool(pars) ?? true);
-    if (Distant != null)
-      pkg.Write(Distant.GetBool(pars) ?? false);
-    if (Priority != null)
-      pkg.Write((byte)Priority.Value);
-  }
-
-  private void RollItems(Dictionary<string, string> pars)
+  private void RollItems(Dictionary<string, string> pars, Dictionary<int, byte[]> byteArrays)
   {
     if (Items?.Count > 0)
     {
       var pkg = ItemValue.LoadItems(pars, Items, ContainerSize, ItemAmount?.Get(pars) ?? 0);
-      ByteArrays ??= [];
-      ByteArrays[ZDOVars.s_items] = pkg.GetArray();
+      byteArrays[ZDOVars.s_items] = pkg.GetArray();
     }
-  }
-
-  private void HandleConnection(ZDO ownZdo)
-  {
-    if (OriginalId == ZDOID.None) return;
-    var ownId = ownZdo.m_uid;
-    if (TargetConnectionId != ZDOID.None)
-    {
-      // If target is known, the setup is easy.
-      var otherZdo = ZDOMan.instance.GetZDO(TargetConnectionId);
-      if (otherZdo == null) return;
-
-      ownZdo.SetConnection(ConnectionType, TargetConnectionId);
-      // Portal is two way.
-      if (ConnectionType == ZDOExtraData.ConnectionType.Portal)
-        otherZdo.SetConnection(ZDOExtraData.ConnectionType.Portal, ownId);
-
-    }
-    else
-    {
-      // Otherwise all zdos must be scanned.
-      var other = ZDOExtraData.s_connections.FirstOrDefault(kvp => kvp.Value.m_target == OriginalId);
-      if (other.Value == null) return;
-      var otherZdo = ZDOMan.instance.GetZDO(other.Key);
-      if (otherZdo == null) return;
-      // Connection is always one way here, otherwise TargetConnectionId would be set.
-      otherZdo.SetConnection(other.Value.m_type, ownId);
-    }
-  }
-  private void HandleHashConnection(ZDO ownZdo)
-  {
-    if (ConnectionHash == 0) return;
-    if (ConnectionType == ZDOExtraData.ConnectionType.None) return;
-    var ownId = ownZdo.m_uid;
-
-    // Hash data is regenerated on world save.
-    // But in this case, it's manually set, so might be needed later.
-    ZDOExtraData.SetConnectionData(ownId, ConnectionType, ConnectionHash);
-
-    // While actual connection can be one way, hash is always two way.
-    // One of the hashes always has the target type.
-    var otherType = ConnectionType ^ ZDOExtraData.ConnectionType.Target;
-    var isOtherTarget = (ConnectionType & ZDOExtraData.ConnectionType.Target) == 0;
-    var zdos = ZDOExtraData.GetAllConnectionZDOIDs(otherType);
-    var otherId = zdos.FirstOrDefault(z => ZDOExtraData.GetConnectionHashData(z, ConnectionType)?.m_hash == ConnectionHash);
-    if (otherId == ZDOID.None) return;
-    var otherZdo = ZDOMan.instance.GetZDO(otherId);
-    if (otherZdo == null) return;
-    if ((ConnectionType & ZDOExtraData.ConnectionType.Spawned) > 0)
-    {
-      // Spawn is one way.
-      var connZDO = isOtherTarget ? ownZdo : otherZdo;
-      var targetId = isOtherTarget ? otherId : ownId;
-      connZDO.SetConnection(ZDOExtraData.ConnectionType.Spawned, targetId);
-    }
-    if ((ConnectionType & ZDOExtraData.ConnectionType.SyncTransform) > 0)
-    {
-      // Sync is one way.
-      var connZDO = isOtherTarget ? ownZdo : otherZdo;
-      var targetId = isOtherTarget ? otherId : ownId;
-      connZDO.SetConnection(ZDOExtraData.ConnectionType.SyncTransform, targetId);
-    }
-    if ((ConnectionType & ZDOExtraData.ConnectionType.Portal) > 0)
-    {
-      // Portal is two way.
-      otherZdo.SetConnection(ZDOExtraData.ConnectionType.Portal, ownId);
-      ownZdo.SetConnection(ZDOExtraData.ConnectionType.Portal, otherId);
-    }
-  }
-
-  private void Migrate()
-  {
-    MigrateItems();
-    MigrateInventory();
-  }
-
-  // Items used to be stored as a base64 string, now they belong in ByteArrays.
-  private void MigrateItems()
-  {
-    if (Strings == null || !Strings.TryGetValue(ZDOVars.s_items, out var itemsValue)) return;
-    var value = itemsValue.Get([]);
-    if (!string.IsNullOrEmpty(value))
-    {
-      ByteArrays ??= [];
-      ByteArrays[ZDOVars.s_items] = Convert.FromBase64String(value);
-    }
-    Strings.Remove(ZDOVars.s_items);
-    if (Strings.Count == 0) Strings = null;
-  }
-  // Inventory prefab fields used to be stored as strings, now they are hashed.
-  private void MigrateInventory()
-  {
-    if (Strings == null) return;
-    foreach (var key in HashKeys)
-    {
-      if (!Strings.TryGetValue(key, out var strValue)) continue;
-      var value = strValue.Get([]);
-      if (!string.IsNullOrEmpty(value))
-      {
-        Hashes ??= [];
-        Hashes[key] = new SimpleHashValue(value!);
-      }
-      Strings.Remove(key);
-    }
-    if (Strings.Count == 0) Strings = null;
   }
 }
+
