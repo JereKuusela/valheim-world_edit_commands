@@ -40,46 +40,46 @@ public partial class Terrain
     }
     DoOperation(nodes, pos, radius, action);
   }
-  public static void LevelTerrain(List<HeightNode> nodes, Vector3 pos, float radius, float smooth, float altitude)
+  public static void LevelTerrain(List<HeightNode> nodes, Vector3 pos, float radius, float smooth, float y)
   {
     void action(TerrainComp compiler, int index, TerrainNode node)
     {
       var multiplier = CalculateSmooth(smooth, node.Distance);
-      compiler.m_levelDelta[index] += multiplier * (altitude - compiler.m_hmap.m_heights[index]);
+      compiler.m_levelDelta[index] += multiplier * (y - compiler.m_hmap.m_heights[index]);
       compiler.m_smoothDelta[index] = 0f;
       compiler.m_modifiedHeight[index] = compiler.m_levelDelta[index] != 0f;
     }
     DoOperation(nodes, pos, radius, action);
   }
 
-  public static void MaxTerrain(List<HeightNode> nodes, Vector3 pos, float radius, float altitude)
+  public static void MaxTerrain(List<HeightNode> nodes, Vector3 pos, float radius, float y)
   {
     void action(TerrainComp compiler, int index, TerrainNode node)
     {
-      var capped = Mathf.Min(altitude, compiler.m_hmap.m_heights[index]);
+      var capped = Mathf.Min(y, compiler.m_hmap.m_heights[index]);
       compiler.m_levelDelta[index] += capped - compiler.m_hmap.m_heights[index];
       compiler.m_smoothDelta[index] = 0f;
       compiler.m_modifiedHeight[index] = compiler.m_levelDelta[index] != 0f;
     }
     DoOperation(nodes, pos, radius, action);
   }
-  public static void MinTerrain(List<HeightNode> nodes, Vector3 pos, float radius, float altitude)
+  public static void MinTerrain(List<HeightNode> nodes, Vector3 pos, float radius, float y)
   {
     void action(TerrainComp compiler, int index, TerrainNode node)
     {
-      var capped = Mathf.Max(altitude, compiler.m_hmap.m_heights[index]);
+      var capped = Mathf.Max(y, compiler.m_hmap.m_heights[index]);
       compiler.m_levelDelta[index] += capped - compiler.m_hmap.m_heights[index];
       compiler.m_smoothDelta[index] = 0f;
       compiler.m_modifiedHeight[index] = compiler.m_levelDelta[index] != 0f;
     }
     DoOperation(nodes, pos, radius, action);
   }
-  public static void SlopeTerrain(List<HeightNode> nodes, Vector3 pos, float radius, float angle, float smooth, float altitude, float amount)
+  public static void SlopeTerrain(List<HeightNode> nodes, Vector3 pos, float radius, float angle, float smooth, float y, float amount)
   {
     void action(TerrainComp compiler, int index, TerrainNode node)
     {
       var multiplier = CalculateSlope(angle, node.DistanceWidth, node.DistanceDepth) * CalculateSmooth(smooth, node.Distance);
-      compiler.m_levelDelta[index] += altitude - compiler.m_hmap.m_heights[index] + multiplier * amount / 2f;
+      compiler.m_levelDelta[index] += y - compiler.m_hmap.m_heights[index] + multiplier * amount / 2f;
       compiler.m_smoothDelta[index] = 0f;
       compiler.m_modifiedHeight[index] = compiler.m_levelDelta[index] != 0f;
     }

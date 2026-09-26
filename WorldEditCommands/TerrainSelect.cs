@@ -70,9 +70,9 @@ public partial class Terrain
       return true;
     };
   }
-  public static Func<TerrainNode, bool> CreateAltitudeFilter(float min, float max)
+  public static Func<TerrainNode, bool> CreateHeightFilter(float min, float max)
   {
-    return (TerrainNode index) =>
+    return index =>
     {
       var height = ZoneSystem.instance.GetGroundHeight(index.Position);
       return height >= min && height <= max;

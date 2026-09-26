@@ -219,14 +219,14 @@ Following parameters are available:
 - `chance=number`: Randomly filters included terrain nodes. For example 0.5 includes half of the nodes (50%).
   - Range can be used to randomize the chance. For example 0.5-0.8 includes 50% to 80% of the nodes.
 - `circle=number` or `circle=min-max`: Determines the radius of the affected terrain.
-- `delta=meters`: Sets the difference from the original elevation. Without the parameter, resets terrain altitude changes.
-- `from=x,z,y`: Overwrites the player's position. Allows fixing the current position for more precise editing. The y coordinate can be used to override the current ground altitude.
+- `delta=meters`: Sets the difference from the original elevation. Without the parameter, resets terrain height changes.
+- `from=x,z,y`: Overwrites the player's position. Allows fixing the current position for more precise editing. The y coordinate can be used to override the current ground height.
 - `id=id1,id2,...`: List of included ids. Supports starts with, ends with or contains by using "*". Default is `*` that allows all objects which don't start with "_".
 - `ignore=id1,id2,..`: List of ignored ids. Supports starts with, ends with or contains by using "*"
-- `level=altitude`: Sets terrain height to the given altitude. If not given, uses the ground altitude below the player.
+- `level=y`: Sets terrain height to the given y coordinate. If not given, uses the ground height below the player.
 - `lower=meters`: Lowers terrain by X meters. Same as `raise` when a negative value is used.
-- `max=altitude`: Lowers terrain above the given altitude to the altitude.
-- `min=altitude`: Raises terrain below the given altitude to the altitude.
+- `max=y`: Lowers terrain above the given y coordinate to the y coordinate.
+- `min=y`: Raises terrain below the given y coordinate to the y coordinate.
 - `offset=forward,right,up`: Moves the targeted position while still using the altitude of the player's position.
 - `smooth=number`: Determines how gradually the changes are applied (from 0.0 to 1.0).
   - 1.0: All of the terrain gets reduced changes (except the very center).
@@ -244,7 +244,7 @@ Following parameters are available:
 - `step=forward,right,up`: Calculates offset based on the radius (and slope height if given).
 - `to=x,z,y`: Moves the affected terrain between the current position and this position. Determines angle, slope and circle/rect size automatically.
 - `void`: Removes the terrain surface. Ignores `smooth` parameter.
-- `within=min-max`: Only includes terrain that is within the given altitude range.
+- `within=min-max`: Only includes terrain that is within the given y coordinate range.
 
 ### Examples: Terrain
 

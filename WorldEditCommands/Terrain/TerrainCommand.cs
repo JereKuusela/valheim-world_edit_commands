@@ -55,7 +55,7 @@ public class TerrainCommand
   {
     List<Func<TerrainNode, bool>> filterers = [];
     if (pars.BlockCheck != BlockCheck.Off) filterers.Add(Terrain.CreateBlockCheckFilter(pars.BlockCheck, pars.IncludedIds, pars.ExcludedIds));
-    if (pars.Within != null) filterers.Add(Terrain.CreateAltitudeFilter(pars.Within.Min, pars.Within.Max));
+    if (pars.Within != null) filterers.Add(Terrain.CreateHeightFilter(pars.Within.Min, pars.Within.Max));
     return filterers;
   }
   public TerrainCommand()
