@@ -55,11 +55,11 @@ public class TweakRunestoneCommand : TweakCommand
     SupportedOperations.Add("topic", typeof(string));
     SupportedOperations.Add("discover", typeof(string));
 
-    AutoComplete.Add("name", (int index) => index == 0 ? ParameterInfo.Create("name=<color=yellow>text</color>", "Display name. Use _ as the space. No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("text", (int index) => ParameterInfo.Create("text=<color=yellow>text</color>", "Shown text. Use _ as the space. No value to reset."));
-    AutoComplete.Add("compendium", (int index) => ParameterInfo.Create("compendium=<color=yellow>text</color>", "Entry in the compendium. Use _ as the space. No value to reset. Add new parameter for more entries."));
-    AutoComplete.Add("topic", (int index) => index == 0 ? ParameterInfo.Create("topic=<color=yellow>text</color>", "Show text topic. Use _ as the space. No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("discover", (int index) =>
+    AutoComplete.Add("name", index => index == 0 ? ParameterInfo.Create("name=<color=yellow>text</color>", "Display name. Use _ as the space. No value to reset.") : ParameterInfo.None);
+    AutoComplete.Add("text", index => ParameterInfo.Create("text=<color=yellow>text</color>", "Shown text. Use _ as the space. No value to reset."));
+    AutoComplete.Add("compendium", index => ParameterInfo.Create("compendium=<color=yellow>text</color>", "Entry in the compendium. Use _ as the space. No value to reset. Add new parameter for more entries."));
+    AutoComplete.Add("topic", index => index == 0 ? ParameterInfo.Create("topic=<color=yellow>text</color>", "Show text topic. Use _ as the space. No value to reset.") : ParameterInfo.None);
+    AutoComplete.Add("discover", index =>
     {
       if (index == 0) return ParameterInfo.LocationIds;
       if (index == 1) return ParameterInfo.Create("discover=id,<color=yellow>pinName</color>,pinType,openMap", "Pin name on the map.");

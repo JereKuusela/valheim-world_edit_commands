@@ -67,17 +67,18 @@ public class TweakChestCommand : TweakCommand {
       SupportedOperations.Add("maxamount", typeof(int));
       SupportedOperations.Add("item", typeof(string[]));
     }
-    AutoComplete.Add("name", (int index) => index == 0 ? ParameterInfo.Create("name=<color=yellow>text</color>", "Display name. Use _ as the space. No value to reset.") : ParameterInfo.None);
+    AutoComplete.Add("name", index => index == 0 ? ParameterInfo.Create("name=<color=yellow>text</color>", "Display name. Use _ as the space. No value to reset.") : ParameterInfo.None);
     if (WorldEditCommands.IsStructureTweaks)
-      AutoComplete.Add("unlock", (int index) => index == 0 ? ParameterInfo.Create("unlock=<color=yellow>true/false</color>", "Ignores wards. No value to toggle.") : ParameterInfo.None);
+      AutoComplete.Add("unlock", index => index == 0 ? ParameterInfo.Create("unlock=<color=yellow>true/false</color>", "Ignores wards. No value to toggle.") : ParameterInfo.None);
 
 
 
     if (WorldEditCommands.IsSpawnerTweaks) {
-      AutoComplete.Add("respawn", (int index) => index == 0 ? ParameterInfo.Create("respawn=<color=yellow>minutes</color>", "Respawn time. No value to reset.") : ParameterInfo.None);
-      AutoComplete.Add("minamount", (int index) => index == 0 ? ParameterInfo.Create("minamount=<color=yellow>number</color>", "Minimum amount of items. No value to reset.") : ParameterInfo.None);
-      AutoComplete.Add("maxamount", (int index) => index == 0 ? ParameterInfo.Create("maxamount=<color=yellow>number</color>", "Maximum amount of items. No value to reset.") : ParameterInfo.None);
-      AutoComplete.Add("item", (int index) => {
+      AutoComplete.Add("respawn", index => index == 0 ? ParameterInfo.Create("respawn=<color=yellow>minutes</color>", "Respawn time. No value to reset.") : ParameterInfo.None);
+      AutoComplete.Add("minamount", index => index == 0 ? ParameterInfo.Create("minamount=<color=yellow>number</color>", "Minimum amount of items. No value to reset.") : ParameterInfo.None);
+      AutoComplete.Add("maxamount", index => index == 0 ? ParameterInfo.Create("maxamount=<color=yellow>number</color>", "Maximum amount of items. No value to reset.") : ParameterInfo.None);
+      AutoComplete.Add("item", index =>
+      {
         if (index == 0) return ParameterInfo.ItemIds;
         if (index == 1) return ParameterInfo.Create("item=id,<color=yellow>weight</color>,minamount,maxamount", "Chance relative to other items.");
         if (index == 2) return ParameterInfo.Create("item=id,weight,<color=yellow>minamount</color>,maxamount", "Minimum amount.");

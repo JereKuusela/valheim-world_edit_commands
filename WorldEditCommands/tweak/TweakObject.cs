@@ -121,21 +121,21 @@ public class TweakObjectCommand : TweakCommand
     SupportedOperations.Add("destroy", typeof(float));
     SupportedOperations.Add("destroyeffect", typeof(string[]));
 
-    AutoComplete.Add("component", (int index) => Components);
-    AutoComplete.Add("status", (int index) => index == 0 ? ParameterInfo.Create("status=<color=yellow>radius</color>,id,playeronly", "Adds status area.") : index == 1 ? ParameterInfo.StatusEffects : ParameterInfo.None);
-    AutoComplete.Add("effect", (int index) => index == 0 ? ParameterInfo.Create("effect=<color=yellow>radius</color>,id,playeronly", "Adds effect area.") : ParameterInfo.EffectAreas);
-    AutoComplete.Add("weather", (int index) => index == 0 ? ParameterInfo.Create("weather=<color=yellow>radius</color>,id,instant,dungeon", "Adds weather area.") : index == 1 ? ParameterInfo.Environments : index == 2 ? ParameterInfo.Create("weather=radius,id,<color=yellow>instant</color>,dungeon", "If given, the weather is changed instantly.") : ParameterInfo.None);
-    AutoComplete.Add("event", (int index) => index == 0 ? ParameterInfo.Create("event=<color=yellow>radius</color>,id", "Adds event area.") : index == 1 ? ParameterInfo.Events : ParameterInfo.None);
-    AutoComplete.Add("collision", (int index) => ParameterInfo.Create("collision=<color=yellow>true/false</color> or no value to toggle.", "Sets object collision."));
-    AutoComplete.Add("fall", (int index) => index == 0 ? FallTypes : ParameterInfo.None);
-    AutoComplete.Add("show", (int index) => ParameterInfo.Create("show=<color=yellow>true/false</color> or no value to toggle.", "Sets object visibility."));
-    AutoComplete.Add("interact", (int index) => ParameterInfo.Create("interact=<color=yellow>true/false</color> or no value to toggle.", "Sets object interactability."));
-    AutoComplete.Add("wear", (int index) => index == 0 ? Wears : ParameterInfo.None);
-    AutoComplete.Add("growth", (int index) => index == 0 ? Growths : ParameterInfo.None);
-    AutoComplete.Add("water", (int index) => index == 0 ? Waters : ParameterInfo.XZY("water", "Scale", index - 1));
-    AutoComplete.Add("creator", (int index) => index == 0 ? ParameterInfo.Create("creator=<color=yellow>player ID</color>", "Sets creator of objects (0 for no creator).") : ParameterInfo.None);
-    AutoComplete.Add("destroy", (int index) => index == 0 ? ParameterInfo.Create("destroy=<color=yellow>seconds</color>", "Timed destruction after seconds.") : ParameterInfo.None);
-    AutoComplete.Add("destroyeffect", (int index) => TweakAutoComplete.Effect("destroyeffect", index));
+    AutoComplete.Add("component", index => Components);
+    AutoComplete.Add("status", index => index == 0 ? ParameterInfo.Create("status=<color=yellow>radius</color>,id,playeronly", "Adds status area.") : index == 1 ? ParameterInfo.StatusEffects : ParameterInfo.None);
+    AutoComplete.Add("effect", index => index == 0 ? ParameterInfo.Create("effect=<color=yellow>radius</color>,id,playeronly", "Adds effect area.") : ParameterInfo.EffectAreas);
+    AutoComplete.Add("weather", index => index == 0 ? ParameterInfo.Create("weather=<color=yellow>radius</color>,id,instant,dungeon", "Adds weather area.") : index == 1 ? ParameterInfo.Environments : index == 2 ? ParameterInfo.Create("weather=radius,id,<color=yellow>instant</color>,dungeon", "If given, the weather is changed instantly.") : ParameterInfo.None);
+    AutoComplete.Add("event", index => index == 0 ? ParameterInfo.Create("event=<color=yellow>radius</color>,id", "Adds event area.") : index == 1 ? ParameterInfo.Events : ParameterInfo.None);
+    AutoComplete.Add("collision", index => ParameterInfo.Create("collision=<color=yellow>true/false</color> or no value to toggle.", "Sets object collision."));
+    AutoComplete.Add("fall", index => index == 0 ? FallTypes : ParameterInfo.None);
+    AutoComplete.Add("show", index => ParameterInfo.Create("show=<color=yellow>true/false</color> or no value to toggle.", "Sets object visibility."));
+    AutoComplete.Add("interact", index => ParameterInfo.Create("interact=<color=yellow>true/false</color> or no value to toggle.", "Sets object interactability."));
+    AutoComplete.Add("wear", index => index == 0 ? Wears : ParameterInfo.None);
+    AutoComplete.Add("growth", index => index == 0 ? Growths : ParameterInfo.None);
+    AutoComplete.Add("water", index => index == 0 ? Waters : ParameterInfo.XZY("water", "Scale", index - 1));
+    AutoComplete.Add("creator", index => index == 0 ? ParameterInfo.Create("creator=<color=yellow>player ID</color>", "Sets creator of objects (0 for no creator).") : ParameterInfo.None);
+    AutoComplete.Add("destroy", index => index == 0 ? ParameterInfo.Create("destroy=<color=yellow>seconds</color>", "Timed destruction after seconds.") : ParameterInfo.None);
+    AutoComplete.Add("destroyeffect", index => TweakAutoComplete.Effect("destroyeffect", index));
     Init("tweak_object", "Modify objects");
   }
 }

@@ -12,7 +12,7 @@ public class DataRawCommand
   public DataRawCommand()
   {
 
-    AutoComplete.Register("data_raw", (int index) => index == 0 ? DataLoading.DataKeys : ParameterInfo.None);
+    AutoComplete.Register("data_raw", index => index == 0 ? DataLoading.DataKeys : ParameterInfo.None);
     Helper.Command("data_raw", "[name] - Copies data entry to clipboard as base64 encoded string.", (args) =>
     {
       Helper.ArgsCheck(args, 2, "Missing data entry name.");

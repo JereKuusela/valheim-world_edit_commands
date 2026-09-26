@@ -62,9 +62,9 @@ public class TweakItemStandCommand : TweakCommand
     SupportedOperations.Add("name", typeof(string));
     SupportedOperations.Add("item", typeof(string));
 
-    AutoComplete.Add("name", (int index) => index == 0 ? ParameterInfo.Create("name=<color=yellow>text</color>", "Display name. Use _ as the space. No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("respawn", (int index) => index == 0 ? ParameterInfo.Create("respawn=<color=yellow>minutes</color>", "Respawn time. No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("item", (int index) =>
+    AutoComplete.Add("name", index => index == 0 ? ParameterInfo.Create("name=<color=yellow>text</color>", "Display name. Use _ as the space. No value to reset.") : ParameterInfo.None);
+    AutoComplete.Add("respawn", index => index == 0 ? ParameterInfo.Create("respawn=<color=yellow>minutes</color>", "Respawn time. No value to reset.") : ParameterInfo.None);
+    AutoComplete.Add("item", index =>
     {
       if (index == 0) return ParameterInfo.ItemIds;
       if (index == 1) return ParameterInfo.Create("item=id,<color=yellow>variant</color>", "Item variant (number).");

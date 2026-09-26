@@ -43,28 +43,28 @@ public class DataAutoComplete
     ];
     NamedOptionsFetchers baseFetchers = new() {
       {
-        "type", (int index) => ParameterInfo.Components
+        "type", index => ParameterInfo.Components
       },
       {
-        "connect", (int index) => ParameterInfo.Flag("Connect")
+        "connect", index => ParameterInfo.Flag("Connect")
       },
       {
-        "id", (int index) => ParameterInfo.Ids
+        "id", index => ParameterInfo.Ids
       },
       {
-        "ignore", (int index) => ParameterInfo.Ids
+        "ignore", index => ParameterInfo.Ids
       },
       {
         "center",
-        (int index) => ParameterInfo.XZY("center", "Overrides the player position. For <color=yellow>rotate</color> sets also the rotation center point.", index)
+        index => ParameterInfo.XZY("center", "Overrides the player position. For <color=yellow>rotate</color> sets also the rotation center point.", index)
       },
       {
         "from",
-        (int index) => ParameterInfo.XZY("center", "Overrides the player position. For <color=yellow>rotate</color> sets also the rotation center point.", index)
+        index => ParameterInfo.XZY("center", "Overrides the player position. For <color=yellow>rotate</color> sets also the rotation center point.", index)
       },
       {
         "rect",
-        (int index) => {
+        index => {
           if (index == 0) return ParameterInfo.Create("rect=<color=yellow>size</color> or rect=<color=yellow>width</color>,depth", "Area of affected objects.");
           if (index == 1) return ParameterInfo.Create("rect=width,<color=yellow>depth</color>", "Area of affected objects.");
           return ParameterInfo.None;
@@ -72,62 +72,61 @@ public class DataAutoComplete
       },
       {
         "angle",
-        (int index) => index == 0 ? ParameterInfo.Create("angle=<color=yellow>degrees</color>", "Direction of the rectangle when used with <color=yellow>rect</color>.") : ParameterInfo.None
+        index => index == 0 ? ParameterInfo.Create("angle=<color=yellow>degrees</color>", "Direction of the rectangle when used with <color=yellow>rect</color>.") : ParameterInfo.None
       },
       {
         "circle",
-        (int index) => index == 0 ? ParameterInfo.Create("circle=<color=yellow>number</color>", "Radius of affected objects.") : ParameterInfo.None
+        index => index == 0 ? ParameterInfo.Create("circle=<color=yellow>number</color>", "Radius of affected objects.") : ParameterInfo.None
       },
       {
         "radius",
-        (int index) => index == 0 ? ParameterInfo.Create("radius=<color=yellow>number</color>", "Radius of affected objects.") : ParameterInfo.None
+        index => index == 0 ? ParameterInfo.Create("radius=<color=yellow>number</color>", "Radius of affected objects.") : ParameterInfo.None
       },
       {
         "chance",
-        (int index) => index == 0 ? ParameterInfo.Create("chance=<color=yellow>number</color>", "Chance to affect the object (from 0.0 to 1.0).") : ParameterInfo.None
+        index => index == 0 ? ParameterInfo.Create("chance=<color=yellow>number</color>", "Chance to affect the object (from 0.0 to 1.0).") : ParameterInfo.None
       },
       {
-        "save", (int index) => ParameterInfo.Create("save=<color=yellow>name</color>", "Saves the object data to the file.")
+        "save", index => ParameterInfo.Create("save=<color=yellow>name</color>", "Saves the object data to the file.")
       },
       {
-        "dump", (int index) => ParameterInfo.Create("dump=<color=yellow>name</color>", "Saves the object data with default fields to the file.")
+        "dump", index => ParameterInfo.Create("dump=<color=yellow>name</color>", "Saves the object data with default fields to the file.")
       },
       {
-        "keep", (int index) => ParameterInfo.Create("keep=<color=yellow>key,key,key,...</color>", "Removes all data except given keys.")
+        "keep", index => ParameterInfo.Create("keep=<color=yellow>key,key,key,...</color>", "Removes all data except given keys.")
       },
       {
-        "clear", (int index) => ParameterInfo.Flag("Removes all data.")
+        "clear", index => ParameterInfo.Flag("Removes all data.")
       },
       {
-        "print", (int index) => ParameterInfo.Flag("Prints data.")
+        "print", index => ParameterInfo.Flag("Prints data.")
       },
       {
-        "remove", (int index) => ParameterInfo.Create("remove=<color=yellow>key,key,key,...</color>", "Removes given keys.")
+        "remove", index => ParameterInfo.Create("remove=<color=yellow>key,key,key,...</color>", "Removes given keys.")
       },
       {
-        "set", (int index) =>
-          index == 0 ? dataTypes :
+        "set", index => index == 0 ? dataTypes :
           index == 1 ? ParameterInfo.Create("set=type,<color=yellow>key</color>,value", "Name of the key.") :
           index == 2 ? ParameterInfo.Create("set=type,key,<color=yellow>value</color>", "Value of the key.") :
           ParameterInfo.None
       },
       {
-        "load", (int index) => DataLoading.DataKeys
+        "load", index => DataLoading.DataKeys
       },
       {
-        "merge", (int index) => DataLoading.DataKeys
+        "merge", index => DataLoading.DataKeys
       },
       {
-        "match", (int index) => index == 0 ? DataLoading.DataKeys : ParameterInfo.None
+        "match", index => index == 0 ? DataLoading.DataKeys : ParameterInfo.None
       },
       {
-        "unmatch", (int index) => index == 0 ? DataLoading.DataKeys : ParameterInfo.None
+        "unmatch", index => index == 0 ? DataLoading.DataKeys : ParameterInfo.None
       },
       {
-        "par", (int index) => index == 0 ? GetDataParameters() : ParameterInfo.Create("par=key,<color=yellow>value</color>", "Value of the parameter.")
+        "par", index => index == 0 ? GetDataParameters() : ParameterInfo.Create("par=key,<color=yellow>value</color>", "Value of the parameter.")
       },
       {
-        "copy_raw", (int index) => {
+        "copy_raw", index => {
           if (index == 0) return ParameterInfo.Create("copy_raw or copy_raw=<color=yellow>all</color> or copy_raw=<color=yellow>key1,key2,...</color>", "Prints and copies object data to clipboard. By default excludes some data for better results.");
           return ParameterInfo.None;
         }

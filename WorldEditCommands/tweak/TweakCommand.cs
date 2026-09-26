@@ -119,7 +119,7 @@ public abstract class TweakCommand
   protected void Init(string name, string description)
   {
     var namedParameters = TweakAutoComplete.WithFilters(AutoComplete.Keys.ToList());
-    ServerDevcommands.AutoComplete.Register(name, (int index) => namedParameters, TweakAutoComplete.WithFilters(AutoComplete));
+    ServerDevcommands.AutoComplete.Register(name, index => namedParameters, TweakAutoComplete.WithFilters(AutoComplete));
     Helper.Command(name, description, (args) =>
     {
       Parameters = new(SupportedOperations);

@@ -60,13 +60,13 @@ public class TweakDoorCommand : TweakCommand
     SupportedOperations.Add("closeeffect", typeof(string[]));
     SupportedOperations.Add("lockedeffect", typeof(string[]));
 
-    AutoComplete.Add("unlock", (int index) => index == 0 ? ParameterInfo.Create("unlock=<color=yellow>true/false</color>", "Ignores wards. No value to toggle.") : ParameterInfo.None);
-    AutoComplete.Add("consume", (int index) => index == 0 ? ParameterInfo.Create("consume=<color=yellow>true/false</color>", "Usage consumes the key. No value to toggle.") : ParameterInfo.None);
-    AutoComplete.Add("noclose", (int index) => index == 0 ? ParameterInfo.Create("noclose=<color=yellow>true/false</color>", "Door can't be closed. No value to toggle.") : ParameterInfo.None);
-    AutoComplete.Add("key", (int index) => index == 0 ? ParameterInfo.ItemIds : ParameterInfo.None);
-    AutoComplete.Add("openeffect", (int index) => TweakAutoComplete.Effect("openeffect", index));
-    AutoComplete.Add("closeeffect", (int index) => TweakAutoComplete.Effect("closeeffect", index));
-    AutoComplete.Add("lockedeffect", (int index) => TweakAutoComplete.Effect("lockedeffect", index));
+    AutoComplete.Add("unlock", index => index == 0 ? ParameterInfo.Create("unlock=<color=yellow>true/false</color>", "Ignores wards. No value to toggle.") : ParameterInfo.None);
+    AutoComplete.Add("consume", index => index == 0 ? ParameterInfo.Create("consume=<color=yellow>true/false</color>", "Usage consumes the key. No value to toggle.") : ParameterInfo.None);
+    AutoComplete.Add("noclose", index => index == 0 ? ParameterInfo.Create("noclose=<color=yellow>true/false</color>", "Door can't be closed. No value to toggle.") : ParameterInfo.None);
+    AutoComplete.Add("key", index => index == 0 ? ParameterInfo.ItemIds : ParameterInfo.None);
+    AutoComplete.Add("openeffect", index => TweakAutoComplete.Effect("openeffect", index));
+    AutoComplete.Add("closeeffect", index => TweakAutoComplete.Effect("closeeffect", index));
+    AutoComplete.Add("lockedeffect", index => TweakAutoComplete.Effect("lockedeffect", index));
     Init("tweak_door", "Modify doors");
   }
 }

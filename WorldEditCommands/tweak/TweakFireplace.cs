@@ -49,7 +49,7 @@ public class TweakFireplaceCommand : TweakCommand
     ComponentName = "fireplace";
     SupportedOperations.Add("smoke", typeof(string));
 
-    AutoComplete.Add("smoke", (int index) => index == 0 ? SmokeTypes : ParameterInfo.None);
+    AutoComplete.Add("smoke", index => index == 0 ? SmokeTypes : ParameterInfo.None);
     Init("tweak_fireplace", "Modify fireplaces");
   }
 }

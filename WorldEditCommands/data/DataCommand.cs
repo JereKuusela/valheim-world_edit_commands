@@ -267,7 +267,7 @@ public class DataCommand
   private DataParameters Parameters = new();
   public DataCommand()
   {
-    AutoComplete.Register(Name, (int index) => DataAutoComplete.GetOptions(), DataAutoComplete.GetNamedOptions());
+    AutoComplete.Register(Name, index => DataAutoComplete.GetOptions(), DataAutoComplete.GetNamedOptions());
     Helper.Command(Name, "Modifies object data.", (args) =>
     {
       Parameters = new();

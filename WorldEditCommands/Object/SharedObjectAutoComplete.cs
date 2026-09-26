@@ -49,91 +49,91 @@ public class SharedObjectAutoComplete
     NamedOptionsFetchers baseFetchers = new() {
       {
         "tame",
-        (int index) => index == 0 ? ParameterInfo.Create("tame=<color=yellow>true/false</color> or no value for default.", "Sets is the creature tamed.") : ParameterInfo.None
+        index => index == 0 ? ParameterInfo.Create("tame=<color=yellow>true/false</color> or no value for default.", "Sets is the creature tamed.") : ParameterInfo.None
       },
       {
-        "baby", (int index) => ParameterInfo.Flag("Baby")
+        "baby", index => ParameterInfo.Flag("Baby")
       },
       {
-        "persist", (int index) => index == 0 ? ParameterInfo.Create("persist=<color=yellow>true/false</color>.", "Sets if the object is saved to the world file.") : ParameterInfo.None
+        "persist", index => index == 0 ? ParameterInfo.Create("persist=<color=yellow>true/false</color>.", "Sets if the object is saved to the world file.") : ParameterInfo.None
       },
       {
-        "distant", (int index) => index == 0 ? ParameterInfo.Create("distant=<color=yellow>true/false</color> or no value for default.", "Sets if the object is loaded from further distance than normally.") : ParameterInfo.None
+        "distant", index => index == 0 ? ParameterInfo.Create("distant=<color=yellow>true/false</color> or no value for default.", "Sets if the object is loaded from further distance than normally.") : ParameterInfo.None
       },
       {
         "left_hand",
-        (int index) => VisualAutoComplete("left_hand", index)
+        index => VisualAutoComplete("left_hand", index)
       },
       {
         "right_hand",
-        (int index) => VisualAutoComplete("right_hand", index)
+        index => VisualAutoComplete("right_hand", index)
       },
       {
         "helmet",
-        (int index) => VisualAutoComplete("helmet", index)
+        index => VisualAutoComplete("helmet", index)
       },
       {
         "chest",
-        (int index) => VisualAutoComplete("chest", index)
+        index => VisualAutoComplete("chest", index)
       },
       {
         "shoulders",
-        (int index) => VisualAutoComplete("shoulders", index)
+        index => VisualAutoComplete("shoulders", index)
       },
       {
         "legs",
-        (int index) => VisualAutoComplete("legs", index)
+        index => VisualAutoComplete("legs", index)
       },
       {
         "utility",
-        (int index) => VisualAutoComplete("utility", index)
+        index => VisualAutoComplete("utility", index)
       },
       {
         "durability",
-        (int index) => index == 0 ? ParameterInfo.Create("durability", "number", "Sets current durability/health (+ maximum health for creatures).") : ParameterInfo.None
+        index => index == 0 ? ParameterInfo.Create("durability", "number", "Sets current durability/health (+ maximum health for creatures).") : ParameterInfo.None
       },
       {
         "health",
-        (int index) => index == 0 ? ParameterInfo.CreateWithMinMax("health", "number", "Sets current durability/health (+ maximum health for creatures).") : ParameterInfo.None
+        index => index == 0 ? ParameterInfo.CreateWithMinMax("health", "number", "Sets current durability/health (+ maximum health for creatures).") : ParameterInfo.None
       },
       {
         "damage",
-        (int index) => index == 0 ? ParameterInfo.CreateWithMinMax("damage", "number", "Sets the damage multiplier.") : ParameterInfo.None
+        index => index == 0 ? ParameterInfo.CreateWithMinMax("damage", "number", "Sets the damage multiplier.") : ParameterInfo.None
       },
       {
         "ammo",
-        (int index) => index == 0 ? ParameterInfo.CreateWithMinMax("ammo", "number", "Sets the amount of ammo.") : ParameterInfo.None
+        index => index == 0 ? ParameterInfo.CreateWithMinMax("ammo", "number", "Sets the amount of ammo.") : ParameterInfo.None
       },
       {
         "ammoType",
-        (int index) => index == 0 ? ParameterInfo.ItemIds : ParameterInfo.None
+        index => index == 0 ? ParameterInfo.ItemIds : ParameterInfo.None
       },
       {
         "stars",
-        (int index) => index == 0 ? ParameterInfo.Create("stars", "integer", "Sets creature stars.") : ParameterInfo.None
+        index => index == 0 ? ParameterInfo.Create("stars", "integer", "Sets creature stars.") : ParameterInfo.None
       },
       {
         "level",
-        (int index) => index == 0 ? ParameterInfo.Create("level", "integer", "Sets creature and item level.") : ParameterInfo.None
+        index => index == 0 ? ParameterInfo.Create("level", "integer", "Sets creature and item level.") : ParameterInfo.None
       },
       {
         "model",
-        (int index) => index == 0 ? ParameterInfo.Create("model", "integer", "Sets the creature model (0 for male, 1 for female).") : ParameterInfo.None
+        index => index == 0 ? ParameterInfo.Create("model", "integer", "Sets the creature model (0 for male, 1 for female).") : ParameterInfo.None
       },
       {
         "scale",
-        (int index) => ParameterInfo.Scale("scale", "Scaling for objects that support it", index)
+        index => ParameterInfo.Scale("scale", "Scaling for objects that support it", index)
       },
       {
         "field",
-        (int index) => index == 0 ? FieldAutoComplete.GetComponents() : index == 1 ? FieldAutoComplete.GetFields() : FieldAutoComplete.GetTypes(index - 2)
+        index => index == 0 ? FieldAutoComplete.GetComponents() : index == 1 ? FieldAutoComplete.GetFields() : FieldAutoComplete.GetTypes(index - 2)
       },
       {
         "f",
-        (int index) => index == 0 ? FieldAutoComplete.GetComponents() : index == 1 ? FieldAutoComplete.GetFields() : FieldAutoComplete.GetTypes(index - 2)
+        index => index == 0 ? FieldAutoComplete.GetComponents() : index == 1 ? FieldAutoComplete.GetFields() : FieldAutoComplete.GetTypes(index - 2)
       },
       {
-        "par", (int index) => index == 0 ? DataAutoComplete.GetDataParameters() : ParameterInfo.Create("par=key,<color=yellow>value</color>", "Value of the parameter.")
+        "par", index => index == 0 ? DataAutoComplete.GetDataParameters() : ParameterInfo.Create("par=key,<color=yellow>value</color>", "Value of the parameter.")
       }
     };
     foreach (var kvp in fetchers) baseFetchers[kvp.Key] = kvp.Value;

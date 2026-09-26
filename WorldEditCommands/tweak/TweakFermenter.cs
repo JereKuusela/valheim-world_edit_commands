@@ -47,16 +47,17 @@ public class TweakFermenterCommand : TweakCommand {
     SupportedOperations.Add("useeffect", typeof(string[]));
     SupportedOperations.Add("outputeffect", typeof(string[]));
 
-    AutoComplete.Add("speed", (int index) => index == 0 ? ParameterInfo.Create("speed=<color=yellow>number</color>", "Conversion speed in seconds. No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("conversion", (int index) => {
+    AutoComplete.Add("speed", index => index == 0 ? ParameterInfo.Create("speed=<color=yellow>number</color>", "Conversion speed in seconds. No value to reset.") : ParameterInfo.None);
+    AutoComplete.Add("conversion", index =>
+    {
       if (index == 0) return ParameterInfo.ItemIds;
       if (index == 1) return ParameterInfo.ItemIds;
       if (index == 2) return ParameterInfo.Create("conversion=from,to,<color=yellow>amount</color>", "Amount of output.");
       return ParameterInfo.Create("For additional entries, add more <color>conversion=...</color> parameters.");
     });
-    AutoComplete.Add("inputeffect", (int index) => TweakAutoComplete.Effect("inputeffect", index));
-    AutoComplete.Add("useeffect", (int index) => TweakAutoComplete.Effect("useeffect", index));
-    AutoComplete.Add("outputeffect", (int index) => TweakAutoComplete.Effect("outputeffect", index));
+    AutoComplete.Add("inputeffect", index => TweakAutoComplete.Effect("inputeffect", index));
+    AutoComplete.Add("useeffect", index => TweakAutoComplete.Effect("useeffect", index));
+    AutoComplete.Add("outputeffect", index => TweakAutoComplete.Effect("outputeffect", index));
     Init("tweak_fermenter", "Modify fermenters");
   }
 }

@@ -29,31 +29,31 @@ public class TweakAutoComplete
   {
     NamedOptionsFetchers baseFetchers = new() {
       {
-        "type", (int index) => ParameterInfo.Components
+        "type", index => ParameterInfo.Components
       },
       {
-        "connect", (int index) => ParameterInfo.Flag("Connect")
+        "connect", index => ParameterInfo.Flag("Connect")
       },
       {
-        "force", (int index) => ParameterInfo.Flag("Force", "Sets the component if missing.")
+        "force", index => ParameterInfo.Flag("Force", "Sets the component if missing.")
       },
       {
-        "id", (int index) => ParameterInfo.Ids
+        "id", index => ParameterInfo.Ids
       },
       {
-        "ignore", (int index) => ParameterInfo.Ids
+        "ignore", index => ParameterInfo.Ids
       },
       {
         "center",
-        (int index) => ParameterInfo.XZY("center", "Overrides the player position. For <color=yellow>rotate</color> sets also the rotation center point.", index)
+        index => ParameterInfo.XZY("center", "Overrides the player position. For <color=yellow>rotate</color> sets also the rotation center point.", index)
       },
       {
         "from",
-        (int index) => ParameterInfo.XZY("center", "Overrides the player position. For <color=yellow>rotate</color> sets also the rotation center point.", index)
+        index => ParameterInfo.XZY("center", "Overrides the player position. For <color=yellow>rotate</color> sets also the rotation center point.", index)
       },
       {
         "rect",
-        (int index) => {
+        index => {
           if (index == 0) return ParameterInfo.Create("rect=<color=yellow>size</color> or rect=<color=yellow>width</color>,depth", "Area of affected objects.");
           if (index == 1) return ParameterInfo.Create("rect=width,<color=yellow>depth</color>", "Area of affected objects.");
           return ParameterInfo.None;
@@ -61,19 +61,19 @@ public class TweakAutoComplete
       },
       {
         "angle",
-        (int index) => index == 0 ? ParameterInfo.Create("angle=<color=yellow>degrees</color>", "Direction of the rectangle when used with <color=yellow>rect</color>.") : ParameterInfo.None
+        index => index == 0 ? ParameterInfo.Create("angle=<color=yellow>degrees</color>", "Direction of the rectangle when used with <color=yellow>rect</color>.") : ParameterInfo.None
       },
       {
         "circle",
-        (int index) => index == 0 ? ParameterInfo.Create("circle=<color=yellow>number</color>", "Radius of affected objects.") : ParameterInfo.None
+        index => index == 0 ? ParameterInfo.Create("circle=<color=yellow>number</color>", "Radius of affected objects.") : ParameterInfo.None
       },
       {
         "radius",
-        (int index) => index == 0 ? ParameterInfo.Create("radius=<color=yellow>number</color>", "Radius of affected objects.") : ParameterInfo.None
+        index => index == 0 ? ParameterInfo.Create("radius=<color=yellow>number</color>", "Radius of affected objects.") : ParameterInfo.None
       },
       {
         "chance",
-        (int index) => index == 0 ? ParameterInfo.Create("chance=<color=yellow>number</color>", "Chance to affect the object (from 0.0 to 1.0).") : ParameterInfo.None
+        index => index == 0 ? ParameterInfo.Create("chance=<color=yellow>number</color>", "Chance to affect the object (from 0.0 to 1.0).") : ParameterInfo.None
       },
     };
     foreach (var kvp in fetchers) baseFetchers[kvp.Key] = kvp.Value;

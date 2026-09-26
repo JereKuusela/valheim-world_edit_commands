@@ -48,12 +48,12 @@ public class TweakPickableCommand : TweakCommand {
     SupportedOperations.Add("useeffect", typeof(string[]));
     SupportedOperations.Add("name", typeof(string));
 
-    AutoComplete.Add("amount", (int index) => index == 0 ? ParameterInfo.Create("amount=<color=yellow>number</color>", "Amount of dropped items. No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("respawn", (int index) => index == 0 ? ParameterInfo.Create("respawn=<color=yellow>minutes</color>", "Respawn time. No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("spawnoffset", (int index) => index == 0 ? ParameterInfo.Create("spawnoffset=<color=yellow>meters</color>", "Spawn distance from the ground.. No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("name", (int index) => index == 0 ? ParameterInfo.Create("name=<color=yellow>text</color>", "Display name. Use _ as the space. No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("spawn", (int index) => index == 0 ? ParameterInfo.ObjectIds : ParameterInfo.None);
-    AutoComplete.Add("useeffect", (int index) => TweakAutoComplete.Effect("useeffect", index));
+    AutoComplete.Add("amount", index => index == 0 ? ParameterInfo.Create("amount=<color=yellow>number</color>", "Amount of dropped items. No value to reset.") : ParameterInfo.None);
+    AutoComplete.Add("respawn", index => index == 0 ? ParameterInfo.Create("respawn=<color=yellow>minutes</color>", "Respawn time. No value to reset.") : ParameterInfo.None);
+    AutoComplete.Add("spawnoffset", index => index == 0 ? ParameterInfo.Create("spawnoffset=<color=yellow>meters</color>", "Spawn distance from the ground.. No value to reset.") : ParameterInfo.None);
+    AutoComplete.Add("name", index => index == 0 ? ParameterInfo.Create("name=<color=yellow>text</color>", "Display name. Use _ as the space. No value to reset.") : ParameterInfo.None);
+    AutoComplete.Add("spawn", index => index == 0 ? ParameterInfo.ObjectIds : ParameterInfo.None);
+    AutoComplete.Add("useeffect", index => TweakAutoComplete.Effect("useeffect", index));
 
     Init("tweak_pickable", "Modify pickables");
   }

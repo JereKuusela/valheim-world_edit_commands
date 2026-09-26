@@ -59,19 +59,20 @@ public class TweakSmelterCommand : TweakCommand {
     SupportedOperations.Add("fueleffect", typeof(string[]));
     SupportedOperations.Add("outputeffect", typeof(string[]));
 
-    AutoComplete.Add("maxamount", (int index) => index == 0 ? ParameterInfo.Create("maxamount=<color=yellow>number</color>", "Maximum amount of queued items. No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("maxfuel", (int index) => index == 0 ? ParameterInfo.Create("maxfuel=<color=yellow>number</color>", "Maximum amount of fuel. No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("fuelusage", (int index) => index == 0 ? ParameterInfo.Create("fuelusage=<color=yellow>number</color>", "Required fuel per conversion. No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("speed", (int index) => index == 0 ? ParameterInfo.Create("speed=<color=yellow>number</color>", "Conversion speed in seconds. No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("fuel", (int index) => index == 0 ? ParameterInfo.ItemIds : ParameterInfo.None);
-    AutoComplete.Add("conversion", (int index) => {
+    AutoComplete.Add("maxamount", index => index == 0 ? ParameterInfo.Create("maxamount=<color=yellow>number</color>", "Maximum amount of queued items. No value to reset.") : ParameterInfo.None);
+    AutoComplete.Add("maxfuel", index => index == 0 ? ParameterInfo.Create("maxfuel=<color=yellow>number</color>", "Maximum amount of fuel. No value to reset.") : ParameterInfo.None);
+    AutoComplete.Add("fuelusage", index => index == 0 ? ParameterInfo.Create("fuelusage=<color=yellow>number</color>", "Required fuel per conversion. No value to reset.") : ParameterInfo.None);
+    AutoComplete.Add("speed", index => index == 0 ? ParameterInfo.Create("speed=<color=yellow>number</color>", "Conversion speed in seconds. No value to reset.") : ParameterInfo.None);
+    AutoComplete.Add("fuel", index => index == 0 ? ParameterInfo.ItemIds : ParameterInfo.None);
+    AutoComplete.Add("conversion", index =>
+    {
       if (index == 0) return ParameterInfo.ItemIds;
       if (index == 1) return ParameterInfo.ItemIds;
       return ParameterInfo.Create("For additional entries, add more <color>conversion=...</color> parameters.");
     });
-    AutoComplete.Add("inputeffect", (int index) => TweakAutoComplete.Effect("inputeffect", index));
-    AutoComplete.Add("fueleffect", (int index) => TweakAutoComplete.Effect("fueleffect", index));
-    AutoComplete.Add("outputeffect", (int index) => TweakAutoComplete.Effect("outputeffect", index));
+    AutoComplete.Add("inputeffect", index => TweakAutoComplete.Effect("inputeffect", index));
+    AutoComplete.Add("fueleffect", index => TweakAutoComplete.Effect("fueleffect", index));
+    AutoComplete.Add("outputeffect", index => TweakAutoComplete.Effect("outputeffect", index));
     Init("tweak_smelter", "Modify smelters");
   }
 }

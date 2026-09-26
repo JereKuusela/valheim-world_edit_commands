@@ -65,11 +65,11 @@ public class TweakDungeonCommand : TweakCommand
     SupportedOperations.Add("exit_hover", typeof(string));
     SupportedOperations.Add("weather", typeof(string));
 
-    AutoComplete.Add("enter_text", (int index) => index == 0 ? ParameterInfo.Create("enter_text=<color=yellow>text</color>", "Text when entering the dungeon.") : ParameterInfo.None);
-    AutoComplete.Add("enter_hover", (int index) => index == 0 ? ParameterInfo.Create("enter_hover=<color=yellow>text</color>", "Text when entering the dungeon.") : ParameterInfo.None);
-    AutoComplete.Add("exit_text", (int index) => index == 0 ? ParameterInfo.Create("exit_text=<color=yellow>text</color>", "Text when entering the dungeon.") : ParameterInfo.None);
-    AutoComplete.Add("exit_hover", (int index) => index == 0 ? ParameterInfo.Create("exit_hover=<color=yellow>text</color>", "Text when entering the dungeon.") : ParameterInfo.None);
-    AutoComplete.Add("weather", (int index) => index == 0 ? ParameterInfo.Environments : ParameterInfo.None);
+    AutoComplete.Add("enter_text", index => index == 0 ? ParameterInfo.Create("enter_text=<color=yellow>text</color>", "Text when entering the dungeon.") : ParameterInfo.None);
+    AutoComplete.Add("enter_hover", index => index == 0 ? ParameterInfo.Create("enter_hover=<color=yellow>text</color>", "Text when entering the dungeon.") : ParameterInfo.None);
+    AutoComplete.Add("exit_text", index => index == 0 ? ParameterInfo.Create("exit_text=<color=yellow>text</color>", "Text when entering the dungeon.") : ParameterInfo.None);
+    AutoComplete.Add("exit_hover", index => index == 0 ? ParameterInfo.Create("exit_hover=<color=yellow>text</color>", "Text when entering the dungeon.") : ParameterInfo.None);
+    AutoComplete.Add("weather", index => index == 0 ? ParameterInfo.Environments : ParameterInfo.None);
     Init("tweak_dungeon", "Modify dungeons");
   }
 }

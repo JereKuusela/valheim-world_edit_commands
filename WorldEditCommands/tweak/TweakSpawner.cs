@@ -89,21 +89,21 @@ public class TweakSpawnerCommand : TweakCommand
     SupportedOperations.Add("spawneffect", typeof(string[]));
     SupportedOperations.Add("faction", typeof(string));
 
-    AutoComplete.Add("minlevel", (int index) => index == 0 ? ParameterInfo.Create("minlevel=<color=yellow>number</color>", "Minimum level (level 1 = no star). No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("maxlevel", (int index) => index == 0 ? ParameterInfo.Create("maxlevel=<color=yellow>number</color>", "Maximum level (level 1 = no star). No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("globalkey", (int index) => index == 0 ? ParameterInfo.Create("text=<color=yellow>key</color>", "Required global keys to work. Start with - to remove the key. No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("maxnear", (int index) => index == 0 ? ParameterInfo.Create("maxnear=<color=yellow>number</color>", "Maximum amount of spawns within the <color=yellow>nearradius</color>. No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("maxtotal", (int index) => index == 0 ? ParameterInfo.Create("maxtotal=<color=yellow>number</color>", "Maximum amount of spawns within the <color=yellow>farradius</color>. No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("spawncondition", (int index) => index == 0 ? ParameterInfo.Create("spawncondition=<color=yellow>flag</color>", "Sum up: 1 = day only, 2 = night only, 4 = ground only.") : ParameterInfo.None);
-    AutoComplete.Add("spawnhealth", (int index) => index == 0 ? ParameterInfo.Create("spawnhealth=<color=yellow>number</color>", "Overrides the creature health. No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("respawn", (int index) => ParameterInfo.Create("respawn=<color=yellow>seconds</color>", "Sets the respawn time. No value to reset."));
-    AutoComplete.Add("levelchance", (int index) => index == 0 ? ParameterInfo.Create("levelchance=<color=yellow>percent</color>", "Level up chance (from 0 to 100). No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("faction", (int index) => index == 0 ? [.. Enum.GetNames(typeof(Character.Faction))] : ParameterInfo.None);
-    AutoComplete.Add("triggerdistance", (int index) => index == 0 ? ParameterInfo.Create("triggerdistance=<color=yellow>meters</color>", "Player distance to activate the spawner. No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("spawnradius", (int index) => index == 0 ? ParameterInfo.Create("spawnradius=<color=yellow>meters</color>", "Maximum spawn radius. No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("nearradius", (int index) => index == 0 ? ParameterInfo.Create("nearradius=<color=yellow>meters</color>", "Radius for <color=yellow>maxnear</color>. No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("farradius", (int index) => index == 0 ? ParameterInfo.Create("farradius=<color=yellow>meters</color>", "Radius for <color=yellow>maxtotal</color>. No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("spawn", (int index) =>
+    AutoComplete.Add("minlevel", index => index == 0 ? ParameterInfo.Create("minlevel=<color=yellow>number</color>", "Minimum level (level 1 = no star). No value to reset.") : ParameterInfo.None);
+    AutoComplete.Add("maxlevel", index => index == 0 ? ParameterInfo.Create("maxlevel=<color=yellow>number</color>", "Maximum level (level 1 = no star). No value to reset.") : ParameterInfo.None);
+    AutoComplete.Add("globalkey", index => index == 0 ? ParameterInfo.Create("text=<color=yellow>key</color>", "Required global keys to work. Start with - to remove the key. No value to reset.") : ParameterInfo.None);
+    AutoComplete.Add("maxnear", index => index == 0 ? ParameterInfo.Create("maxnear=<color=yellow>number</color>", "Maximum amount of spawns within the <color=yellow>nearradius</color>. No value to reset.") : ParameterInfo.None);
+    AutoComplete.Add("maxtotal", index => index == 0 ? ParameterInfo.Create("maxtotal=<color=yellow>number</color>", "Maximum amount of spawns within the <color=yellow>farradius</color>. No value to reset.") : ParameterInfo.None);
+    AutoComplete.Add("spawncondition", index => index == 0 ? ParameterInfo.Create("spawncondition=<color=yellow>flag</color>", "Sum up: 1 = day only, 2 = night only, 4 = ground only.") : ParameterInfo.None);
+    AutoComplete.Add("spawnhealth", index => index == 0 ? ParameterInfo.Create("spawnhealth=<color=yellow>number</color>", "Overrides the creature health. No value to reset.") : ParameterInfo.None);
+    AutoComplete.Add("respawn", index => ParameterInfo.Create("respawn=<color=yellow>seconds</color>", "Sets the respawn time. No value to reset."));
+    AutoComplete.Add("levelchance", index => index == 0 ? ParameterInfo.Create("levelchance=<color=yellow>percent</color>", "Level up chance (from 0 to 100). No value to reset.") : ParameterInfo.None);
+    AutoComplete.Add("faction", index => index == 0 ? [.. Enum.GetNames(typeof(Character.Faction))] : ParameterInfo.None);
+    AutoComplete.Add("triggerdistance", index => index == 0 ? ParameterInfo.Create("triggerdistance=<color=yellow>meters</color>", "Player distance to activate the spawner. No value to reset.") : ParameterInfo.None);
+    AutoComplete.Add("spawnradius", index => index == 0 ? ParameterInfo.Create("spawnradius=<color=yellow>meters</color>", "Maximum spawn radius. No value to reset.") : ParameterInfo.None);
+    AutoComplete.Add("nearradius", index => index == 0 ? ParameterInfo.Create("nearradius=<color=yellow>meters</color>", "Radius for <color=yellow>maxnear</color>. No value to reset.") : ParameterInfo.None);
+    AutoComplete.Add("farradius", index => index == 0 ? ParameterInfo.Create("farradius=<color=yellow>meters</color>", "Radius for <color=yellow>maxtotal</color>. No value to reset.") : ParameterInfo.None);
+    AutoComplete.Add("spawn", index =>
     {
       if (index == 0) return ParameterInfo.Ids;
       if (index == 1) return ParameterInfo.Create("spawn=id,<color=yellow>weight</color>,minlevel,maxlevel,health/data", "Spawn chance relative to other spawns.");
@@ -112,7 +112,7 @@ public class TweakSpawnerCommand : TweakCommand
       if (index == 4) return DataLoading.DataKeys;
       return ParameterInfo.Create("For additional entries, add more <color>spawn=...</color> parameters.");
     });
-    AutoComplete.Add("spawneffect", (int index) => TweakAutoComplete.Effect("spawneffect", index));
+    AutoComplete.Add("spawneffect", index => TweakAutoComplete.Effect("spawneffect", index));
     Init("tweak_spawner", "Modify spawners");
   }
 }

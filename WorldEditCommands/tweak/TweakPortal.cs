@@ -34,7 +34,7 @@ public class TweakPortalCommand : TweakCommand {
     ComponentName = "portal";
     SupportedOperations.Add("restrict", typeof(bool));
 
-    AutoComplete.Add("restrict", (int index) => index == 0 ? ParameterInfo.Create("restrict=<color=yellow>false</color>", "Allows teleporting with any items. No value to reset.") : ParameterInfo.None);
+    AutoComplete.Add("restrict", index => index == 0 ? ParameterInfo.Create("restrict=<color=yellow>false</color>", "Allows teleporting with any items. No value to reset.") : ParameterInfo.None);
     Init("tweak_portal", "Modify portals");
   }
 }

@@ -44,7 +44,7 @@ public class AliasesCommand
         args.Context.TryRunCommand($"alias spawn spawn_object {sub} amount={sub} level={sub}");
       }
     });
-    AutoComplete.Register("world_edit_aliases", (int index) =>
+    AutoComplete.Register("world_edit_aliases", index =>
     {
       if (index == 0) return ["set", "clear"];
       return ParameterInfo.None;

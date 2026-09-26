@@ -23,66 +23,66 @@ public class SpawnObjectAutoComplete : SharedObjectAutoComplete
       "data",
       "crafterId"
     ]);
-    AutoComplete.Register(SpawnObjectCommand.Name, (int index) => index == 0 ? ParameterInfo.ObjectIds : NamedParameters, WithSharedFetchers(new() {
+    AutoComplete.Register(SpawnObjectCommand.Name, index => index == 0 ? ParameterInfo.ObjectIds : NamedParameters, WithSharedFetchers(new() {
       {
         "data",
-        (int index) =>  DataLoading.DataKeys
+        index => DataLoading.DataKeys
       },
       {
         "crafterId",
-        (int index) => index == 0 ? ParameterInfo.Create("crafterId=<color=yellow>number</color>", "Sets the crafter player ID.") : ParameterInfo.None
+        index => index == 0 ? ParameterInfo.Create("crafterId=<color=yellow>number</color>", "Sets the crafter player ID.") : ParameterInfo.None
       },
       {
         "hunt",
-        (int index) => index == 0 ? ParameterInfo.Create("hunt=<color=yellow>true/false</color> or no value for true.", "Sets is the creature in aggressive mode.") : ParameterInfo.None
+        index => index == 0 ? ParameterInfo.Create("hunt=<color=yellow>true/false</color> or no value for true.", "Sets is the creature in aggressive mode.") : ParameterInfo.None
       },
       {
         "name",
-        (int index) => index == 0 ? ParameterInfo.Create("name", "string", "Name for tameable creatures.") : ParameterInfo.None
+        index => index == 0 ? ParameterInfo.Create("name", "string", "Name for tameable creatures.") : ParameterInfo.None
       },
       {
         "crafter",
-        (int index) => index == 0 ? ParameterInfo.Create("name", "string", "Crafter for items.") : ParameterInfo.None
+        index => index == 0 ? ParameterInfo.Create("name", "string", "Crafter for items.") : ParameterInfo.None
       },
       {
         "variant",
-        (int index) => index == 0 ? ParameterInfo.CreateWithMinMax("variant", "integer", "Variant for items.") : ParameterInfo.None
+        index => index == 0 ? ParameterInfo.CreateWithMinMax("variant", "integer", "Variant for items.") : ParameterInfo.None
       },
       {
         "amount",
-        (int index) => index == 0 ? ParameterInfo.CreateWithMinMax("amount", "integer", "Amount of spawned objects.") : ParameterInfo.None
+        index => index == 0 ? ParameterInfo.CreateWithMinMax("amount", "integer", "Amount of spawned objects.") : ParameterInfo.None
       },
       {
         "pos",
-        (int index) => ParameterInfo.FRU("pos", "Offset from the player position", index)
+        index => ParameterInfo.FRU("pos", "Offset from the player position", index)
       },
       {
         "to",
-        (int index) => ParameterInfo.XZY("to", "End position for multiple objects", index)
+        index => ParameterInfo.XZY("to", "End position for multiple objects", index)
       },
       {
         "from",
-        (int index) => ParameterInfo.XZY("from", "Overrides the player position", index)
+        index => ParameterInfo.XZY("from", "Overrides the player position", index)
       },
       {
         "refPlayer",
-        (int index) => index == 0 ? ParameterInfo.PlayerNames : ParameterInfo.None
+        index => index == 0 ? ParameterInfo.PlayerNames : ParameterInfo.None
       },
       {
         "rot",
-        (int index) => ParameterInfo.YawRollPitch("rot", "Rotation from the player rotation", index)
+        index => ParameterInfo.YawRollPitch("rot", "Rotation from the player rotation", index)
       },
       {
         "refRot",
-        (int index) => ParameterInfo.YawRollPitch("refRot", "Overrides the player rotation", index)
+        index => ParameterInfo.YawRollPitch("refRot", "Overrides the player rotation", index)
       },
       {
         "circle",
-        (int index) => index == 0 ? ParameterInfo.Create("circle=<color=yellow>number</color>", "Maximum spawn distance when spawning multiple objects. Default is 0.5 meters.") : ParameterInfo.None
+        index => index == 0 ? ParameterInfo.Create("circle=<color=yellow>number</color>", "Maximum spawn distance when spawning multiple objects. Default is 0.5 meters.") : ParameterInfo.None
       },
       {
         "radius",
-        (int index) => index == 0 ? ParameterInfo.Create("radius=<color=yellow>number</color>", "Maximum spawn distance when spawning multiple objects. Default is 0.5 meters.") : ParameterInfo.None
+        index => index == 0 ? ParameterInfo.Create("radius=<color=yellow>number</color>", "Maximum spawn distance when spawning multiple objects. Default is 0.5 meters.") : ParameterInfo.None
       },
     }));
   }
