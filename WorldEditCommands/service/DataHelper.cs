@@ -136,12 +136,14 @@ public class DataHelper
     var byteArrays = GetValues(ZDOExtraData.s_byteArrays, id).Select(kvp => $"{ZDOKeys.Convert(kvp.Key)}: {Convert.ToBase64String(kvp.Value)} (byte array)");
     return [.. lines, .. vecs, .. ints, .. floats, .. quats, .. strings, .. longs, .. byteArrays];
   }
-  public static ZDO? Init(int prefab, Transform tr, DataEntry? data)
+  // Deprecated: Can remove later.
+  public static ZDO? Init(int prefab, Transform tr, DataEntry? data) => Init(prefab, tr.position, tr.rotation, tr.localScale, data);
+  public static ZDO? Init(int prefab, Vector3 pos, Quaternion rot, Vector3? scale, DataEntry? data)
   {
     CleanUp();
     var obj = ZNetScene.instance.GetPrefab(prefab);
     if (!obj) return null;
-    return Init(obj, tr.position, tr.rotation, tr.lossyScale, data, []);
+    return Init(obj, pos, rot, scale, data, []);
   }
   public static ZDO? Init(GameObject obj, Vector3 pos, Quaternion rot, Vector3? scale, DataEntry? data, Dictionary<string, string> pars)
   {

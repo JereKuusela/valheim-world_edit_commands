@@ -1,3 +1,6 @@
+- v1.78
+  - Fixes compatibility issue with DragNBuild mod.
+
 - v1.77
   - Adds compatibility for data using old inventory or item formats.
   - Fixes command `spawn_location` causing error on dedicated server. Thanks Synistro!
