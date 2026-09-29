@@ -118,7 +118,7 @@ public static class ItemDataHelper
       var cheated = version == Version.Item.AbandonedDN && pkg.ReadBool();
 
       // Empty PrefabName means the prefab no longer exists (removed mod/item).
-      var hash = name != "" ? name.GetStableHashCode() : 0;
+      var hash = name != "" ? ZDOKeys.Hash(name) : 0;
       var prefabName = hash != 0 ? ObjectDB.instance.GetItemPrefab(hash)?.name ?? "" : "";
       records.Add(new ItemRecord
       {
@@ -181,7 +181,7 @@ public static class ItemDataHelper
   private static readonly int[] HashKeys = [
     ZDOVars.s_content,
     ZDOVars.s_item,
-    .. Enumerable.Range(0, 15).Select(i => $"{i}_item".GetStableHashCode())
+    .. Enumerable.Range(0, 15).Select(i => ZDOKeys.Hash($"{i}_item"))
   ];
 
   // Items used to be stored as a base64 string, now they belong in ByteArrays.
@@ -207,7 +207,7 @@ public static class ItemDataHelper
       if (!string.IsNullOrEmpty(value))
       {
         data.Ints ??= [];
-        data.Ints[key] = value.GetStableHashCode();
+        data.Ints[key] = ZDOKeys.Hash(value);
       }
       data.Strings.Remove(key);
     }
@@ -273,8 +273,8 @@ public static class ItemDataHelper
     {
       for (var i = 0; i < dataCount; i++)
       {
-        var keyHash = $"data_{i}".GetStableHashCode();
-        var valueHash = $"data__{i}".GetStableHashCode();
+        var keyHash = ZDOKeys.Hash($"data_{i}");
+        var valueHash = ZDOKeys.Hash($"data__{i}");
         var key = data.Strings != null && data.Strings.TryGetValue(keyHash, out var k) ? k : null;
         var value = data.Strings != null && data.Strings.TryGetValue(valueHash, out var v) ? v : null;
         if (!string.IsNullOrEmpty(key))

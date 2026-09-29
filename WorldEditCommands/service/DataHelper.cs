@@ -45,7 +45,7 @@ public class DataHelper
   }
   public static ZDO CloneWithKeys(ZDO zdo, string[] keys)
   {
-    var hashed = keys.Select(s => s.GetStableHashCode()).ToHashSet();
+    var hashed = keys.Select(ZDOKeys.Hash).ToHashSet();
     var clone = CloneBase(zdo);
     var id = zdo.m_uid;
     var cid = clone.m_uid;
@@ -74,7 +74,7 @@ public class DataHelper
 
   public static bool HasKey(ZDO zdo, string[] keys)
   {
-    var hashed = keys.Select(s => s.GetStableHashCode()).ToHashSet();
+    var hashed = keys.Select(ZDOKeys.Hash).ToHashSet();
     var id = zdo.m_uid;
     var floats = GetValues(ZDOExtraData.s_floats, id).Select(kvp => kvp.Key);
     var vecs = GetValues(ZDOExtraData.s_vec3, id).Select(kvp => kvp.Key);
@@ -87,7 +87,7 @@ public class DataHelper
   }
   public static ZDO CloneWithoutKeys(ZDO zdo, string[] keys)
   {
-    var hashed = keys.Select(s => s.GetStableHashCode()).ToHashSet();
+    var hashed = keys.Select(ZDOKeys.Hash).ToHashSet();
     var clone = CloneBase(zdo);
     var id = zdo.m_uid;
     var cid = clone.m_uid;

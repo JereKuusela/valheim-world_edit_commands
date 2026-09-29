@@ -371,9 +371,9 @@ public class DataEntry
     if (componentsToAdd.Count > 0)
     {
       Ints ??= [];
-      Ints[$"HasFields".GetStableHashCode()] = DataValue.Simple(1);
+      Ints[ZDOKeys.Hash($"HasFields")] = DataValue.Simple(1);
       foreach (var component in componentsToAdd)
-        Ints[$"HasFields{component}".GetStableHashCode()] = DataValue.Simple(1);
+        Ints[ZDOKeys.Hash($"HasFields{component}")] = DataValue.Simple(1);
     }
     if (data.persistent != null)
       Persistent = DataValue.Bool(data.persistent, RequiredParameters);
@@ -439,7 +439,18 @@ public class DataEntry
       Strings ??= [];
       var count = pkg.ReadByte();
       for (var i = 0; i < count; ++i)
-        Strings[pkg.ReadInt()] = DataValue.String(pkg);
+      {
+        var key = pkg.ReadInt();
+        if (ItemHashKeys.Contains(key))
+        {
+          Hashes ??= [];
+          string str = pkg.ReadString();
+          Log.Warning($"Item hash key detected: {key}, value: {str}");
+          Hashes[key] = DataValue.Hash(str.Trim('"'));
+        }
+        else
+          Strings[key] = DataValue.String(pkg);
+      }
     }
     if ((num & 128) != 0)
     {
@@ -460,6 +471,10 @@ public class DataEntry
     if ((num & 2048) != 0)
       Priority = (ZDO.ObjectType)pkg.ReadByte();
   }
+  private static readonly HashSet<int> ItemHashKeys = [
+    ZDOVars.s_item,
+    .. Enumerable.Range(0, 12).Select(i => ZDOKeys.Hash($"{i}_item"))
+  ];
   public bool Match(Dictionary<string, string> pars, ZDO zdo)
   {
     AddParameters(pars, zdo);

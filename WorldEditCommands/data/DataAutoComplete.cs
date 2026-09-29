@@ -4,6 +4,7 @@ using System.Linq;
 using Data;
 using ServerDevcommands;
 namespace WorldEditCommands;
+
 using NamedOptionsFetchers = Dictionary<string, Func<int, List<string>>>;
 public class DataAutoComplete
 {
@@ -148,7 +149,7 @@ public class DataAutoComplete
     var command = GetInput();
     var split = command.Split(' ');
     if (split.Length < 2) return ParameterInfo.Create("par=<color=yellow>key</color>,value", "Name of the parameter."); ;
-    if (DataLoading.Data.TryGetValue(split[1].GetStableHashCode(), out var data))
+    if (DataLoading.Data.TryGetValue(ZDOKeys.Hash(split[1]), out var data))
       return [.. data.RequiredParameters];
     return ParameterInfo.Create("par=<color=yellow>key</color>,value", "Name of the parameter.");
   }
@@ -162,7 +163,7 @@ public class DataAutoComplete
     HashSet<string> parameters = [];
     foreach (var name in dataNames)
     {
-      if (DataLoading.Data.TryGetValue(name.GetStableHashCode(), out var data))
+      if (DataLoading.Data.TryGetValue(ZDOKeys.Hash(name), out var data))
         foreach (var oar in data.RequiredParameters)
           parameters.Add(oar);
     }

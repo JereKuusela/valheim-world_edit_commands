@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Data;
 using ServerDevcommands;
 using UnityEngine;
 namespace WorldEditCommands;
+
 public class Item
 {
   public string Name;
@@ -111,8 +113,8 @@ public class SharedObjectParameters
         var key = zdoField ? field : $"{component}.{field}";
         if (type == typeof(int))
           Fields.Add(key, Parse.Int(fieldValue));
-        else if (type == typeof(Int64))
-          Fields.Add(key, (long)Int64.Parse(fieldValue));
+        else if (type == typeof(long))
+          Fields.Add(key, long.Parse(fieldValue));
         else if (type == typeof(float))
           Fields.Add(key, Parse.Float(fieldValue));
         else if (type == typeof(string))
@@ -126,7 +128,7 @@ public class SharedObjectParameters
         else if (type == typeof(GameObject) || type == typeof(ItemDrop) || type == typeof(EffectList))
           Fields.Add(key, fieldValue);
         else if (type == typeof(ObjectHash) || type == typeof(LocationHash) || type == typeof(RoomHash))
-          Fields.Add(key, fieldValue.GetStableHashCode());
+          Fields.Add(key, ZDOKeys.Hash(fieldValue));
         else if (type.IsEnum)
           Fields.Add(key, ToEnum(type, fieldValue));
         else if (type == typeof(void))

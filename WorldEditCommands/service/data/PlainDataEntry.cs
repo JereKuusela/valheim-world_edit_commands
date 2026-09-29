@@ -68,7 +68,7 @@ public class PlainDataEntry
     ZDOVars.s_rightItem,
     ZDOVars.s_content,
     ZDOVars.s_item,
-    .. Enumerable.Range(0, 11).Select(i => $"{i}_item".GetStableHashCode())
+    .. Enumerable.Range(0, 11).Select(i => ZDOKeys.Hash($"{i}_item"))
   ];
   public void Write(DataData data, bool all)
   {

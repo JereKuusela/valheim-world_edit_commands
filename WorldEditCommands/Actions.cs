@@ -55,7 +55,7 @@ public static class Actions
     if (LowerIdToHash.Count == 0) LowerIdToHash = ZNetScene.instance.m_namedPrefabs.ToLookup(kvp => kvp.Value.name.ToLower(), kvp => kvp.Key).ToDictionary(kvp => kvp.Key, kvp => kvp.FirstOrDefault());
     if (IdToHash.TryGetValue(id, out var value)) return value;
     if (LowerIdToHash.TryGetValue(id.ToLower(), out var value2)) return value2;
-    return id.GetStableHashCode();
+    return ZDOKeys.Hash(id);
   }
   public static void SetPrefab(ZNetView obj, string? value, int hash, bool refresh = false)
   {
@@ -118,7 +118,7 @@ public static class Actions
     var zdo = obj.GetZDO();
     if (zdo == null || !zdo.IsValid()) return false;
     var previous = zdo.GetPrefab();
-    zdo.SetPrefab(prefab.GetStableHashCode());
+    zdo.SetPrefab(ZDOKeys.Hash(prefab));
     var newObj = ZNetScene.instance.CreateObject(zdo);
     if (!newObj)
     {
@@ -435,7 +435,7 @@ public static class Actions
         zdo.Set("HasFields" + component, true);
       }
       else refresh = true;
-      var hash = kvp.Key.GetStableHashCode();
+      var hash = ZDOKeys.Hash(kvp.Key);
       if (kvp.Value is int v)
         zdo.Set(hash, v);
       else if (kvp.Value is float v1)

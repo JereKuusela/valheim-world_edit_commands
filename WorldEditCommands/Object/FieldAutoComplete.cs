@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using Data;
 using HarmonyLib;
 using ServerDevcommands;
 using UnityEngine;
@@ -120,7 +121,7 @@ public class FieldAutoComplete
     var prefab = "";
     if (!string.IsNullOrEmpty(arg))
       prefab = arg.Split('=')[1];
-    else if (split.Length > 1 && ZNetScene.instance.m_namedPrefabs.ContainsKey(split[1].GetStableHashCode()))
+    else if (split.Length > 1 && ZNetScene.instance.m_namedPrefabs.ContainsKey(ZDOKeys.Hash(split[1])))
       prefab = split[1];
     else
     {
@@ -130,7 +131,7 @@ public class FieldAutoComplete
     }
     return prefab;
   }
-  public static List<string> GetComponents(string prefab) => GetComponents(prefab.GetStableHashCode());
+  public static List<string> GetComponents(string prefab) => GetComponents(ZDOKeys.Hash(prefab));
   public static List<string> GetComponents(int prefab)
   {
     if (ZNetScene.instance.m_namedPrefabs.TryGetValue(prefab, out var gameObject))
@@ -751,6 +752,7 @@ public class PreventStripping
     if (fieldInfo.FieldType == typeof(string) || fieldInfo.FieldType == typeof(int) || fieldInfo.FieldType == typeof(bool))
     {
       var key = $"{type.Name}.{fieldInfo.Name}";
+      // Iterates every field so caching with ZDOKeys.Hash would bloat it.
       FieldZdoKeys.Add(key.GetStableHashCode());
     }
   }

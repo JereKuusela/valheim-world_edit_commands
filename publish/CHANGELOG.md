@@ -1,3 +1,6 @@
+- v1.79
+  - Improves compatibility with old base64 encoded data.
+
 - v1.78
   - Fixes compatibility issue with DragNBuild mod.
 
@@ -14,7 +17,3 @@
 
 - v1.75
   - Fixes for the new game update.
-
-- v1.74
-  - Fixes `from` parameter not turning off snapping even when y coordinate is specified.
-  - Internal changes to match Server Devcommands code.

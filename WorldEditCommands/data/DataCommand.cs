@@ -104,7 +104,7 @@ public class DataCommand
         if (split.Length < 3)
           throw new InvalidOperationException($"Set: Missing key for {split[1]}.");
         var type = split[0].ToLowerInvariant();
-        var key = int.TryParse(split[1], out var i) ? i : split[1].GetStableHashCode();
+        var key = int.TryParse(split[1], out var i) ? i : ZDOKeys.Hash(split[1]);
         var val = split[2];
         if (type == "float")
           ZDOExtraData.Set(id, key, Parse.Float(val));
@@ -115,7 +115,7 @@ public class DataCommand
         else if (type == "int")
           ZDOExtraData.Set(id, key, Parse.Int(val));
         else if (type == "hash")
-          ZDOExtraData.Set(id, key, val.GetStableHashCode());
+          ZDOExtraData.Set(id, key, ZDOKeys.Hash(val));
         else if (type == "bool")
           ZDOExtraData.Set(id, key, Parse.Boolean(val) == true ? 1 : 0);
         else if (type == "long")
@@ -209,12 +209,12 @@ public class DataCommand
   {
     var prefab = ZNetScene.instance.GetPrefab(zdo.GetPrefab());
     if (!prefab) return entry;
-    prefab.GetComponentsInChildren<MonoBehaviour>(ZNetView.m_tempComponents);
+    prefab.GetComponentsInChildren(ZNetView.m_tempComponents);
     foreach (var comp in ZNetView.m_tempComponents)
     {
       foreach (FieldInfo fieldInfo in comp.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public))
       {
-        var hash = StringExtensionMethods.GetStableHashCode(comp.GetType().Name + "." + fieldInfo.Name);
+        var hash = ZDOKeys.Hash(comp.GetType().Name + "." + fieldInfo.Name);
         var type = fieldInfo.FieldType;
         if (type == typeof(int))
         {
