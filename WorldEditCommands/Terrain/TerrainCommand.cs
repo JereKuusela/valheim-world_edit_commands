@@ -25,6 +25,7 @@ public class TerrainCommand
 
   private TerrainComp[] GetCompilers(TerrainParameters pars)
   {
+    if (pars.Paths != null) return Terrain.GetCompilers(pars.Paths, pars.PathRadius!.Max);
     if (pars.Radius != null) return Terrain.GetCompilers(pars.Position, pars.Radius);
     if (pars.Width != null && pars.Depth != null) return Terrain.GetCompilers(pars.Position, pars.Width, pars.Depth, pars.Angle);
     throw new InvalidOperationException("Unable to select any terrain");
@@ -34,8 +35,9 @@ public class TerrainCommand
     List<HeightNode> nodes = [];
     foreach (var comp in compilers)
     {
-      if (pars.Radius != null) Terrain.GetHeightNodesWithCircle(nodes, comp, pars.Position, pars.Radius);
-      if (pars.Width != null && pars.Depth != null) Terrain.GetHeightNodesWithRect(nodes, comp, pars.Position, pars.Width, pars.Depth, pars.Angle);
+      if (pars.Paths != null) Terrain.GetNodesWithPath(nodes, comp, pars.Paths, pars.PathRadius!, pars.Radius == null);
+      else if (pars.Radius != null) Terrain.GetHeightNodesWithCircle(nodes, comp, pars.Position, pars.Radius);
+      else if (pars.Width != null && pars.Depth != null) Terrain.GetHeightNodesWithRect(nodes, comp, pars.Position, pars.Width, pars.Depth, pars.Angle);
     }
     if (pars.Chance < 1f) nodes = nodes.Where(n => UnityEngine.Random.value < pars.Chance).ToList();
     return nodes;
@@ -45,8 +47,9 @@ public class TerrainCommand
     List<PaintNode> nodes = [];
     foreach (var comp in compilers)
     {
-      if (pars.Radius != null) Terrain.GetPaintNodesWithCircle(nodes, comp, pars.Position, pars.Radius);
-      if (pars.Width != null && pars.Depth != null) Terrain.GetPaintNodesWithRect(nodes, comp, pars.Position, pars.Width, pars.Depth, pars.Angle);
+      if (pars.Paths != null) Terrain.GetNodesWithPath(nodes, comp, pars.Paths, pars.PathRadius!, pars.Radius == null);
+      else if (pars.Radius != null) Terrain.GetPaintNodesWithCircle(nodes, comp, pars.Position, pars.Radius);
+      else if (pars.Width != null && pars.Depth != null) Terrain.GetPaintNodesWithRect(nodes, comp, pars.Position, pars.Width, pars.Depth, pars.Angle);
     }
     if (pars.Chance < 1f) nodes = nodes.Where(n => UnityEngine.Random.value < pars.Chance).ToList();
     return nodes;
@@ -71,13 +74,20 @@ public class TerrainCommand
       var paintNodes = GetPaintNodes(pars, compilers).Where(n => filterers.All(f => f(n))).ToList(); ;
       var before = Terrain.GetData(heightNodes, paintNodes);
       if (pars.Reset)
-        Terrain.ResetTerrain(heightNodes, paintNodes, pars.Position, pars.Size);
+      {
+        var paths = pars.Paths;
+        var maxDistance = pars.PathRadius?.Max + 1f;
+        Func<Vector3, bool>? filter = paths == null ? null : pos => TerrainPath.Distance(paths, pos) <= maxDistance;
+        Terrain.ResetTerrain(heightNodes, paintNodes, pars.Position, pars.Size, filter);
+      }
       if (pars.Set.HasValue)
         Terrain.SetTerrain(heightNodes, pars.Position, pars.Size, pars.Smooth, pars.Set.Value);
       // Level would override the slope which can lead to weird results when operating near the dig limit.
       if (pars.Slope.HasValue && !pars.Level.HasValue)
         Terrain.SlopeTerrain(heightNodes, pars.Position, pars.Size, pars.SlopeAngle, pars.Smooth, pars.Position.y, pars.Slope.Value);
-      if (pars.Level.HasValue)
+      if (pars.Level.HasValue && pars.Paths != null && pars.LevelToPath)
+        Terrain.LevelTerrainToPath(heightNodes, pars.Position, pars.Size, pars.Smooth);
+      else if (pars.Level.HasValue)
         Terrain.LevelTerrain(heightNodes, pars.Position, pars.Size, pars.Smooth, pars.Level.Value);
       if (pars.Delta.HasValue)
         Terrain.RaiseTerrain(heightNodes, pars.Position, pars.Size, pars.Smooth, pars.Delta.Value);

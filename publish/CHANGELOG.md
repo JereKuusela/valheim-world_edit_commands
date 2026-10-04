@@ -1,3 +1,6 @@
+- v1.80
+  - Adds new terrain operations `path`, `arc` and `curve`.
+
 - v1.79
   - Improves compatibility with old base64 encoded data.
 
@@ -11,9 +14,3 @@
 
 - v1.76
   - Fixes chest inventory handling and code clean up. Thanks JPValheim!
-
-- v1.76
-  - Fixes chest inventory handling and code clean up. Thanks JPValheim!
-
-- v1.75
-  - Fixes for the new game update.

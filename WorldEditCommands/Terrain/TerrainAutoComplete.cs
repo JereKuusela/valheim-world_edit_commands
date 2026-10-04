@@ -25,7 +25,11 @@ public class TerrainAutoComplete
     "min",
     "max",
     "within",
-    "chance"
+    "chance",
+    "path",
+    "arc",
+    "curve",
+    "point"
   ];
   public TerrainAutoComplete()
   {
@@ -80,7 +84,27 @@ public class TerrainAutoComplete
       },
       {
         "to",
-        index => ParameterInfo.XZY("to", "Determines the angle and circle/rect distance.", index)
+        index => ParameterInfo.XZY("to", "Determines the angle and circle/rect distance. With <color=yellow>path</color>, adds a point.", index)
+      },
+      {
+        "point",
+        index => ParameterInfo.XZY("point", "Adds a point to the path. Can be used multiple times (shorthand <color=yellow>p</color>).", index)
+      },
+      {
+        "p",
+        index => ParameterInfo.XZY("p", "Adds a point to the path. Can be used multiple times.", index)
+      },
+      {
+        "path",
+        index => ParameterInfo.Flag("Path", "Affects terrain along straight lines between the points. Width is set with <color=yellow>circle</color> (round ends) or <color=yellow>rect</color> (flat ends).")
+      },
+      {
+        "arc",
+        index => ParameterInfo.Flag("Arc", "Like <color=yellow>path</color> but connects the points with circular arcs.")
+      },
+      {
+        "curve",
+        index => ParameterInfo.Flag("Curve", "Like <color=yellow>path</color> but connects the points with a smooth curve.")
       },
       {
         "step",
@@ -112,7 +136,7 @@ public class TerrainAutoComplete
       },
       {
         "level",
-        index => index == 0 ? ParameterInfo.Create("level or level=<color=yellow>y</color>", "Levels the terrain to a given y coordinate. Without parameters, levels to the terrain height below the player.") : ParameterInfo.None
+        index => index == 0 ? ParameterInfo.Create("level or level=<color=yellow>y</color>", "Levels the terrain to a given y coordinate. Without parameters, levels to the terrain height below the player (or to the path height with <color=yellow>path</color>).") : ParameterInfo.None
       },
       {
         "within",

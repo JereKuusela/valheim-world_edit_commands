@@ -1,7 +1,10 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using ServerDevcommands;
 using UnityEngine;
 namespace WorldEditCommands;
+
 public class TerrainParameters
 {
   public Vector3 Position = Vector3.zero;
@@ -30,6 +33,13 @@ public class TerrainParameters
   public BlockCheck BlockCheck = BlockCheck.Off;
   public Range<float>? Within;
   public float Chance = 1f;
+  public bool Path = false;
+  public bool Arc = false;
+  public bool Curve = false;
+  // Sampled points of each requested path operation.
+  public List<List<Vector3>>? Paths;
+  public Range<float>? PathRadius;
+  public bool LevelToPath = false;
 
   public TerrainParameters(Terminal.ConsoleEventArgs args)
   {
@@ -94,7 +104,16 @@ public class TerrainParameters
       if (name == "delta")
         Set = 0f;
       if (name == "level")
+      {
         Level = Position.y;
+        LevelToPath = true;
+      }
+      if (name == "path")
+        Path = true;
+      if (name == "arc")
+        Arc = true;
+      if (name == "curve")
+        Curve = true;
       if (name == "blockcheck")
         BlockCheck = BlockCheck.On;
       if (name == "circle")
@@ -155,7 +174,10 @@ public class TerrainParameters
       if (name == "within")
         Within = Parse.FloatRange(value);
       if (name == "level")
+      {
         Level = Parse.Float(value, Position.y);
+        LevelToPath = false;
+      }
       if (name == "step")
         Step = Parse.VectorZXY(values);
       if (name == "blockcheck")
@@ -166,7 +188,10 @@ public class TerrainParameters
         else throw new InvalidOperationException($"Invalid value {value} for blockcheck.");
       }
     }
-    HandleTo(args);
+    if (Path || Arc || Curve)
+      HandlePath(args);
+    else
+      HandleTo(args);
     if (Radius != null && Depth != null)
       throw new InvalidOperationException($"<color=yellow>circle</color> and <color=yellow>rect</color> parameters can't be used together.");
 
@@ -174,6 +199,23 @@ public class TerrainParameters
       throw new InvalidOperationException($"<color=yellow>circle</color> or <color=yellow>rect</color> parameter must be used.");
     if (Radius != null) Size = Radius.Max;
     if (Depth != null && Width != null) Size = Mathf.Max(Depth.Max, Width.Max);
+    if (Paths != null)
+    {
+      if (Slope.HasValue)
+        throw new InvalidOperationException("<color=yellow>slope</color> can't be used with <color=yellow>path</color>. Use <color=yellow>level</color> to follow the path height.");
+      PathRadius = Radius ?? Width!;
+      var all = Paths.SelectMany(path => path).ToList();
+      var min = all[0];
+      var max = all[0];
+      foreach (var point in all)
+      {
+        min = Vector3.Min(min, point);
+        max = Vector3.Max(max, point);
+      }
+      Position = (min + max) / 2f;
+      Size = Utils.DistanceXZ(min, max) / 2f + PathRadius.Max;
+      return;
+    }
     if (Step != Vector3.zero)
     {
       var width = Size;
@@ -198,6 +240,34 @@ public class TerrainParameters
     }
     // Circle doesn't use the angle so the slope needs both.
     if (Radius != null) SlopeAngle += Angle;
+  }
+
+  private void HandlePath(string[] args)
+  {
+    List<Vector3> points = [];
+    foreach (var arg in args)
+    {
+      var split = arg.Split('=');
+      if (split.Length < 2) continue;
+      var name = split[0].ToLower();
+      if (name != "point" && name != "p") continue;
+      var values = Parse.Split(split[1].ToLower());
+      var point = Parse.VectorXZY(values);
+      if (values.Length < 3)
+      {
+        if (ZoneSystem.instance.IsZoneLoaded(point))
+          point.y = ZoneSystem.instance.GetGroundHeight(point);
+        else
+          throw new InvalidOperationException($"Unable to find the ground height. Use <color=yellow>{name}</color> with the y coordinate.");
+      }
+      points.Add(point);
+    }
+    if (points.Count < 2)
+      throw new InvalidOperationException("<color=yellow>path</color> requires at least two points. Use <color=yellow>point</color> (or <color=yellow>p</color>) parameters.");
+    Paths = [];
+    if (Path) Paths.Add(TerrainPath.Sample(points, PathMode.Line));
+    if (Arc) Paths.Add(TerrainPath.Sample(points, PathMode.Arc));
+    if (Curve) Paths.Add(TerrainPath.Sample(points, PathMode.Curve));
   }
 
   private void HandleTo(string[] args)

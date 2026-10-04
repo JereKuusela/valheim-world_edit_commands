@@ -13,6 +13,8 @@ public abstract class TerrainNode
   public float DistanceWidth;
   public float DistanceDepth;
   public float Distance;
+  // Path height at the closest point of the path.
+  public float Height;
 
   public TerrainComp? Compiler;
 }

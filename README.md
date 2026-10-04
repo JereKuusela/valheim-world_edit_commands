@@ -237,6 +237,15 @@ Following parameters are available:
   - Vegetation value is automatically reversed for Ashlands so that value 0 applies lava (internally value 1 is lava).
   - This is needed to prevent default paints applying lava. You can use negative vegetation value to skip the biome check.
   - Value `*` can be used use the paint value of existing terrain. This allows only changing specific paint layers.
+- `path`, `arc` or `curve`: Affects terrain along a route through the points given with `point` parameters.
+  - path: Straight lines between the points.
+  - arc: Circular arcs. The first arc passes through the first three points. Each next arc continues in the direction where the previous one ended and ends at the next point.
+  - curve: Smooth curve that passes through every point.
+  - These are separate operations that can be combined (for example `path arc`). Overlapping areas are only affected once.
+  - `circle=number` sets the half-width with rounded ends. `rect=number` sets the half-width with flat ends. Ranges like `circle=2-3` only affect the edges.
+  - `level` without a value follows the route height. Points without the y coordinate use the ground height.
+  - `angle`, `offset`, `slope` and `step` are not supported.
+- `point=x,z,y` or `p=x,z,y`: Adds a point to the route (use multiple times). The route starts at the first point. If `from` is given, it is used as the first point.
 - `raise=meters`: Raises terrain by X meters. Same as `lower` when a negative value is used.
 - `rect=width,depth` or `rect=min-max,min-max`: Determines the size of the affected terrain.
 - `reset`: Resets terrain height and paint changes. Ignores `smooth` parameter.
@@ -260,6 +269,9 @@ Following parameters are available:
 - `terrain from=-23,23 angle=e rect=5 slope=4 step=1,2,1 level`: Creates a level at the end of the slope. The last parameter of step is needed because the slope is not going to the original direction so it won't be raised automatically.
 - `alias level terrain level circle=$$`: New command `level [value]` for easier leveling.
 - `alias level_sq terrain level rect=$$`: New command `level_sq [value]` for easier leveling.
+- `terrain curve p=1722,672,136 p=1751,696,123 p=1788,708,127 p=1816,665,146 level paint=paved rect=3`: Creates a smooth 6 meters wide paved road following the given heights.
+- `terrain arc p=0,0 p=20,20 p=40,0 paint=dirt circle=2`: Paints a half circle arc.
+- `terrain path p=0,0 p=0,50 p=50,50 raise=2 circle=1-2`: Raises edges of an L-shaped path.
 
 ## Mechanics
 

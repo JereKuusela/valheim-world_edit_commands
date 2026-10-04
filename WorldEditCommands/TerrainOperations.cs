@@ -51,6 +51,17 @@ public partial class Terrain
     }
     DoOperation(nodes, pos, radius, action);
   }
+  public static void LevelTerrainToPath(List<HeightNode> nodes, Vector3 pos, float radius, float smooth)
+  {
+    void action(TerrainComp compiler, int index, TerrainNode node)
+    {
+      var multiplier = CalculateSmooth(smooth, node.Distance);
+      compiler.m_levelDelta[index] += multiplier * (node.Height - compiler.m_hmap.m_heights[index]);
+      compiler.m_smoothDelta[index] = 0f;
+      compiler.m_modifiedHeight[index] = compiler.m_levelDelta[index] != 0f;
+    }
+    DoOperation(nodes, pos, radius, action);
+  }
 
   public static void MaxTerrain(List<HeightNode> nodes, Vector3 pos, float radius, float y)
   {
@@ -138,13 +149,14 @@ public partial class Terrain
     }
     DoOperation(nodes, pos, radius, action);
   }
-  public static void ResetTerrain(List<HeightNode> heightNodes, List<PaintNode> paintNodes, Vector3 pos, float radius)
+  public static void ResetTerrain(List<HeightNode> heightNodes, List<PaintNode> paintNodes, Vector3 pos, float radius, Func<Vector3, bool>? filter = null)
   {
     List<TerrainModifier> modifiers = [];
     TerrainModifier.GetModifiers(pos, radius + 1f, modifiers);
     foreach (TerrainModifier modifier in modifiers)
     {
       if (modifier.m_nview == null) continue;
+      if (filter != null && !filter(modifier.transform.position)) continue;
       modifier.m_nview.ClaimOwnership();
       ZNetScene.instance.Destroy(modifier.gameObject);
     }
