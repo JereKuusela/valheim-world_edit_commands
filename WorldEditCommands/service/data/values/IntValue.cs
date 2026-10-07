@@ -1,26 +1,23 @@
-
-using System.Collections.Generic;
-using System.Globalization;
-using ServerDevcommands;
+using Service;
 using UnityEngine;
 
 namespace Data;
 
 public class IntValue(string[] values) : AnyValue(values), IIntValue
 {
-  public int? Get(Dictionary<string, string> pars)
+  public int? Get(Functions f)
   {
-    var value = GetValue(pars);
+    var value = GetValue(f);
     if (value == null)
       return null;
     if (!value.Contains(";"))
-      return Calculator.EvaluateInt(value);
+      return Parse.IntNull(value);
     // Format for range is "start;end;step;statement".
     var split = value.Split(';');
     if (split.Length < 2)
       throw new System.InvalidOperationException($"Invalid range format: {value}");
-    var min = Calculator.EvaluateInt(split[0]);
-    var max = Calculator.EvaluateInt(split[1]);
+    var min = Parse.IntNull(split[0]);
+    var max = Parse.IntNull(split[1]);
     if (min == null || max == null)
       return null;
     int? roll;
@@ -28,7 +25,7 @@ public class IntValue(string[] values) : AnyValue(values), IIntValue
       roll = Random.Range(min.Value, max.Value + 1);
     else
     {
-      var step = Calculator.EvaluateInt(split[2]);
+      var step = Parse.IntNull(split[2]);
       if (step == null)
         roll = Random.Range(min.Value, max.Value + 1);
       else
@@ -38,21 +35,19 @@ public class IntValue(string[] values) : AnyValue(values), IIntValue
         roll = min + rollStep * step;
       }
     }
-    if (split.Length < 4)
-      return roll;
-    return Calculator.EvaluateInt(split[3].Replace("<value>", roll.ToString()));
+    return roll;
   }
-  public bool? Match(Dictionary<string, string> pars, int value)
+  public bool? Match(Functions f, int value)
   {
     // If all values are null, default to a match.
     var allNull = true;
     foreach (var rawValue in Values)
     {
-      var v = ReplaceParameters(rawValue, pars);
+      var v = f.Replace(rawValue);
       // Case 1: Simple value.
       if (!v.Contains(";"))
       {
-        var parsed = Calculator.EvaluateInt(v);
+        var parsed = Parse.IntNull(v);
         if (parsed == null) continue;
         allNull = false;
         if (parsed.Value == value)
@@ -62,8 +57,8 @@ public class IntValue(string[] values) : AnyValue(values), IIntValue
       var split = v.Split(';');
       if (split.Length < 2)
         throw new System.InvalidOperationException($"Invalid range format: {v}");
-      var min = Calculator.EvaluateInt(split[0]);
-      var max = Calculator.EvaluateInt(split[1]);
+      var min = Parse.IntNull(split[0]);
+      var max = Parse.IntNull(split[1]);
       if (min == null || max == null)
         continue;
       // Case 2: Range.
@@ -76,7 +71,7 @@ public class IntValue(string[] values) : AnyValue(values), IIntValue
       // Case 3: Range with step.
       else if (split.Length < 4)
       {
-        var step = Calculator.EvaluateInt(split[2]);
+        var step = Parse.IntNull(split[2]);
         if (step == null)
           continue;
         allNull = false;
@@ -88,37 +83,6 @@ public class IntValue(string[] values) : AnyValue(values), IIntValue
             return true;
         }
       }
-      else
-      {
-        // Case 4: Range with statement.
-        if (split[2] == "")
-        {
-          var minValue = Calculator.EvaluateInt(split[3].Replace("<value>", min?.ToString(CultureInfo.InvariantCulture)));
-          var maxValue = Calculator.EvaluateInt(split[3].Replace("<value>", max?.ToString(CultureInfo.InvariantCulture)));
-          if (minValue == null || maxValue == null)
-            continue;
-          allNull = false;
-          if (value >= minValue.Value && value <= maxValue.Value)
-            return true;
-        }
-        else
-        {
-          // Case 5: Range with step and statement.
-          var step = Calculator.EvaluateInt(split[2]);
-          if (step == null)
-            continue;
-          allNull = false;
-          var steps = (max.Value - min.Value) / step.Value;
-          for (var i = 0; i <= steps; ++i)
-          {
-            var roll = min + i * step;
-            var parsed = Calculator.EvaluateInt(split[3].Replace("<value>", roll?.ToString(CultureInfo.InvariantCulture)));
-            if (parsed == null) continue;
-            if (parsed.Value == value)
-              return true;
-          }
-        }
-      }
     }
     return allNull ? null : false;
   }
@@ -127,11 +91,11 @@ public class IntValue(string[] values) : AnyValue(values), IIntValue
 public class SimpleIntValue(int value) : IIntValue
 {
   private readonly int Value = value;
-  public int? Get(Dictionary<string, string> pars) => Value;
-  public bool? Match(Dictionary<string, string> pars, int value) => Value == value;
+  public int? Get(Functions f) => Value;
+  public bool? Match(Functions f, int value) => Value == value;
 }
 public interface IIntValue
 {
-  int? Get(Dictionary<string, string> pars);
-  bool? Match(Dictionary<string, string> pars, int value);
+  int? Get(Functions f);
+  bool? Match(Functions f, int value);
 }

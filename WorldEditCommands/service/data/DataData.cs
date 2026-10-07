@@ -34,6 +34,8 @@ public class DataData
   [DefaultValue(null)]
   public ItemData[]? items;
   [DefaultValue(null)]
+  public ItemData? item;
+  [DefaultValue(null)]
   public string? containerSize;
   [DefaultValue(null)]
   public string? itemAmount;
@@ -59,24 +61,15 @@ public class ItemData
   public float chance = 1f;
   [DefaultValue("")]
   public string prefab = "";
-  [DefaultValue("1")]
-  public string stack = "1";
-  [DefaultValue("1")]
-  public string quality = "1";
-  [DefaultValue("0")]
-  public string variant = "0";
-  [DefaultValue("0")]
-  public string durability = "0";
-  [DefaultValue("0")]
-  public string crafterID = "0";
-  [DefaultValue("")]
-  public string crafterName = "";
-  [DefaultValue("0")]
-  public string worldLevel = "0";
-  [DefaultValue("false")]
-  public string equipped = "false";
-  [DefaultValue("false")]
-  public string pickedUp = "false";
-  [DefaultValue(null)]
+  public string? stack;
+  public string? quality;
+  public string? variant;
+  public string? durability;
+  public string? crafterID;
+  public string? crafterName;
+  public string? worldLevel;
+  public string? equipped;
+  public string? pickedUp;
+  public string? cheated;
   public Dictionary<string, string>? customData;
 }

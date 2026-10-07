@@ -1,32 +1,30 @@
-
-using System.Collections.Generic;
-using ServerDevcommands;
-
 namespace Data;
 
 public class BoolValue(string[] values) : AnyValue(values), IBoolValue
 {
-  public int? GetInt(Dictionary<string, string> pars)
+  public int? GetInt(Functions f)
   {
-    var value = GetBool(pars);
+    var value = GetValue(f);
     if (value == null) return null;
-    return value.Value ? 1 : 0;
+    return value == "true" ? 1 : 0;
   }
-  public bool? GetBool(Dictionary<string, string> pars)
+  public bool? GetBool(Functions f)
   {
-    var value = GetValue(pars);
-    return Parse.BoolNull(value);
+    var value = GetValue(f);
+    if (value == null) return null;
+    return value == "true";
   }
-  public bool? Match(Dictionary<string, string> pars, bool value)
+  public bool? Match(Functions f, bool value)
   {
+
     // If all values are null, default to a match.
     var allNull = true;
     foreach (var rawValue in Values)
     {
-      var v = ReplaceParameters(rawValue, pars);
+      var v = f.Replace(rawValue);
       if (v == null) continue;
       allNull = false;
-      var truthy = Parse.BoolNull(v);
+      var truthy = v == "true";
       if (truthy == value)
         return true;
     }
@@ -38,14 +36,14 @@ public class SimpleBoolValue(bool value) : IBoolValue
 {
   private readonly bool Value = value;
 
-  public int? GetInt(Dictionary<string, string> pars) => Value ? 1 : 0;
-  public bool? GetBool(Dictionary<string, string> pars) => Value;
-  public bool? Match(Dictionary<string, string> pars, bool value) => Value == value;
+  public int? GetInt(Functions f) => Value ? 1 : 0;
+  public bool? GetBool(Functions f) => Value;
+  public bool? Match(Functions f, bool value) => Value == value;
 }
 
 public interface IBoolValue
 {
-  int? GetInt(Dictionary<string, string> pars);
-  bool? GetBool(Dictionary<string, string> pars);
-  bool? Match(Dictionary<string, string> pars, bool value);
+  int? GetInt(Functions f);
+  bool? GetBool(Functions f);
+  bool? Match(Functions f, bool value);
 }

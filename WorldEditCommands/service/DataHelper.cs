@@ -152,11 +152,13 @@ public class DataHelper
     if (!obj.TryGetComponent<ZNetView>(out var view)) return null;
     var prefab = Utils.GetPrefabName(obj).GetStableHashCode();
     ZNetView.m_initZDO = ZDOMan.instance.CreateNewZDO(pos, prefab);
-    data?.Write(pars, ZNetView.m_initZDO);
+    ZNetView.m_initZDO.Type = view.m_type;
+    ZNetView.m_initZDO.Distant = view.m_distant;
+    ZNetView.m_initZDO.Persistent = view.m_persistent;
+    // Data values override the prefab defaults.
+    if (data != null)
+      Write(data, pars, ZNetView.m_initZDO);
     ZNetView.m_initZDO.m_rotation = rot.eulerAngles;
-    ZNetView.m_initZDO.Type = data?.Priority ?? view.m_type;
-    ZNetView.m_initZDO.Distant = data?.Distant?.GetBool(pars) ?? view.m_distant;
-    ZNetView.m_initZDO.Persistent = data?.Persistent?.GetBool(pars) ?? view.m_persistent;
     ZNetView.m_initZDO.m_prefab = prefab;
     if (!view.m_syncInitialScale && scale != null && WorldEditCommands.WorldEditCommands.IsTweaks)
     {
@@ -197,7 +199,7 @@ public class DataHelper
     {
       try
       {
-        DataLoading.Data[hash] = new DataEntry(name);
+        DataLoading.Data[hash] = new DataEntry(new ZPackage(name));
       }
       catch (Exception e)
       {
@@ -209,11 +211,19 @@ public class DataHelper
     }
     return DataLoading.Data[hash];
   }
+  // Evaluates parameters, values and legacy formats into plain data.
+  public static PlainDataEntry Resolve(DataEntry data, Dictionary<string, string> pars, ZDO? zdo)
+  {
+    PlainDataEntry resolved = new();
+    resolved.Load(data, new ParFunctions(pars, zdo), zdo);
+    return resolved;
+  }
+  public static void Write(DataEntry data, Dictionary<string, string> pars, ZDO zdo) => Resolve(data, pars, zdo).Write(zdo);
   public static string Base64(Dictionary<string, string> pars, string data)
   {
     if (!DataLoading.Data.TryGetValue(data.GetStableHashCode(), out var zdo))
       return data;
-    return zdo.GetBase64(pars);
+    return Resolve(zdo, pars, null).GetBase64();
   }
 
 }

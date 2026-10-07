@@ -29,12 +29,13 @@ public class ObjectCommand
         context.AddString($"Skipped: {view.name} is not loaded.");
         return false;
       }
-      if (matchData != null && !matchData.Match(pars.DataParameters.ToDictionary(kvp => kvp.Key, kvp => kvp.Value), view.GetZDO()))
+      var zdo = view.GetZDO();
+      if (matchData != null && !matchData.Match(new ParFunctions(pars.DataParameters, zdo), zdo))
       {
         context.AddString($"Skipped: {view.name} not matching filter.");
         return false;
       }
-      if (unmatchData != null && !unmatchData.Unmatch(pars.DataParameters.ToDictionary(kvp => kvp.Key, kvp => kvp.Value), view.GetZDO()))
+      if (unmatchData != null && !unmatchData.Unmatch(new ParFunctions(pars.DataParameters, zdo), zdo))
       {
         context.AddString($"Skipped: {view.name} matching filter.");
         return false;

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Data;
 using ServerDevcommands;
-using Service;
 using UnityEngine;
+using Selector = Service.Selector;
 namespace WorldEditCommands;
 
 public abstract class BaseParameters(Dictionary<string, Type> supportedOperations)
@@ -174,12 +174,13 @@ public abstract class BaseParameters(Dictionary<string, Type> supportedOperation
         terminal.AddString($"Skipped: {view.name} is not loaded.");
         return false;
       }
-      if (matchData != null && !matchData.Match(DataParameters.ToDictionary(kvp => kvp.Key, kvp => kvp.Value), view.GetZDO()))
+      var zdo = view.GetZDO();
+      if (matchData != null && !matchData.Match(new ParFunctions(DataParameters, zdo), zdo))
       {
         terminal.AddString($"Skipped: {view.name} not matching filter.");
         return false;
       }
-      if (unmatchData != null && !unmatchData.Unmatch(DataParameters.ToDictionary(kvp => kvp.Key, kvp => kvp.Value), view.GetZDO()))
+      if (unmatchData != null && !unmatchData.Unmatch(new ParFunctions(DataParameters, zdo), zdo))
       {
         terminal.AddString($"Skipped: {view.name} matching filter.");
         return false;

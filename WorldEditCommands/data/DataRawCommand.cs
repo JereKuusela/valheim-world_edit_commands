@@ -19,7 +19,7 @@ public class DataRawCommand
       if (!DataLoading.Data.TryGetValue(args[1].GetStableHashCode(), out var zdo))
         throw new InvalidOperationException($"Data entry {args[1]} not found.");
       var pars = ParseCommand(args);
-      var str = zdo.GetBase64(pars);
+      var str = DataHelper.Resolve(zdo, pars, null).GetBase64();
       if (str == "AAAAAA==")
         throw new InvalidOperationException($"Data entry {args[1]} is empty.");
       GUIUtility.systemCopyBuffer = str;
@@ -39,7 +39,7 @@ public class DataRawCommand
       {
         var kvp = Parse.Kvp(split[1]);
         if (kvp.Key == "") throw new InvalidOperationException($"Invalid data parameter {split[1]}.");
-        parameters[kvp.Key] = kvp.Value;
+        parameters[$"<{kvp.Key}>"] = kvp.Value;
       }
     }
     return parameters;

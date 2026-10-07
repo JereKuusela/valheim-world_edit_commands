@@ -50,7 +50,7 @@ public class DataCommand
       UndoHelper.AddEditAction(view);
       var values = value.SelectMany(str => str.Split(',')).Select(s => s.Trim()).ToArray();
       var data = DataHelper.Merge(values.Select(DataHelper.Get).ToArray());
-      data?.Write(Parameters.DataParameters, view.GetZDO());
+      if (data != null) DataHelper.Write(data, Parameters.DataParameters, view.GetZDO());
       Actions.Refresh(view);
       return $"¤ data merged from {string.Join(", ", values)}.";
     }
@@ -62,7 +62,7 @@ public class DataCommand
       var zdo = DataHelper.CloneBase(view.GetZDO());
       var values = value.SelectMany(str => str.Split(',')).Select(s => s.Trim()).ToArray();
       var data = DataHelper.Merge(values.Select(DataHelper.Get).ToArray());
-      data?.Write(Parameters.DataParameters, zdo);
+      if (data != null) DataHelper.Write(data, Parameters.DataParameters, zdo);
       Regen(view, zdo);
       return $"¤ data loaded from {string.Join(", ", values)}.";
     }

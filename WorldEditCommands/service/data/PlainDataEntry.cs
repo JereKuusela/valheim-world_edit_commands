@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using Service;
 using UnityEngine;
 
 namespace Data;
 
-// Split from DataEntry to keep it simpler. When loading data from actual objects, only simple values are needed.
-// This can be used for saving ZDO data to file and for undo/redo.
-public class PlainDataEntry
+// WEC only: snapshot of a ZDO that can be saved to file, copied as base64 and used for undo/redo.
+public class PlainDataEntry : ResolvedDataEntry
 {
   public PlainDataEntry() { }
   public PlainDataEntry(ZDO zdo)
@@ -16,22 +16,7 @@ public class PlainDataEntry
     Load(zdo);
   }
 
-  // Nulls add more code but should be more performant.
-  public Dictionary<int, string>? Strings;
-  public Dictionary<int, float>? Floats;
-  public Dictionary<int, int>? Ints;
-  public Dictionary<int, long>? Longs;
-  public Dictionary<int, Vector3>? Vecs;
-  public Dictionary<int, Quaternion>? Quats;
-  public Dictionary<int, byte[]>? ByteArrays;
-  public ZDOExtraData.ConnectionType ConnectionType = ZDOExtraData.ConnectionType.None;
-  public int ConnectionHash = 0;
-  public ZDOID OriginalId = ZDOID.None;
-  public ZDOID TargetConnectionId = ZDOID.None;
-  public bool Distant = false;
-  public bool Persistent = true;
-  public ZDO.ObjectType Priority = ZDO.ObjectType.Default;
-
+  private bool HasConnection => ConnectionType.HasValue && ConnectionType != ZDOExtraData.ConnectionType.None && ConnectionHash != 0;
 
   public void Load(ZDO zdo)
   {
@@ -83,17 +68,34 @@ public class PlainDataEntry
     data.strings = Strings?.Select(pair => $"{ZDOKeys.Convert(pair.Key)}, {Serialize(pair.Value)}").ToArray();
     data.vecs = Vecs?.Select(pair => $"{ZDOKeys.Convert(pair.Key)}, {Serialize(pair.Value)}").ToArray();
     data.quats = Quats?.Select(pair => $"{ZDOKeys.Convert(pair.Key)}, {Serialize(pair.Value)}").ToArray();
-    data.bytes = ByteArrays?.Select(pair => $"{ZDOKeys.Convert(pair.Key)}, {Convert.ToBase64String(pair.Value)}").ToArray();
-    if (ByteArrays != null && ByteArrays.TryGetValue(ZDOVars.s_items, out var items))
-      GetItems(items);
+    // Unreadable or invalid items stay in their raw byte field.
+    var bytes = ByteArrays == null ? null : new Dictionary<int, byte[]>(ByteArrays);
+    if (bytes != null && bytes.TryGetValue(ZDOVars.s_items, out var packedItems))
+    {
+      var records = ItemDataHelper.Load(new ZPackage(packedItems));
+      if (records.Count > 0 && ItemDataHelper.CountInvalid(records) == 0)
+      {
+        data.items = [.. records.Select(ToData)];
+        bytes.Remove(ZDOVars.s_items);
+      }
+    }
+    if (bytes != null && bytes.TryGetValue(ZDOVars.s_itemData, out var packedItem) && ItemDataHelper.LoadItem(packedItem) is { } record)
+    {
+      data.item = ToData(record);
+      bytes.Remove(ZDOVars.s_itemData);
+    }
+    data.bytes = bytes?.Count > 0 ? bytes.Select(pair => $"{ZDOKeys.Convert(pair.Key)}, {Convert.ToBase64String(pair.Value)}").ToArray() : null;
 
-    if (ConnectionType != ZDOExtraData.ConnectionType.None && ConnectionHash != 0)
+    if (HasConnection)
       data.connection = $"{ConnectionType}, {ConnectionHash}";
+    var persistent = Persistent ?? true;
+    var distant = Distant ?? false;
+    var priority = Priority ?? ZDO.ObjectType.Default;
     if (all)
     {
-      data.persistent = Persistent ? "true" : "false";
-      data.distant = Distant ? "true" : "false";
-      data.priority = Priority.ToString();
+      data.persistent = persistent ? "true" : "false";
+      data.distant = distant ? "true" : "false";
+      data.priority = priority.ToString();
     }
     else
     {
@@ -102,9 +104,9 @@ public class PlainDataEntry
       var defaultDistant = false;
       var defaultPersistent = true;
       var defaultType = ZDO.ObjectType.Default;
-      if (OriginalId != ZDOID.None)
+      if (OriginalId.HasValue && OriginalId != ZDOID.None)
       {
-        var zdo = ZDOMan.instance.GetZDO(OriginalId);
+        var zdo = ZDOMan.instance.GetZDO(OriginalId.Value);
         var prefab = ZNetScene.instance.GetPrefab(zdo.m_prefab);
         var view = prefab?.GetComponent<ZNetView>();
         if (view != null)
@@ -114,60 +116,30 @@ public class PlainDataEntry
           defaultType = view.m_type;
         }
       }
-      if (Persistent != defaultPersistent)
-        data.persistent = Persistent ? "true" : "false";
-      if (Distant != defaultDistant)
-        data.distant = Distant ? "true" : "false";
-      if (Priority != defaultType)
-        data.priority = Priority.ToString();
+      if (persistent != defaultPersistent)
+        data.persistent = persistent ? "true" : "false";
+      if (distant != defaultDistant)
+        data.distant = distant ? "true" : "false";
+      if (priority != defaultType)
+        data.priority = priority.ToString();
     }
   }
-  private static ItemData[]? GetItems(byte[] encoded)
+  private static ItemData ToData(ItemRecord record) => new()
   {
-    ZPackage pkg = new(encoded);
-    var version = pkg.ReadInt();
-    // Not latest, but this is legacy way anyways.
-    if (version != 106) return null; // Keep unsupported formats in their original raw field.
-    var amount = pkg.ReadInt();
-    var list = new ItemData[amount];
-    for (var i = 0; i < amount; ++i)
-    {
-      var text = pkg.ReadString();
-      var stack = pkg.ReadInt();
-      var durability = pkg.ReadSingle();
-      var pos = pkg.ReadVector2i();
-      var equipped = pkg.ReadBool();
-      var quality = pkg.ReadInt();
-      var variant = pkg.ReadInt();
-      var crafterID = pkg.ReadLong();
-      var crafterName = pkg.ReadString();
-      var dictionary = new Dictionary<string, string>();
-      var num3 = pkg.ReadInt();
-      for (var j = 0; j < num3; ++j)
-      {
-        dictionary[pkg.ReadString()] = pkg.ReadString();
-      }
-      var worldLevel = pkg.ReadInt();
-      var pickedUp = pkg.ReadBool();
-      var extra = num3 > 0 ? $", {string.Join(", ", dictionary.Select(kvp => $"{kvp.Key}: {kvp.Value}"))}" : "";
-      list[i] = new()
-      {
-        pos = $"{pos.x}, {pos.y}",
-        prefab = text,
-        stack = stack.ToString(),
-        quality = quality.ToString(),
-        variant = variant.ToString(),
-        customData = dictionary.Count > 0 ? dictionary : null,
-        equipped = equipped ? "true" : "false",
-        durability = Serialize(durability),
-        crafterID = crafterID.ToString(),
-        crafterName = crafterName,
-        pickedUp = pickedUp ? "true" : "false",
-        worldLevel = worldLevel.ToString()
-      };
-    }
-    return list;
-  }
+    pos = $"{record.GridPos.x}, {record.GridPos.y}",
+    prefab = record.PrefabName,
+    stack = record.Stack.ToString(),
+    quality = record.Quality.ToString(),
+    variant = record.Variant.ToString(),
+    customData = record.CustomData.Count > 0 ? record.CustomData : null,
+    equipped = record.Equipped ? "true" : "false",
+    durability = Serialize(record.Durability),
+    crafterID = record.CrafterID.ToString(),
+    crafterName = record.CrafterName,
+    pickedUp = record.PickedUp ? "true" : "false",
+    cheated = record.Cheated ? "true" : "false",
+    worldLevel = record.WorldLevel.ToString()
+  };
 
   private static string Serialize(string? str) => str == null || str == "" ? "\"\"" : str.Contains(",") ? $"\"{str}\"" : str;
   private static string Serialize(Quaternion quat)
@@ -209,13 +181,13 @@ public class PlainDataEntry
       num |= 64;
     if (ByteArrays?.Count > 0)
       num |= 128;
-    if (ConnectionType != ZDOExtraData.ConnectionType.None && ConnectionHash != 0)
+    if (HasConnection)
       num |= 256;
-    if (!Persistent)
+    if (Persistent == false)
       num |= 512;
-    if (Distant)
+    if (Distant == true)
       num |= 1024;
-    if (Priority != ZDO.ObjectType.Default)
+    if (Priority.HasValue && Priority != ZDO.ObjectType.Default)
       num |= 2048;
 
     pkg.Write(num);
@@ -282,134 +254,16 @@ public class PlainDataEntry
         pkg.Write(kvp.Value);
       }
     }
-    if (ConnectionType != ZDOExtraData.ConnectionType.None && ConnectionHash != 0)
+    if (HasConnection)
     {
-      pkg.Write((byte)ConnectionType);
+      pkg.Write((byte)ConnectionType!.Value);
       pkg.Write(ConnectionHash);
     }
     if ((num & 512) != 0)
-      pkg.Write(Persistent);
+      pkg.Write(Persistent!.Value);
     if ((num & 1024) != 0)
-      pkg.Write(Distant);
+      pkg.Write(Distant!.Value);
     if ((num & 2048) != 0)
-      pkg.Write((byte)Priority);
-  }
-  public void Write(ZDO zdo)
-  {
-    var id = zdo.m_uid;
-    if (Floats?.Count > 0)
-    {
-      ZDOHelper.Init(ZDOExtraData.s_floats, id);
-      foreach (var pair in Floats)
-        ZDOExtraData.s_floats[id].SetValue(pair.Key, pair.Value);
-    }
-    if (Vecs?.Count > 0)
-    {
-      ZDOHelper.Init(ZDOExtraData.s_vec3, id);
-      foreach (var pair in Vecs)
-        ZDOExtraData.s_vec3[id].SetValue(pair.Key, pair.Value);
-    }
-    if (Quats?.Count > 0)
-    {
-      ZDOHelper.Init(ZDOExtraData.s_quats, id);
-      foreach (var pair in Quats)
-        ZDOExtraData.s_quats[id].SetValue(pair.Key, pair.Value);
-    }
-    if (Ints?.Count > 0)
-    {
-      ZDOHelper.Init(ZDOExtraData.s_ints, id);
-      foreach (var pair in Ints)
-        ZDOExtraData.s_ints[id].SetValue(pair.Key, pair.Value);
-    }
-    if (Longs?.Count > 0)
-    {
-      ZDOHelper.Init(ZDOExtraData.s_longs, id);
-      foreach (var pair in Longs)
-        ZDOExtraData.s_longs[id].SetValue(pair.Key, pair.Value);
-    }
-    if (Strings?.Count > 0)
-    {
-      ZDOHelper.Init(ZDOExtraData.s_strings, id);
-      foreach (var pair in Strings)
-        ZDOExtraData.s_strings[id].SetValue(pair.Key, pair.Value);
-    }
-    if (ByteArrays?.Count > 0)
-    {
-      ZDOHelper.Init(ZDOExtraData.s_byteArrays, id);
-      foreach (var pair in ByteArrays)
-        ZDOExtraData.s_byteArrays[id].SetValue(pair.Key, pair.Value);
-    }
-    HandleConnection(zdo);
-    HandleHashConnection(zdo);
-    zdo.Distant = Distant;
-    zdo.Persistent = Persistent;
-    zdo.Type = Priority;
-  }
-  private void HandleConnection(ZDO ownZdo)
-  {
-    if (OriginalId == ZDOID.None) return;
-    var ownId = ownZdo.m_uid;
-    if (TargetConnectionId != ZDOID.None)
-    {
-      // If target is known, the setup is easy.
-      var otherZdo = ZDOMan.instance.GetZDO(TargetConnectionId);
-      if (otherZdo == null) return;
-
-      ownZdo.SetConnection(ConnectionType, TargetConnectionId);
-      // Portal is two way.
-      if (ConnectionType == ZDOExtraData.ConnectionType.Portal)
-        otherZdo.SetConnection(ZDOExtraData.ConnectionType.Portal, ownId);
-
-    }
-    else
-    {
-      // Otherwise all zdos must be scanned.
-      var other = ZDOExtraData.s_connections.FirstOrDefault(kvp => kvp.Value.m_target == OriginalId);
-      if (other.Value == null) return;
-      var otherZdo = ZDOMan.instance.GetZDO(other.Key);
-      if (otherZdo == null) return;
-      // Connection is always one way here, otherwise TargetConnectionId would be set.
-      otherZdo.SetConnection(other.Value.m_type, ownId);
-    }
-  }
-  private void HandleHashConnection(ZDO ownZdo)
-  {
-    if (ConnectionHash == 0) return;
-    if (ConnectionType == ZDOExtraData.ConnectionType.None) return;
-    var ownId = ownZdo.m_uid;
-
-    // Hash data is regenerated on world save.
-    // But in this case, it's manually set, so might be needed later.
-    ZDOExtraData.SetConnectionData(ownId, ConnectionType, ConnectionHash);
-
-    // While actual connection can be one way, hash is always two way.
-    // One of the hashes always has the target type.
-    var otherType = ConnectionType ^ ZDOExtraData.ConnectionType.Target;
-    var isOtherTarget = (ConnectionType & ZDOExtraData.ConnectionType.Target) == 0;
-    var zdos = ZDOExtraData.GetAllConnectionZDOIDs(otherType);
-    var otherId = zdos.FirstOrDefault(z => ZDOExtraData.GetConnectionHashData(z, ConnectionType)?.m_hash == ConnectionHash);
-    if (otherId == ZDOID.None) return;
-    var otherZdo = ZDOMan.instance.GetZDO(otherId);
-    if (otherZdo == null) return;
-    if ((ConnectionType & ZDOExtraData.ConnectionType.Spawned) > 0)
-    {
-      // Spawn is one way.
-      var connZDO = isOtherTarget ? ownZdo : otherZdo;
-      var targetId = isOtherTarget ? otherId : ownId;
-      connZDO.SetConnection(ZDOExtraData.ConnectionType.Spawned, targetId);
-    }
-    if ((ConnectionType & ZDOExtraData.ConnectionType.SyncTransform) > 0)
-    {
-      // Sync is one way.
-      var connZDO = isOtherTarget ? ownZdo : otherZdo;
-      var targetId = isOtherTarget ? otherId : ownId;
-      connZDO.SetConnection(ZDOExtraData.ConnectionType.SyncTransform, targetId);
-    }
-    if ((ConnectionType & ZDOExtraData.ConnectionType.Portal) > 0)
-    {
-      // Portal is two way.
-      otherZdo.SetConnection(ZDOExtraData.ConnectionType.Portal, ownId);
-      ownZdo.SetConnection(ZDOExtraData.ConnectionType.Portal, otherId);
-    }
+      pkg.Write((byte)Priority!.Value);
   }
 }

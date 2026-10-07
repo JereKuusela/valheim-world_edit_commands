@@ -150,7 +150,7 @@ public class DataAutoComplete
     var split = command.Split(' ');
     if (split.Length < 2) return ParameterInfo.Create("par=<color=yellow>key</color>,value", "Name of the parameter."); ;
     if (DataLoading.Data.TryGetValue(ZDOKeys.Hash(split[1]), out var data))
-      return [.. data.RequiredParameters];
+      return [.. RequiredParameters.Get(data)];
     return ParameterInfo.Create("par=<color=yellow>key</color>,value", "Name of the parameter.");
   }
 
@@ -164,7 +164,7 @@ public class DataAutoComplete
     foreach (var name in dataNames)
     {
       if (DataLoading.Data.TryGetValue(ZDOKeys.Hash(name), out var data))
-        foreach (var oar in data.RequiredParameters)
+        foreach (var oar in RequiredParameters.Get(data))
           parameters.Add(oar);
     }
     return parameters;
