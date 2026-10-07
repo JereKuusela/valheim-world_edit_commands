@@ -180,7 +180,7 @@ public abstract class BaseParameters(Dictionary<string, Type> supportedOperation
         terminal.AddString($"Skipped: {view.name} not matching filter.");
         return false;
       }
-      if (unmatchData != null && !unmatchData.Unmatch(new ParFunctions(DataParameters, zdo), zdo))
+      if (unmatchData != null && !unmatchData.MatchNone(new ParFunctions(DataParameters, zdo), zdo))
       {
         terminal.AddString($"Skipped: {view.name} matching filter.");
         return false;

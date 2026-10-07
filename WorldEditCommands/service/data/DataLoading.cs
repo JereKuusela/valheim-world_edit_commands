@@ -3,7 +3,7 @@ using System.IO;
 using BepInEx;
 using ServerDevcommands;
 using Service;
-using Parse = Service.Parse;
+
 namespace Data;
 
 public class DataLoading
@@ -13,22 +13,8 @@ public class DataLoading
 
   // Each file can have multiple data entries so we need to load them all.
   public static readonly Dictionary<int, DataEntry> Data = [];
-  public static readonly Dictionary<int, List<string>> ValueGroups = [];
   public static readonly List<string> DataKeys = [];
 
-
-  public static bool TryGetValueFromGroup(string group, out string value)
-  {
-    var hash = group.ToLowerInvariant().GetStableHashCode();
-    if (!ValueGroups.ContainsKey(hash))
-    {
-      value = group;
-      return false;
-    }
-    var roll = UnityEngine.Random.Range(0, ValueGroups[hash].Count);
-    value = ValueGroups[hash][roll];
-    return true;
-  }
   public static void LoadEntries()
   {
     if (!ZNet.instance)
@@ -36,46 +22,32 @@ public class DataLoading
     Data.Clear();
     DataKeys.Clear();
     ValueGroups.Clear();
-    Yaml.LoadListsFromDirectory<DataData>(GamePath, "*.yaml", LoadEntry);
+    List<(string File, DataYaml Data)> loaded = [];
+    void Collect(string file, DataYaml data) => loaded.Add((file, data));
+    Yaml.LoadListsFromDirectory<DataYaml>(GamePath, "*.yaml", Collect);
     if (ProfilePath != GamePath)
-      Yaml.LoadListsFromDirectory<DataData>(ProfilePath, "*.yaml", LoadEntry);
+      Yaml.LoadListsFromDirectory<DataYaml>(ProfilePath, "*.yaml", Collect);
 
-    Log.Info($"Loaded {Data.Count} data entries.");
+    foreach (var entry in loaded)
+      ValueGroups.Add(entry.Data, entry.File);
     if (ValueGroups.Count > 0)
       Log.Info($"Loaded {ValueGroups.Count} value groups.");
-    LoadDefaultValueGroups();
+    // Entries need fully resolved value groups, so two passes are needed.
+    ValueGroups.Resolve();
+    foreach (var entry in loaded)
+      LoadEntry(entry.File, entry.Data);
+    PrefabHelper.ClearCache();
+    Log.Info($"Loaded {Data.Count} data entries.");
   }
 
-  private static void LoadEntry(string file, DataData data)
+  private static void LoadEntry(string file, DataYaml data)
   {
-    if (data.value != null)
-    {
-      var kvp = Parse.Kvp(data.value);
-      var hash = kvp.Key.ToLowerInvariant().GetStableHashCode();
-      if (ValueGroups.ContainsKey(hash))
-        Log.Warning($"Duplicate value group entry: {kvp.Key} at {file}");
-      if (!ValueGroups.ContainsKey(hash))
-        ValueGroups[hash] = [];
-      ValueGroups[hash].Add(kvp.Value);
-    }
-    if (data.valueGroup != null && data.values != null)
-    {
-      var hash = data.valueGroup.ToLowerInvariant().GetStableHashCode();
-      if (ValueGroups.ContainsKey(hash))
-        Log.Warning($"Duplicate value group entry: {data.valueGroup} at {file}");
-      if (!ValueGroups.ContainsKey(hash))
-        ValueGroups[hash] = [];
-      foreach (var value in data.values)
-        ValueGroups[hash].Add(value);
-    }
-    if (data.name != null)
-    {
-      var hash = data.name.GetStableHashCode();
-      if (Data.ContainsKey(hash))
-        Log.Warning($"Duplicate data entry: {data.name} at {file}");
-      DataKeys.Add(data.name);
-      Data[hash] = new DataEntry(data);
-    }
+    if (data.name == null) return;
+    var hash = data.name.GetStableHashCode();
+    if (Data.ContainsKey(hash))
+      Log.Warning($"Duplicate data entry: {data.name} at {file}");
+    DataKeys.Add(data.name);
+    Data[hash] = new DataEntry(data);
   }
 
   public static void Save(PlainDataEntry data, string name, bool profile, bool dump)
@@ -91,38 +63,11 @@ public class DataLoading
     File.WriteAllText(path, yaml);
   }
 
-  public static DataData ToData(PlainDataEntry zdo, string name, bool dump)
+  public static DataYaml ToData(PlainDataEntry zdo, string name, bool dump)
   {
-    DataData data = new() { name = name };
+    DataYaml data = new() { name = name };
     zdo.Write(data, dump);
     return data;
-  }
-
-  private static readonly Dictionary<int, List<string>> DefaultValueGroups = [];
-  private static readonly int WearNTearHash = "wearntear".GetStableHashCode();
-  private static readonly int HumanoidHash = "humanoid".GetStableHashCode();
-  private static readonly int CreatureHash = "creature".GetStableHashCode();
-  private static readonly int StructureHash = "structure".GetStableHashCode();
-  private static void LoadDefaultValueGroups()
-  {
-    if (DefaultValueGroups.Count == 0)
-    {
-      foreach (var type in ComponentInfo.Types)
-      {
-        var hash = type.Name.ToLowerInvariant().GetStableHashCode();
-        DefaultValueGroups[hash] = [.. ComponentInfo.PrefabsByComponent(type.Name)];
-      }
-      // Some key codes are hardcoded for legacy reasons.
-      if (DefaultValueGroups.ContainsKey(HumanoidHash))
-        DefaultValueGroups[CreatureHash] = DefaultValueGroups[HumanoidHash];
-      if (DefaultValueGroups.ContainsKey(WearNTearHash))
-        DefaultValueGroups[StructureHash] = DefaultValueGroups[WearNTearHash];
-    }
-    foreach (var kvp in DefaultValueGroups)
-    {
-      if (!ValueGroups.ContainsKey(kvp.Key))
-        ValueGroups[kvp.Key] = kvp.Value;
-    }
   }
 
   public static void SetupWatcher()

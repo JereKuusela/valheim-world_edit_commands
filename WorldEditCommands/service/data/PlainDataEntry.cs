@@ -55,7 +55,7 @@ public class PlainDataEntry : ResolvedDataEntry
     ZDOVars.s_item,
     .. Enumerable.Range(0, 11).Select(i => ZDOKeys.Hash($"{i}_item"))
   ];
-  public void Write(DataData data, bool all)
+  public void Write(DataYaml data, bool all)
   {
     // No need to roll here because tbis always come from ZDO that doesn't have item values.
     data.floats = Floats?.Select(pair => $"{ZDOKeys.Convert(pair.Key)}, {pair.Value}").ToArray();
@@ -124,7 +124,7 @@ public class PlainDataEntry : ResolvedDataEntry
         data.priority = priority.ToString();
     }
   }
-  private static ItemData ToData(ItemRecord record) => new()
+  private static ItemYaml ToData(ItemRecord record) => new()
   {
     pos = $"{record.GridPos.x}, {record.GridPos.y}",
     prefab = record.PrefabName,

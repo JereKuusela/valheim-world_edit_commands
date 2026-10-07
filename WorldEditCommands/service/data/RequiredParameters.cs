@@ -31,7 +31,7 @@ public static class RequiredParameters
 
   private static void Collect(object? value, HashSet<string> result)
   {
-    if (value is AnyValue any)
+    if (value is DynamicValue any)
     {
       foreach (var raw in any.RawValues)
         Extract(raw, result);

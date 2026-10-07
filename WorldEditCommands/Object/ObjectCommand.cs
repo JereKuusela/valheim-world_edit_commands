@@ -35,7 +35,7 @@ public class ObjectCommand
         context.AddString($"Skipped: {view.name} not matching filter.");
         return false;
       }
-      if (unmatchData != null && !unmatchData.Unmatch(new ParFunctions(pars.DataParameters, zdo), zdo))
+      if (unmatchData != null && !unmatchData.MatchNone(new ParFunctions(pars.DataParameters, zdo), zdo))
       {
         context.AddString($"Skipped: {view.name} matching filter.");
         return false;
