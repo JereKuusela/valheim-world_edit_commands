@@ -1,3 +1,7 @@
+- v1.81
+  - Adds new field `item` to data files which contains decoded item data.
+  - Reworks data system to match Expand World Prefabs mod.
+
 - v1.80
   - Adds new terrain operations `path`, `arc` and `curve`.
 

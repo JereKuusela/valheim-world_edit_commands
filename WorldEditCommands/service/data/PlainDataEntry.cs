@@ -75,13 +75,13 @@ public class PlainDataEntry : ResolvedDataEntry
       var records = ItemDataHelper.Load(new ZPackage(packedItems));
       if (records.Count > 0 && ItemDataHelper.CountInvalid(records) == 0)
       {
-        data.items = [.. records.Select(ToData)];
+        data.items = [.. records.Select(r => ToData(r, true, all))];
         bytes.Remove(ZDOVars.s_items);
       }
     }
     if (bytes != null && bytes.TryGetValue(ZDOVars.s_itemData, out var packedItem) && ItemDataHelper.LoadItem(packedItem) is { } record)
     {
-      data.item = ToData(record);
+      data.item = ToData(record, all, all);
       bytes.Remove(ZDOVars.s_itemData);
     }
     data.bytes = bytes?.Count > 0 ? bytes.Select(pair => $"{ZDOKeys.Convert(pair.Key)}, {Convert.ToBase64String(pair.Value)}").ToArray() : null;
@@ -124,21 +124,22 @@ public class PlainDataEntry : ResolvedDataEntry
         data.priority = priority.ToString();
     }
   }
-  private static ItemYaml ToData(ItemRecord record) => new()
+  private static ItemYaml ToData(ItemRecord record, bool includePos, bool all) => new()
   {
-    pos = $"{record.GridPos.x}, {record.GridPos.y}",
+    pos = includePos ? $"{record.GridPos.x}, {record.GridPos.y}" : "",
     prefab = record.PrefabName,
     stack = record.Stack.ToString(),
-    quality = record.Quality.ToString(),
-    variant = record.Variant.ToString(),
+    // Missing quality loads as 1.
+    quality = all || record.Quality != 1 ? record.Quality.ToString() : null,
+    variant = all || record.Variant != 0 ? record.Variant.ToString() : null,
     customData = record.CustomData.Count > 0 ? record.CustomData : null,
-    equipped = record.Equipped ? "true" : "false",
+    equipped = all ? (record.Equipped ? "true" : "false") : record.Equipped ? "true" : null,
     durability = Serialize(record.Durability),
-    crafterID = record.CrafterID.ToString(),
-    crafterName = record.CrafterName,
-    pickedUp = record.PickedUp ? "true" : "false",
-    cheated = record.Cheated ? "true" : "false",
-    worldLevel = record.WorldLevel.ToString()
+    crafterID = all || record.CrafterID != 0 ? record.CrafterID.ToString() : null,
+    crafterName = all || record.CrafterName != "" ? record.CrafterName : null,
+    pickedUp = all ? (record.PickedUp ? "true" : "false") : record.PickedUp ? "true" : null,
+    cheated = all ? (record.Cheated ? "true" : "false") : record.Cheated ? "true" : null,
+    worldLevel = all || record.WorldLevel != 0 ? record.WorldLevel.ToString() : null
   };
 
   private static string Serialize(string? str) => str == null || str == "" ? "\"\"" : str.Contains(",") ? $"\"{str}\"" : str;

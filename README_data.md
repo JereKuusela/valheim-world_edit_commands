@@ -74,6 +74,9 @@ Each data type has its own values. It's important to use the correct type, other
   - Internally the list is converted to base64 encoded string and saved as "items".
   - If you use this, remove the "items" from strings.
   - See section "Loot generation" for more information.
+- item: Single item, used by item drops on the ground.
+  - Internally saved as base64 encoded string "itemData".
+  - Uses the same properties as the items in the list, but "pos" is not needed.
 - position: (EWP only) Position in world coordinates as vector (x,z,y)
 - rotation: (EWP only) Rotation as vector (y,x,z) in degrees
 
@@ -279,6 +282,8 @@ Item properties:
 - customData: Custom data of the item.
   - This is a list of key-value pairs.
   - These are only used by modded items.
+
+When saving, default values are left out. Use `dump` to include them all.
 
 ### Random loot
 
