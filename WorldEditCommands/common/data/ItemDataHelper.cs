@@ -79,12 +79,34 @@ public static class ItemDataHelper
     return pkg.GetArray();
   }
 
+  private static readonly Dictionary<int, (int Index, bool IsValue)> CustomDataKeys = BuildCustomDataKeys();
+
+  private static Dictionary<int, (int, bool)> BuildCustomDataKeys()
+  {
+    Dictionary<int, (int, bool)> keys = [];
+    for (var i = 0; i < 32; i++)
+    {
+      keys[$"data_{i}".GetStableHashCode()] = (i, false);
+      keys[$"data__{i}".GetStableHashCode()] = (i, true);
+    }
+    return keys;
+  }
+
   public static bool TryGetString(ZDO zdo, int hash, out string value)
   {
     value = "";
-    if (hash != ZDOVars.s_crafterName) return false;
+    var isCrafterName = hash == ZDOVars.s_crafterName;
+    var isCustomData = CustomDataKeys.TryGetValue(hash, out var key);
+    if (!isCrafterName && !isCustomData) return false;
     if (!TryLoadDrop(zdo, out var itemData)) return false;
-    value = itemData.m_crafterName;
+    if (isCrafterName)
+    {
+      value = itemData.m_crafterName;
+      return true;
+    }
+    if (key.Index >= itemData.m_customData.Count) return false;
+    var entry = itemData.m_customData.ElementAt(key.Index);
+    value = key.IsValue ? entry.Value : entry.Key;
     return true;
   }
 
@@ -100,13 +122,14 @@ public static class ItemDataHelper
   public static bool TryGetInt(ZDO zdo, int hash, out int value)
   {
     value = 0;
-    if (hash != ZDOVars.s_stack && hash != ZDOVars.s_quality && hash != ZDOVars.s_variant && hash != ZDOVars.s_worldLevel && hash != ZDOVars.s_pickedUp) return false;
+    if (hash != ZDOVars.s_stack && hash != ZDOVars.s_quality && hash != ZDOVars.s_variant && hash != ZDOVars.s_worldLevel && hash != ZDOVars.s_pickedUp && hash != ZDOVars.s_dataCount) return false;
     if (!TryLoadDrop(zdo, out var itemData)) return false;
     if (hash == ZDOVars.s_stack) value = itemData.m_stack;
     else if (hash == ZDOVars.s_quality) value = itemData.m_quality;
     else if (hash == ZDOVars.s_variant) value = itemData.m_variant;
     else if (hash == ZDOVars.s_worldLevel) value = itemData.m_worldLevel;
     else if (hash == ZDOVars.s_pickedUp) value = itemData.m_pickedUp ? 1 : 0;
+    else if (hash == ZDOVars.s_dataCount) value = itemData.m_customData.Count;
     else return false;
     return true;
   }
