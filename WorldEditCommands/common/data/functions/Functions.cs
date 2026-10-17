@@ -41,14 +41,17 @@ public partial class Functions(string prefab, string[] args, Vector3 pos)
   private readonly double time = ZNet.instance.GetTimeSeconds();
 
   public int Amount = 0;
-  private List<ZDOID>? pokeTargets;
-  private Dictionary<string, int>? pokeCounts;
+  private Dictionary<int, List<ZDOID>>? pokeTargets;
+  private Dictionary<int, Dictionary<string, int>>? pokeCounts;
 
-  public void SetPokeTargets(List<ZDOID> targets)
+  public void SetPokeTargets(int slot, List<ZDOID> targets)
   {
-    pokeTargets = targets;
+    pokeTargets ??= [];
+    if (!pokeTargets.TryGetValue(slot, out var slotTargets))
+      pokeTargets[slot] = slotTargets = [];
+    slotTargets.AddRange(targets);
     pokeCounts = null;
-    Amount = targets.Count;
+    Amount += targets.Count;
   }
   public string Replace(string str) => Replace(str, false, false);
   public string Replace(string str, bool preventInjections, bool allValues)
@@ -280,17 +283,29 @@ public partial class Functions(string prefab, string[] args, Vector3 pos)
      _ => null,
    };
 
-  private string GetPokeCount(string value, string defaultValue)
+  private string GetPokeCount(string value, string defaultValue) =>
+    pokeTargets == null ? defaultValue : GetPokeCount(GetPokeCounts(), value, defaultValue);
+
+  private static string GetPokeCount(Dictionary<int, Dictionary<string, int>> slots, string value, string defaultValue) =>
+    GetCount(slots, slots.Values.SelectMany(s => s).GroupBy(c => c.Key).ToDictionary(g => g.Key, g => g.Sum(c => c.Value)), value, defaultValue);
+
+  protected static string GetCount(Dictionary<int, Dictionary<string, int>> slots, Dictionary<string, int> counts, string value, string defaultValue)
   {
-    if (value == "" || pokeTargets == null) return defaultValue;
-    var counts = GetPokeCounts();
+    if (value == "") return defaultValue;
+    if (Parse.TryInt(value, out var slot))
+      return slots.TryGetValue(slot, out var slotCounts) ? slotCounts.Values.Sum().ToString(CultureInfo.InvariantCulture) : defaultValue;
     if (counts.TryGetValue(value, out var exact)) return exact.ToString(CultureInfo.InvariantCulture);
+    if (ValueGroups.TryGet(value, out var members)) return SumCounts(counts, members);
     if (!Wildcard.IsPattern(value)) return defaultValue;
     var sum = counts.Where(kv => Wildcard.Match(kv.Key, value)).Sum(kv => kv.Value);
     return sum.ToString(CultureInfo.InvariantCulture);
   }
 
-  private Dictionary<string, int> GetPokeCounts() => pokeCounts ??= GetPokeCounts(pokeTargets!);
+  protected static string SumCounts(Dictionary<string, int> counts, List<string> members) =>
+    counts.Where(kv => members.Contains(kv.Key)).Sum(kv => kv.Value).ToString(CultureInfo.InvariantCulture);
+
+  private Dictionary<int, Dictionary<string, int>> GetPokeCounts() =>
+    pokeCounts ??= pokeTargets!.ToDictionary(kv => kv.Key, kv => GetPokeCounts(kv.Value));
 
   private static Dictionary<string, int> GetPokeCounts(List<ZDOID> targets)
   {
