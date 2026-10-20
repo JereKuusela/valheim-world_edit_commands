@@ -192,6 +192,7 @@ Following parameters are available:
 - `from=x,z,y`: Allows overriding the player's position for the command. Used by `redo` and can be useful for some advanced usage.
 - `pos=forward,right,up`: Relative position (meters) from the player. If not given, the location will be placed at the player. If y coordinate is not given, the location snaps to the ground.
 - `rot=degrees`: Relative rotation (degrees) from the player's rotation.
+- `center`: Moves the location away from the zone border, if needed, so it fits inside the zone of the player (or of `pos`). Same as the base game.
 - `refRot=degrees`: Allows overriding the player's rotation for the command. Used by `redo` and can be useful for some advanced usage.
 
 ### Examples

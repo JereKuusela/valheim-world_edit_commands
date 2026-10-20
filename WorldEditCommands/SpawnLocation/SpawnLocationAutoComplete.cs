@@ -9,7 +9,8 @@ public class SpawnLocationAutoComplete
     "pos",
     "rot",
     "from",
-    "refRot"
+    "refRot",
+    "center"
   ];
   public SpawnLocationAutoComplete()
   {
@@ -38,6 +39,10 @@ public class SpawnLocationAutoComplete
       {
         "rot",
         index => index == 0 ? ParameterInfo.Create("rot", "degrees", "Sets the location rotation. Randomized by default.") : ParameterInfo.None
+      },
+      {
+        "center",
+        index => index == 0 ? ParameterInfo.Create("center", "Moves the location inside its zone (like the base game).") : ParameterInfo.None
       },
       {
         "refRot",
