@@ -8,6 +8,7 @@ public class TerrainAutoComplete
   public List<string> NamedParameters = [
     "lower",
     "level",
+    "altitude",
     "raise",
     "reset",
     "paint",
@@ -137,6 +138,10 @@ public class TerrainAutoComplete
       {
         "level",
         index => index == 0 ? ParameterInfo.Create("level or level=<color=yellow>y</color>", "Levels the terrain to a given y coordinate. Without parameters, levels to the terrain height below the player (or to the path height with <color=yellow>path</color>).") : ParameterInfo.None
+      },
+      {
+        "altitude",
+        index => index == 0 ? ParameterInfo.Create("altitude", "Makes the y coordinates of <color=yellow>level</color>, <color=yellow>min</color>, <color=yellow>max</color> and <color=yellow>within</color> relative to the ocean level (y=30).") : ParameterInfo.None
       },
       {
         "within",

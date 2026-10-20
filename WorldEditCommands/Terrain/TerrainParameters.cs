@@ -21,6 +21,7 @@ public class TerrainParameters
   public bool Reset = false;
   public bool Void = false;
   public float? Delta;
+  public float SeaLevel = 0f;
   public float? Level;
   public float? Min;
   public float? Max;
@@ -75,6 +76,8 @@ public class TerrainParameters
     {
       var split = arg.Split('=');
       var name = split[0].ToLower();
+      if (name == "altitude")
+        SeaLevel = ZoneSystem.instance.m_waterLevel;
       if (split.Length < 2) continue;
       var value = split[1].ToLower();
       if (name == "from")
@@ -155,9 +158,9 @@ public class TerrainParameters
       if (name == "delta")
         Set = Parse.Float(value, 0f);
       if (name == "min")
-        Min = Parse.Float(value, float.MinValue);
+        Min = Parse.Float(value, float.MinValue) + SeaLevel;
       if (name == "max")
-        Max = Parse.Float(value, float.MaxValue);
+        Max = Parse.Float(value, float.MaxValue) + SeaLevel;
       if (name == "raise")
         Delta = Parse.Float(value, 0f);
       if (name == "lower")
@@ -172,10 +175,13 @@ public class TerrainParameters
       if (name == "offset")
         Offset = Parse.VectorZXY(values);
       if (name == "within")
-        Within = Parse.FloatRange(value);
+      {
+        var within = Parse.FloatRange(value);
+        Within = new(within.Min + SeaLevel, within.Max + SeaLevel);
+      }
       if (name == "level")
       {
-        Level = Parse.Float(value, Position.y);
+        Level = Parse.Float(value, Position.y - SeaLevel) + SeaLevel;
         LevelToPath = false;
       }
       if (name == "step")
@@ -192,6 +198,8 @@ public class TerrainParameters
       HandlePath(args);
     else
       HandleTo(args);
+    if (SeaLevel != 0f && LevelToPath)
+      throw new InvalidOperationException("<color=yellow>altitude</color> can't be used with <color=yellow>level</color> without a value.");
     if (Radius != null && Depth != null)
       throw new InvalidOperationException($"<color=yellow>circle</color> and <color=yellow>rect</color> parameters can't be used together.");
 
