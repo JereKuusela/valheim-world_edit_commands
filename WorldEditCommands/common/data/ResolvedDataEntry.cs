@@ -217,8 +217,6 @@ public class ResolvedDataEntry
 
   private void HandleConnection(ZDO ownZdo)
   {
-    var originalId = OriginalId ?? ZDOID.None;
-    if (originalId == ZDOID.None) return;
     var type = ConnectionType ?? ZDOExtraData.ConnectionType.None;
     var targetId = TargetConnectionId ?? ZDOID.None;
     var ownId = ownZdo.m_uid;
@@ -236,6 +234,8 @@ public class ResolvedDataEntry
     else
     {
       // Otherwise all zdos must be scanned.
+      var originalId = OriginalId ?? ZDOID.None;
+      if (originalId == ZDOID.None) return;
       var other = ZDOExtraData.s_connections.FirstOrDefault(kvp => kvp.Value.m_target == originalId);
       if (other.Value == null) return;
       var otherZdo = ZDOMan.instance.GetZDO(other.Key);

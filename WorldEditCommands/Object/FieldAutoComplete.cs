@@ -655,7 +655,8 @@ public class FieldAutoComplete
     },{
       nameof(ShipConstructor), new Dictionary<string, Type>
       {
-        { "user", typeof(long) },
+        { "done", typeof(bool) },
+        { "spawntime", typeof(long) },
       }
     },{
       nameof(Sign), new Dictionary<string, Type>
