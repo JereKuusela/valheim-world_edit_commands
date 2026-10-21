@@ -26,7 +26,7 @@ public partial class Functions
       .AddMinutes(minute)
       .AddSeconds(second);
 
-    return dt.ToString(format, CultureInfo.InvariantCulture);
+    return FormatTime(dt, format);
   }
   private string HandleRealtime(string value)
   {
@@ -35,6 +35,8 @@ public partial class Functions
     var timezoneOffset = parts.Length > 1 ? Parse.Float(parts[1], 0f) : (float)TimeZoneInfo.Local.BaseUtcOffset.TotalHours;
     var utcNow = DateTimeOffset.UtcNow;
     var offsetTime = utcNow.AddHours(timezoneOffset);
-    return offsetTime.ToString(format, CultureInfo.InvariantCulture);
+    return FormatTime(offsetTime, format);
   }
+  private static string FormatTime(DateTimeOffset time, string format) =>
+    time.ToString(format.Length == 1 ? "%" + format : format, CultureInfo.InvariantCulture);
 }
