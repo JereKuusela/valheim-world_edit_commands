@@ -1,6 +1,7 @@
 ﻿// Shared code: keep identical in EWD, EWP and WEC (common/). Sync changes to all three.
 using System.Collections.Generic;
 using System.Linq;
+using Service;
 using UnityEngine;
 
 namespace Data;
@@ -144,6 +145,7 @@ public class ResolvedDataEntry
 
   public virtual void Write(ZDO zdo)
   {
+    Log.Warning("Writing ZDO with ID: " + zdo.m_uid);
     var id = zdo.m_uid;
     if (Floats?.Count > 0)
     {
@@ -183,6 +185,7 @@ public class ResolvedDataEntry
     }
     if (ByteArrays?.Count > 0)
     {
+      Log.Warning("Writing bytes to ZDO with ID: " + zdo.m_uid);
       ZDOHelper.Init(ZDOExtraData.s_byteArrays, id);
       foreach (var pair in ByteArrays)
         ZDOExtraData.s_byteArrays[id].SetValue(pair.Key, pair.Value);

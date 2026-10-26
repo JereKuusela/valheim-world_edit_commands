@@ -179,6 +179,14 @@ public static class Actions
     if (!obj) return;
     obj.m_itemData.m_quality = level;
     obj.m_nview.GetZDO().Set(Hash.Quality, level);
+    SaveItem(obj);
+  }
+  // Vanilla Load() only reads the s_itemData blob, so local edits must be written there.
+  private static void SaveItem(ItemDrop obj)
+  {
+    var zdo = obj.m_nview.GetZDO();
+    ItemDrop.SaveToZDO(obj.m_itemData, zdo);
+    obj.m_loadedRevision = zdo.DataRevision;
   }
   public static float GetHealth(ZNetView obj)
   {
@@ -272,6 +280,7 @@ public static class Actions
     if (health == 0) health = obj.m_itemData.GetMaxDurability();
     obj.m_itemData.m_durability = health;
     obj.m_nview.GetZDO().Set(Hash.Durability, obj.m_itemData.m_durability);
+    SaveItem(obj);
     return previous;
   }
 
@@ -297,6 +306,7 @@ public static class Actions
     if (!obj) return;
     obj.m_itemData.m_variant = variant;
     obj.m_nview.GetZDO().Set(Hash.Variant, variant);
+    SaveItem(obj);
   }
   public static void SetName(GameObject obj, string name)
   {
@@ -313,6 +323,7 @@ public static class Actions
     if (!obj) return;
     obj.m_itemData.m_crafterID = id;
     obj.m_nview.GetZDO().Set(Hash.CrafterID, obj.m_itemData.m_crafterID);
+    SaveItem(obj);
   }
   public static void SetName(ItemDrop obj, string name)
   {
@@ -321,6 +332,7 @@ public static class Actions
     obj.m_nview.GetZDO().Set(Hash.CrafterID, obj.m_itemData.m_crafterID);
     obj.m_itemData.m_crafterName = name;
     obj.m_nview.GetZDO().Set(Hash.CrafterName, name);
+    SaveItem(obj);
   }
   public static int SetStack(GameObject obj, int remaining)
   {
@@ -330,6 +342,7 @@ public static class Actions
     var stack = Math.Min(remaining, item.m_itemData.m_shared.m_maxStackSize);
     item.m_itemData.m_stack = stack;
     item.m_nview.GetZDO().Set(Hash.Stack, stack);
+    SaveItem(item);
     return stack;
   }
   public static void SetRotation(GameObject obj, Quaternion rotation)

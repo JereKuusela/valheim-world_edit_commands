@@ -88,7 +88,8 @@ public class SpawnObjectCommand
         Actions.SetHunt(obj, pars.Hunt.Value);
       if (pars.Tamed.HasValue)
         Actions.SetTame(obj, pars.Tamed.Value);
-      total -= Actions.SetStack(obj, total);
+      if (pars.Amount != null)
+        total -= Actions.SetStack(obj, total);
       Actions.SetVisual(obj, VisSlot.Helmet, pars.Helmet);
       Actions.SetVisual(obj, VisSlot.Chest, pars.Chest);
       Actions.SetVisual(obj, VisSlot.Shoulder, pars.Shoulders);
@@ -124,7 +125,7 @@ public class SpawnObjectCommand
 
       SpawnObjectParameters pars = new(args);
       var itemDrop = prefab.GetComponent<ItemDrop>();
-      var amount = Helper.RandomValue(pars.Amount);
+      var amount = pars.Amount == null ? 1 : Helper.RandomValue(pars.Amount);
       var count = amount;
       if (itemDrop)
         count = (int)Math.Ceiling((double)count / itemDrop.m_itemData.m_shared.m_maxStackSize);

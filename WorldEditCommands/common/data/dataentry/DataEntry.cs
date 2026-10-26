@@ -128,10 +128,15 @@ public partial class DataEntry
     if (data.ItemAmount != null)
       ItemAmount = data.ItemAmount;
 
-    ConnectionType = data.ConnectionType;
-    ConnectionHash = data.ConnectionHash;
-    OriginalId = data.OriginalId;
-    TargetConnectionId = data.TargetConnectionId;
+    if (data.ConnectionType != null)
+    {
+      ConnectionType = data.ConnectionType;
+      ConnectionHash = data.ConnectionHash;
+    }
+    if (data.OriginalId != null)
+      OriginalId = data.OriginalId;
+    if (data.TargetConnectionId != null)
+      TargetConnectionId = data.TargetConnectionId;
     if (data.Persistent != null)
       Persistent = data.Persistent;
     if (data.Distant != null)
@@ -142,7 +147,7 @@ public partial class DataEntry
       Position = data.Position;
     if (data.Rotation != null)
       Rotation = data.Rotation;
-    CanBeInjected = data.CanBeInjected;
+    CanBeInjected &= data.CanBeInjected;
   }
   // Reusing the same object keeps references working.
   public DataEntry Reset(DataYaml data)

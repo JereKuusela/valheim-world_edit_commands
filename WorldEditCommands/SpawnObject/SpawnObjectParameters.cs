@@ -12,7 +12,7 @@ class SpawnObjectParameters : SharedObjectParameters
   public Range<Vector3> RelativePosition = new(Vector3.zero);
   public Vector3 From = Vector3.zero;
   public Vector3? To = null;
-  public Range<int> Amount = new(1);
+  public Range<int>? Amount;
   public string? Name;
   public long? CrafterId;
   public Range<int>? Variant;

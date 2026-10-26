@@ -155,6 +155,7 @@ public class DataHelper
     ZNetView.m_initZDO.Type = view.m_type;
     ZNetView.m_initZDO.Distant = view.m_distant;
     ZNetView.m_initZDO.Persistent = view.m_persistent;
+    ZNetView.m_initZDO.m_prefab = prefab;
     // Data values override the prefab defaults.
     if (data != null)
       Write(data, pars, ZNetView.m_initZDO);
