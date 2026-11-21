@@ -11,24 +11,9 @@ public class SpawnObjectCommand
   private static List<GameObject> SpawnObject(SpawnObjectParameters pars, GameObject prefab, int count)
   {
     List<GameObject> spawned = [];
-    var defaultRadius = (count - 1) * 0.5f;
     for (int i = 0; i < count; i++)
     {
-      Vector3 spawnPosition;
-      if (pars.To.HasValue)
-        spawnPosition = pars.GetPosition(i, count);
-      else
-      {
-        spawnPosition = pars.GetPosition();
-        var random = UnityEngine.Random.insideUnitCircle * (pars.Radius?.Max ?? defaultRadius);
-        if (pars.Radius != null && pars.Radius.Min != pars.Radius.Max)
-        {
-          var angle = UnityEngine.Random.Range(0f, Mathf.PI * 2f);
-          random = new Vector2(Mathf.Sin(angle), Mathf.Cos(angle)).normalized * Helper.RandomValue(pars.Radius);
-        }
-        spawnPosition.x += random.x;
-        spawnPosition.z += random.y;
-      }
+      var spawnPosition = pars.GetSpawnPosition(i, count);
       if (pars.Snap)
       {
         // TODO: Use World Gen if no zone.

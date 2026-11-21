@@ -118,10 +118,17 @@ class SpawnObjectParameters : SharedObjectParameters
   }
 
   public Vector3 GetPosition() => From + BaseRotation * Helper.RandomValue(RelativePosition);
-  public Vector3 GetPosition(int index, int max)
+  public Vector3 GetSpawnPosition(int index, int count)
   {
     if (To.HasValue)
-      return From + (To.Value - From) * index / (max - 1);
-    return From;
+      return count > 1 ? Vector3.Lerp(From, To.Value, (float)index / (count - 1)) : From;
+    var position = GetPosition();
+    var random = UnityEngine.Random.insideUnitCircle * (Radius?.Max ?? (count - 1) * 0.5f);
+    if (Radius != null && Radius.Min != Radius.Max)
+    {
+      var angle = UnityEngine.Random.Range(0f, Mathf.PI * 2f);
+      random = new Vector2(Mathf.Sin(angle), Mathf.Cos(angle)).normalized * Helper.RandomValue(Radius);
+    }
+    return position + new Vector3(random.x, 0f, random.y);
   }
 }

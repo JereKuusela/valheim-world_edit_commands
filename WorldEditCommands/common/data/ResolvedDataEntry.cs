@@ -145,7 +145,6 @@ public class ResolvedDataEntry
 
   public virtual void Write(ZDO zdo)
   {
-    Log.Warning("Writing ZDO with ID: " + zdo.m_uid);
     var id = zdo.m_uid;
     if (Floats?.Count > 0)
     {

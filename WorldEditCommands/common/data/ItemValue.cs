@@ -47,7 +47,7 @@ public partial class ItemValue(ItemYaml data)
   {
     ZPackage pkg = new();
     // Inventory uses int for version, itemDrops uses byte.
-    pkg.Write((int)Version.Item.ChunksNCheats);
+    pkg.Write((int)Version.Item.NewCheats);
     items = Generate(f, items, size, amount);
     items = [.. items.Where(item => item.CanWrite())];
     pkg.Write((ushort)items.Count);

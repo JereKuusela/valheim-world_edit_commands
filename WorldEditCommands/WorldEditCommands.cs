@@ -29,6 +29,7 @@ public class WorldEditCommands : BaseUnityPlugin
     IsTweaks = Chainloader.PluginInfos.ContainsKey("world_edit_tweaks");
     IsEWFactions = Chainloader.PluginInfos.ContainsKey("expand_world_factions");
     DataLoading.SetupWatcher();
+    BlueprintWatcher.Start();
 
   }
 }
@@ -48,6 +49,7 @@ public class SetCommands
   {
     new SpawnLocationCommand();
     new SpawnObjectCommand();
+    new SpawnBlueprintCommand();
     new ObjectCommand();
     new TerrainCommand();
     new AliasesCommand();
