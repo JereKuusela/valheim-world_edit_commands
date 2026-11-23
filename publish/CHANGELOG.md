@@ -1,5 +1,7 @@
 - v1.84
   - Fixes blueprint loading not always recognizing commented out lines.
+  - Fixes `spawn_object` applying field edits post spawn (too late for some changes).
+  - Fixes `object` field edits not fully refreshing the object (missing some changes).
   - Fixes `spawn_object` snapping sometimes placing objects below the terrain.
   - Fixes `object model=` not being undoable.
   - Fixes `object` ignoring the `type` parameter when targeting the hovered object.
