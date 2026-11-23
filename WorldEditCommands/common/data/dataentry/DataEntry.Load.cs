@@ -268,9 +268,9 @@ public partial class DataEntry
     {
       CanBeInjected = false;
       var component = key.Split('.')[0];
-      Ints ??= [];
-      Ints[ZdoHelper.Hash("HasFields")] = DataValue.Constant(1);
-      Ints[ZdoHelper.Hash($"HasFields{component}")] = DataValue.Constant(1);
+      Components ??= [];
+      Components[ZdoHelper.Hash("HasFields")] = DataValue.Constant(1);
+      Components[ZdoHelper.Hash($"HasFields{component}")] = DataValue.Constant(1);
     }
     switch (type)
     {
