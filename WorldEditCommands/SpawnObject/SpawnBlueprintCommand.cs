@@ -70,8 +70,7 @@ public class SpawnBlueprintCommand
       var spawned = 0;
       var skipped = 0;
       var hasTerrain = false;
-      UndoHelper.BeginAction();
-      try
+      UndoHelper.Run(() =>
       {
         for (int index = 0; index < count; index++)
         {
@@ -88,11 +87,7 @@ public class SpawnBlueprintCommand
             else skipped++;
           }
         }
-      }
-      finally
-      {
-        UndoHelper.EndAction();
-      }
+      });
       args.Context.AddString($"Spawned blueprint {name}: {spawned} objects.");
       if (skipped > 0) args.Context.AddString($"Skipped {skipped} objects that could not be tracked for undo.");
       if (hasTerrain) args.Context.AddString("Blueprint terrain was not applied.");

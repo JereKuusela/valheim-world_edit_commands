@@ -206,6 +206,11 @@ public partial class DataEntry
       Position = DataValue.Vector3(data.position!);
     if (!string.IsNullOrWhiteSpace(data.rotation))
       Rotation = DataValue.Quaternion(data.rotation!);
+    if (!string.IsNullOrWhiteSpace(data.prefab))
+    {
+      Prefab = DataValue.Hash(data.prefab!);
+      CanBeInjected = false;
+    }
     if (data.persistent != null)
       Persistent = DataValue.Bool(data.persistent);
     if (data.distant != null)

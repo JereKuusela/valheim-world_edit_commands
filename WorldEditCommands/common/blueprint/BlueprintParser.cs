@@ -110,9 +110,7 @@ public partial class Blueprints
   // Metadata headers keep the current section so that files without a #Pieces header still work.
   private static PlanBuildSection ReadPlanBuildHeader(Blueprint bp, string row, PlanBuildSection current)
   {
-    // Terrain rows always end at the next header.
-    if (current is PlanBuildSection.TerrainHeight or PlanBuildSection.TerrainPaint)
-      current = PlanBuildSection.Ignore;
+    var afterMetadata = current is PlanBuildSection.TerrainHeight or PlanBuildSection.TerrainPaint ? PlanBuildSection.Ignore : current;
     var separator = row.IndexOf(':');
     var name = (separator < 0 ? row : row.Substring(0, separator)).Trim();
     var value = separator < 0 ? "" : row.Substring(separator + 1);
@@ -124,37 +122,37 @@ public partial class Blueprints
     {
       if (separator < 0) throw new FormatException("#Center requires a prefab name.");
       bp.CenterPiece = value;
-      return current;
+      return afterMetadata;
     }
     if (name.Equals("#name", StringComparison.OrdinalIgnoreCase))
     {
       bp.Title = value;
-      return current;
+      return afterMetadata;
     }
     if (name.Equals("#creator", StringComparison.OrdinalIgnoreCase))
     {
       bp.Creator = value;
-      return current;
+      return afterMetadata;
     }
     if (name.Equals("#description", StringComparison.OrdinalIgnoreCase))
     {
       bp.Description = value;
-      return current;
+      return afterMetadata;
     }
     if (name.Equals("#category", StringComparison.OrdinalIgnoreCase))
     {
       bp.Category = value;
-      return current;
+      return afterMetadata;
     }
     if (name.Equals("#coordinates", StringComparison.OrdinalIgnoreCase))
     {
       bp.Coordinates = Parse.VectorXZY(value);
-      return current;
+      return afterMetadata;
     }
     if (name.Equals("#rotation", StringComparison.OrdinalIgnoreCase))
     {
       bp.Rotation = Parse.VectorXZY(value);
-      return current;
+      return afterMetadata;
     }
     if (name.Equals("#height", StringComparison.OrdinalIgnoreCase) || name.Equals("#paint", StringComparison.OrdinalIgnoreCase))
     {
@@ -193,11 +191,7 @@ public partial class Blueprints
         return PlanBuildSection.Ignore;
       }
     }
-    // Plain comments don't affect the section. Unknown sections must not inherit the previous
-    // parser state, so future PlanBuild extensions are not interpreted as pieces.
-    if (row.Length == 1 || char.IsWhiteSpace(row[1]))
-      return current;
-    return PlanBuildSection.Ignore;
+    return current;
   }
 
   private static BlueprintObject GetPlanBuildObject(string row, string fileName, bool loadData)

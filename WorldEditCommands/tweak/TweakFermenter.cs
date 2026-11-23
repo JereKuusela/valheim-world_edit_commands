@@ -3,21 +3,17 @@ using ServerDevcommands;
 
 namespace WorldEditCommands;
 
-public class TweakFermenterCommand : TweakCommand {
-  protected override string DoOperation(ZNetView view, string operation, string? value) {
-    throw new NotImplementedException();
-  }
-  protected override string DoOperation(ZNetView view, string operation, float? value) {
+public class TweakFermenterCommand : TweakCommand
+{
+  protected override string DoOperation(ZNetView view, string operation, float? value)
+  {
     if (operation == "speed")
       return TweakActions.Speed(view, value);
     throw new NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, int? value) {
-    throw new NotImplementedException();
-  }
-
-  protected override string DoOperation(ZNetView view, string operation, string[] value) {
+  protected override string DoOperation(ZNetView view, string operation, string[] value)
+  {
     if (operation == "conversion")
       return TweakActions.Conversions(view, value);
     if (operation == "inputeffect")
@@ -29,15 +25,8 @@ public class TweakFermenterCommand : TweakCommand {
     throw new NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, bool? value) {
-    throw new NotImplementedException();
-  }
-
-  protected override string DoOperation(ZNetView view, string operation, long? value) {
-    throw new NotImplementedException();
-  }
-
-  public TweakFermenterCommand() {
+  public TweakFermenterCommand()
+  {
     AddComponentAutomatically = false;
     Component = typeof(Fermenter);
     ComponentName = "fermenter";

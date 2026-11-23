@@ -25,6 +25,19 @@ public class UndoHelper
     TerrainInfo.Clear();
   }
   public static List<ZDO> GetSpawned() => SpawnedInfo;
+  // Ensures the action is always closed so that tracking doesn't leak on errors.
+  public static void Run(Action action)
+  {
+    BeginAction();
+    try
+    {
+      action();
+    }
+    finally
+    {
+      EndAction();
+    }
+  }
   // Bit of a hack in case of nested actions.
   // Normally using the stack should be avoided because exceptions would leave it in an inconsistent state.
   private static int SubStack = 0;
@@ -47,6 +60,11 @@ public class UndoHelper
   {
     SpawnedInfo.Add(zdo);
   }
+  // Recreated objects are edits, not spawns.
+  public static void RemoveSpawnAction(ZDO zdo)
+  {
+    SpawnedInfo.Remove(zdo);
+  }
 
   public static void AddTerrainAction(Dictionary<Vector3, TerrainUndoData> before, Dictionary<Vector3, TerrainUndoData> after, Vector3 position, float radius)
   {
@@ -67,6 +85,7 @@ public class UndoHelper
     entry.Original = zdo;
     EditedInfo[zdo.m_uid] = entry;
     EditedInfo.Remove(original);
+    RemoveSpawnAction(zdo);
   }
   public static void EndAction()
   {
@@ -187,8 +206,8 @@ public class UndoAction(IEnumerable<UndoData> data, IEnumerable<UndoTerrain>? te
     var message = CreateMessage();
     for (var i = TerrainData.Length - 1; i >= 0; i--)
       TerrainData[i].Undo();
-    foreach (var data in Data)
-      data.Undo();
+    for (var i = Data.Length - 1; i >= 0; i--)
+      Data[i].Undo();
     return message;
   }
 

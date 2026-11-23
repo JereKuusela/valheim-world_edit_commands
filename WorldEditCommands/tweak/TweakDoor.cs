@@ -11,16 +11,6 @@ public class TweakDoorCommand : TweakCommand
       return TweakActions.DoorKey(view, value);
     throw new NotImplementedException();
   }
-  protected override string DoOperation(ZNetView view, string operation, float? value)
-  {
-    throw new NotImplementedException();
-  }
-
-  protected override string DoOperation(ZNetView view, string operation, int? value)
-  {
-    throw new NotImplementedException();
-  }
-
   protected override string DoOperation(ZNetView view, string operation, string[] value)
   {
     if (operation == "openeffect")
@@ -40,11 +30,6 @@ public class TweakDoorCommand : TweakCommand
       return TweakActions.Consume(view, value);
     if (operation == "noclose")
       return TweakActions.NoClose(view, value);
-    throw new NotImplementedException();
-  }
-
-  protected override string DoOperation(ZNetView view, string operation, long? value)
-  {
     throw new NotImplementedException();
   }
 

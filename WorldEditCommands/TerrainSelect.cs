@@ -38,7 +38,6 @@ public partial class Terrain
     List<Heightmap> heightMaps = [];
     Heightmap.FindHeightmap(position, radius.Max + 1, heightMaps);
     var pos = ZNet.instance.GetReferencePosition();
-    var ns = ZNetScene.instance;
     return heightMaps.Where(hmap => ZNetScene.InActiveArea(hmap.transform.position, pos)).Select(hmap => hmap.GetAndCreateTerrainCompiler()).ToArray();
   }
   public static TerrainComp[] GetCompilers(Vector3 position, Range<float> width, Range<float> depth, float angle)
@@ -51,7 +50,6 @@ public partial class Terrain
     var size = maxDimension * dimensionMultiplier;
     Heightmap.FindHeightmap(position, size + 1, heightMaps);
     var pos = ZNet.instance.GetReferencePosition();
-    var ns = ZNetScene.instance;
     return heightMaps.Where(hmap => ZNetScene.InActiveArea(hmap.transform.position, pos)).Select(hmap => hmap.GetAndCreateTerrainCompiler()).ToArray();
   }
 
@@ -80,7 +78,7 @@ public partial class Terrain
       return height >= min && height <= max;
     };
   }
-  public static void GetHeightNodesWithCircle(List<HeightNode> nodes, TerrainComp compiler, Vector3 centerPos, Range<float> radius)
+  public static void GetNodesWithCircle<T>(List<T> nodes, TerrainComp compiler, Vector3 centerPos, Range<float> radius) where T : TerrainNode, new()
   {
     if (radius.Max == 0f) return;
     var max = compiler.m_width + 1;
@@ -115,7 +113,7 @@ public partial class Terrain
 
   private static float GetX(float x, float z, float angle) => Mathf.Cos(angle) * x - Mathf.Sin(angle) * z;
   private static float GetZ(float x, float z, float angle) => Mathf.Sin(angle) * x + Mathf.Cos(angle) * z;
-  public static void GetHeightNodesWithRect(List<HeightNode> nodes, TerrainComp compiler, Vector3 centerPos, Range<float> width, Range<float> depth, float angle)
+  public static void GetNodesWithRect<T>(List<T> nodes, TerrainComp compiler, Vector3 centerPos, Range<float> width, Range<float> depth, float angle) where T : TerrainNode, new()
   {
     if (width.Max == 0f || depth.Max == 0f) return;
     var max = compiler.m_width + 1;
@@ -139,60 +137,6 @@ public partial class Terrain
           DistanceWidth = distanceWidth,
           DistanceDepth = distanceDepth,
           Distance = Mathf.Max(Mathf.Abs(distanceWidth), Mathf.Abs(distanceDepth)),
-          Compiler = compiler
-        });
-      }
-    }
-  }
-
-  public static void GetPaintNodesWithRect(List<PaintNode> nodes, TerrainComp compiler, Vector3 centerPos, Range<float> width, Range<float> depth, float angle)
-  {
-    var max = compiler.m_width + 1;
-    for (int x = 0; x < max; x++)
-    {
-      for (int z = 0; z < max; z++)
-      {
-        var nodePos = VertexToWorld(compiler.m_hmap, x, z);
-        var rawDx = nodePos.x - centerPos.x;
-        var rawDz = nodePos.z - centerPos.z;
-        var dx = GetX(rawDx, rawDz, angle);
-        var dz = GetZ(rawDx, rawDz, angle);
-        if (!Helper.Within(width, depth, Mathf.Abs(dx), Mathf.Abs(dz)))
-          continue;
-        var distanceWidth = dx / width.Max;
-        var distanceDepth = dz / depth.Max;
-        nodes.Add(new()
-        {
-          Index = z * max + x,
-          Position = nodePos,
-          DistanceWidth = distanceWidth,
-          DistanceDepth = distanceDepth,
-          Distance = Mathf.Max(Mathf.Abs(distanceWidth), Mathf.Abs(distanceDepth)),
-          Compiler = compiler
-        });
-      }
-    }
-  }
-
-  public static void GetPaintNodesWithCircle(List<PaintNode> nodes, TerrainComp compiler, Vector3 centerPos, Range<float> radius)
-  {
-    var max = compiler.m_width + 1;
-    for (int x = 0; x < max; x++)
-    {
-      for (int z = 0; z < max; z++)
-      {
-        var nodePos = VertexToWorld(compiler.m_hmap, x, z);
-        var dx = nodePos.x - centerPos.x;
-        var dz = nodePos.z - centerPos.z;
-        var distance = Utils.DistanceXZ(centerPos, nodePos);
-        if (!Helper.Within(radius, distance)) continue;
-        nodes.Add(new()
-        {
-          Index = z * max + x,
-          Position = nodePos,
-          DistanceWidth = dx / radius.Max,
-          DistanceDepth = dz / radius.Max,
-          Distance = distance / radius.Max,
           Compiler = compiler
         });
       }

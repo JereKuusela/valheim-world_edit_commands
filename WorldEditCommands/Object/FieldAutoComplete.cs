@@ -82,26 +82,6 @@ public class FieldAutoComplete
     }
     return fields;
   }
-  private static Dictionary<string, Dictionary<string, Type>> LoadTweakFields()
-  {
-    Dictionary<string, Dictionary<string, Type>> fields = [];
-    var types = ComponentInfo.Types;
-    var valid = ValidTweakTypes;
-    foreach (var type in types)
-    {
-      if (!fields.ContainsKey(type.Name))
-        fields[type.Name] = [];
-      foreach (var fieldInfo in type.GetFields(BindingFlags.Instance | BindingFlags.Public))
-      {
-        if (!fieldInfo.FieldType.IsEnum && !valid.Contains(fieldInfo.FieldType)) continue;
-        fields[type.Name][fieldInfo.Name] = fieldInfo.FieldType;
-        PreventStripping.AddKey(type, fieldInfo);
-      }
-      if (fields[type.Name].Count == 0)
-        fields.Remove(type.Name);
-    }
-    return fields;
-  }
   public static List<string> GetComponents()
   {
     var prefab = PrefabFromCommand(GetInput());
@@ -135,7 +115,7 @@ public class FieldAutoComplete
   public static List<string> GetComponents(int prefab)
   {
     if (ZNetScene.instance.m_namedPrefabs.TryGetValue(prefab, out var gameObject))
-      return [.. gameObject.GetComponentsInChildren<MonoBehaviour>().Select(c => c.GetType().Name), "zdo"];
+      return [.. gameObject.GetComponentsInChildren<MonoBehaviour>().Select(c => c.GetType().Name).Distinct(), "zdo"];
     return Components;
   }
   public static List<string> GetFields()

@@ -27,22 +27,6 @@ public class DungeonCommand
 
     });
   }
-  private static DungeonDB.RoomData FindRoom(string type)
-  {
-    throw new NotImplementedException();
-  }
-
-  private static string EditRoom(ZNetView obj, int i, string type, Vector3 pos, Quaternion rot)
-  {
-    var id = "room" + i.ToString();
-    var room = FindRoom(type);
-
-    var zdo = obj.GetZDO();
-    zdo.Set(id, room.GetHashCode());
-    zdo.Set(id, pos);
-    zdo.Set(id, rot);
-    return "";
-  }
   private static string PrintRooms(ZNetView obj)
   {
     List<string> info = [];

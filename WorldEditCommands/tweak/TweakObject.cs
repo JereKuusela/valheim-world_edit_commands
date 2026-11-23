@@ -26,11 +26,6 @@ public class TweakObjectCommand : TweakCommand
     throw new NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, int? value)
-  {
-    throw new NotImplementedException();
-  }
-
   protected override string DoOperation(ZNetView view, string operation, string[] value)
   {
     if (operation == "destroyeffect")

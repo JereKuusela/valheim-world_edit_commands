@@ -54,6 +54,9 @@ Each data type has its own values. It's important to use the correct type, other
 ### Data properties
 
 - name: Name of the data entry. Must be unique across all files.
+- prefab: Optional prefab name. `data merge` and `data load` recreate the target as this prefab.
+  - For multiple data entries, last prefab is used.
+  - Not applied for Player objects.
 - ints: List of integer values.
 - floats: List of decimal values.
 - strings: List of text values.

@@ -5,19 +5,23 @@ using ServerDevcommands;
 
 namespace WorldEditCommands;
 
-public class TweakChestCommand : TweakCommand {
-  protected override string DoOperation(ZNetView view, string operation, string? value) {
+public class TweakChestCommand : TweakCommand
+{
+  protected override string DoOperation(ZNetView view, string operation, string? value)
+  {
     if (operation == "name")
       return TweakActions.Name(view, value);
     throw new System.NotImplementedException();
   }
-  protected override string DoOperation(ZNetView view, string operation, float? value) {
+  protected override string DoOperation(ZNetView view, string operation, float? value)
+  {
     if (operation == "respawn")
       return TweakActions.Respawn(view, Hash.Respawn, value);
     throw new System.NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, int? value) {
+  protected override string DoOperation(ZNetView view, string operation, int? value)
+  {
     if (operation == "minamount")
       return TweakActions.MinAmount(view, value);
     if (operation == "maxamount")
@@ -25,23 +29,26 @@ public class TweakChestCommand : TweakCommand {
     throw new System.NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, string[] value) {
+  protected override string DoOperation(ZNetView view, string operation, string[] value)
+  {
     if (operation == "item")
       return TweakActions.Items(view, value);
     throw new System.NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, bool? value) {
+  protected override string DoOperation(ZNetView view, string operation, bool? value)
+  {
     if (operation == "unlock")
       return TweakActions.Unlock(view, value);
     throw new NotImplementedException();
   }
 
-  protected override Dictionary<string, object?> Postprocess(ZNetView view, Dictionary<string, object?> operations) {
+  protected override Dictionary<string, object?> Postprocess(ZNetView view, Dictionary<string, object?> operations)
+  {
     if (!operations.ContainsKey("respawn") || operations.ContainsKey("item")) return operations;
     var container = view.GetComponent<Container>();
     if (!container) return operations;
-    var items = container.GetInventory().GetAllItems().Select(item => $"{item.m_dropPrefab.name},1,{item.m_stack}").ToArray();
+    var items = container.GetInventory().GetAllItems().Where(item => item.m_dropPrefab).Select(item => $"{item.m_dropPrefab.name},1,{item.m_stack},{item.m_stack}").ToArray();
     var newOperations = operations.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
     newOperations["item"] = items;
     if (!newOperations.ContainsKey("minamount"))
@@ -51,17 +58,15 @@ public class TweakChestCommand : TweakCommand {
     return newOperations;
   }
 
-  protected override string DoOperation(ZNetView view, string operation, long? value) {
-    throw new NotImplementedException();
-  }
-
-  public TweakChestCommand() {
+  public TweakChestCommand()
+  {
     Component = typeof(Container);
     ComponentName = "chest";
     SupportedOperations.Add("name", typeof(string));
     if (WorldEditCommands.IsStructureTweaks)
       SupportedOperations.Add("unlock", typeof(bool));
-    if (WorldEditCommands.IsSpawnerTweaks) {
+    if (WorldEditCommands.IsSpawnerTweaks)
+    {
       SupportedOperations.Add("respawn", typeof(float));
       SupportedOperations.Add("minamount", typeof(int));
       SupportedOperations.Add("maxamount", typeof(int));
@@ -73,7 +78,8 @@ public class TweakChestCommand : TweakCommand {
 
 
 
-    if (WorldEditCommands.IsSpawnerTweaks) {
+    if (WorldEditCommands.IsSpawnerTweaks)
+    {
       AutoComplete.Add("respawn", index => index == 0 ? ParameterInfo.Create("respawn=<color=yellow>minutes</color>", "Respawn time. No value to reset.") : ParameterInfo.None);
       AutoComplete.Add("minamount", index => index == 0 ? ParameterInfo.Create("minamount=<color=yellow>number</color>", "Minimum amount of items. No value to reset.") : ParameterInfo.None);
       AutoComplete.Add("maxamount", index => index == 0 ? ParameterInfo.Create("maxamount=<color=yellow>number</color>", "Maximum amount of items. No value to reset.") : ParameterInfo.None);
