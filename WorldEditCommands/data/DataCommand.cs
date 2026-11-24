@@ -100,7 +100,8 @@ public class DataCommand
         if (split.Length < 3)
           throw new InvalidOperationException($"Set: Missing key for {split[1]}.");
         var type = split[0].ToLowerInvariant();
-        var key = int.TryParse(split[1], out var i) ? i : ZDOKeys.Hash(split[1]);
+        var keyName = split[1];
+        var key = int.TryParse(keyName, out var i) ? i : ZDOKeys.Hash(keyName);
         var val = split[2];
         if (type == "float")
           ZDOExtraData.Set(id, key, Parse.Float(val));
@@ -121,6 +122,13 @@ public class DataCommand
         else if (type == "array")
           ZDOExtraData.Set(id, key, Convert.FromBase64String(val));
         else throw new InvalidOperationException($"Unknown type {type}.");
+        var separator = keyName.IndexOf('.');
+        if (separator > 0)
+        {
+          var component = keyName.Substring(0, separator);
+          ZDOExtraData.Set(id, Hash.HasFields, 1);
+          ZDOExtraData.Set(id, $"HasFields{component}".GetStableHashCode(), 1);
+        }
       }
       zdo.IncreaseDataRevision();
       Actions.Refresh(view);

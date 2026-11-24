@@ -12,6 +12,7 @@
   - Fixes `tweak_*` commands applying the `chance` parameter twice.
   - Fixes undo/redo of `data merge/set` removing or duplicating the object.
   - Fixes `tweak_fireplace` parameter `smoke` not resetting without a value.
+  - Fixes `data set` not applying "HasFields" automatically.
   - Fixes some autocomplete texts.
 
 - v1.83
