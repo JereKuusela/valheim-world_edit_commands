@@ -1,7 +1,6 @@
 ﻿// Shared code: keep identical in EWD, EWP and WEC (common/). Sync changes to all three.
 using System.Collections.Generic;
 using System.Linq;
-using Service;
 using UnityEngine;
 
 namespace Data;
@@ -150,44 +149,43 @@ public class ResolvedDataEntry
     {
       ZDOHelper.Init(ZDOExtraData.s_floats, id);
       foreach (var pair in Floats)
-        ZDOExtraData.s_floats[id].SetValue(pair.Key, pair.Value);
+        ZDOExtraData.s_floats[id][pair.Key] = pair.Value;
     }
     if (Vecs?.Count > 0)
     {
       ZDOHelper.Init(ZDOExtraData.s_vec3, id);
       foreach (var pair in Vecs)
-        ZDOExtraData.s_vec3[id].SetValue(pair.Key, pair.Value);
+        ZDOExtraData.s_vec3[id][pair.Key] = pair.Value;
     }
     if (Quats?.Count > 0)
     {
       ZDOHelper.Init(ZDOExtraData.s_quats, id);
       foreach (var pair in Quats)
-        ZDOExtraData.s_quats[id].SetValue(pair.Key, pair.Value);
+        ZDOExtraData.s_quats[id][pair.Key] = pair.Value;
     }
     if (Ints?.Count > 0)
     {
       ZDOHelper.Init(ZDOExtraData.s_ints, id);
       foreach (var pair in Ints)
-        ZDOExtraData.s_ints[id].SetValue(pair.Key, pair.Value);
+        ZDOExtraData.s_ints[id][pair.Key] = pair.Value;
     }
     if (Longs?.Count > 0)
     {
       ZDOHelper.Init(ZDOExtraData.s_longs, id);
       foreach (var pair in Longs)
-        ZDOExtraData.s_longs[id].SetValue(pair.Key, pair.Value);
+        ZDOExtraData.s_longs[id][pair.Key] = pair.Value;
     }
     if (Strings?.Count > 0)
     {
       ZDOHelper.Init(ZDOExtraData.s_strings, id);
       foreach (var pair in Strings)
-        ZDOExtraData.s_strings[id].SetValue(pair.Key, pair.Value);
+        ZDOExtraData.s_strings[id][pair.Key] = pair.Value;
     }
     if (ByteArrays?.Count > 0)
     {
-      Log.Warning("Writing bytes to ZDO with ID: " + zdo.m_uid);
       ZDOHelper.Init(ZDOExtraData.s_byteArrays, id);
       foreach (var pair in ByteArrays)
-        ZDOExtraData.s_byteArrays[id].SetValue(pair.Key, pair.Value);
+        ZDOExtraData.s_byteArrays[id][pair.Key] = pair.Value;
     }
     HandleConnection(zdo);
     HandleHashConnection(zdo);
