@@ -1,3 +1,6 @@
+- v1.85
+  - Fixed for the new update. Thanks Maxime!
+
 - v1.84
   - Fixes blueprint loading not always recognizing commented out lines.
   - Fixes `spawn_object` applying field edits post spawn (too late for some changes).
@@ -22,10 +25,3 @@
 
 - v1.82
   - Fixes custom item data not working when spawning items.
-
-- v1.81
-  - Adds new field `item` to data files which contains decoded item data.
-  - Reworks data system to match Expand World Prefabs mod.
-
-- v1.80
-  - Adds new terrain operations `path`, `arc` and `curve`.
