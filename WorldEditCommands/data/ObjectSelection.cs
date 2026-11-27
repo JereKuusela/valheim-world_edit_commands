@@ -85,12 +85,14 @@ public class ObjectSelection
     }
   }
 
+  public ZNetView? GetHovered() => Selector.GetHovered(50f, IncludedIds, Components, ExcludedIds);
+
   public ZNetView[] GetObjects(Terminal terminal)
   {
     ZNetView[] views;
     if (Connect)
     {
-      var view = Selector.GetHovered(50f, IncludedIds, Components, ExcludedIds);
+      var view = GetHovered();
       if (view == null) return [];
       views = Selector.GetConnected(view, ConnectionIds, IncludedIds, ExcludedIds);
     }
@@ -104,7 +106,7 @@ public class ObjectSelection
     }
     else
     {
-      var view = Selector.GetHovered(50f, IncludedIds, Components, ExcludedIds);
+      var view = GetHovered();
       if (view == null) return [];
       if (!Selector.GetPrefabs(IncludedIds).Contains(view.GetZDO().GetPrefab()))
       {

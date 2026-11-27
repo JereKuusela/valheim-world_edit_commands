@@ -45,7 +45,8 @@ public class DataHelper
   }
   public static ZDO CloneWithKeys(ZDO zdo, string[] keys)
   {
-    var hashed = keys.Select(ZDOKeys.Hash).ToHashSet();
+    var fields = keys.Where(key => key.Contains('.')).SelectMany(key => new[] { "HasFields", "HasFields" + key.Split('.')[0] });
+    var hashed = keys.Concat(fields).Select(ZDOKeys.Hash).ToHashSet();
     var clone = CloneBase(zdo);
     var id = zdo.m_uid;
     var cid = clone.m_uid;
@@ -72,9 +73,8 @@ public class DataHelper
   private static IEnumerable<KeyValuePair<int, T>> GetValues<T>(Dictionary<ZDOID, BinarySearchDictionary<int, T>> values, ZDOID id) =>
     values.TryGetValue(id, out var data) ? data : Enumerable.Empty<KeyValuePair<int, T>>();
 
-  public static bool HasKey(ZDO zdo, string[] keys)
+  public static IEnumerable<int> GetKeys(ZDO zdo)
   {
-    var hashed = keys.Select(ZDOKeys.Hash).ToHashSet();
     var id = zdo.m_uid;
     var floats = GetValues(ZDOExtraData.s_floats, id).Select(kvp => kvp.Key);
     var vecs = GetValues(ZDOExtraData.s_vec3, id).Select(kvp => kvp.Key);
@@ -83,7 +83,12 @@ public class DataHelper
     var longs = GetValues(ZDOExtraData.s_longs, id).Select(kvp => kvp.Key);
     var strings = GetValues(ZDOExtraData.s_strings, id).Select(kvp => kvp.Key);
     var byteArrays = GetValues(ZDOExtraData.s_byteArrays, id).Select(kvp => kvp.Key);
-    return floats.Concat(vecs).Concat(quats).Concat(ints).Concat(longs).Concat(strings).Concat(byteArrays).Any(hashed.Contains);
+    return floats.Concat(vecs).Concat(quats).Concat(ints).Concat(longs).Concat(strings).Concat(byteArrays);
+  }
+  public static bool HasKey(ZDO zdo, string[] keys)
+  {
+    var hashed = keys.Select(ZDOKeys.Hash).ToHashSet();
+    return GetKeys(zdo).Any(hashed.Contains);
   }
   public static ZDO CloneWithoutKeys(ZDO zdo, string[] keys)
   {
