@@ -196,7 +196,7 @@ public class FieldAutoComplete
   {
     if (zdoField)
     {
-      if (!ZdoFields.TryGetValue("zdo", out var zdo)) return typeof(void);
+      if (!ZdoFields.TryGetValue(component, out var zdo)) return typeof(void);
       if (!zdo.TryGetValue(field, out var type)) return typeof(void);
       return type;
     }
@@ -371,6 +371,11 @@ public class FieldAutoComplete
         { "GrowStart", typeof(float) },
       }
     },{
+      nameof(Feast), new Dictionary<string, Type>
+      {
+        { "Value", typeof(int) },
+      }
+    },{
       nameof(Fermenter), new Dictionary<string, Type>
       {
         { "Content", typeof(GameObject) },
@@ -412,6 +417,7 @@ public class FieldAutoComplete
         { "level", typeof(int) },
         { "max_health", typeof(float) },
         { "noise", typeof(float) },
+        { "overrideHoverName", typeof(string) },
         { "RandomSkillFactor", typeof(float) },
         { "seed", typeof(int) },
         { "tamed", typeof(bool) },
@@ -441,6 +447,7 @@ public class FieldAutoComplete
       {
         { "quality", typeof(int) },
         { "item", typeof(GameObject) },
+        { "type", typeof(int) },
         { "variant", typeof(int) },
       }
     },{
@@ -506,8 +513,14 @@ public class FieldAutoComplete
         { "played", typeof(bool) },
       }
     },{
+      nameof(MusicVolume), new Dictionary<string, Type>
+      {
+        { "plays", typeof(int) },
+      }
+    },{
        nameof(Pickable), new Dictionary<string, Type>
       {
+        { "enabled", typeof(bool) },
         { "picked", typeof(bool) },
         { "picked_time", typeof(long) },
       }
@@ -533,6 +546,7 @@ public class FieldAutoComplete
       {
         { "baseValue", typeof(int) },
         { "BodyVelocity", typeof(Vector3) },
+        { "crowned", typeof(bool) },
         { "DebugFly", typeof(bool) },
         { "dodgeinv", typeof(bool) },
         { "dead", typeof(bool) },
@@ -588,6 +602,7 @@ public class FieldAutoComplete
         { "drop_amount2", typeof(float) },
         { "Hue", typeof(float) },
         { "InitVel", typeof(Vector3) },
+        { "level", typeof(int) },
         { "Saturation", typeof(float) },
         { "Value", typeof(float) },
       }
@@ -606,6 +621,7 @@ public class FieldAutoComplete
     },{
       nameof(Sadle), new Dictionary<string, Type>
       {
+        { "stamina", typeof(float) },
         { "user", typeof(long) },
       }
     },{
@@ -659,17 +675,32 @@ public class FieldAutoComplete
         { "StartTime", typeof(long) },
       }
     },{
+      nameof(StaticRotation), new Dictionary<string, Type>
+      {
+        { "tiltrot", typeof(float) },
+      }
+    },{
       nameof(Tameable), new Dictionary<string, Type>
       {
+        { "follow", typeof(string) },
         { "HaveSaddle", typeof(bool) },
+        { "TameLastFeeding", typeof(long) },
         { "TamedName", typeof(string) },
         { "TamedNameAuthor", typeof(string) },
+        { "TameTimeLeft", typeof(float) },
       }
     },{
       nameof(TeleportWorld), new Dictionary<string, Type>
       {
         { "tag", typeof(string) },
         { "tagauthor", typeof(string) },
+      }
+    },{
+      nameof(TombStone), new Dictionary<string, Type>
+      {
+        { "owner", typeof(long) },
+        { "ownerName", typeof(string) },
+        { "timeOfDeath", typeof(long) },
       }
     },{
       nameof(Trap), new Dictionary<string, Type>
@@ -709,9 +740,23 @@ public class FieldAutoComplete
         { "attachJoint", typeof(bool) },
       }
     },{
+      nameof(Vine), new Dictionary<string, Type>
+      {
+        { "GrowStart", typeof(long) },
+        { "plantTime", typeof(long) },
+        { "type", typeof(int) },
+      }
+    },{
+      nameof(WarriorNames), new Dictionary<string, Type>
+      {
+        { "overrideHoverName", typeof(string) },
+      }
+    },{
       nameof(WearNTear), new Dictionary<string, Type>
       {
         { "health", typeof(float) },
+        { "preSnow", typeof(bool) },
+        { "snow", typeof(float) },
         { "support", typeof(float) },
       }
     },{
