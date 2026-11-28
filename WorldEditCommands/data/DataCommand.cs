@@ -101,7 +101,7 @@ public class DataCommand
           throw new InvalidOperationException($"Set: Missing key for {split[1]}.");
         var type = split[0].ToLowerInvariant();
         var keyName = split[1];
-        var key = int.TryParse(keyName, out var i) ? i : ZDOKeys.Hash(keyName);
+        var key = ZdoHelper.Hash(keyName);
         var val = split[2];
         if (type == "float")
           ZDOExtraData.Set(id, key, Parse.Float(val));
