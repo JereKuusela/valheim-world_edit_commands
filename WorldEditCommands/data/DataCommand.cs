@@ -112,7 +112,7 @@ public class DataCommand
         else if (type == "int")
           ZDOExtraData.Set(id, key, Parse.Int(val));
         else if (type == "hash")
-          ZDOExtraData.Set(id, key, ZDOKeys.Hash(val));
+          ZDOExtraData.Set(id, key, ZdoHelper.Hash(val));
         else if (type == "bool")
           ZDOExtraData.Set(id, key, Parse.Boolean(val) == true ? 1 : 0);
         else if (type == "long")
@@ -219,7 +219,7 @@ public class DataCommand
     {
       foreach (FieldInfo fieldInfo in comp.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public))
       {
-        var hash = ZDOKeys.Hash(comp.GetType().Name + "." + fieldInfo.Name);
+        var hash = ZdoHelper.Hash(comp.GetType().Name + "." + fieldInfo.Name);
         var type = fieldInfo.FieldType;
         if (type == typeof(int))
         {
