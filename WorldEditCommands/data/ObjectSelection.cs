@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Data;
 using ServerDevcommands;
@@ -23,6 +24,7 @@ public class ObjectSelection
   public float Chance = 1f;
   public string Match = "";
   public string Unmatch = "";
+  public List<string[]> Filters = [];
   public bool Connect;
   public HashSet<string> Components = [];
   public Dictionary<string, string> DataParameters = [];
@@ -49,6 +51,7 @@ public class ObjectSelection
     if (name == "type") AddComponents(values);
     if (name == "match") Match = value;
     if (name == "unmatch") Unmatch = value;
+    if (name == "filter") Filters.Add(ParseFilter(value));
     if (name == "rect")
     {
       var size = Parse.ScaleRange(value);
@@ -62,6 +65,24 @@ public class ObjectSelection
     if (name == "angle")
       Angle = Parse.Float(value, 0f) * Mathf.PI / 180f;
   }
+  private static string[] ParseFilter(string value)
+  {
+    var split = value.Split([','], 3);
+    if (split.Length < 3) return split;
+    var type = split[0].ToLowerInvariant();
+    if (type == "int" || type == "float" || type == "long")
+      split[2] = string.Join(",", split[2].Split(',').Select(v => IsRange(v) ? ToRange(type, v) : v));
+    return split;
+  }
+  private static bool IsRange(string value) => value.Length > 1 && value.IndexOf('-', 1) > 0 && !value.Contains("<");
+  private static string ToRange(string type, string value) => type switch
+  {
+    "int" => ToRange(Parse.IntRange(value)),
+    "long" => ToRange(Parse.LongRange(value)),
+    _ => ToRange(Parse.FloatRange(value)),
+  };
+  private static string ToRange<T>(Range<T> range) where T : IFormattable =>
+    range.Min.ToString(null, CultureInfo.InvariantCulture) + ";" + range.Max.ToString(null, CultureInfo.InvariantCulture);
   public void ValidateSelection()
   {
     if (Radius != null && Depth != null)
@@ -117,6 +138,9 @@ public class ObjectSelection
     }
     DataEntry? matchData = Match == "" ? null : DataHelper.Get(Match);
     DataEntry? unmatchData = Unmatch == "" ? null : DataHelper.Get(Unmatch);
+    DataEntry? filterData = null;
+    foreach (var filter in Filters)
+      (filterData ??= new()).Load(filter);
     return [.. views.Where(view =>
     {
       if (!view) return false;
@@ -127,6 +151,11 @@ public class ObjectSelection
       }
       var zdo = view.GetZDO();
       if (matchData != null && !matchData.Match(new ParFunctions(DataParameters, zdo), zdo))
+      {
+        terminal.AddString($"Skipped: {view.name} not matching filter.");
+        return false;
+      }
+      if (filterData != null && !filterData.Match(new ParFunctions(DataParameters, zdo), zdo))
       {
         terminal.AddString($"Skipped: {view.name} not matching filter.");
         return false;

@@ -334,9 +334,21 @@ For this purpose, there is `data_raw [name]` command that prints the data as bas
 
 ## Pattern matching
 
-`data` and `object` commands have parameters `match` and `unmatch`.
+`data` and `object` commands have parameters `match`, `unmatch` and `filter`.
 
 These parameters can be used to filter the affected objects based on their data.
+
+### Filter
+
+The `filter` parameter checks a single data value without a data entry. The format is `filter=type,key,value`.
+
+- Type is `bool`, `float`, `hash`, `int`, `long`, `quat`, `string` or `vec3`.
+- Key is a data key name, a number or `Component.field`.
+- Numbers support ranges with `min-max` format.
+- Lists are supported, for example `filter=int,level,1,3`.
+- Multiple `filter=` can be used in the same command. Objects must match all of them.
+
+For example `object filter=int,level,2-3 radius=10 info` selects creatures with 1 or 2 stars.
 
 ### Default values
 

@@ -24,6 +24,7 @@ public class DataAutoComplete
       "connect",
       "match",
       "unmatch",
+      "filter",
       "par",
       ..DataParameters.SupportedOperations.Keys
     ];
@@ -124,6 +125,9 @@ public class DataAutoComplete
         "unmatch", index => index == 0 ? DataLoading.DataKeys : ParameterInfo.None
       },
       {
+        "filter", Filter
+      },
+      {
         "par", index => index == 0 ? GetDataParameters() : ParameterInfo.Create("par=key,<color=yellow>value</color>", "Value of the parameter.")
       },
       {
@@ -154,6 +158,20 @@ public class DataAutoComplete
     return ParameterInfo.Create("par=<color=yellow>key</color>,value", "Name of the parameter.");
   }
 
+  private static readonly List<string> FilterTypes = [
+    "bool",
+    "float",
+    "hash",
+    "int",
+    "long",
+    "quat",
+    "string",
+    "vec3",
+  ];
+  public static List<string> Filter(int index) => index == 0 ? FilterTypes :
+    index == 1 ? GetKeys() ?? ParameterInfo.Create("filter=type,<color=yellow>key</color>,value", "Name of the key.") :
+    index == 2 ? ParameterInfo.Create("filter=type,key,<color=yellow>value</color>", "Value or range of the key.") :
+    ParameterInfo.None;
   private static List<string>? GetKeys()
   {
     ObjectSelection selection = new();

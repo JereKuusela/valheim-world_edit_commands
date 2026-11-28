@@ -34,6 +34,7 @@ public class ObjectAutoComplete : SharedObjectAutoComplete
       "components",
       "match",
       "unmatch",
+      "filter",
       "copy"
     ]);
     AutoComplete.Register(ObjectCommand.Name, index => NamedParameters, WithSharedFetchers(new() {
@@ -141,6 +142,9 @@ public class ObjectAutoComplete : SharedObjectAutoComplete
       },
       {
         "unmatch", index => index == 0 ? DataLoading.DataKeys : ParameterInfo.None
+      },
+      {
+        "filter", DataAutoComplete.Filter
       },
       {
         "copy", index => ParameterInfo.Flag("copy")
