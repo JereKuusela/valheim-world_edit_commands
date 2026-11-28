@@ -118,6 +118,13 @@ public class FieldAutoComplete
       return [.. gameObject.GetComponentsInChildren<MonoBehaviour>().Select(c => c.GetType().Name).Distinct(), "zdo"];
     return Components;
   }
+  public static IEnumerable<string> GetZdoKeys(int prefab)
+  {
+    var components = GetComponents(prefab).Where(c => c != "zdo").ToList();
+    var zdoKeys = components.Where(ZdoFields.ContainsKey).SelectMany(c => ZdoFields[c].Keys);
+    var fieldKeys = components.Where(Fields.ContainsKey).SelectMany(c => Fields[c].Keys.Select(field => $"{c}.{field}"));
+    return zdoKeys.Concat(fieldKeys);
+  }
   public static List<string> GetFields()
   {
     var command = GetInput();

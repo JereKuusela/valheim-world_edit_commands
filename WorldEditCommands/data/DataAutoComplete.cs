@@ -94,7 +94,7 @@ public class DataAutoComplete
         "dump", index => ParameterInfo.Create("dump=<color=yellow>name</color>", "Saves the object data with default fields to the file.")
       },
       {
-        "keep", index => ParameterInfo.Create("keep=<color=yellow>key,key,key,...</color>", "Removes all data except given keys.")
+        "keep", index => GetKeys() ?? ParameterInfo.Create("keep=<color=yellow>key,key,key,...</color>", "Removes all data except given keys. Hover an object to list its keys.")
       },
       {
         "clear", index => ParameterInfo.Flag("Removes all data.")
@@ -103,7 +103,7 @@ public class DataAutoComplete
         "print", index => ParameterInfo.Flag("Prints data.")
       },
       {
-        "remove", index => ParameterInfo.Create("remove=<color=yellow>key,key,key,...</color>", "Removes given keys.")
+        "remove", index => GetKeys() ?? ParameterInfo.Create("remove=<color=yellow>key,key,key,...</color>", "Removes given keys. Hover an object to list its keys.")
       },
       {
         "set", index => index == 0 ? dataTypes :
@@ -154,6 +154,34 @@ public class DataAutoComplete
     return ParameterInfo.Create("par=<color=yellow>key</color>,value", "Name of the parameter.");
   }
 
+  private static List<string>? GetKeys()
+  {
+    ObjectSelection selection = new();
+    foreach (var arg in GetInput().Split(' '))
+    {
+      var split = arg.Split(['='], 2);
+      var name = split[0].ToLower();
+      if (split.Length == 2 && (name == "id" || name == "ignore" || name == "type"))
+        selection.ParseSelectionArg(name, split[1]);
+    }
+    var keys = selection.IncludedIds.Select(id => id.GetStableHashCode()).Where(ZNetScene.instance.m_namedPrefabs.ContainsKey).SelectMany(FieldAutoComplete.GetZdoKeys);
+    var view = GetHovered(selection);
+    if (view != null)
+      keys = keys.Concat(DataHelper.GetKeys(view.GetZDO()).Select(ZDOKeys.Convert));
+    List<string> list = [.. keys.Where(key => !int.TryParse(key, out _) && !key.StartsWith("HasFields", StringComparison.Ordinal)).Distinct().OrderBy(key => key)];
+    return list.Count == 0 ? null : list;
+  }
+  private static ZNetView? GetHovered(ObjectSelection selection)
+  {
+    try
+    {
+      return selection.GetHovered();
+    }
+    catch (InvalidOperationException)
+    {
+      return null;
+    }
+  }
   private static HashSet<string> DataFromCommand(string command)
   {
     var split = command.Split(' ');
