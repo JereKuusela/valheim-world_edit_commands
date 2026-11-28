@@ -35,7 +35,7 @@
       <HintPath>$(ManagedDir)\Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="gui_framework">
-      <HintPath>$(LibsDir)\gui_framework.dll</HintPath>
+      <HintPath>$(ManagedDir)\gui_framework.dll</HintPath>
     </Reference>
     <Reference Include="0Harmony">
       <HintPath>$(BepInExDir)\0Harmony.dll</HintPath>
