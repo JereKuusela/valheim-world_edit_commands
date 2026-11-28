@@ -68,7 +68,7 @@ public class DataRawCommand
     }
     else if (filter != "all")
     {
-      var filters = Parse.Split(filter).Select(ZDOKeys.Hash).ToHashSet();
+      var filters = Parse.Split(filter).Select(ZdoHelper.Hash).ToHashSet();
       vecs = FilterZdo(vecs, filters);
       quats = FilterZdo(quats, filters);
       floats = FilterZdo(floats, filters);

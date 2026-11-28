@@ -239,7 +239,7 @@ class SpawnObjectParameters : SharedObjectParameters
     void SetItem(Item? item, int key, int? variantKey = null)
     {
       if (item == null) return;
-      zdo.Set(key, ZDOKeys.Hash(item.Name));
+      zdo.Set(key, ZdoHelper.Hash(item.Name));
       if (variantKey.HasValue)
         zdo.Set(variantKey.Value, item.Variant);
     }

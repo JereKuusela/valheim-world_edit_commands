@@ -28,7 +28,6 @@
     <Error Condition="'$(_MissingDirs)' == 'true'" Text="Set LibsDir and ValheimDir in Directory.Build.props.user or with MSBuild properties. With AlwaysUseLibsDir=true, only LibsDir is required." />
     <Error Condition="!Exists('$(ManagedDir)\assembly_valheim.dll')" Text="assembly_valheim.dll was not found in '$(ManagedDir)'." />
     <Error Condition="!Exists('$(BepInExDir)\BepInEx.dll')" Text="BepInEx.dll was not found in '$(BepInExDir)'." />
-    <Error Condition="!Exists('$(LibsDir)\gui_framework.dll')" Text="gui_framework.dll was not found in '$(LibsDir)'." />
     <Error Condition="!Exists('$(LibsDir)\ServerDevcommands.dll')" Text="ServerDevcommands.dll was not found in '$(LibsDir)'." />
   </Target>
 </Project>

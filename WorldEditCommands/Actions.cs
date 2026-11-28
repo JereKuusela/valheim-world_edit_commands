@@ -50,7 +50,7 @@ public static class Actions
     if (LowerIdToHash.Count == 0) LowerIdToHash = ZNetScene.instance.m_namedPrefabs.ToLookup(kvp => kvp.Value.name.ToLower(), kvp => kvp.Key).ToDictionary(kvp => kvp.Key, kvp => kvp.FirstOrDefault());
     if (IdToHash.TryGetValue(id, out var value)) return value;
     if (LowerIdToHash.TryGetValue(id.ToLower(), out var value2)) return value2;
-    return ZDOKeys.Hash(id);
+    return ZdoHelper.Hash(id);
   }
   public static void SetPrefab(ZNetView obj, string? value, int hash)
   {
@@ -109,7 +109,7 @@ public static class Actions
     var zdo = obj.GetZDO();
     if (zdo == null || !zdo.IsValid()) return false;
     var previous = zdo.GetPrefab();
-    zdo.SetPrefab(ZDOKeys.Hash(prefab));
+    zdo.SetPrefab(ZdoHelper.Hash(prefab));
     var newObj = ZNetScene.instance.CreateObject(zdo);
     if (!newObj)
     {
@@ -430,9 +430,16 @@ public static class Actions
   internal static int WriteFields(ZNetView view, ZDO zdo, Dictionary<string, object> fields)
   {
     var components = ComponentInfo.Get(view).ToHashSet();
+    var itemDrop = view.GetComponent<ItemDrop>();
+    var item = itemDrop ? itemDrop.m_itemData.Clone() : null;
+    if (item != null)
+      ItemDrop.LoadFromZDO(item, zdo);
+    var itemChanged = false;
     var count = 0;
     foreach (var kvp in fields)
     {
+      if (item != null && SetItemField(item, kvp.Key, kvp.Value))
+        itemChanged = true;
       var split = kvp.Key.Split('.');
       if (split.Length > 1)
       {
@@ -441,7 +448,7 @@ public static class Actions
         zdo.Set(Hash.HasFields, true);
         zdo.Set("HasFields" + component, true);
       }
-      var hash = ZDOKeys.Hash(kvp.Key);
+      var hash = ZdoHelper.Hash(kvp.Key);
       if (kvp.Value is int v)
         zdo.Set(hash, v);
       else if (kvp.Value is float v1)
@@ -458,7 +465,49 @@ public static class Actions
         zdo.Set(hash, TransformRot(zdo, kvp.Key, quaternion));
       count += 1;
     }
+    if (itemChanged)
+    {
+      ItemDrop.SaveToZDO(item!, zdo);
+      itemDrop!.Load();
+    }
     return count;
+  }
+  private static bool SetItemField(ItemDrop.ItemData item, string key, object value)
+  {
+    switch (key)
+    {
+      case "stack" when value is int stack:
+        item.m_stack = Math.Min(stack, item.m_shared.m_maxStackSize);
+        break;
+      case "quality" when value is int quality:
+        item.m_quality = quality;
+        break;
+      case "variant" when value is int variant:
+        item.m_variant = variant;
+        break;
+      case "worldLevel" when value is int worldLevel:
+        item.m_worldLevel = worldLevel;
+        break;
+      case "pickedUp" when value is int pickedUp:
+        item.m_pickedUp = pickedUp == 1;
+        break;
+      case "durability" when value is float durability:
+        item.m_durability = durability;
+        break;
+      case "crafterID" when value is long crafterID:
+        item.m_crafterID = crafterID;
+        break;
+      case "crafterName" when value is string crafterName:
+        item.m_crafterName = crafterName;
+        if (crafterName == "")
+          item.m_crafterID = 0;
+        else if (item.m_crafterID == 0)
+          item.m_crafterID = -1;
+        break;
+      default:
+        return false;
+    }
+    return true;
   }
   private static Vector3 TransformPos(ZDO zdo, string key, Vector3 pos)
   {
@@ -484,7 +533,7 @@ public static class Actions
     if (!obj || item == null) return;
     var equipment = obj.GetComponent<VisEquipment>();
     if (!equipment) return;
-    equipment.SetItem(slot, ZDOKeys.Hash(item.Name), item.Variant);
+    equipment.SetItem(slot, ZdoHelper.Hash(item.Name), item.Variant);
   }
   public static void Move(ZNetView obj, Vector3 offset, string origin)
   {

@@ -25,7 +25,7 @@ public static partial class ZdoHelper
     if (HashCache.TryGetValue(key, out var hash)) return hash;
     hash = HashKey(key);
     HashCache[key] = hash;
-    ReverseHashCache[hash] = key;
+    if (!Parse.TryInt(key, out _)) ReverseHashCache[hash] = key;
     OnHashed(key, hash);
     return hash;
   }

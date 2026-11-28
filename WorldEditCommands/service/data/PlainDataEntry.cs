@@ -52,21 +52,21 @@ public class PlainDataEntry : ResolvedDataEntry
     ZDOVars.s_rightItem,
     ZDOVars.s_content,
     ZDOVars.s_item,
-    .. Enumerable.Range(0, 11).Select(i => ZDOKeys.Hash($"{i}_item"))
+    .. Enumerable.Range(0, 11).Select(i => ZdoHelper.Hash($"{i}_item"))
   ];
   public void Write(DataYaml data, bool all)
   {
     // No need to roll here because tbis always come from ZDO that doesn't have item values.
-    data.floats = Floats?.Select(pair => $"{ZDOKeys.Convert(pair.Key)}, {pair.Value}").ToArray();
-    data.ints = Ints?.Where(kvp => !HashKeys.Contains(kvp.Key)).Select(pair => $"{ZDOKeys.Convert(pair.Key)}, {pair.Value}").ToArray();
+    data.floats = Floats?.Select(pair => $"{ZdoHelper.ReverseHash(pair.Key)}, {pair.Value}").ToArray();
+    data.ints = Ints?.Where(kvp => !HashKeys.Contains(kvp.Key)).Select(pair => $"{ZdoHelper.ReverseHash(pair.Key)}, {pair.Value}").ToArray();
     if (data.ints?.Length == 0) data.ints = null;
-    data.hashes = Ints?.Where(kvp => HashKeys.Contains(kvp.Key)).Select(pair => $"{ZDOKeys.Convert(pair.Key)}, {ZNetScene.instance.GetPrefab(pair.Value)?.name ?? pair.Value.ToString()}").ToArray();
+    data.hashes = Ints?.Where(kvp => HashKeys.Contains(kvp.Key)).Select(pair => $"{ZdoHelper.ReverseHash(pair.Key)}, {ZNetScene.instance.GetPrefab(pair.Value)?.name ?? pair.Value.ToString()}").ToArray();
     if (data.hashes?.Length == 0) data.hashes = null;
 
-    data.longs = Longs?.Select(pair => $"{ZDOKeys.Convert(pair.Key)}, {pair.Value}").ToArray();
-    data.strings = Strings?.Select(pair => $"{ZDOKeys.Convert(pair.Key)}, {Serialize(pair.Value)}").ToArray();
-    data.vecs = Vecs?.Select(pair => $"{ZDOKeys.Convert(pair.Key)}, {Serialize(pair.Value)}").ToArray();
-    data.quats = Quats?.Select(pair => $"{ZDOKeys.Convert(pair.Key)}, {Serialize(pair.Value)}").ToArray();
+    data.longs = Longs?.Select(pair => $"{ZdoHelper.ReverseHash(pair.Key)}, {pair.Value}").ToArray();
+    data.strings = Strings?.Select(pair => $"{ZdoHelper.ReverseHash(pair.Key)}, {Serialize(pair.Value)}").ToArray();
+    data.vecs = Vecs?.Select(pair => $"{ZdoHelper.ReverseHash(pair.Key)}, {Serialize(pair.Value)}").ToArray();
+    data.quats = Quats?.Select(pair => $"{ZdoHelper.ReverseHash(pair.Key)}, {Serialize(pair.Value)}").ToArray();
     // Unreadable or invalid items stay in their raw byte field.
     var bytes = ByteArrays == null ? null : new Dictionary<int, byte[]>(ByteArrays);
     if (bytes != null && bytes.TryGetValue(ZDOVars.s_items, out var packedItems))
@@ -83,7 +83,7 @@ public class PlainDataEntry : ResolvedDataEntry
       data.item = ToData(record, all, all);
       bytes.Remove(ZDOVars.s_itemData);
     }
-    data.bytes = bytes?.Count > 0 ? bytes.Select(pair => $"{ZDOKeys.Convert(pair.Key)}, {Convert.ToBase64String(pair.Value)}").ToArray() : null;
+    data.bytes = bytes?.Count > 0 ? bytes.Select(pair => $"{ZdoHelper.ReverseHash(pair.Key)}, {Convert.ToBase64String(pair.Value)}").ToArray() : null;
 
     if (HasConnection)
       data.connection = $"{ConnectionType}, {ConnectionHash}";

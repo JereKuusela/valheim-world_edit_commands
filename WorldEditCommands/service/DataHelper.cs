@@ -46,7 +46,7 @@ public class DataHelper
   public static ZDO CloneWithKeys(ZDO zdo, string[] keys)
   {
     var fields = keys.Where(key => key.Contains('.')).SelectMany(key => new[] { "HasFields", "HasFields" + key.Split('.')[0] });
-    var hashed = keys.Concat(fields).Select(ZDOKeys.Hash).ToHashSet();
+    var hashed = keys.Concat(fields).Select(ZdoHelper.Hash).ToHashSet();
     var clone = CloneBase(zdo);
     var id = zdo.m_uid;
     var cid = clone.m_uid;
@@ -92,7 +92,7 @@ public class DataHelper
   }
   public static ZDO CloneWithoutKeys(ZDO zdo, string[] keys)
   {
-    var hashed = keys.Select(ZDOKeys.Hash).ToHashSet();
+    var hashed = keys.Select(ZdoHelper.Hash).ToHashSet();
     var clone = CloneBase(zdo);
     var id = zdo.m_uid;
     var cid = clone.m_uid;
@@ -132,13 +132,13 @@ public class DataHelper
       $"Rotation: {Helper.PrintVectorYXZ(zdo.m_rotation)} (quat y,x,z)",
       $"Revision: {zdo.DataRevision} + {zdo.OwnerRevision}"
     ];
-    var vecs = GetValues(ZDOExtraData.s_vec3, id).Select(kvp => $"{ZDOKeys.Convert(kvp.Key)}: {Helper.PrintVectorXZY(kvp.Value)} (vec x,z,y)");
-    var ints = GetValues(ZDOExtraData.s_ints, id).Select(kvp => $"{ZDOKeys.Convert(kvp.Key)}: {kvp.Value} (int)");
-    var floats = GetValues(ZDOExtraData.s_floats, id).Select(kvp => $"{ZDOKeys.Convert(kvp.Key)}: {kvp.Value} (float)");
-    var quats = GetValues(ZDOExtraData.s_quats, id).Select(kvp => $"{ZDOKeys.Convert(kvp.Key)}: {Helper.PrintAngleYXZ(kvp.Value)} (quat y,x,z)");
-    var strings = GetValues(ZDOExtraData.s_strings, id).Select(kvp => $"{ZDOKeys.Convert(kvp.Key)}: {kvp.Value} (string)");
-    var longs = GetValues(ZDOExtraData.s_longs, id).Select(kvp => $"{ZDOKeys.Convert(kvp.Key)}: {kvp.Value} (long)");
-    var byteArrays = GetValues(ZDOExtraData.s_byteArrays, id).Select(kvp => $"{ZDOKeys.Convert(kvp.Key)}: {Convert.ToBase64String(kvp.Value)} (byte array)");
+    var vecs = GetValues(ZDOExtraData.s_vec3, id).Select(kvp => $"{ZdoHelper.ReverseHash(kvp.Key)}: {Helper.PrintVectorXZY(kvp.Value)} (vec x,z,y)");
+    var ints = GetValues(ZDOExtraData.s_ints, id).Select(kvp => $"{ZdoHelper.ReverseHash(kvp.Key)}: {kvp.Value} (int)");
+    var floats = GetValues(ZDOExtraData.s_floats, id).Select(kvp => $"{ZdoHelper.ReverseHash(kvp.Key)}: {kvp.Value} (float)");
+    var quats = GetValues(ZDOExtraData.s_quats, id).Select(kvp => $"{ZdoHelper.ReverseHash(kvp.Key)}: {Helper.PrintAngleYXZ(kvp.Value)} (quat y,x,z)");
+    var strings = GetValues(ZDOExtraData.s_strings, id).Select(kvp => $"{ZdoHelper.ReverseHash(kvp.Key)}: {kvp.Value} (string)");
+    var longs = GetValues(ZDOExtraData.s_longs, id).Select(kvp => $"{ZdoHelper.ReverseHash(kvp.Key)}: {kvp.Value} (long)");
+    var byteArrays = GetValues(ZDOExtraData.s_byteArrays, id).Select(kvp => $"{ZdoHelper.ReverseHash(kvp.Key)}: {Convert.ToBase64String(kvp.Value)} (byte array)");
     return [.. lines, .. vecs, .. ints, .. floats, .. quats, .. strings, .. longs, .. byteArrays];
   }
   // Deprecated: Can remove later.
