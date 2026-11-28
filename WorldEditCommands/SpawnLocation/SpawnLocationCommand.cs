@@ -34,10 +34,13 @@ public class SpawnLocationCommand
         baseAngle = player.transform.rotation.eulerAngles.y;
       }
       var snap = true;
+      var center = false;
       foreach (var arg in args.Args)
       {
         var split = arg.Split('=');
         var argName = split[0].ToLower();
+        if (argName == "center")
+          center = true;
         if (split.Length < 2) continue;
         if (argName == "seed")
           seed = Parse.Int(split[1], 0);
@@ -65,6 +68,13 @@ public class SpawnLocationCommand
       spawnPosition += baseRotation * Vector3.right * relativePosition.z;
       spawnPosition += baseRotation * Vector3.up * relativePosition.y;
       var spawnRotation = baseRotation * Quaternion.Euler(0f, relativeAngle, 0f);
+      if (center)
+      {
+        var radius = Mathf.Max(location.m_exteriorRadius, location.m_interiorRadius);
+        var zonePosition = ZoneSystem.GetZonePos(ZoneSystem.GetZone(spawnPosition));
+        spawnPosition.x = Mathf.Clamp(spawnPosition.x, zonePosition.x - 32f + radius, zonePosition.x + 32f - radius);
+        spawnPosition.z = Mathf.Clamp(spawnPosition.z, zonePosition.z - 32f + radius, zonePosition.z + 32f - radius);
+      }
       if (snap && ZoneSystem.instance.FindFloor(spawnPosition, out var value))
         spawnPosition.y = value;
 
