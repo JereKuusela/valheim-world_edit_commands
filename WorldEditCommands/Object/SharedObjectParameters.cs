@@ -128,7 +128,7 @@ public class SharedObjectParameters
         else if (type == typeof(GameObject) || type == typeof(ItemDrop) || type == typeof(EffectList))
           Fields.Add(key, fieldValue);
         else if (type == typeof(ObjectHash) || type == typeof(LocationHash) || type == typeof(RoomHash))
-          Fields.Add(key, ZDOKeys.Hash(fieldValue));
+          Fields.Add(key, ZdoHelper.Hash(fieldValue));
         else if (type.IsEnum)
           Fields.Add(key, ToEnum(type, fieldValue));
         else if (type == typeof(void))

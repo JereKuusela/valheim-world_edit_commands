@@ -286,18 +286,9 @@ public class ZDOKeys
     "emote",
   ];
 
-  private static Dictionary<string, int> keyToHash = [];
   private static Dictionary<int, string>? hashToKey;
   private static Dictionary<int, string> HashToKey => hashToKey ??= KnownKeys.ToDictionary(CalculateHash, x => x);
   public static string Convert(int hash) => HashToKey.TryGetValue(hash, out var key) ? key : hash.ToString();
-  public static int Hash(string key)
-  {
-    if (keyToHash.TryGetValue(key, out var hash)) return hash;
-    hash = CalculateHash(key);
-    keyToHash[key] = hash;
-    HashToKey[hash] = key;
-    return hash;
-  }
   private static int CalculateHash(string key)
   {
     if (key.StartsWith("$", StringComparison.InvariantCultureIgnoreCase))

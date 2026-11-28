@@ -50,7 +50,7 @@ public static class Actions
     if (LowerIdToHash.Count == 0) LowerIdToHash = ZNetScene.instance.m_namedPrefabs.ToLookup(kvp => kvp.Value.name.ToLower(), kvp => kvp.Key).ToDictionary(kvp => kvp.Key, kvp => kvp.FirstOrDefault());
     if (IdToHash.TryGetValue(id, out var value)) return value;
     if (LowerIdToHash.TryGetValue(id.ToLower(), out var value2)) return value2;
-    return ZDOKeys.Hash(id);
+    return ZdoHelper.Hash(id);
   }
   public static void SetPrefab(ZNetView obj, string? value, int hash)
   {
@@ -109,7 +109,7 @@ public static class Actions
     var zdo = obj.GetZDO();
     if (zdo == null || !zdo.IsValid()) return false;
     var previous = zdo.GetPrefab();
-    zdo.SetPrefab(ZDOKeys.Hash(prefab));
+    zdo.SetPrefab(ZdoHelper.Hash(prefab));
     var newObj = ZNetScene.instance.CreateObject(zdo);
     if (!newObj)
     {
@@ -448,7 +448,7 @@ public static class Actions
         zdo.Set(Hash.HasFields, true);
         zdo.Set("HasFields" + component, true);
       }
-      var hash = ZDOKeys.Hash(kvp.Key);
+      var hash = ZdoHelper.Hash(kvp.Key);
       if (kvp.Value is int v)
         zdo.Set(hash, v);
       else if (kvp.Value is float v1)
@@ -533,7 +533,7 @@ public static class Actions
     if (!obj || item == null) return;
     var equipment = obj.GetComponent<VisEquipment>();
     if (!equipment) return;
-    equipment.SetItem(slot, ZDOKeys.Hash(item.Name), item.Variant);
+    equipment.SetItem(slot, ZdoHelper.Hash(item.Name), item.Variant);
   }
   public static void Move(ZNetView obj, Vector3 offset, string origin)
   {

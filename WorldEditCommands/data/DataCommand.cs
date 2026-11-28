@@ -101,7 +101,7 @@ public class DataCommand
           throw new InvalidOperationException($"Set: Missing key for {split[1]}.");
         var type = split[0].ToLowerInvariant();
         var keyName = split[1];
-        var key = int.TryParse(keyName, out var i) ? i : ZDOKeys.Hash(keyName);
+        var key = ZdoHelper.Hash(keyName);
         var val = split[2];
         if (type == "float")
           ZDOExtraData.Set(id, key, Parse.Float(val));
@@ -112,7 +112,7 @@ public class DataCommand
         else if (type == "int")
           ZDOExtraData.Set(id, key, Parse.Int(val));
         else if (type == "hash")
-          ZDOExtraData.Set(id, key, ZDOKeys.Hash(val));
+          ZDOExtraData.Set(id, key, ZdoHelper.Hash(val));
         else if (type == "bool")
           ZDOExtraData.Set(id, key, Parse.Boolean(val) == true ? 1 : 0);
         else if (type == "long")
@@ -219,7 +219,7 @@ public class DataCommand
     {
       foreach (FieldInfo fieldInfo in comp.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public))
       {
-        var hash = ZDOKeys.Hash(comp.GetType().Name + "." + fieldInfo.Name);
+        var hash = ZdoHelper.Hash(comp.GetType().Name + "." + fieldInfo.Name);
         var type = fieldInfo.FieldType;
         if (type == typeof(int))
         {
