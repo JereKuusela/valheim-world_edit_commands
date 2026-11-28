@@ -430,9 +430,16 @@ public static class Actions
   internal static int WriteFields(ZNetView view, ZDO zdo, Dictionary<string, object> fields)
   {
     var components = ComponentInfo.Get(view).ToHashSet();
+    var itemDrop = view.GetComponent<ItemDrop>();
+    var item = itemDrop ? itemDrop.m_itemData.Clone() : null;
+    if (item != null)
+      ItemDrop.LoadFromZDO(item, zdo);
+    var itemChanged = false;
     var count = 0;
     foreach (var kvp in fields)
     {
+      if (item != null && SetItemField(item, kvp.Key, kvp.Value))
+        itemChanged = true;
       var split = kvp.Key.Split('.');
       if (split.Length > 1)
       {
@@ -458,7 +465,49 @@ public static class Actions
         zdo.Set(hash, TransformRot(zdo, kvp.Key, quaternion));
       count += 1;
     }
+    if (itemChanged)
+    {
+      ItemDrop.SaveToZDO(item!, zdo);
+      itemDrop!.Load();
+    }
     return count;
+  }
+  private static bool SetItemField(ItemDrop.ItemData item, string key, object value)
+  {
+    switch (key)
+    {
+      case "stack" when value is int stack:
+        item.m_stack = Math.Min(stack, item.m_shared.m_maxStackSize);
+        break;
+      case "quality" when value is int quality:
+        item.m_quality = quality;
+        break;
+      case "variant" when value is int variant:
+        item.m_variant = variant;
+        break;
+      case "worldLevel" when value is int worldLevel:
+        item.m_worldLevel = worldLevel;
+        break;
+      case "pickedUp" when value is int pickedUp:
+        item.m_pickedUp = pickedUp == 1;
+        break;
+      case "durability" when value is float durability:
+        item.m_durability = durability;
+        break;
+      case "crafterID" when value is long crafterID:
+        item.m_crafterID = crafterID;
+        break;
+      case "crafterName" when value is string crafterName:
+        item.m_crafterName = crafterName;
+        if (crafterName == "")
+          item.m_crafterID = 0;
+        else if (item.m_crafterID == 0)
+          item.m_crafterID = -1;
+        break;
+      default:
+        return false;
+    }
+    return true;
   }
   private static Vector3 TransformPos(ZDO zdo, string key, Vector3 pos)
   {
