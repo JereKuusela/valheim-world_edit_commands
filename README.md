@@ -63,6 +63,9 @@ Following parameters are available:
   - Create alias `alias sf spawn_object $$ f=$$ f=$$ f=$$ f=$$ f=$$` to quickly set multiple fields.
   - Note: This is vanilla compatible.
   - False, zero and empty values are removed on world load, unless World Edit Commands is also installed on the server.
+- `filter=type,key,value`: Only selects objects with the given data value.
+  - Multiple `filter=` can be used in the same command. Objects must match all of them.
+  - See [data documentation](https://github.com/JereKuusela/valheim-world_edit_commands/blob/main/README_data.md/#Pattern_matching) for more info.
 - `fuel=number`: Sets the fuel amount. Without number, prints the fuel amount.
 - `from=x,z,y`: Same as the `center`.
 - `height`: Maximum height from the `center` point (default is 1000 meters).
