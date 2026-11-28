@@ -4,13 +4,6 @@ namespace Data;
 
 public static partial class ZdoHelper
 {
-  // Vanilla keys are known by name.
-  static partial void FindKnownKey(int hash, ref string? key)
-  {
-    var known = ZDOKeys.Convert(hash);
-    if (known != hash.ToString()) key = known;
-  }
-
   public static byte[]? TryGetBytes(ZDO zdo, int hash) => zdo.GetByteArray(hash);
   public static string? TryGetString(ZDO zdo, int hash)
   {

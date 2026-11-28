@@ -1,3 +1,13 @@
+- v1.86
+  - Adds new parameter `filter` to commands `data` and `object` to support data based filtering. Thanks Zeall!
+  - Adds new parameter `altitude` to command `terrain` to make y coordinates relative to the ocean level. Thanks Zeall!
+  - Adds new paramater `center` to command `spawn_location` to ensure it stays within the zone bounds. Thanks Zeall!
+  - Adds autocomplete to `data remove=` and `keep=` commands. Thanks Zeall!
+  - Adds missing autocomplete for `object field=` command. Thanks Zeall!
+  - Fixes `object field=` not working when same key was used in multiple components. Thanks Zeall!
+  - Fixes `object field=itemdrop` not working. Thanks Zeall!
+  - Fixes `object field=` not finding target past 5 meters for the autocomplete. Thanks Zeall!
+
 - v1.85
   - Fixed for the new update. Thanks Maxime!
 

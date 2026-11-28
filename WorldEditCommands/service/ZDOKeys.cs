@@ -11,8 +11,6 @@ namespace Data;
 
 public class ZDOKeys
 {
-  private static string[]? knownKeys;
-  private static string[] KnownKeys => knownKeys ??= GenerateKeys();
   private static string[] GenerateKeys()
   {
     List<string> keys = [.. StaticKeys];
@@ -286,21 +284,12 @@ public class ZDOKeys
     "emote",
   ];
 
-  private static Dictionary<int, string>? hashToKey;
-  private static Dictionary<int, string> HashToKey => hashToKey ??= KnownKeys.ToDictionary(CalculateHash, x => x);
-  public static string Convert(int hash) => HashToKey.TryGetValue(hash, out var key) ? key : hash.ToString();
-  private static int CalculateHash(string key)
+  // Hashing registers the keys for ZdoHelper.ReverseHash. Needs all plugins loaded.
+  public static void Init()
   {
-    if (key.StartsWith("$", StringComparison.InvariantCultureIgnoreCase))
-    {
-      var hash = ZSyncAnimation.GetHash(key.Substring(1));
-      // Animation keys are offset by 438569, except for $anim_speed.
-      if (key == "$anim_speed") return hash;
-      return hash + 438569;
-    }
-    return key.GetStableHashCode();
+    foreach (var key in GenerateKeys()) ZdoHelper.Hash(key);
   }
-  public static bool Exists(int hash) => hashToKey == null || HashToKey.ContainsKey(hash);
+  public static bool Exists(int hash) => ZdoHelper.ReverseHash(hash) != hash.ToString();
 
 }
 /* Code for collecting new keys.

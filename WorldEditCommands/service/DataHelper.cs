@@ -87,7 +87,7 @@ public class DataHelper
   }
   public static bool HasKey(ZDO zdo, string[] keys)
   {
-    var hashed = keys.Select(ZDOKeys.Hash).ToHashSet();
+    var hashed = keys.Select(ZdoHelper.Hash).ToHashSet();
     return GetKeys(zdo).Any(hashed.Contains);
   }
   public static ZDO CloneWithoutKeys(ZDO zdo, string[] keys)

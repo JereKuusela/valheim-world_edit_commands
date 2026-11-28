@@ -185,7 +185,7 @@ public class DataAutoComplete
     var keys = selection.IncludedIds.Select(id => id.GetStableHashCode()).Where(ZNetScene.instance.m_namedPrefabs.ContainsKey).SelectMany(FieldAutoComplete.GetZdoKeys);
     var view = GetHovered(selection);
     if (view != null)
-      keys = keys.Concat(DataHelper.GetKeys(view.GetZDO()).Select(ZDOKeys.Convert));
+      keys = keys.Concat(DataHelper.GetKeys(view.GetZDO()).Select(ZdoHelper.ReverseHash));
     List<string> list = [.. keys.Where(key => !int.TryParse(key, out _) && !key.StartsWith("HasFields", StringComparison.Ordinal)).Distinct().OrderBy(key => key)];
     return list.Count == 0 ? null : list;
   }
