@@ -236,6 +236,7 @@ Following parameters are available:
 - `id=id1,id2,...`: List of included ids. Supports starts with, ends with or contains by using "*". Default is `*` that allows all objects which don't start with "_".
 - `ignore=id1,id2,..`: List of ignored ids. Supports starts with, ends with or contains by using "*"
 - `level=y`: Sets terrain height to the given y coordinate. If not given, uses the ground height below the player.
+- `altitude`: Makes the y coordinates of `level=y`, `min`, `max` and `within` relative to the ocean level (y=30). Can't be used with `level` without a value.
 - `lower=meters`: Lowers terrain by X meters. Same as `raise` when a negative value is used.
 - `max=y`: Lowers terrain above the given y coordinate to the y coordinate.
 - `min=y`: Raises terrain below the given y coordinate to the y coordinate.
