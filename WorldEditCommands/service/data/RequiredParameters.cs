@@ -21,6 +21,7 @@ public static class RequiredParameters
     Collect(data.Distant, result);
     Collect(data.Position, result);
     Collect(data.Rotation, result);
+    Collect(data.Prefab, result);
     Collect(data.ItemAmount, result);
     Collect(data.Item, result);
     if (data.Items != null)

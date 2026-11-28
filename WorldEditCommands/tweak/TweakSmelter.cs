@@ -3,19 +3,23 @@ using ServerDevcommands;
 
 namespace WorldEditCommands;
 
-public class TweakSmelterCommand : TweakCommand {
-  protected override string DoOperation(ZNetView view, string operation, string? value) {
+public class TweakSmelterCommand : TweakCommand
+{
+  protected override string DoOperation(ZNetView view, string operation, string? value)
+  {
     if (operation == "fuel")
       return TweakActions.Fuel(view, value);
     throw new NotImplementedException();
   }
-  protected override string DoOperation(ZNetView view, string operation, float? value) {
+  protected override string DoOperation(ZNetView view, string operation, float? value)
+  {
     if (operation == "speed")
       return TweakActions.Speed(view, value);
     throw new NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, int? value) {
+  protected override string DoOperation(ZNetView view, string operation, int? value)
+  {
     if (operation == "maxamount")
       return TweakActions.MaxAmount(view, value);
     if (operation == "maxfuel")
@@ -25,7 +29,8 @@ public class TweakSmelterCommand : TweakCommand {
     throw new NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, string[] value) {
+  protected override string DoOperation(ZNetView view, string operation, string[] value)
+  {
     if (operation == "conversion")
       return TweakActions.Conversions(view, value);
     if (operation == "inputeffect")
@@ -37,15 +42,8 @@ public class TweakSmelterCommand : TweakCommand {
     throw new NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, bool? value) {
-    throw new NotImplementedException();
-  }
-
-  protected override string DoOperation(ZNetView view, string operation, long? value) {
-    throw new NotImplementedException();
-  }
-
-  public TweakSmelterCommand() {
+  public TweakSmelterCommand()
+  {
     AddComponentAutomatically = false;
     Component = typeof(Smelter);
     ComponentName = "smelter";

@@ -243,9 +243,15 @@ public static class TweakActions
   }
   public static string Smoke(ZNetView view, string? value)
   {
-    int val = 0;
-    if (value == "off") val = 1;
-    if (value == "ignore") val = 2;
+    int? val = value switch
+    {
+      null => null,
+      "on" => 0,
+      "off" => 1,
+      "ignore" => 2,
+      _ => -1
+    };
+    if (val == -1) return $"Skipped: Invalid smoke value {value}.";
     Actions.SetInt(view, val, Hash.Smoke);
     return $"¤ smoke set to {Print(value)}.";
   }
@@ -636,7 +642,7 @@ public static class TweakActions
   public static string SpawnOffset(ZNetView view, float? value)
   {
     Actions.SetFloat(view, value, Hash.SpawnOffset);
-    return $"¤ spawn offset to {Print(value)} meters.";
+    return $"¤ spawn offset set to {Print(value)} meters.";
   }
   public static string Destroy(ZNetView view, float? value)
   {

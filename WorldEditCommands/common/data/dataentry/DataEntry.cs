@@ -1,5 +1,6 @@
 ﻿// Shared code: keep identical in EWD, EWP and WEC (common/). Sync changes to all three.
 using System.Collections.Generic;
+using Service;
 
 namespace Data;
 
@@ -52,6 +53,19 @@ public partial class DataEntry
   public ZDO.ObjectType? Priority;
   public IVector3Value? Position;
   public IQuaternionValue? Rotation;
+  public IHashValue? Prefab;
+
+  public int? GetPrefabOverride(Functions functions, int currentPrefab)
+  {
+    var playerPrefab = nameof(Player).GetStableHashCode();
+    if (Prefab == null || currentPrefab == playerPrefab) return null;
+    var hash = Prefab.Get(functions);
+    if (!hash.HasValue || hash.Value == currentPrefab) return null;
+    var prefab = ZNetScene.instance.GetPrefab(hash.Value);
+    if (hash.Value != playerPrefab && prefab && prefab.GetComponent<ZNetView>()) return hash;
+    Log.Warning($"Ignoring invalid data prefab override: {hash.Value}.");
+    return null;
+  }
 
   public void Load(DataEntry data)
   {
@@ -128,10 +142,15 @@ public partial class DataEntry
     if (data.ItemAmount != null)
       ItemAmount = data.ItemAmount;
 
-    ConnectionType = data.ConnectionType;
-    ConnectionHash = data.ConnectionHash;
-    OriginalId = data.OriginalId;
-    TargetConnectionId = data.TargetConnectionId;
+    if (data.ConnectionType != null)
+    {
+      ConnectionType = data.ConnectionType;
+      ConnectionHash = data.ConnectionHash;
+    }
+    if (data.OriginalId != null)
+      OriginalId = data.OriginalId;
+    if (data.TargetConnectionId != null)
+      TargetConnectionId = data.TargetConnectionId;
     if (data.Persistent != null)
       Persistent = data.Persistent;
     if (data.Distant != null)
@@ -142,7 +161,9 @@ public partial class DataEntry
       Position = data.Position;
     if (data.Rotation != null)
       Rotation = data.Rotation;
-    CanBeInjected = data.CanBeInjected;
+    if (data.Prefab != null)
+      Prefab = data.Prefab;
+    CanBeInjected &= data.CanBeInjected;
   }
   // Reusing the same object keeps references working.
   public DataEntry Reset(DataYaml data)
@@ -168,6 +189,7 @@ public partial class DataEntry
     TargetConnectionId = null;
     Position = null;
     Rotation = null;
+    Prefab = null;
     Distant = null;
     Persistent = null;
     Priority = null;
@@ -180,5 +202,6 @@ public partial class DataEntry
     (Ints == null || (!Ints.ContainsKey(HasFieldsHash) && !Ints.ContainsKey(ZDOVars.s_level)))
     && Components == null
     && Position == null
-    && Rotation == null;
+    && Rotation == null
+    && Prefab == null;
 }

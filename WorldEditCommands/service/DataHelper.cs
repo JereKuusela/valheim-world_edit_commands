@@ -145,21 +145,24 @@ public class DataHelper
     if (!obj) return null;
     return Init(obj, pos, rot, scale, data, []);
   }
-  public static ZDO? Init(GameObject obj, Vector3 pos, Quaternion rot, Vector3? scale, DataEntry? data, Dictionary<string, string> pars)
+  public static ZDO? Init(GameObject obj, Vector3 pos, Quaternion rot, Vector3? scale, DataEntry? data, Dictionary<string, string> pars) =>
+    Init(obj, pos, rot, scale, data, pars, false);
+
+  internal static ZDO? Init(GameObject obj, Vector3 pos, Quaternion rot, Vector3? scale, DataEntry? data, Dictionary<string, string> pars, bool force)
   {
     CleanUp();
-    if (data == null && scale == null) return null;
+    if (data == null && scale == null && !force) return null;
     if (!obj.TryGetComponent<ZNetView>(out var view)) return null;
     var prefab = Utils.GetPrefabName(obj).GetStableHashCode();
     ZNetView.m_initZDO = ZDOMan.instance.CreateNewZDO(pos, prefab);
     ZNetView.m_initZDO.Type = view.m_type;
     ZNetView.m_initZDO.Distant = view.m_distant;
     ZNetView.m_initZDO.Persistent = view.m_persistent;
+    ZNetView.m_initZDO.m_prefab = prefab;
     // Data values override the prefab defaults.
     if (data != null)
       Write(data, pars, ZNetView.m_initZDO);
     ZNetView.m_initZDO.m_rotation = rot.eulerAngles;
-    ZNetView.m_initZDO.m_prefab = prefab;
     if (!view.m_syncInitialScale && scale != null && WorldEditCommands.WorldEditCommands.IsTweaks)
     {
       ZNetView.m_initZDO.Set(Hash.HasFields, true);

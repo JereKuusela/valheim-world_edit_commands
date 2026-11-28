@@ -21,6 +21,7 @@ public class ObjectAutoComplete : SharedObjectAutoComplete
       "fuel",
       "prefab",
       "center",
+      "circle",
       "respawn",
       "from",
       "rect",

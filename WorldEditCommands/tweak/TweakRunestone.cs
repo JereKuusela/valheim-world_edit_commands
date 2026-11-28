@@ -18,30 +18,10 @@ public class TweakRunestoneCommand : TweakCommand
       return TweakActions.Discover(view, value);
     throw new NotImplementedException();
   }
-  protected override string DoOperation(ZNetView view, string operation, float? value)
-  {
-    throw new NotImplementedException();
-  }
-
-  protected override string DoOperation(ZNetView view, string operation, int? value)
-  {
-    throw new NotImplementedException();
-  }
-
   protected override string DoOperation(ZNetView view, string operation, string[] value)
   {
     if (operation == "compendium")
       return TweakActions.Compendium(view, value);
-    throw new NotImplementedException();
-  }
-
-  protected override string DoOperation(ZNetView view, string operation, bool? value)
-  {
-    throw new NotImplementedException();
-  }
-
-  protected override string DoOperation(ZNetView view, string operation, long? value)
-  {
     throw new NotImplementedException();
   }
 

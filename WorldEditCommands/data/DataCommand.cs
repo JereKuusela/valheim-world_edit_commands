@@ -37,10 +37,6 @@ public class DataCommand
     }
     throw new NotImplementedException();
   }
-  protected string DoOperation(ZNetView view, string operation, float? value)
-  {
-    throw new NotImplementedException();
-  }
   protected string DoOperation(ZNetView view, string operation, string[] value)
   {
     if (operation == "merge")
@@ -50,7 +46,7 @@ public class DataCommand
       UndoHelper.AddEditAction(view);
       var values = value.SelectMany(str => str.Split(',')).Select(s => s.Trim()).ToArray();
       var data = DataHelper.Merge(values.Select(DataHelper.Get).ToArray());
-      if (data != null) DataHelper.Write(data, Parameters.DataParameters, view.GetZDO());
+      if (data != null) WriteWithPrefab(data, view.GetZDO());
       Actions.Refresh(view);
       return $"¤ data merged from {string.Join(", ", values)}.";
     }
@@ -62,7 +58,7 @@ public class DataCommand
       var zdo = DataHelper.CloneBase(view.GetZDO());
       var values = value.SelectMany(str => str.Split(',')).Select(s => s.Trim()).ToArray();
       var data = DataHelper.Merge(values.Select(DataHelper.Get).ToArray());
-      if (data != null) DataHelper.Write(data, Parameters.DataParameters, zdo);
+      if (data != null) WriteWithPrefab(data, zdo);
       Regen(view, zdo);
       return $"¤ data loaded from {string.Join(", ", values)}.";
     }
@@ -104,7 +100,8 @@ public class DataCommand
         if (split.Length < 3)
           throw new InvalidOperationException($"Set: Missing key for {split[1]}.");
         var type = split[0].ToLowerInvariant();
-        var key = int.TryParse(split[1], out var i) ? i : ZDOKeys.Hash(split[1]);
+        var keyName = split[1];
+        var key = int.TryParse(keyName, out var i) ? i : ZDOKeys.Hash(keyName);
         var val = split[2];
         if (type == "float")
           ZDOExtraData.Set(id, key, Parse.Float(val));
@@ -125,15 +122,18 @@ public class DataCommand
         else if (type == "array")
           ZDOExtraData.Set(id, key, Convert.FromBase64String(val));
         else throw new InvalidOperationException($"Unknown type {type}.");
+        var separator = keyName.IndexOf('.');
+        if (separator > 0)
+        {
+          var component = keyName.Substring(0, separator);
+          ZDOExtraData.Set(id, Hash.HasFields, 1);
+          ZDOExtraData.Set(id, $"HasFields{component}".GetStableHashCode(), 1);
+        }
       }
       zdo.IncreaseDataRevision();
       Actions.Refresh(view);
       return $"¤ data set.";
     }
-    throw new NotImplementedException();
-  }
-  protected string DoOperation(ZNetView view, string operation, int? value)
-  {
     throw new NotImplementedException();
   }
   protected string DoOperation(ZNetView view, string operation, bool? value)
@@ -151,9 +151,23 @@ public class DataCommand
     }
     throw new NotImplementedException();
   }
-  protected string DoOperation(ZNetView view, string operation, long? value)
+  private void WriteWithPrefab(DataEntry data, ZDO zdo)
   {
-    throw new NotImplementedException();
+    var currentPrefab = zdo.GetPrefab();
+    var functions = new ParFunctions(Parameters.DataParameters, zdo);
+    var prefab = data.GetPrefabOverride(functions, currentPrefab);
+    if (prefab.HasValue) zdo.SetPrefab(prefab.Value);
+    try
+    {
+      PlainDataEntry resolved = new();
+      resolved.Load(data, functions, zdo);
+      resolved.Write(zdo);
+    }
+    catch
+    {
+      if (prefab.HasValue) zdo.SetPrefab(currentPrefab);
+      throw;
+    }
   }
   // Removing properties is not supported, so have to recreate the object.
   // This means undo information has to be updated.
@@ -166,8 +180,6 @@ public class DataCommand
   }
   private void Execute(Terminal context, ZNetView[] views)
   {
-    UndoHelper.BeginAction();
-
     var count = views.Count();
     var claimOwner = Parameters.Operations.Count > 1 || !Parameters.Operations.ContainsKey("print");
     foreach (var view in views)
@@ -181,13 +193,7 @@ public class DataCommand
         var type = DataParameters.SupportedOperations[operation.Key];
         var name = Utils.GetPrefabName(view.gameObject);
         string output;
-        if (type == typeof(int))
-          output = DoOperation(view, operation.Key, (int?)operation.Value);
-        else if (type == typeof(long))
-          output = DoOperation(view, operation.Key, (long?)operation.Value);
-        else if (type == typeof(float))
-          output = DoOperation(view, operation.Key, (float?)operation.Value);
-        else if (type == typeof(string[]))
+        if (type == typeof(string[]))
           output = DoOperation(view, operation.Key, (string[])operation.Value!);
         else if (type == typeof(bool))
           output = DoOperation(view, operation.Key, (bool?)operation.Value!);
@@ -202,7 +208,6 @@ public class DataCommand
           context.AddString(message);
       }
     }
-    UndoHelper.EndAction();
   }
 
   private static PlainDataEntry AddDefaultFields(ZDO zdo, PlainDataEntry entry)
@@ -275,7 +280,7 @@ public class DataCommand
       var views = Parameters.GetObjects();
       if (Parameters.Operations.ContainsKey("save") && views.Length > 1)
         throw new InvalidOperationException("Can't save multiple objects at once.");
-      Execute(args.Context, views);
+      UndoHelper.Run(() => Execute(args.Context, views));
 
     });
   }

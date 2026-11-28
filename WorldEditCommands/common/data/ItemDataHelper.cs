@@ -74,7 +74,7 @@ public static class ItemDataHelper
   {
     ZPackage pkg = new();
     // Inventory uses int for version, itemDrops uses byte.
-    pkg.Write((byte)Version.Item.ChunksNCheats);
+    pkg.Write((byte)Version.Item.NewCheats);
     itemData.Save(pkg);
     return pkg.GetArray();
   }
@@ -302,7 +302,7 @@ public static class ItemDataHelper
   public static void Save(List<ItemRecord> records, ZPackage pkg)
   {
     // Inventory uses int for version, itemDrops uses byte.
-    pkg.Write((int)Version.Item.ChunksNCheats);
+    pkg.Write((int)Version.Item.NewCheats);
     pkg.Write((ushort)records.Count);
     foreach (var record in records)
     {
@@ -394,7 +394,7 @@ public static class ItemDataHelper
     var itemData = ParseLegacyItemData(data, existing);
 
     var pkg = new ZPackage();
-    pkg.Write((byte)Version.Item.ChunksNCheats);
+    pkg.Write((byte)Version.Item.NewCheats);
     itemData.Save(pkg);
     data.ByteArrays ??= [];
     data.ByteArrays[ZDOVars.s_itemData] = pkg.GetArray();

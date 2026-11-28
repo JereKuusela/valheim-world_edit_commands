@@ -9,7 +9,7 @@ public class SharedObjectAutoComplete
   public static List<string> VisualAutoComplete(string name, int index)
   {
     if (index == 0) return ParameterInfo.ItemIds;
-    if (index == 1) return ParameterInfo.Create($"${name}=id,<color=yellow>integer</color> | Item variant for items that have multiple variants.");
+    if (index == 1) return ParameterInfo.Create($"{name}=id,<color=yellow>integer</color> | Item variant for items that have multiple variants.");
     return ParameterInfo.None;
   }
 

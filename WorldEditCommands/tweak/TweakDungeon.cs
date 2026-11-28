@@ -15,32 +15,6 @@ public class TweakDungeonCommand : TweakCommand
     if (operation == "weather") return TweakActions.Weather(view, Hash.DungeonWeather, value);
     throw new System.NotImplementedException();
   }
-  protected override string DoOperation(ZNetView view, string operation, float? value)
-  {
-    throw new System.NotImplementedException();
-  }
-
-  protected override string DoOperation(ZNetView view, string operation, int? value)
-  {
-    throw new System.NotImplementedException();
-  }
-
-  protected override string DoOperation(ZNetView view, string operation, string[] value)
-  {
-    throw new System.NotImplementedException();
-  }
-
-  protected override string DoOperation(ZNetView view, string operation, bool? value)
-  {
-    throw new NotImplementedException();
-  }
-
-
-  protected override string DoOperation(ZNetView view, string operation, long? value)
-  {
-    throw new NotImplementedException();
-  }
-
   protected override ZNetView Preprocess(Terminal context, ZNetView view)
   {
     if (view.GetComponent<LocationProxy>()) return view;
@@ -67,7 +41,7 @@ public class TweakDungeonCommand : TweakCommand
 
     AutoComplete.Add("enter_text", index => index == 0 ? ParameterInfo.Create("enter_text=<color=yellow>text</color>", "Text when entering the dungeon.") : ParameterInfo.None);
     AutoComplete.Add("enter_hover", index => index == 0 ? ParameterInfo.Create("enter_hover=<color=yellow>text</color>", "Text when entering the dungeon.") : ParameterInfo.None);
-    AutoComplete.Add("exit_text", index => index == 0 ? ParameterInfo.Create("exit_text=<color=yellow>text</color>", "Text when entering the dungeon.") : ParameterInfo.None);
+    AutoComplete.Add("exit_text", index => index == 0 ? ParameterInfo.Create("exit_text=<color=yellow>text</color>", "Text when exiting the dungeon.") : ParameterInfo.None);
     AutoComplete.Add("exit_hover", index => index == 0 ? ParameterInfo.Create("exit_hover=<color=yellow>text</color>", "Text when entering the dungeon.") : ParameterInfo.None);
     AutoComplete.Add("weather", index => index == 0 ? ParameterInfo.Environments : ParameterInfo.None);
     Init("tweak_dungeon", "Modify dungeons");

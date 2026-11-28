@@ -9,45 +9,9 @@ namespace WorldEditCommands;
 
 public class ObjectCommand
 {
-  public static System.Random Random = new();
-  public static bool Roll(float value)
-  {
-    if (value >= 1f) return true;
-    return Random.NextDouble() < value;
-  }
   public const string Name = "object";
   private static void Execute(Terminal context, ObjectParameters pars, IEnumerable<string> operations, ZNetView[] views)
   {
-    var scene = ZNetScene.instance;
-    DataEntry? matchData = pars.Match == "" ? null : DataHelper.Get(pars.Match);
-    DataEntry? unmatchData = pars.Unmatch == "" ? null : DataHelper.Get(pars.Unmatch);
-    views = views.Where(view =>
-    {
-      if (!view) return false;
-      if (!view.GetZDO().IsValid())
-      {
-        context.AddString($"Skipped: {view.name} is not loaded.");
-        return false;
-      }
-      var zdo = view.GetZDO();
-      if (matchData != null && !matchData.Match(new ParFunctions(pars.DataParameters, zdo), zdo))
-      {
-        context.AddString($"Skipped: {view.name} not matching filter.");
-        return false;
-      }
-      if (unmatchData != null && !unmatchData.MatchNone(new ParFunctions(pars.DataParameters, zdo), zdo))
-      {
-        context.AddString($"Skipped: {view.name} matching filter.");
-        return false;
-      }
-      if (!Roll(pars.Chance))
-      {
-        context.AddString($"Skipped: {view.name} (chance).");
-        return false;
-      }
-      return true;
-    }).ToArray();
-    UndoHelper.BeginAction();
     foreach (var view in views)
     {
       var zdo = view.GetZDO();
@@ -60,88 +24,8 @@ public class ObjectCommand
       foreach (var view in views)
       {
         if (!view) continue;
-        var output = "";
         var name = Utils.GetPrefabName(view.gameObject);
-        if (operation == "durability" || operation == "health")
-          output = ChangeHealth(view, Helper.RandomValue(pars.Health), pars.isHealthPercentage);
-        if (operation == "damage")
-          output = Actions.Damage(view, Helper.RandomValue(pars.Damage));
-        if (operation == "ammo")
-          output = Actions.Ammo(view, Helper.RandomValue(pars.Ammo));
-        if (operation == "ammotype")
-          output = Actions.AmmoType(view, pars.AmmoType);
-        if (operation == "stars" || operation == "level")
-          output = SetStars(view, Helper.RandomValue(pars.Level!) - 1);
-        if (operation == "fuel" && pars.Fuel != null)
-          output = SetFuel(view, Helper.RandomValue(pars.Fuel));
-        if (operation == "creator")
-          output = SetCreator(view, pars.Creator);
-        if (operation == "fuel" && pars.Fuel == null)
-          output = PrintFuel(view);
-        if (operation == "tame")
-          output = MakeTame(view);
-        if (operation == "wild")
-          output = MakeWild(view);
-        if (operation == "baby")
-          output = SetBaby(view);
-        if (operation == "respawn")
-          output = Respawn(view);
-        if (operation == "info")
-          output = GetInfo(view);
-        if (operation == "components")
-          output = GetComponents(view);
-        if (operation == "sleep")
-          output = MakeSleep(view);
-        if (operation == "visual")
-          output = SetVisual(view, pars.Visual);
-        if (operation == "model")
-          output = SetModel(view, Helper.RandomValue(pars.Model));
-        if (operation == "helmet")
-          output = SetHelmet(view, pars.Helmet);
-        if (operation == "field" || operation == "f")
-          SetFields(view, pars.Fields);
-        if (operation == "left_hand")
-          output = SetLeftHand(view, pars.LeftHand);
-        if (operation == "right_hand")
-          output = SetRightHand(view, pars.RightHand);
-        if (operation == "chest")
-          output = SetChest(view, pars.Chest);
-        if (operation == "shoulders")
-          output = SetShoulder(view, pars.Shoulders);
-        if (operation == "legs")
-          output = SetLegs(view, pars.Legs);
-        if (operation == "utility")
-          output = SetUtility(view, pars.Utility);
-        if (operation == "prefab")
-          output = SetPrefab(view, pars.Prefab);
-        if (operation == "copy")
-          output = CopyId(view);
-        if (operation == "status" && pars.StatusName != null)
-          output = SetStatus(view, pars.StatusName, Helper.RandomValue(pars.StatusDuration), Helper.RandomValue(pars.StatusIntensity));
-        if (operation == "move")
-          output = Move(view, Helper.RandomValue(pars.Offset), pars.Origin);
-        if (operation == "mirror" && pars.Center.HasValue)
-          output = Mirror(view, pars.Center.Value);
-        if (operation == "distant" && pars.Distant != null)
-          output = SetDistant(view, pars.Distant.Value);
-        if (operation == "persist" && pars.Persist != null)
-          output = SetPersistent(view, pars.Persist.Value);
-        if (operation == "rotate")
-        {
-          if (pars.ResetRotation)
-            output = ResetRotation(view);
-          else
-            output = Rotate(view, Helper.RandomValue(pars.Rotation), pars.Origin, pars.Center);
-        }
-        if (operation == "scale")
-          output = Scale(view, Helper.RandomValue(pars.Scale));
-        if (operation == "remove")
-        {
-          UndoHelper.AddRemoveAction(view.GetZDO());
-          Actions.RemoveZDO(view.GetZDO());
-          output = "Entity ¤ destroyed.";
-        }
-        // No operation.
+        var output = ApplyOperation(operation, pars, view);
         if (output == "") continue;
         var message = output.Replace("¤", name);
         if (count == 1)
@@ -159,7 +43,95 @@ public class ObjectCommand
           wearNTear.m_colliders = null; // Forces the next support check to refresh collider positions.
       }
     }
-    UndoHelper.EndAction();
+    // Component fields are only read when the object is created.
+    if (operations.Contains("field") || operations.Contains("f"))
+    {
+      foreach (var view in views)
+      {
+        if (view) Actions.Refresh(view);
+      }
+    }
+  }
+  private static string ApplyOperation(string operation, ObjectParameters pars, ZNetView view)
+  {
+    switch (operation)
+    {
+      case "durability":
+      case "health":
+        return ChangeHealth(view, Helper.RandomValue(pars.Health), pars.isHealthPercentage);
+      case "damage":
+        return Actions.Damage(view, Helper.RandomValue(pars.Damage));
+      case "ammo":
+        return Actions.Ammo(view, Helper.RandomValue(pars.Ammo));
+      case "ammotype":
+        return Actions.AmmoType(view, pars.AmmoType);
+      case "stars":
+      case "level":
+        return SetStars(view, Helper.RandomValue(pars.Level!) - 1);
+      case "fuel":
+        return pars.Fuel != null ? SetFuel(view, Helper.RandomValue(pars.Fuel)) : PrintFuel(view);
+      case "creator":
+        return SetCreator(view, pars.Creator);
+      case "tame":
+        return MakeTame(view);
+      case "wild":
+        return MakeWild(view);
+      case "baby":
+        return SetBaby(view);
+      case "respawn":
+        return Respawn(view);
+      case "info":
+        return GetInfo(view);
+      case "components":
+        return GetComponents(view);
+      case "sleep":
+        return MakeSleep(view);
+      case "visual":
+        return SetVisual(view, pars.Visual);
+      case "model":
+        return SetModel(view, Helper.RandomValue(pars.Model));
+      case "helmet":
+        return SetHelmet(view, pars.Helmet);
+      case "field":
+      case "f":
+        return SetFields(view, pars.Fields);
+      case "left_hand":
+        return SetLeftHand(view, pars.LeftHand);
+      case "right_hand":
+        return SetRightHand(view, pars.RightHand);
+      case "chest":
+        return SetChest(view, pars.Chest);
+      case "shoulders":
+        return SetShoulder(view, pars.Shoulders);
+      case "legs":
+        return SetLegs(view, pars.Legs);
+      case "utility":
+        return SetUtility(view, pars.Utility);
+      case "prefab":
+        return SetPrefab(view, pars.Prefab);
+      case "copy":
+        return CopyId(view);
+      case "status" when pars.StatusName != null:
+        return SetStatus(view, pars.StatusName, Helper.RandomValue(pars.StatusDuration), Helper.RandomValue(pars.StatusIntensity));
+      case "move":
+        return Move(view, Helper.RandomValue(pars.Offset), pars.Origin);
+      case "mirror" when pars.Selection.Center.HasValue:
+        return Mirror(view, pars.Selection.Center.Value);
+      case "distant" when pars.Distant != null:
+        return SetDistant(view, pars.Distant.Value);
+      case "persist" when pars.Persist != null:
+        return SetPersistent(view, pars.Persist.Value);
+      case "rotate":
+        return pars.ResetRotation ? ResetRotation(view) : Rotate(view, Helper.RandomValue(pars.Rotation), pars.Origin, pars.Selection.Center);
+      case "scale":
+        return Scale(view, Helper.RandomValue(pars.Scale));
+      case "remove":
+        UndoHelper.AddRemoveAction(view.GetZDO());
+        Actions.RemoveZDO(view.GetZDO());
+        return "Entity ¤ destroyed.";
+      default:
+        return "";
+    }
   }
   public ObjectCommand()
   {
@@ -167,33 +139,8 @@ public class ObjectCommand
     Helper.Command(Name, "Modifies objects.", (args) =>
     {
       ObjectParameters pars = new(args);
-      ZNetView[] views;
-      if (pars.Connect)
-      {
-        var view = Selector.GetHovered(50f, pars.IncludedIds, pars.Components, pars.ExcludedIds);
-        if (view == null) return;
-        views = Selector.GetConnected(view, pars.ConnectionIds, pars.IncludedIds, pars.ExcludedIds);
-      }
-      else if (pars.Radius != null)
-      {
-        views = Selector.GetNearby(pars.IncludedIds, pars.Components, pars.ExcludedIds, pars.Center ?? pars.From, pars.Radius, pars.Height);
-      }
-      else if (pars.Width != null && pars.Depth != null)
-      {
-        views = Selector.GetNearby(pars.IncludedIds, pars.Components, pars.ExcludedIds, pars.Center ?? pars.From, pars.Angle, pars.Width, pars.Depth, pars.Height);
-      }
-      else
-      {
-        var view = Selector.GetHovered(50f, pars.IncludedIds, pars.ExcludedIds);
-        if (view == null) return;
-        if (!Selector.GetPrefabs(pars.IncludedIds).Contains(view.GetZDO().GetPrefab()))
-        {
-          Helper.AddMessage(args.Context, $"Skipped: {view.name} has invalid id.");
-          return;
-        }
-        views = [view];
-      }
-      Execute(args.Context, pars, pars.Operations, views);
+      var views = pars.Selection.GetObjects(args.Context);
+      UndoHelper.Run(() => Execute(args.Context, pars, pars.Operations, views));
 
     });
   }
@@ -415,6 +362,7 @@ public class ObjectCommand
   {
     var obj = view.GetComponent<Character>();
     if (!obj) return "Skipped: ¤ is not a creature.";
+    UndoHelper.AddEditAction(view);
     Actions.SetModel(obj, index);
     return $"Model of ¤ set to {index}.";
   }

@@ -22,30 +22,25 @@ public static class Actions
     UnityEngine.Object.Destroy(obj);
     var newObj = ZNetScene.instance.CreateObject(zdo);
     ZNetScene.instance.m_instances[zdo] = newObj.GetComponent<ZNetView>();
+    UndoHelper.RemoveSpawnAction(zdo);
     return newObj;
   }
 
   public static GameObject? Refresh(ZNetView view) => Refresh(view.GetZDO());
-  public static void SetFloat(ZNetView obj, float? value, int hash, bool refresh = false)
+  public static void SetFloat(ZNetView obj, float? value, int hash)
   {
     if (!obj) return;
     obj.GetZDO().Set(hash, value ?? -1f);
-    if (refresh)
-      Refresh(obj);
   }
-  public static void SetInt(ZNetView obj, int? value, int hash, bool refresh = false)
+  public static void SetInt(ZNetView obj, int? value, int hash)
   {
     if (!obj) return;
     obj.GetZDO().Set(hash, value ?? -1);
-    if (refresh)
-      Refresh(obj);
   }
-  public static void SetLong(ZNetView obj, long? value, int hash, bool refresh = false)
+  public static void SetLong(ZNetView obj, long? value, int hash)
   {
     if (!obj) return;
     obj.GetZDO().Set(hash, value ?? -1);
-    if (refresh)
-      Refresh(obj);
   }
   private static Dictionary<string, int> IdToHash = [];
   private static Dictionary<string, int> LowerIdToHash = [];
@@ -57,19 +52,15 @@ public static class Actions
     if (LowerIdToHash.TryGetValue(id.ToLower(), out var value2)) return value2;
     return ZDOKeys.Hash(id);
   }
-  public static void SetPrefab(ZNetView obj, string? value, int hash, bool refresh = false)
+  public static void SetPrefab(ZNetView obj, string? value, int hash)
   {
     if (!obj) return;
     obj.GetZDO().Set(hash, value ?? "");
-    if (refresh)
-      Refresh(obj);
   }
-  public static void SetString(ZNetView obj, string? value, int hash, bool refresh = false)
+  public static void SetString(ZNetView obj, string? value, int hash)
   {
     if (!obj) return;
     obj.GetZDO().Set(hash, value ?? "");
-    if (refresh)
-      Refresh(obj);
   }
 
   public static void SetTame(GameObject obj, bool tame)
@@ -179,6 +170,14 @@ public static class Actions
     if (!obj) return;
     obj.m_itemData.m_quality = level;
     obj.m_nview.GetZDO().Set(Hash.Quality, level);
+    SaveItem(obj);
+  }
+  // Vanilla Load() only reads the s_itemData blob, so local edits must be written there.
+  private static void SaveItem(ItemDrop obj)
+  {
+    var zdo = obj.m_nview.GetZDO();
+    ItemDrop.SaveToZDO(obj.m_itemData, zdo);
+    obj.m_loadedRevision = zdo.DataRevision;
   }
   public static float GetHealth(ZNetView obj)
   {
@@ -272,6 +271,7 @@ public static class Actions
     if (health == 0) health = obj.m_itemData.GetMaxDurability();
     obj.m_itemData.m_durability = health;
     obj.m_nview.GetZDO().Set(Hash.Durability, obj.m_itemData.m_durability);
+    SaveItem(obj);
     return previous;
   }
 
@@ -297,6 +297,7 @@ public static class Actions
     if (!obj) return;
     obj.m_itemData.m_variant = variant;
     obj.m_nview.GetZDO().Set(Hash.Variant, variant);
+    SaveItem(obj);
   }
   public static void SetName(GameObject obj, string name)
   {
@@ -313,6 +314,7 @@ public static class Actions
     if (!obj) return;
     obj.m_itemData.m_crafterID = id;
     obj.m_nview.GetZDO().Set(Hash.CrafterID, obj.m_itemData.m_crafterID);
+    SaveItem(obj);
   }
   public static void SetName(ItemDrop obj, string name)
   {
@@ -321,6 +323,7 @@ public static class Actions
     obj.m_nview.GetZDO().Set(Hash.CrafterID, obj.m_itemData.m_crafterID);
     obj.m_itemData.m_crafterName = name;
     obj.m_nview.GetZDO().Set(Hash.CrafterName, name);
+    SaveItem(obj);
   }
   public static int SetStack(GameObject obj, int remaining)
   {
@@ -330,6 +333,7 @@ public static class Actions
     var stack = Math.Min(remaining, item.m_itemData.m_shared.m_maxStackSize);
     item.m_itemData.m_stack = stack;
     item.m_nview.GetZDO().Set(Hash.Stack, stack);
+    SaveItem(item);
     return stack;
   }
   public static void SetRotation(GameObject obj, Quaternion rotation)
@@ -421,20 +425,22 @@ public static class Actions
   {
     var zdo = view?.GetZDO();
     if (view == null || zdo == null) return 0;
+    return WriteFields(view, zdo, fields);
+  }
+  internal static int WriteFields(ZNetView view, ZDO zdo, Dictionary<string, object> fields)
+  {
     var components = ComponentInfo.Get(view).ToHashSet();
     var count = 0;
-    var refresh = false;
     foreach (var kvp in fields)
     {
       var split = kvp.Key.Split('.');
       if (split.Length > 1)
       {
-        var component = kvp.Key.Split('.')[0];
+        var component = split[0];
         if (!components.Contains(component)) continue;
         zdo.Set(Hash.HasFields, true);
         zdo.Set("HasFields" + component, true);
       }
-      else refresh = true;
       var hash = ZDOKeys.Hash(kvp.Key);
       if (kvp.Value is int v)
         zdo.Set(hash, v);
@@ -451,17 +457,6 @@ public static class Actions
       else if (kvp.Value is Quaternion quaternion)
         zdo.Set(hash, TransformRot(zdo, kvp.Key, quaternion));
       count += 1;
-    }
-    if (refresh)
-      Refresh(view);
-    else
-    {
-      view.LoadFields();
-      if (view.TryGetComponent<WearNTear>(out var wearNTear))
-      {
-        wearNTear.m_healthPercentage = zdo.GetFloat(ZDOVars.s_health, wearNTear.m_health) / wearNTear.m_health;
-        wearNTear.UpdateVisual(false);
-      }
     }
     return count;
   }
@@ -543,9 +538,10 @@ public static class Actions
     var tweaked = false;
     if (!obj.m_syncInitialScale && WorldEditCommands.IsTweaks)
     {
-      SetFields(obj, new() {
+      WriteFields(obj, obj.GetZDO(), new() {
         { "ZNetView.m_syncInitialScale", true }
       });
+      obj.LoadFields();
       tweaked = true;
     }
     if (obj.m_syncInitialScale)

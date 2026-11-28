@@ -47,6 +47,8 @@ public class TweakAltarCommand : TweakCommand
       return TweakActions.SpawnRadius(view, value);
     if (operation == "spawnmaxy")
       return TweakActions.SpawnMaxY(view, value);
+    if (operation == "itemstandrange")
+      return TweakActions.ItemStandRange(view, value);
     throw new NotImplementedException();
   }
 
@@ -69,16 +71,6 @@ public class TweakAltarCommand : TweakCommand
       return TweakActions.SpawnEffect(view, value);
     if (operation == "useeffect")
       return TweakActions.UseEffect(view, value);
-    throw new NotImplementedException();
-  }
-
-  protected override string DoOperation(ZNetView view, string operation, bool? value)
-  {
-    throw new NotImplementedException();
-  }
-
-  protected override string DoOperation(ZNetView view, string operation, long? value)
-  {
     throw new NotImplementedException();
   }
 
@@ -105,6 +97,7 @@ public class TweakAltarCommand : TweakCommand
     SupportedOperations.Add("text", typeof(string));
     SupportedOperations.Add("itemoffset", typeof(string));
     SupportedOperations.Add("itemstandprefix", typeof(string));
+    SupportedOperations.Add("itemstandrange", typeof(float));
     SupportedOperations.Add("globalkey", typeof(string));
     SupportedOperations.Add("faction", typeof(string));
     SupportedOperations.Add("spawndata", typeof(string));
@@ -123,7 +116,7 @@ public class TweakAltarCommand : TweakCommand
     AutoComplete.Add("name", index => index == 0 ? ParameterInfo.Create("name=<color=yellow>text</color>", "Display name. Use _ as the space. No value to reset.") : ParameterInfo.None);
     AutoComplete.Add("faction", index => index == 0 ? [.. Enum.GetNames(typeof(Character.Faction))] : ParameterInfo.None);
     AutoComplete.Add("itemstandprefix", index => index == 0 ? ParameterInfo.Create("itemstandprefix=<color=yellow>text</color>", "Prefix for included item stands. No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("globalkey", index => index == 0 ? ParameterInfo.Create("text=<color=yellow>key</color>", "Sets the global key when used. Start with - to remove the key. No value to reset.") : ParameterInfo.None);
+    AutoComplete.Add("globalkey", index => index == 0 ? ParameterInfo.Create("globalkey=<color=yellow>key</color>", "Sets the global key when used. Start with - to remove the key. No value to reset.") : ParameterInfo.None);
     AutoComplete.Add("spawn", index => index == 0 ? ParameterInfo.ObjectIds : ParameterInfo.None);
     AutoComplete.Add("spawnitem", index => index == 0 ? ParameterInfo.ItemIds : ParameterInfo.None);
     AutoComplete.Add("respawn", index => index == 0 ? ParameterInfo.Create("respawn=<color=yellow>minutes/false</color>", "Respawn time. No value to reset.") : ParameterInfo.None);
