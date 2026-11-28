@@ -103,11 +103,17 @@ public class FieldAutoComplete
       prefab = arg.Split('=')[1];
     else if (split.Length > 1 && ZNetScene.instance.m_namedPrefabs.ContainsKey(ZDOKeys.Hash(split[1])))
       prefab = split[1];
-    else
+    else if (Player.m_localPlayer)
     {
-      var selection = Player.m_localPlayer?.GetHoverObject();
-      if (selection)
-        prefab = Utils.GetPrefabName(selection);
+      ObjectSelection selection = new();
+      foreach (var kvp in split.Select(s => s.Split(['='], 2)))
+      {
+        if (kvp.Length == 2 && (kvp[0] == "type" || kvp[0] == "ignore"))
+          selection.ParseSelectionArg(kvp[0], kvp[1]);
+      }
+      var view = Service.Selector.GetHovered(50f, [], selection.Components, selection.ExcludedIds);
+      if (view)
+        prefab = Utils.GetPrefabName(view.gameObject);
     }
     return prefab;
   }
