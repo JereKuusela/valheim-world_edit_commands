@@ -50,16 +50,6 @@ public class TweakSpawnPointCommand : TweakCommand
     throw new System.NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, bool? value)
-  {
-    throw new NotImplementedException();
-  }
-
-  protected override string DoOperation(ZNetView view, string operation, long? value)
-  {
-    throw new NotImplementedException();
-  }
-
   public TweakSpawnPointCommand()
   {
     Component = typeof(CreatureSpawner);

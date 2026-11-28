@@ -9,6 +9,8 @@ public class DataYaml
   [DefaultValue(null)]
   public string? name;
   [DefaultValue(null)]
+  public string? prefab;
+  [DefaultValue(null)]
   public string? position;
   [DefaultValue(null)]
   public string? rotation;

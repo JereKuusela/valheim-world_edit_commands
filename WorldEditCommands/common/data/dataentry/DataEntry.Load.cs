@@ -206,6 +206,11 @@ public partial class DataEntry
       Position = DataValue.Vector3(data.position!);
     if (!string.IsNullOrWhiteSpace(data.rotation))
       Rotation = DataValue.Quaternion(data.rotation!);
+    if (!string.IsNullOrWhiteSpace(data.prefab))
+    {
+      Prefab = DataValue.Hash(data.prefab!);
+      CanBeInjected = false;
+    }
     if (data.persistent != null)
       Persistent = DataValue.Bool(data.persistent);
     if (data.distant != null)
@@ -263,9 +268,9 @@ public partial class DataEntry
     {
       CanBeInjected = false;
       var component = key.Split('.')[0];
-      Ints ??= [];
-      Ints[ZdoHelper.Hash("HasFields")] = DataValue.Constant(1);
-      Ints[ZdoHelper.Hash($"HasFields{component}")] = DataValue.Constant(1);
+      Components ??= [];
+      Components[ZdoHelper.Hash("HasFields")] = DataValue.Constant(1);
+      Components[ZdoHelper.Hash($"HasFields{component}")] = DataValue.Constant(1);
     }
     switch (type)
     {

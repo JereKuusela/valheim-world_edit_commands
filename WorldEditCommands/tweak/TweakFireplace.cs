@@ -12,32 +12,6 @@ public class TweakFireplaceCommand : TweakCommand
       return TweakActions.Smoke(view, value);
     throw new System.NotImplementedException();
   }
-  protected override string DoOperation(ZNetView view, string operation, float? value)
-  {
-    throw new System.NotImplementedException();
-  }
-
-  protected override string DoOperation(ZNetView view, string operation, int? value)
-  {
-    throw new System.NotImplementedException();
-  }
-
-  protected override string DoOperation(ZNetView view, string operation, string[] value)
-  {
-    throw new System.NotImplementedException();
-  }
-
-  protected override string DoOperation(ZNetView view, string operation, bool? value)
-  {
-
-    throw new NotImplementedException();
-  }
-
-  protected override string DoOperation(ZNetView view, string operation, long? value)
-  {
-    throw new NotImplementedException();
-  }
-
   public static List<string> SmokeTypes = [
       "off",
       "on",

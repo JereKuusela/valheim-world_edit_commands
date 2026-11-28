@@ -69,9 +69,7 @@ public class SpawnLocationCommand
         spawnPosition.y = value;
 
       DungeonGenerator.m_forceSeed = dungeonSeed;
-      UndoHelper.BeginAction();
-      ZoneSystem.instance.SpawnLocation(location, seed, spawnPosition, spawnRotation, ZoneSystem.SpawnMode.Full, []);
-      UndoHelper.EndAction();
+      UndoHelper.Run(() => ZoneSystem.instance.SpawnLocation(location, seed, spawnPosition, spawnRotation, ZoneSystem.SpawnMode.Full, []));
       args.Context.AddString("Spawned: " + name + " at " + Helper.PrintVectorXZY(spawnPosition));
     });
   }

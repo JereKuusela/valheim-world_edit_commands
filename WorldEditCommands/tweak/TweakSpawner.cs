@@ -58,16 +58,6 @@ public class TweakSpawnerCommand : TweakCommand
     throw new NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, bool? value)
-  {
-    throw new NotImplementedException();
-  }
-
-  protected override string DoOperation(ZNetView view, string operation, long? value)
-  {
-    throw new NotImplementedException();
-  }
-
   public TweakSpawnerCommand()
   {
     Component = typeof(SpawnArea);
@@ -91,7 +81,7 @@ public class TweakSpawnerCommand : TweakCommand
 
     AutoComplete.Add("minlevel", index => index == 0 ? ParameterInfo.Create("minlevel=<color=yellow>number</color>", "Minimum level (level 1 = no star). No value to reset.") : ParameterInfo.None);
     AutoComplete.Add("maxlevel", index => index == 0 ? ParameterInfo.Create("maxlevel=<color=yellow>number</color>", "Maximum level (level 1 = no star). No value to reset.") : ParameterInfo.None);
-    AutoComplete.Add("globalkey", index => index == 0 ? ParameterInfo.Create("text=<color=yellow>key</color>", "Required global keys to work. Start with - to remove the key. No value to reset.") : ParameterInfo.None);
+    AutoComplete.Add("globalkey", index => index == 0 ? ParameterInfo.Create("globalkey=<color=yellow>key</color>", "Required global keys to work. Start with - to remove the key. No value to reset.") : ParameterInfo.None);
     AutoComplete.Add("maxnear", index => index == 0 ? ParameterInfo.Create("maxnear=<color=yellow>number</color>", "Maximum amount of spawns within the <color=yellow>nearradius</color>. No value to reset.") : ParameterInfo.None);
     AutoComplete.Add("maxtotal", index => index == 0 ? ParameterInfo.Create("maxtotal=<color=yellow>number</color>", "Maximum amount of spawns within the <color=yellow>farradius</color>. No value to reset.") : ParameterInfo.None);
     AutoComplete.Add("spawncondition", index => index == 0 ? ParameterInfo.Create("spawncondition=<color=yellow>flag</color>", "Sum up: 1 = day only, 2 = night only, 4 = ground only.") : ParameterInfo.None);

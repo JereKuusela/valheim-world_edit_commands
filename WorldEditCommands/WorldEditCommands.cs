@@ -11,7 +11,7 @@ public class WorldEditCommands : BaseUnityPlugin
 {
   public const string GUID = "world_edit_commands";
   public const string NAME = "World Edit Commands";
-  public const string VERSION = "1.81";
+  public const string VERSION = "1.85";
   public void Awake()
   {
     new Harmony(GUID).PatchAll();
@@ -29,6 +29,7 @@ public class WorldEditCommands : BaseUnityPlugin
     IsTweaks = Chainloader.PluginInfos.ContainsKey("world_edit_tweaks");
     IsEWFactions = Chainloader.PluginInfos.ContainsKey("expand_world_factions");
     DataLoading.SetupWatcher();
+    BlueprintWatcher.Start();
 
   }
 }
@@ -48,6 +49,7 @@ public class SetCommands
   {
     new SpawnLocationCommand();
     new SpawnObjectCommand();
+    new SpawnBlueprintCommand();
     new ObjectCommand();
     new TerrainCommand();
     new AliasesCommand();

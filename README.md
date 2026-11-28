@@ -181,6 +181,17 @@ Note: Creatures reset their style when attacking.
 - `spawn_object PickaxeIron refPlayer=Jay`: Spawns an iron pickaxe at the position of a player called Jay.
 - `alias spawn spawn_object $$ amount=$$ level=$$`: Upgrades the default `spawn` command with undo/redo.
 
+## Spawn blueprint
+
+Use `spawn_blueprint [blueprint name] [...args]` to place objects from a `.blueprint` or `.vbuild` file in `BepInEx/config/blueprints` or a subfolder. Enter the file name without its extension, replacing spaces with underscores. Autocomplete lists available names.
+
+By default the blueprint is placed in front of you, facing the same direction. The command accepts the `spawn_object` placement options `amount`, `from`, `pos`, `radius`, `refPlayer`, `refRot`, `rot`, `scale`, and `to`. `scale` applies to supported pieces, not the spacing between them. Use `data` to apply a data preset on top of the saved piece data.
+
+All objects placed by one command are undone or redone together. Saved terrain height and paint are not applied.
+
+- `spawn_blueprint Watch_Tower rot=90`: Places the blueprint with a 90-degree turn relative to your facing.
+- `spawn_blueprint Watch_Tower amount=3 from=100,200 to=140,200`: Places three copies evenly along a line, snapping their anchors to the ground.
+
 ## Spawn location
 
 The `spawn_location [location id] [...args]` spawns Point of Interests to the world. The main difference to the `location` command is that the game saving doesn't get disabled and all parameters can be set. The `undo`/`redo` system is supported by saving snapshots of the created objects.

@@ -53,17 +53,7 @@ public class TweakBeehiveCommand : TweakCommand
   protected override string DoOperation(ZNetView view, string operation, string[] value)
   {
     if (operation == "spawneffect")
-      return TweakActions.OutputEffect(view, value);
-    throw new NotImplementedException();
-  }
-
-  protected override string DoOperation(ZNetView view, string operation, bool? value)
-  {
-    throw new NotImplementedException();
-  }
-
-  protected override string DoOperation(ZNetView view, string operation, long? value)
-  {
+      return TweakActions.SpawnEffect(view, value);
     throw new NotImplementedException();
   }
 

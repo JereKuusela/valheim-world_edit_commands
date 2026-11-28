@@ -23,21 +23,6 @@ public class TweakItemStandCommand : TweakCommand
     throw new System.NotImplementedException();
   }
 
-  protected override string DoOperation(ZNetView view, string operation, int? value)
-  {
-    throw new System.NotImplementedException();
-  }
-
-  protected override string DoOperation(ZNetView view, string operation, string[] value)
-  {
-    throw new System.NotImplementedException();
-  }
-
-  protected override string DoOperation(ZNetView view, string operation, bool? value)
-  {
-    throw new NotImplementedException();
-  }
-
   protected override Dictionary<string, object?> Postprocess(ZNetView view, Dictionary<string, object?> operations)
   {
     if (!operations.ContainsKey("respawn") || operations.ContainsKey("item")) return operations;
@@ -47,11 +32,6 @@ public class TweakItemStandCommand : TweakCommand
     var newOperations = operations.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
     newOperations["item"] = item;
     return newOperations;
-  }
-
-  protected override string DoOperation(ZNetView view, string operation, long? value)
-  {
-    throw new NotImplementedException();
   }
 
   public TweakItemStandCommand()

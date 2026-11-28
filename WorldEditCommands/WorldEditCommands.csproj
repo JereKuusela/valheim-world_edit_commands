@@ -8,51 +8,52 @@
   <Target Name="CopyDLL" AfterTargets="Build">
     <Copy
       SourceFiles="$(TargetDir)$(ProjectName).dll"
-      DestinationFolder="$(ProjectDir)\..\..\Libs" />
+      DestinationFolder="$(LibsDir)" />
     <Message Text="Copied to Libs folder." Importance="High" />
   </Target>
   <ItemGroup>
+    <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.3" PrivateAssets="all" />
     <Reference Include="BepInEx">
-      <HintPath>..\..\Libs\BepinEx.dll</HintPath>
+      <HintPath>$(BepInExDir)\BepInEx.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\..\Libs\UnityEngine.dll</HintPath>
+      <HintPath>$(ManagedDir)\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>..\..\Libs\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>$(ManagedDir)\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.PhysicsModule">
-      <HintPath>..\..\Libs\UnityEngine.PhysicsModule.dll</HintPath>
+      <HintPath>$(ManagedDir)\UnityEngine.PhysicsModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.IMGUIModule">
-      <HintPath>..\..\Libs\UnityEngine.IMGUIModule.dll</HintPath>
+      <HintPath>$(ManagedDir)\UnityEngine.IMGUIModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AnimationModule">
-      <HintPath>..\..\Libs\UnityEngine.AnimationModule.dll</HintPath>
+      <HintPath>$(ManagedDir)\UnityEngine.AnimationModule.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro">
-      <HintPath>..\..\Libs\Unity.TextMeshPro.dll</HintPath>
+      <HintPath>$(ManagedDir)\Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="gui_framework">
-      <HintPath>..\..\Libs\gui_framework.dll</HintPath>
+      <HintPath>$(LibsDir)\gui_framework.dll</HintPath>
     </Reference>
     <Reference Include="0Harmony">
-      <HintPath>..\..\Libs\0Harmony.dll</HintPath>
+      <HintPath>$(BepInExDir)\0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="BepInEx.Harmony">
-      <HintPath>..\..\Libs\BepInEx.Harmony.dll</HintPath>
+      <HintPath>$(BepInExDir)\BepInEx.Harmony.dll</HintPath>
     </Reference>
-    <Reference Include="SoftReferenceableAssets">
-      <HintPath>..\..\Libs\SoftReferenceableAssets.dll</HintPath>
+    <Reference Include="SoftReferenceableAssets" Publicize="true">
+      <HintPath>$(ManagedDir)\SoftReferenceableAssets.dll</HintPath>
     </Reference>
-    <Reference Include="assembly_valheim">
-      <HintPath>..\..\Libs\assembly_valheim.dll</HintPath>
+    <Reference Include="assembly_valheim" Publicize="true">
+      <HintPath>$(ManagedDir)\assembly_valheim.dll</HintPath>
     </Reference>
-    <Reference Include="assembly_utils">
-      <HintPath>..\..\Libs\assembly_utils.dll</HintPath>
+    <Reference Include="assembly_utils" Publicize="true">
+      <HintPath>$(ManagedDir)\assembly_utils.dll</HintPath>
     </Reference>
     <Reference Include="ServerDevcommands">
-      <HintPath>..\..\Libs\ServerDevcommands.dll</HintPath>
+      <HintPath>$(LibsDir)\ServerDevcommands.dll</HintPath>
     </Reference>
   </ItemGroup>
 </Project>
